@@ -1,2 +1,2 @@
 # docx2hub
-Converts Microsoft docx files to flat hub XML
+Converts Microsoft docx to flat hub XML

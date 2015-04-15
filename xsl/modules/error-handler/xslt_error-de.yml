@@ -1,0 +1,6 @@
+de:
+  xslt_error:
+    base:
+      W2D_test: "Testfehler: {{info-text}}"
+
+      W2D_999: "Standardfehler: {{info-text}}"

@@ -1,0 +1,11 @@
+#! /bin/bash
+
+umask 002
+
+if [[ $2 == 'no' ]]; then
+    cat $1
+fi
+
+grep -v -E '^##' $1 | sed -e 's/^##//' > `dirname $1`/`basename $1 .log`.msg.log
+grep -E '^##' $1 | sed -e 's/^##//' > $1.tmp.log
+mv $1.tmp.log $1

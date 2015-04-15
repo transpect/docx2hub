@@ -1,0 +1,13 @@
+#! /bin/bash
+
+flag=0
+
+saxon -xsl:main.xsl -s:test.xml -it:main -o:tmp.xml
+
+
+if [ $flag == 1 ]; then
+    echo "Check failed."
+    exit -1
+else
+    echo "Success!"
+fi

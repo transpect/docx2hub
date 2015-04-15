@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:dbk="http://docbook.org/ns/docbook"
+  queryBinding="xslt2">
+  
+  <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
+  <ns prefix="dbk" uri="http://docbook.org/ns/docbook" />
+
+  <let name="base-dir" value="/*/dbk:info/dbk:keywordset[@role eq 'hub']/dbk:keyword[@role eq 'source-dir-uri']"/>
+
+  <pattern id="test">
+    <rule context="w:instrText">
+      <report test="false()" id="instrText" diagnostics="instrText_de" role="info">
+        <span class="srcpath"><xsl:value-of select="concat(
+                                                      $base-dir, 
+                                                      ancestor::*[@srcpath][1]/@srcpath
+                                                    )"/></span>
+        instrText!
+      </report>
+    </rule>
+  </pattern>
+
+  <pattern id="docx_changes">
+    <rule context="w:moveTo | w:ins | w:del">
+      <report test="true()" role="error" id="change_markup" diagnostics="change_markup_de">
+        <span class="srcpath"><xsl:value-of select="string-join(
+                                                      (
+                                                        $base-dir, 
+                                                        ((ancestor::*[@srcpath][1] | descendant::*[@srcpath][1])/@srcpath)[last()]
+                                                      ), ''
+                                                    )"/></span>
+        The docx converter is currently unable to handle change markup such as '<value-of 
+        select="name()"/>' properly. Please remove the markup, e.g., by accepting all changes. (Note that the 
+        content that contains the markup might be removed already during conversion.)</report>
+    </rule>
+  </pattern>
+
+  <pattern id="docx_tables">
+    <rule context="w:table">
+      <report test="every $tr in w:tr satisfies $tr[w:trPr/w:tblHeader or w:tblHeader]" role="info" id="table_headers_only" diagnostics="table_headers_only_de">
+        <span class="srcpath"><xsl:value-of select="string-join(
+                                                      (
+                                                        $base-dir, 
+                                                        ((ancestor::*[@srcpath][1] | descendant::*[@srcpath][1])/@srcpath)[last()]
+                                                      ), ''
+                                                    )"/></span>
+        All table rows are marked as table header, found no body rows. The docx converter moves all table header rows to table body, otherwise the resulting XML would be invalid.</report>
+    </rule>
+  </pattern>
+  
+  <diagnostics>
+    <diagnostic id="instrText_de" xml:lang="de">Feldfunktion!</diagnostic>
+    <diagnostic id="change_markup_de" xml:lang="de">Der docx-Konverter kann nicht richtig mit Änderungs-Markup wie '<value-of 
+        select="name()"/>' umgehen. Bitte entfernen Sie dieses Markup, z.B. indem Sie alle Änderungen akzeptieren. (Bitte
+    beachten Sie, dass der Inhalt, der dieses Markup enthielt, während der weiteren Konvertierung</diagnostic>
+    <diagnostic id="table_headers_only_de" xml:lang="de">In dieser Tabelle wurden alle Tabellenzeilen als TabellenkÃpfe ausgezeichnet. Der docx-Konverter hat deshalb alle Tabellenzeilen in den Bauch der Tabelle verschoben, da sonst das resultierende XML invalide wÃŒrde.</diagnostic>
+  </diagnostics>
+  
+</schema>

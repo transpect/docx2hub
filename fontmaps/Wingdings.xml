@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<symbols>
+  <symbol number="F049" entity="&#xF049;" char="&#x270B;" font="Segoe UI Symbol"/><!-- raised hand -->
+  <symbol number="F04A" entity="&#xF04A;" char="&#x263a;" font="Segoe UI Symbol"/><!-- happy smiley -->
+  <symbol number="004A" entity="J" char="&#x263A;" font="Segoe UI Symbol"/><!-- happy smiley -->
+  <symbol number="F04B" entity="&#xF04B;" char="&#x1F610;" font="Segoe UI Symbol"/><!-- neutral smiley -->
+  <symbol number="F04C" entity="&#xF04C;" char="&#x2639;" font="Segoe UI Symbol"/><!-- sad smiley -->
+  <symbol number="004C" entity="L" char="&#x2639;" font="Segoe UI Symbol"/><!-- sad smiley -->
+  <symbol number="F06E" entity="&#xF06E;" char="&#x25a0;"/><!-- BLACK SQUARE -->
+  <symbol number="006E" entity="" char="&#x25a0;"/><!-- BLACK SQUARE -->
+  <symbol number="F06F" entity="" char="&#x25A1;"/><!-- WHITE SQUARE -->
+  <symbol number="006F" entity="o" char="&#x25A1;"/><!-- WHITE SQUARE -->
+  <symbol number="F08C" entity="&#xF08C;" char="&#x2776;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT ONE -->
+  <symbol number="F08D" entity="&#xF08D;" char="&#x2777;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT TWO -->
+  <symbol number="F08E" entity="&#xF08E;" char="&#x2778;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT THREE -->
+  <symbol number="F08F" entity="&#xF08F;" char="&#x2779;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FOUR -->
+  <symbol number="F090" entity="&#xF090;" char="&#x277a;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FIVE -->
+  <symbol number="F09F" entity="" char="&#x2022;"/><!-- BULLET -->
+  <symbol number="F0A6" entity="&#xF0A6;" char="&#x274D;" font="Segoe UI Symbol"/><!-- SHADOWED WHITE CIRCLE -->
+  <symbol number="F0A7" entity="&#xF0A7;" char="&#x25aa;" font="Segoe UI Symbol"/><!-- BLACK SMALL SQUARE -->
+  <symbol number="F0DF" entity="&#xF0DF;" char="&#x2190;"/><!-- LEFTWARDS ARROW -->
+  <symbol number="F0E0" entity="&#xF0E0;" char="&#x2192;"/><!-- RIGHTWARDS ARROW -->
+  <symbol number="F0FA" entity="&#xF0FA;" char="&#x25ab;" font="Segoe UI Symbol"/><!-- WHITE SMALL SQUARE -->
+  <symbol number="0072" entity="&#x0072;" char="&#x2610;"/><!-- BALLOT BOX -->
+  <symbol number="F0FD" entity="&#xF0FD;" char="&#x2612;" font="Segoe UI Symbol"/><!-- BALLOT BOX WITH X -->
+  <symbol number="F0FE" entity="&#xF0FE;" char="&#x2611;" font="Segoe UI Symbol"/><!-- BALLOT BOX WITH CHECK -->
+  <symbol number="003F" entity="&#x003F;" char="&#x2794;"/><!-- Heavy wide-headed rightwards arrow -->
+  <symbol number="F0E8" entity="&#xF0E8;" char="&#x2794;" font="Segoe UI Symbol"/><!-- Heavy wide-headed rightwards arrow -->
+  <symbol number="00E8" entity="&#x00E8;" char="&#x2794;" font="Segoe UI Symbol"/><!-- Heavy wide-headed rightwards arrow -->
+  <symbol number="0AEA" entity="&#x0AEA;" char="&#x2794;"/><!-- Heavy wide-headed rightwards arrow -->
+  <symbol number="F0A8" entity="" char="&#x25FB;" font="Segoe UI Symbol"/><!-- WHITE MEDIUM SQUARE -->
+  <symbol number="F0FC" entity="&#252;" char="&#x2713;" font="Segoe UI Symbol"/><!-- CHECK MARK -->
+</symbols>

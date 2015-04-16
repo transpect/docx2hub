@@ -20,21 +20,17 @@
   <xsl:param name="error-mode" select="'debug'"/>
   <xsl:param name="language-localization" select="'de'"/>
   <xsl:param name="error-msg-file" select="'xslt_error-de.yml'"/>
-  <xsl:param name="error-msg-file-path" select="replace(static-base-uri(), '/[^/]+$', '')"/>
   <xsl:param name="create-pis" select="'yes'"/>
-
+  
   <xsl:variable name="error-info">
     <xsl:choose>
       <xsl:when test="$error-mode = 'debug'">
         <xsl:sequence 
-          select="unparsed-text(
-                    concat($error-msg-file-path, '/', $error-msg-file), 
-                    'utf-8')"/>
+          select="unparsed-text($error-msg-file, 'utf-8')"/>
       </xsl:when>
       <xsl:otherwise/>
     </xsl:choose>
   </xsl:variable>
-
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <!-- template to handle error messages -->

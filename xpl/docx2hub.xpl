@@ -34,7 +34,7 @@
     <p:empty/>
   </p:input>
   <p:input port="field-functions-schematron">
-    <p:document href="../schematron/field-functions.sch.xml"/>
+    <p:document href="../sch/field-functions.sch.xml"/>
     <p:documentation>Schematron that will validate the intermediate format after merging/splitting Word field functions.</p:documentation>
   </p:input>
   <p:output port="result" primary="true"/>

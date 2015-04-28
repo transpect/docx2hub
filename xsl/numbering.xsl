@@ -7,7 +7,8 @@
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns="http://docbook.org/ns/docbook"
-  exclude-result-prefixes = "w xs dbk tr docx2hub">
+  exclude-result-prefixes = "w xs dbk tr docx2hub" 
+  version="2.0">
 
   <xsl:function name="tr:insert-numbering" as="item()*">
     <xsl:param name="context" as="element(w:p)"/>

@@ -20,8 +20,18 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml">
 
+  <xsl:variable name="comment-reference-style-regex" select="'^(Kommentarzeichen)$'"/>
+
   <xsl:template match="w:commentReference" mode="wml-to-dbk">
     <xsl:apply-templates select="key('comment-by-id', @w:id)" mode="comment"/>
+  </xsl:template>
+
+  <!-- dissolve single w:r with only comment(s) -->
+  <xsl:template match="*[*]
+                        [self::w:r[matches(@role, $comment-reference-style-regex)]]
+                        [every $n in node() satisfies $n/self::w:commentReference]" 
+                mode="wml-to-dbk" priority="3">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
   <xsl:template match="w:comment" mode="comment">

@@ -60,6 +60,63 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
+  <xsl:key name="docx2hub:linking-item-by-id" match="*[@linkend | @linkends]" use="@linkend, tokenize(@linkends, '\s+')"/>
+  <xsl:key name="docx2hub:item-by-id" match="*[@xml:id]" use="@xml:id"/>
+
+  <!-- collateral: deflate an adjacent start/end anchor pair to a single anchor --> 
+  <xsl:template match="dbk:anchor[
+                         following-sibling::*[1] is key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:anchor
+                       ]" mode="docx2hub:join-runs">
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @role" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="dbk:anchor[
+                         preceding-sibling::*[1] is key('docx2hub:item-by-id', @linkend)
+                       ]" mode="docx2hub:join-runs"/>
+
+  <xsl:template match="dbk:anchor/@linkend" mode="docx2hub:join-runs">
+    <!-- I’d like to keep it for bookmark ranges, but it isn’t allowed in DocBook -->
+  </xsl:template>
+
+  <!-- collateral: create indexterms for what was a bookmark range in docx -->
+  <xsl:template match="dbk:anchor[exists(key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm[@linkends])]"
+    mode="docx2hub:join-runs" priority="1">
+    <xsl:variable name="next-match" as="element(dbk:anchor)?">
+      <xsl:next-match/>  
+    </xsl:variable>
+    <xsl:sequence select="$next-match"/>
+    <xsl:variable name="indexterms" as="element(dbk:indexterm)+" 
+      select="key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm"/>
+    <xsl:variable name="context" select="." as="element(dbk:anchor)"/>
+    <xsl:for-each select="$indexterms">
+      <xsl:variable name="pos" as="xs:integer" select="index-of(tokenize(@linkends, '\s+'), $context/@xml:id)"/>
+      <xsl:variable name="id" select="concat('itr_', generate-id())" as="xs:string"/>
+      <xsl:choose>
+        <xsl:when test="$pos = 1">
+          <xsl:copy>
+            <xsl:apply-templates select="@* except @linkends" mode="#current"/>
+            <xsl:if test="$next-match/@role = ('start', 'hub:start')">
+              <xsl:attribute name="xml:id" select="$id"/>
+              <xsl:attribute name="class" select="'startofrange'"/>
+            </xsl:if>
+            <xsl:apply-templates mode="#current"/>
+          </xsl:copy>
+        </xsl:when>
+        <xsl:when test="$pos = 2 and exists($next-match)">
+          <xsl:copy>
+            <xsl:apply-templates select="@* except @linkends" mode="#current"/>
+            <xsl:attribute name="startref" select="$id"/>
+            <xsl:attribute name="class" select="'endofrange'"/>
+          </xsl:copy>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="dbk:indexterm[@linkends]" mode="docx2hub:join-runs"/>
+
   <!-- collateral: replace name of mapped symbols with default Unicode font name -->
   <xsl:template match="@css:font-family[. = $docx2hub:symbol-font-names][.. = docx2hub:font-map(.)/symbols/symbol/@char]"
     mode="docx2hub:join-runs">

@@ -2,7 +2,8 @@
 <p:declare-step xmlns:p="http://www.w3.org/ns/xproc" 
   xmlns:c="http://www.w3.org/ns/xproc-step"
   xmlns:cx="http://xmlcalabash.com/ns/extensions"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:letex="http://www.le-tex.de/namespace"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
@@ -23,7 +24,7 @@
     <p:pipe port="result" step="params"/>
   </p:output>
   <p:output port="zip-manifest">
-    <p:pipe port="result" step="unzip"/>
+    <p:pipe port="result" step="zip-manifest"/>
   </p:output>
 
   <p:option name="docx" required="true">
@@ -91,6 +92,34 @@
               )"/>
   </p:load>
 
+  <p:sink/>
+  
+  <p:xslt name="zip-manifest">
+    <p:input port="source">
+      <p:pipe port="result" step="unzip"/>
+    </p:input>
+    <p:input port="stylesheet">
+      <p:inline>
+        <xsl:stylesheet version="2.0">
+          <xsl:template match="c:files">
+            <c:zip-manifest>
+              <xsl:apply-templates/>
+            </c:zip-manifest>
+          </xsl:template>
+          <xsl:variable name="base-uri" select="/*/@xml:base" as="xs:string"/>
+          <xsl:template match="c:file">
+            <c:entry name="{replace(replace(@name, '%5B', '['), '%5D', ']')}"
+              href="{concat($base-uri, replace(replace(@name, '\[', '%5B'), '\]', '%5D'))}" compression-method="deflate"
+              compression-level="default"/>
+          </xsl:template>
+        </xsl:stylesheet>
+      </p:inline>
+    </p:input>
+    <p:input port="parameters">
+      <p:empty/>
+    </p:input>
+  </p:xslt>
+  
   <p:sink/>
 
   <p:add-attribute attribute-name="value" match="/c:param" name="error-msg-file-path">

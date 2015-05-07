@@ -53,7 +53,7 @@
     <xsl:param name="att" as="attribute(*)"/>
     <xsl:param name="context" as="element(*)"/>
     <xsl:variable name="context-atts" select="key('style-by-name', $context/@role, $att/root())/@* | $context/@*" as="attribute(*)*"/>
-    <xsl:sequence select="not(some $a in $context-atts satisfies ($a/name() = $att/name()(: and string($a) = string($att):)))"/>
+    <xsl:sequence select="not(some $a in $context-atts satisfies ($a/name() = $att/name() and string($a) = string($att)))"/>
   </xsl:function>
 
   <xsl:function name="tr:get-lvl-of-numbering" as="element(w:lvl)?">

@@ -25,7 +25,6 @@
 
   <xsl:import href="propmap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/colors/xsl/colors.xsl"/>
-
   <xsl:key name="docx2hub:style" match="w:style" use="@w:styleId" />
   <xsl:key name="docx2hub:style-by-role" match="css:rule | dbk:style" use="if ($hub-version eq '1.0') then @role else @name" />
 
@@ -418,13 +417,14 @@
 
       <xsl:when test=". eq 'lang'">
         <docx2hub:attribute name="{../@target-name}">
-          <!-- provisional -->
-          <xsl:value-of select="if (matches($val, 'German') or matches($val, '\Wde\W'))
+          <xsl:variable name="stringval" select="if ($val/self::w:lang) then ($val/@w:val, $val/@w:bidi)[1] else $val"/>
+          <xsl:value-of select="if (matches($stringval, 'German') or matches($stringval, '\Wde\W'))
                                 then 'de'
                                 else 
-                                  if (matches($val, 'English'))
+                                  if (matches($stringval, 'English'))
                                   then 'en'
-                                  else $val" />
+                                  else replace($stringval, '^(\p{Ll}+).*$', '$1')" />
+        <!-- stripping the country by default. If someone needs it, we need to introduce an option -->
         </docx2hub:attribute>
       </xsl:when>
 
@@ -911,7 +911,7 @@
                         every $el in $content[self::*] 
                         satisfies $el[self::w:t[@xml:space eq 'preserve'][matches(., '^\p{Zs}*$')]]
                       )">
-        <xsl:sequence select="docx2hub:wrap($content, (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
+        <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
       </xsl:when>
       <!-- do not wrap whitespace only subscript or superscript -->
       <xsl:when test="w:t and docx2hub:wrap/@element = ('superscript', 'subscript') 
@@ -921,17 +921,17 @@
                         satisfies $el[self::w:t[@xml:space eq 'preserve'][matches(., '^\p{Zs}*$')]]
                       )">
         <xsl:copy>
-          <xsl:sequence select="docx2hub:wrap($content, (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
+          <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
         </xsl:copy>
       </xsl:when>
       <xsl:when test="exists(docx2hub:wrap) and exists(self::css:rule | self::dbk:style)">
         <xsl:copy>
           <xsl:attribute name="remap" select="docx2hub:wrap/@element" />
-          <xsl:sequence select="@*, $content" />
+          <xsl:sequence select="@*, (@srcpath, $content)" />
         </xsl:copy>
       </xsl:when>
       <xsl:when test="exists(docx2hub:wrap) and not(self::css:rule or self::dbk:style)">
-        <xsl:sequence select="docx2hub:wrap($content, (docx2hub:wrap))" />
+        <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap))" />
       </xsl:when>
       <xsl:otherwise>
         <xsl:copy>
@@ -942,7 +942,7 @@
   </xsl:template>
 
   <xsl:function name="docx2hub:wrap" as="node()*">
-    <xsl:param name="content" as="node()*" />
+    <xsl:param name="content" as="item()*" /><!-- attribute(srcpath) or node() -->
     <xsl:param name="wrappers" as="element(docx2hub:wrap)*" />
     <xsl:choose>
       <xsl:when test="exists($wrappers)">

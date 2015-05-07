@@ -14,6 +14,7 @@
   xmlns:exsl='http://exslt.org/common'
   xmlns:saxon="http://saxon.sf.net/"
   xmlns:tr="http://transpect.io"
+  xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:mml="http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns="http://docbook.org/ns/docbook"
@@ -24,6 +25,8 @@
     <xsl:param name="instr" as="xs:string?"/>
     <xsl:param name="text" as="element(*)*"/>
     <xsl:param name="nodes" as="element(*)*"/>
+
+    <xsl:variable name="context" as="element(w:instrText)" select="."/>
 
     <xsl:variable name="instr-from-nodes" as="node()*">
       <xsl:for-each select="$nodes//w:instrText">
@@ -81,12 +84,12 @@
             </xsl:choose>
           </xsl:variable>
           <xsl:variable name="indexterm-attributes" as="attribute()*">
-            <!--<xsl:if test="matches($current-instr-from-nodes-text, '\\i')">
-              <xsl:attribute name="pagenum" select="'italic'"/>
+            <xsl:if test="matches($current-instr-from-nodes-text, '\\i')">
+              <xsl:attribute name="role" select="'hub:pagenum-italic'"/>
             </xsl:if>
             <xsl:if test="matches($current-instr-from-nodes-text, '\\b')">
-              <xsl:attribute name="pagenum" select="'bold'"/>
-            </xsl:if>-->
+              <xsl:attribute name="role" select="'hub:pagenum-bold'"/>
+            </xsl:if>
             <xsl:if test="matches($current-instr-from-nodes-text, '\\s')">
               <xsl:attribute name="class" select="'startofrange'"/>
             </xsl:if>
@@ -94,7 +97,20 @@
               <xsl:attribute name="class" select="'endofrange'"/>
             </xsl:if>
             <xsl:if test="matches($current-instr-from-nodes-text, '\\r')">
-              <xsl:attribute name="id" select="tr:rereplace-chars(replace($current-instr-from-nodes-text, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
+              <xsl:variable name="id" as="xs:string" 
+                select="tr:rereplace-chars(replace($current-instr-from-nodes-text, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
+              <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)" 
+                select="key('docx2hub:bookmarkStart-by-name', $id, root($context))"/>
+              <xsl:variable name="start-id" as="attribute(xml:id)">
+                <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id"/>
+              </xsl:variable>
+              <xsl:variable name="end-id" as="attribute(xml:id)">
+                <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id">
+                  <xsl:with-param name="end" select="true()"/>
+                </xsl:apply-templates>
+              </xsl:variable>
+              <xsl:attribute name="linkends" select="$start-id, $end-id" separator=" "/>
+              <!-- Create distinct startofrange/endofrange indexterms at the anchors specified by linkends in the next pass. -->
             </xsl:if>
             <xsl:if test="not(empty($type))">
               <xsl:attribute name="type" select="tr:rereplace-chars($type)"/>
@@ -122,23 +138,18 @@
               </xsl:choose>
             </xsl:for-each-group>
           </xsl:variable>
-          <xsl:variable name="real-term-text" select="string-join($real-term,'')"/>
           <xsl:variable name="indexterm">
             <indexterm>
-              <xsl:apply-templates select="$indexterm-attributes" mode="#current"/>
-              <primary sortas="{normalize-space(replace(tr:rm-last-quot(tokenize($real-term-text,':')[not(matches(.,'Register§§'))][1]),'^[\s&#160;]*[Xx][eE][\s&#160;]+&quot;',''))}">
-                <xsl:apply-templates select="$real-term" mode="index-processing"/>
-              </primary>
-              <xsl:if test="count(tokenize($real-term-text,':')[not(matches(.,'Register§§'))]) gt 1">
-                <secondary sortas="{normalize-space(replace(tr:rm-last-quot(tokenize($real-term-text,':')[not(matches(.,'Register§§'))][2]),'^[\s&#160;]*[Xx][eE][\s&#160;]+&quot;',''))}">
-                  <xsl:apply-templates select="$real-term" mode="index-processing"/>
-                </secondary>
-              </xsl:if>
-              <xsl:if test="count(tokenize($real-term-text,':')[not(matches(.,'Register§§'))]) gt 2">
-                <tertiary sortas="{normalize-space(replace(tr:rm-last-quot(tokenize($real-term-text,':')[not(matches(.,'Register§§'))][3]),'^[\s&#160;]*[Xx][eE][\s&#160;]+&quot;',''))}">
-                  <xsl:apply-templates select="$real-term" mode="index-processing"/>
-                </tertiary>
-              </xsl:if>
+              <xsl:for-each-group select="$indexterm-attributes" group-by="name()">
+                <xsl:attribute name="{name()}" select="string-join(current-group(), ' ')"/>
+              </xsl:for-each-group>
+              <xsl:for-each select="('primary', 'secondary', 'tertiary')">
+                <xsl:call-template name="indexterm-sub">
+                  <xsl:with-param name="pos" select="position()"/>
+                  <xsl:with-param name="real-term" select="$real-term"/>
+                  <xsl:with-param name="elt" select="."/>
+                </xsl:call-template>
+              </xsl:for-each>
               <xsl:if test="not($see = '') and not(empty($see))">
                 <see>
                   <xsl:value-of select="tr:rereplace-chars($see)"/>
@@ -165,7 +176,27 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
+  <xsl:template name="indexterm-sub">
+    <xsl:param name="pos" as="xs:integer"/>
+    <xsl:param name="real-term" as="node()*"/>
+    <xsl:param name="elt" as="xs:string"/>
+    <xsl:variable name="real-term-text" select="string-join($real-term,'')" as="xs:string"/>
+    <xsl:if test="count(tokenize($real-term-text,':')[not(matches(.,'Register§§'))]) gt $pos - 1">
+      <xsl:variable name="processed" as="node()*">
+        <xsl:apply-templates select="$real-term" mode="index-processing"/>
+      </xsl:variable>
+      <xsl:variable name="processed-text" select="string-join($processed, '')" as="xs:string"/>
+      <xsl:if test="$processed-text">
+        <xsl:element name="{$elt}">
+          <xsl:attribute name="sortas" 
+            select="normalize-space(replace(tr:rm-last-quot(tokenize($real-term-text,':')[not(matches(.,'Register§§'))][$pos]),'^[\s&#160;]*[Xx][eE][\s&#160;]+&quot;',''))"/>
+          <xsl:sequence select="$processed"/>
+        </xsl:element>
+      </xsl:if>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match="text()[matches(., '^\s*[xX][eE]\s*&quot;.*$')]" mode="index-processing" priority="10">
     <xsl:choose>
       <xsl:when test="matches(., '\s*[xX][eE]\s*&quot;(.*)&quot;\s*$')">
@@ -194,73 +225,50 @@
     <xsl:value-of select="tr:rm-last-quot(.)"/>
   </xsl:template>
   
-  <xsl:template match="*:primary" mode="index-processing-1">
+  <xsl:function name="tr:primary-secondary-tertiary-number" as="xs:integer?">
+    <xsl:param name="name" as="xs:string"/>
+    <xsl:choose>
+      <xsl:when test="$name = 'primary'">
+        <xsl:sequence select="1"/>
+      </xsl:when>
+      <xsl:when test="$name = 'secondary'">
+        <xsl:sequence select="2"/>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:template match="dbk:primary | dbk:secondary | dbk:tertiary" mode="index-processing-1" priority="1">
     <xsl:variable name="content" as="node()*">
       <xsl:sequence select="tr:extract-chars(node(),':',':')"/>
     </xsl:variable>
-    <xsl:copy>
+    <xsl:variable name="pst" select="tr:primary-secondary-tertiary-number(local-name())" as="xs:integer"/>
+    <xsl:variable name="processed" as="node()*">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="$content" group-starting-with="*:text[matches(.,'^:')]">
         <xsl:variable name="pos" select="position()"/>
         <xsl:choose>
-          <xsl:when test="$pos=1 and not(exists($content[matches(.,'Register§§')]))">
+          <xsl:when test="$pos = $pst and not(exists($content[matches(.,'Register§§')]))">
             <xsl:value-of select="normalize-space(tr:rereplace-chars(replace(current-group()[1]/descendant-or-self::text(),'^:[\s&#160;]*','')))"/>
             <xsl:apply-templates select="current-group()[position() gt 1]" mode="index-processing-2"/>
           </xsl:when>
-          <xsl:when test="$pos=2 and exists($content[matches(.,'Register§§')])">
+          <xsl:when test="$pos = $pst + 1 and exists($content[matches(.,'Register§§')])">
             <xsl:value-of select="normalize-space(tr:rereplace-chars(replace(current-group()[1]/descendant-or-self::text(),'^:[\s&#160;]*','')))"/>
             <xsl:apply-templates select="current-group()[position() gt 1]" mode="index-processing-2"/>
           </xsl:when>
           <xsl:otherwise/>
         </xsl:choose>
       </xsl:for-each-group>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="*:secondary" mode="index-processing-1">
-    <xsl:variable name="content" as="node()*">
-      <xsl:sequence select="tr:extract-chars(node(),':',':')"/>
     </xsl:variable>
-    <xsl:copy>
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="$content" group-starting-with="*:text[matches(.,'^:')]">
-        <xsl:variable name="pos" select="position()"/>
-        <xsl:choose>
-          <xsl:when test="$pos=2 and not(exists($content[matches(.,'Register§§')]))">
-            <xsl:value-of select="normalize-space(tr:rereplace-chars(replace(current-group()[1]//text(),'^:[\s&#160;]*','')))"/>
-            <xsl:apply-templates select="current-group()[position() gt 1]" mode="index-processing-2"/>
-          </xsl:when>
-          <xsl:when test="$pos=3 and exists($content[matches(.,'Register§§')])">
-            <xsl:value-of select="normalize-space(tr:rereplace-chars(replace(current-group()[1]//text(),'^:[\s&#160;]*','')))"/>
-            <xsl:apply-templates select="current-group()[position() gt 1]" mode="index-processing-2"/>
-          </xsl:when>
-          <xsl:otherwise/>
-        </xsl:choose>
-      </xsl:for-each-group>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="*:tertiary" mode="index-processing-1">
-    <xsl:variable name="content" as="node()*">
-      <xsl:sequence select="tr:extract-chars(node(),':',':')"/>
-    </xsl:variable>
-    <xsl:copy>
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="$content" group-starting-with="*:text[matches(.,'^:')]">
-        <xsl:variable name="pos" select="position()"/>
-        <xsl:choose>
-          <xsl:when test="$pos=3 and not(exists($content[matches(.,'Register§§')]))">
-            <xsl:value-of select="normalize-space(tr:rereplace-chars(replace(current-group()[1]//text(),'^:[\s&#160;]*','')))"/>
-            <xsl:apply-templates select="current-group()[position() gt 1]" mode="index-processing-2"/>
-          </xsl:when>
-          <xsl:when test="$pos=4 and exists($content[matches(.,'Register§§')])">
-            <xsl:value-of select="normalize-space(tr:rereplace-chars(replace(current-group()[1]//text(),'^:[\s&#160;]*','')))"/>
-            <xsl:apply-templates select="current-group()[position() gt 1]" mode="index-processing-2"/>
-          </xsl:when>
-          <xsl:otherwise/>
-        </xsl:choose>
-      </xsl:for-each-group>
-    </xsl:copy>
+    <xsl:variable name="processed-text" as="xs:string" select="string-join($processed, '')"/>
+    <xsl:if test="normalize-space($processed-text)">
+      <xsl:copy>
+        <xsl:apply-templates select="@* except @sortas" mode="#current"/>
+        <xsl:if test="not(@sortas = $processed-text)">
+          <xsl:copy-of select="@sortas"/>
+        </xsl:if>
+        <xsl:sequence select="$processed"/>
+      </xsl:copy>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="*:text | text()" mode="index-processing-2">

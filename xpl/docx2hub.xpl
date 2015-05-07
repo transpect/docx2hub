@@ -47,6 +47,10 @@
   <p:output port="schema" sequence="true">
     <p:pipe port="result" step="decorate-field-functions-schematron"/>
   </p:output>
+  <p:output port="zip-manifest">
+    <p:pipe port="zip-manifest" step="single-tree"/>
+  </p:output>
+
 
   <p:option name="docx" required="true">
     <p:documentation>OS name (preferably with full path, may not resolve if only a relative path is given), file:, http:, or

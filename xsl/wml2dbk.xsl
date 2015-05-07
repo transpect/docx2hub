@@ -565,14 +565,34 @@
     </anchor>
   </xsl:template>
   
+  <xsl:key name="docx2hub:bookmarkStart-by-name" match="w:bookmarkStart[@w:name]" use="docx2hub:normalize-name-for-id(@w:name)"/>
+  
+  <xsl:function name="docx2hub:normalize-name-for-id" as="xs:string?">
+    <xsl:param name="name" as="xs:string?"/>
+    <xsl:choose>
+      <xsl:when test="not($name)"/>
+      <xsl:when test="not(matches($name, '^\i'))">
+        <xsl:sequence select="docx2hub:normalize-name-for-id(concat('_', $name))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="replace($name, '[^-_.a-z\d]', '_', 'i')"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
   <xsl:template match="w:bookmarkStart/@w:name" 
     mode="bookmark-id" as="attribute(xml:id)">
     <xsl:param name="end" select="false()"/>
+    <xsl:variable name="normalized-string" as="xs:string" select="docx2hub:normalize-name-for-id(.)"/>
     <xsl:attribute name="xml:id" 
       select="  replace(
                   replace(
                     string-join(
-                      (., ../@w:id, if ($end) then 'end' else ()), 
+                      (
+                        $normalized-string, 
+                        if (count(key('docx2hub:bookmarkStart-by-name', $normalized-string)) = 1) then () else ../@w:id, 
+                        if ($end) then 'end' else ()
+                      ), 
                       '_'
                     ), 
                     '%20', 
@@ -592,9 +612,13 @@
     <xsl:if test="exists(key('docx2hub:bookmarkStart', @w:id))">
       <xsl:variable name="start" select="key('docx2hub:bookmarkStart', @w:id)" as="element(w:bookmarkStart)"/>
       <anchor role="end">
+        <xsl:variable name="id" as="attribute(xml:id)">
+          <xsl:apply-templates select="$start/@w:name" mode="bookmark-id"/> 
+        </xsl:variable>
         <xsl:apply-templates select="$start/@w:name" mode="bookmark-id">
           <xsl:with-param name="end" select="true()"/>
         </xsl:apply-templates>
+        <xsl:attribute name="linkend" select="$id"/>
       </anchor>
     </xsl:if>
   </xsl:template>
@@ -650,7 +674,7 @@
      <xsl:choose>
       <xsl:when test="exists(parent::w:hyperlink/@r:id)"/>
       <xsl:otherwise>
-        <xsl:attribute name="linkend" select="."/>
+        <xsl:attribute name="linkend" select="docx2hub:normalize-name-for-id(.)"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -715,6 +739,22 @@
   <!-- text (w:t) -->
   <xsl:template match="w:t" mode="wml-to-dbk">
     <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
+  <xsl:template match="@xml:lang" mode="wml-to-dbk" priority="5">
+    <xsl:variable name="context" select="." as="attribute(*)"/>
+    <xsl:variable name="ancestors-with-langs" as="element(*)+">
+      <xsl:for-each select="ancestor::*">
+        <xsl:copy>
+          <xsl:copy-of select="key('style-by-name', @role)/@xml:lang"/>
+          <xsl:copy-of select="@xml:lang except $context"/>
+        </xsl:copy>
+      </xsl:for-each>
+    </xsl:variable>
+    <!-- Only output the next specific xml:lang if its string value differs from the current one’s: -->
+    <xsl:if test="not($ancestors-with-langs[@xml:lang][last()]/@xml:lang = $context)">
+      <xsl:next-match/>
+    </xsl:if>
   </xsl:template>
 
   <!-- instrText (w:instrText)  [not(../preceding-sibling::*[w:instrText])] -->
@@ -794,7 +834,7 @@
               <xsl:if test="$tooltip">
                 <xsl:attribute name="xlink:title" select="$tooltip"/>
               </xsl:if>
-              <xsl:apply-templates select="$text" mode="#current"/>
+              <xsl:apply-templates select="($nodes//@srcpath)[1], $text" mode="#current"/>
             </link>
           </xsl:when>
           <xsl:when test="$tokens[1] = 'SET'">

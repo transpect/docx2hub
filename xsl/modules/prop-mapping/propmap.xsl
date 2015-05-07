@@ -79,7 +79,7 @@
       	<prop name="w:keepNext" />
       	<prop name="w:kern" />
         <prop name="w:kinsoku" />
-        <prop name="w:lang" type="linear" target-name="xml:lang" />
+        <prop name="w:lang" type="lang" target-name="xml:lang" />
         <prop name="w:link" />
         <prop name="w:locked" />
         <prop name="w:name" type="linear" target-name="role" hubversion="1.0"/>

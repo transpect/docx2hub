@@ -61,7 +61,7 @@
   <p:option name="status-dir-uri" select="'status'"/>
   <p:option name="srcpaths" select="'no'"/>
   <p:option name="unwrap-tooltip-links" select="'no'"/>
-  <p:option name="hub-version" select="'1.1'"/>
+  <p:option name="hub-version" select="'1.2'"/>
   <p:option name="fail-on-error" select="'no'"/>
   <p:option name="field-vars" select="'no'"/>
   <p:option name="extract-dir" select="''">

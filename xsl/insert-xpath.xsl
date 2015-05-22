@@ -54,6 +54,7 @@
 
   <xsl:template match="*[ $srcpaths = 'yes' ]
                         [ name() = $docx2hub:srcpath-elements ]
+                        [ not(ancestor::w:pPr) (: suppress srcpath in tab declarations :)] 
                         [ /*/name() = ('w:document', 'w:footnotes', 'w:endnotes', 'w:comments')]
                         " mode="insert-xpath">
     <xsl:copy copy-namespaces="no">

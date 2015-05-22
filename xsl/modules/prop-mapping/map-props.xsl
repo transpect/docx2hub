@@ -90,12 +90,12 @@
               <xsl:with-param name="contexts" select="., /w:root/w:footnotes, /w:root/w:endnotes"/>
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="$hub-version eq '1.1'">
+          <xsl:otherwise>
             <xsl:call-template name="docx2hub:hub-1.1-styles">
               <xsl:with-param name="version" select="$hub-version" tunnel="yes"/>
               <xsl:with-param name="contexts" select="., /w:root/w:footnotes, /w:root/w:endnotes"/>
             </xsl:call-template>
-          </xsl:when>
+          </xsl:otherwise>
         </xsl:choose>
       </info>
       <xsl:apply-templates select="../../w:numbering" mode="#current"/>
@@ -474,7 +474,10 @@
       
       <xsl:when test=". eq 'docx-padding'">
         <xsl:variable name="orientation" select="replace(../@name, '^.+:', '')" as="xs:string" />
-        <docx2hub:attribute name="css:padding-{$orientation}"><xsl:value-of select="docx2hub:pt-length($val/@w:w)" /></docx2hub:attribute>
+        <docx2hub:attribute name="css:padding-{$orientation}">
+          <!-- LibreOffice produced a padding of -2 dxa, so check for negativity -->
+          <xsl:value-of select="if (starts-with($val/@w:w, '-')) then '0' else docx2hub:pt-length($val/@w:w)" />
+        </docx2hub:attribute>
       </xsl:when>
 
       <xsl:when test=". eq 'docx-charstyle'">
@@ -812,6 +815,12 @@
     <xsl:choose>
       <xsl:when test="$val eq 'single'">
         <xsl:sequence select="'solid'" />
+      </xsl:when>
+      <xsl:when test="matches($val, '(thinThick.+Gap|dashDotStroked)')">
+        <xsl:sequence select="'dashed'" />
+      </xsl:when>
+      <xsl:when test="$val eq 'threeDEmboss'">
+        <xsl:sequence select="'groove'" />
       </xsl:when>
       <xsl:when test="$val eq 'nil'">
         <xsl:sequence select="'none'" />

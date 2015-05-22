@@ -185,32 +185,36 @@
             </xsl:choose>
           </xsl:when>
           <xsl:when test="count($nodes/w:fldChar[@w:fldCharType = 'begin']) gt 1">
-            <xsl:for-each-group select="$nodes" group-starting-with="w:r[w:fldChar[@w:fldCharType = 'begin']]">
-              <xsl:choose>
-                <xsl:when test="current-group()[1][self::w:r[w:fldChar[@w:fldCharType = 'begin']]]">
-                  <!--<xsl:message>=====================================================</xsl:message> 
-                  <xsl:message select="current-group()"/>
-                  <xsl:message select="string-join(current-group()//text()[parent::w:instrText], '')"/> 
-                  <xsl:message select="string-join(current-group()[.//text()[parent::w:t]], '')"/> 
-                  <xsl:message select="(current-group()[w:instrText])[1]"/> -->
-                  <xsl:apply-templates select="(current-group()[w:instrText])[1]" mode="wml-to-dbk">
-                    <xsl:with-param name="instrText" select="string-join(current-group()//text()[parent::w:instrText], '')" tunnel="yes" as="xs:string?"/>
-                    <xsl:with-param name="nodes" select="current-group()[descendant::w:instrText]" tunnel="yes" as="element(*)*"/>
-                    <xsl:with-param name="text" select="current-group()[.//text()[parent::w:t] or .//w:tab or .//w:br or .//w:pict]" tunnel="yes" as="element(*)*"/>
-                  </xsl:apply-templates>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:call-template name="signal-error" xmlns="">
-                    <xsl:with-param name="error-code" select="'W2D_012'"/>
-                    <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-                    <xsl:with-param name="hash">
-                      <value key="xpath"><xsl:value-of select="current-group()[1]/@srcpath"/></value>
-                      <value key="level">INT</value>
-                    </xsl:with-param>
+            <xsl:choose>
+              <xsl:when test="$nodes/w:fldChar[@w:fldCharType = 'begin'][following::w:fldChar[@w:fldCharType = ('begin','end')][1][self::w:fldChar[@w:fldCharType = 'begin']]]">
+                <xsl:call-template name="handle-nested-field-functions">
+                  <xsl:with-param name="nodes" select="$nodes"/>
                   </xsl:call-template>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:for-each-group>
+                </xsl:when>
+            <xsl:otherwise>
+                <xsl:for-each-group select="$nodes" group-starting-with="w:r[w:fldChar[@w:fldCharType = 'begin']]">
+                  <xsl:choose>
+                    <xsl:when test="current-group()[1][self::w:r[w:fldChar[@w:fldCharType = 'begin']]]">
+                      <xsl:apply-templates select="(current-group()[w:instrText])[1]" mode="wml-to-dbk">
+                        <xsl:with-param name="instrText" select="string-join(current-group()//text()[parent::w:instrText], '')" tunnel="yes" as="xs:string?"/>
+                        <xsl:with-param name="nodes" select="current-group()[descendant::w:instrText]" tunnel="yes" as="element(*)*"/>
+                        <xsl:with-param name="text" select="current-group()[.//text()[parent::w:t] or .//w:tab or .//w:br or .//w:pict]" tunnel="yes" as="element(*)*"/>
+                      </xsl:apply-templates>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:call-template name="signal-error" xmlns="">
+                        <xsl:with-param name="error-code" select="'W2D_012'"/>
+                        <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
+                        <xsl:with-param name="hash">
+                          <value key="xpath"><xsl:value-of select="current-group()[1]/@srcpath"/></value>
+                          <value key="level">INT</value>
+                        </xsl:with-param>
+                      </xsl:call-template>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:for-each-group>    
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
             <xsl:call-template name="signal-error" xmlns="">
@@ -224,6 +228,40 @@
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="handle-nested-field-functions">
+    <xsl:param name="nodes" as="element(*)*"/>
+    <xsl:choose>
+      <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin'])">
+        <xsl:copy-of select="$nodes"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="new-nodes">
+          <temp>
+            <xsl:for-each-group select="$nodes" group-starting-with="w:r[w:fldChar[@w:fldCharType='begin'][following::w:fldChar[@w:fldCharType = ('begin','end')][1][self::w:fldChar[@w:fldCharType = 'end']]]]">
+            <xsl:for-each-group select="current-group()" group-ending-with="w:r[w:fldChar[@w:fldCharType='end']]">
+              <xsl:choose>
+                <xsl:when test="current-group()[1][self::w:r[w:fldChar[@w:fldCharType='begin'][following::w:fldChar[@w:fldCharType = ('begin','end')][1][self::w:fldChar[@w:fldCharType = 'end']]]]] and current-group()[last()][self::w:r[w:fldChar[@w:fldCharType='end']]]">
+                  <xsl:apply-templates select="(current-group()[w:instrText])[1]" mode="wml-to-dbk">
+                    <xsl:with-param name="instrText" select="string-join(current-group()//text()[parent::w:instrText], '')" tunnel="yes" as="xs:string?"/>
+                    <xsl:with-param name="nodes" select="current-group()[descendant::w:instrText]" tunnel="yes" as="element(*)*"/>
+                    <xsl:with-param name="text" select="current-group()[.//text()[parent::w:t] or .//w:tab or .//w:br or .//w:pict or .//dbk:*]" tunnel="yes" as="element(*)*"/>
+                  </xsl:apply-templates>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:copy-of select="current-group()"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each-group>
+          </xsl:for-each-group>
+          </temp>
+        </xsl:variable>
+        <xsl:call-template name="handle-nested-field-functions">
+          <xsl:with-param name="nodes" select="$new-nodes/*/node()"/>
+        </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -609,8 +647,8 @@
   <xsl:template match="w:bookmarkEnd[preceding-sibling::w:p]" mode="wml-to-dbk"/>
   
   <xsl:template match="w:bookmarkEnd" mode="wml-to-dbk wml-to-dbk-bookmarkEnd">
-    <xsl:if test="exists(key('docx2hub:bookmarkStart', @w:id))">
-      <xsl:variable name="start" select="key('docx2hub:bookmarkStart', @w:id)" as="element(w:bookmarkStart)"/>
+    <xsl:if test="exists(key('docx2hub:bookmarkStart', @w:id)[not(@w:name='_GoBack')])">
+      <xsl:variable name="start" select="key('docx2hub:bookmarkStart', @w:id)[not(@w:name='_GoBack')]" as="element(w:bookmarkStart)"/>
       <anchor role="end">
         <xsl:variable name="id" as="attribute(xml:id)">
           <xsl:apply-templates select="$start/@w:name" mode="bookmark-id"/> 
@@ -625,7 +663,11 @@
 
   <xsl:template match="w:bookmarkStart[@w:name eq '_GoBack']" mode="wml-to-dbk wml-to-dbk-bookmarkStart" priority="2"/>
   
-  <xsl:template match="w:bookmarkEnd[key('docx2hub:bookmarkStart', @w:id)/@w:name eq '_GoBack']" mode="wml-to-dbk wml-to-dbk-bookmarkEnd" priority="2"/>
+  <xsl:template match="w:bookmarkEnd[key('docx2hub:bookmarkStart', @w:id)/@w:name = '_GoBack']" mode="wml-to-dbk wml-to-dbk-bookmarkEnd" priority="2">
+    <xsl:if test="not(preceding::w:bookmarkStart[@w:id=current()/@w:id][1]/@w:name = '_GoBack')">
+      <xsl:next-match/>
+    </xsl:if>
+  </xsl:template>
   
   <!-- comments -->
   <xsl:template match="w:commentRangeStart" mode="wml-to-dbk"/>

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="2.0"
-    xmlns:xsl   = "http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs    = "http://www.w3.org/2001/XMLSchema"
-    xmlns:docx2hub  = "http://transpect.io/docx2hub"
-    exclude-result-prefixes = "xs"
->
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:docx2hub="http://transpect.io/docx2hub"
+    version="2.0"
+    exclude-result-prefixes = "xs">
 
   <!-- The predicate prop[…] is needed when there are multiple entries with different @hubversion
     attributes. The key picks, of all prop declarations that are compatible with the requested $hub-version, 
@@ -144,6 +143,7 @@
         </prop>
         <!--<prop name="w:stri-->
         <prop name="w:suppressAutoHyphens" type="docx-boolean-prop" target-name="css:hyphens" default="auto" active="manual"/>
+        <prop name="w:suppressLineNumbers" implement="maybe later"/>
         <prop name="w:sz" type="docx-font-size" target-name="css:font-size" />
         <prop name="w:szCs" />
         <prop name="w:tab/@w:leader" type="linear" target-name="leader" />

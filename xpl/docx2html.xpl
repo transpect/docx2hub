@@ -37,7 +37,7 @@
   <p:option name="debug-dir-uri" required="false" select="'debug'"/>
   <p:option name="srcpaths" required="false" select="'no'"/>
   <p:option name="unwrap-tooltip-links" required="false" select="'no'"/>
-  <p:option name="hub-version" required="false" select="'1.1'"/>
+  <p:option name="hub-version" required="false" select="'1.2'"/>
   <p:option name="fail-on-error" required="false" select="'no'"/>
   <p:option name="extract-dir" required="false" select="''">
     <p:documentation>Directory (OS path, not file: URL) to which the file will be unzipped. If option is empty string, will be

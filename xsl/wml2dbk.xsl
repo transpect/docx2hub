@@ -518,9 +518,9 @@
   <xsl:template match="w:p" mode="wml-to-dbk">
     <xsl:element name="para">
       <xsl:apply-templates select="@* except @*[matches(name(),'^w:rsid')]" mode="#current"/>
-      <xsl:if test=".//w:r">
+<!--      <xsl:if test=".//w:r">-->
         <xsl:sequence select="tr:insert-numbering(.)"/>
-      </xsl:if>
+      <!--</xsl:if>-->
       <!-- Only necessary in tables? They'll get lost otherwise. -->
       <xsl:variable name="bookmarkstart-before-p" as="element(w:bookmarkStart)*"
         select="preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/preceding-sibling::*[not(self::w:bookmarkStart)][1]]"/>

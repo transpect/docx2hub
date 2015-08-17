@@ -99,18 +99,22 @@
             <xsl:if test="matches($current-instr-from-nodes-text, '\\r')">
               <xsl:variable name="id" as="xs:string" 
                 select="tr:rereplace-chars(replace($current-instr-from-nodes-text, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
-              <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)" 
+              <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)*" 
                 select="key('docx2hub:bookmarkStart-by-name', $id, root($context))"/>
-              <xsl:variable name="start-id" as="attribute(xml:id)">
-                <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id"/>
-              </xsl:variable>
-              <xsl:variable name="end-id" as="attribute(xml:id)">
-                <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id">
-                  <xsl:with-param name="end" select="true()"/>
-                </xsl:apply-templates>
-              </xsl:variable>
-              <xsl:attribute name="linkends" select="$start-id, $end-id" separator=" "/>
-              <!-- Create distinct startofrange/endofrange indexterms at the anchors specified by linkends in the next pass. -->
+              <xsl:choose>
+                <xsl:when test="exists($bookmark-start)">
+                  <xsl:variable name="start-id" as="attribute(xml:id)">
+                    <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id"/>
+                  </xsl:variable>
+                  <xsl:variable name="end-id" as="attribute(xml:id)">
+                    <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id">
+                      <xsl:with-param name="end" select="true()"/>
+                    </xsl:apply-templates>
+                  </xsl:variable>
+                  <xsl:attribute name="linkends" select="$start-id, $end-id" separator=" "/>
+                  <!-- Create distinct startofrange/endofrange indexterms at the anchors specified by linkends in the next pass. -->
+                </xsl:when>
+              </xsl:choose>
             </xsl:if>
             <xsl:if test="not(empty($type))">
               <xsl:attribute name="type" select="tr:rereplace-chars($type)"/>
@@ -234,6 +238,9 @@
       <xsl:when test="$name = 'secondary'">
         <xsl:sequence select="2"/>
       </xsl:when>
+      <xsl:when test="$name = 'tertiary'">
+        <xsl:sequence select="3"/>
+      </xsl:when>
     </xsl:choose>
   </xsl:function>
   
@@ -243,7 +250,6 @@
     </xsl:variable>
     <xsl:variable name="pst" select="tr:primary-secondary-tertiary-number(local-name())" as="xs:integer"/>
     <xsl:variable name="processed" as="node()*">
-      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="$content" group-starting-with="*:text[matches(.,'^:')]">
         <xsl:variable name="pos" select="position()"/>
         <xsl:choose>

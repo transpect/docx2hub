@@ -9,15 +9,29 @@
 
   <let name="base-dir" value="/*/dbk:info/dbk:keywordset[@role eq 'hub']/dbk:keyword[@role eq 'source-dir-uri']"/>
 
-  <pattern id="test">
-    <rule context="w:instrText">
-      <report test="false()" id="instrText" diagnostics="instrText_de" role="info">
+  <pattern id="dangling-indexterm-ranges">
+    <rule context="w:instrText[matches(., '^\s*XE.+ \\r ')]">
+      <let name="bookmark-name" value="replace(., '^.+\\r\s+&quot;([^&quot;]*)&quot;.*$', '$1')"/>
+      <assert test="exists(//w:bookmarkStart[@w:name = $bookmark-name])" id="range-not-found"  role="warning"><!-- diagnostics="range-not-found_de" -->
         <span class="srcpath"><xsl:value-of select="concat(
                                                       $base-dir, 
-                                                      ancestor::*[@srcpath][1]/@srcpath
+                                                      ancestor::w:p[1]/@srcpath
                                                     )"/></span>
-        instrText!
-      </report>
+           The index term instruction text '<value-of select="."/>' requested a bookmark range '<value-of select="$bookmark-name"/>' 
+        that could not be located in the document. Reverting to a plain (non-range) index term.
+      </assert>
+    </rule>
+  </pattern>
+
+  <pattern id="fnmarks">
+    <rule context="w:p[w:r/w:footnoteRef]">
+      <let name="marker-style" value="w:r[w:footnoteRef]/@role"/>
+      <assert test="count(w:r[@role = $marker-style]) le 1" role="warning" id="footnote_mark_style">
+        <span class="srcpath"><xsl:value-of select="concat($base-dir,@srcpath)"/></span>
+        Apparently more text than just the footnote marker has the footnote marker style, '<value-of select="$marker-style"/>'.
+        Text with this marker style: '<value-of select="string-join(w:r[@role = $marker-style], '')"/>'.
+        This text may be removed during conversion.
+      </assert>
     </rule>
   </pattern>
 

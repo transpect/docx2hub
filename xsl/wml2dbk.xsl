@@ -231,33 +231,70 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-
+  
   <xsl:template name="handle-nested-field-functions">
-    <xsl:param name="nodes" as="element(*)*"/>
+    <xsl:param name="nodes" as="element()*"/>
     <xsl:choose>
+      <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin']) and $nodes//w:instrText and matches(string-join($nodes//w:instrText//text(),''),'^[A-Z\.]*[0-9]*$')">
+        <xsl:copy-of select="$nodes//w:instrText/text()"/>
+      </xsl:when>
       <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin'])">
         <xsl:copy-of select="$nodes"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="new-nodes">
-          <temp>
+        <xsl:variable name="new-nodes" as="document-node(element(dbk:temp))">
+          <xsl:document><temp>
             <xsl:for-each-group select="$nodes" group-starting-with="w:r[w:fldChar[@w:fldCharType='begin'][following::w:fldChar[@w:fldCharType = ('begin','end')][1][self::w:fldChar[@w:fldCharType = 'end']]]]">
-            <xsl:for-each-group select="current-group()" group-ending-with="w:r[w:fldChar[@w:fldCharType='end']]">
-              <xsl:choose>
-                <xsl:when test="current-group()[1][self::w:r[w:fldChar[@w:fldCharType='begin'][following::w:fldChar[@w:fldCharType = ('begin','end')][1][self::w:fldChar[@w:fldCharType = 'end']]]]] and current-group()[last()][self::w:r[w:fldChar[@w:fldCharType='end']]]">
-                  <xsl:apply-templates select="(current-group()[w:instrText])[1]" mode="wml-to-dbk">
-                    <xsl:with-param name="instrText" select="string-join(current-group()//text()[parent::w:instrText], '')" tunnel="yes" as="xs:string?"/>
-                    <xsl:with-param name="nodes" select="current-group()[descendant::w:instrText]" tunnel="yes" as="element(*)*"/>
-                    <xsl:with-param name="text" select="current-group()[.//text()[parent::w:t] or .//w:tab or .//w:br or .//w:pict or .//dbk:*]" tunnel="yes" as="element(*)*"/>
-                  </xsl:apply-templates>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:copy-of select="current-group()"/>
-                </xsl:otherwise>
-              </xsl:choose>
+              <xsl:for-each-group select="current-group()" group-ending-with="w:r[w:fldChar[@w:fldCharType='end']]">
+                <xsl:choose>
+                  <xsl:when test="current-group()[1][self::w:r[
+                                                       w:fldChar[
+                                                         @w:fldCharType='begin'
+                                                       ][
+                                                         following::w:fldChar[
+                                                           @w:fldCharType = ('begin','end')
+                                                         ][1][
+                                                           self::w:fldChar[@w:fldCharType = 'end']
+                                                         ]
+                                                       ]
+                                                     ]
+                                                   ] 
+                                  and 
+                                  current-group()[last()][
+                                                    self::w:r[w:fldChar[@w:fldCharType='end']]
+                                                 ]">
+                    <xsl:variable name="prelim" as="node()*">
+                      <xsl:apply-templates select="(current-group()[w:instrText])[1]" mode="wml-to-dbk">
+                        <xsl:with-param name="instrText" select="string-join(current-group()//text()[parent::w:instrText], '')" tunnel="yes" as="xs:string?"/>
+                        <xsl:with-param name="nodes" select="current-group()[descendant::w:instrText]" tunnel="yes" as="element(*)*"/>
+                        <xsl:with-param name="text" select="current-group()[.//text()[parent::w:t] or .//w:tab or .//w:br or .//w:pict or .//dbk:*]" tunnel="yes" as="element(*)*"/>
+                      </xsl:apply-templates>
+                    </xsl:variable>
+                    <xsl:for-each select="$prelim">
+                      <xsl:choose>
+                        <xsl:when test="self::text()">
+                          <w:r>
+                            <!-- Not sure whether we can safely surround text output (SYMBOL field function processing output)
+                              with instrText. If we don't, SYMBOL within XE will be discarded -->
+                            <w:instrText>
+                              <xsl:sequence select="."/>
+                            </w:instrText>
+                          </w:r>
+                        </xsl:when>
+                        <xsl:otherwise>
+                          <xsl:sequence select="."/>
+                        </xsl:otherwise>
+                      </xsl:choose>  
+                    </xsl:for-each>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:copy-of select="current-group()"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:for-each-group>
             </xsl:for-each-group>
-          </xsl:for-each-group>
           </temp>
+          </xsl:document>
         </xsl:variable>
         <xsl:call-template name="handle-nested-field-functions">
           <xsl:with-param name="nodes" select="$new-nodes/*/node()"/>
@@ -304,15 +341,6 @@
   <!-- ================================================================================ -->
   <!-- Mode: pre-process -->
   <!-- ================================================================================ -->
-
-  <!-- Verlauf -->
-  <xsl:template match="w:del" mode="docx2hub:separate-field-functions">
-    <!-- gelöschten Text wegwerfen -->
-  </xsl:template>
-
-  <xsl:template match="w:ins" mode="docx2hub:separate-field-functions">
-    <xsl:apply-templates select="*" mode="#current"/>
-  </xsl:template>
 
   <!-- Ende von Feldfunktionen ueber mehrere Absaetze in einzelnen Absatz packen -->
   <!-- Grund: wenn in dem gleichen Absatz eine neue Feldfunktion beginnt, liefert check-field-functions falsche Gruppen -->
@@ -405,7 +433,6 @@
   <xsl:template match="  w:p/w:numPr 
                        | css:rule/w:numPr 
                        | *:style/w:numPr 
-                       | css:rule/w:tblPr 
                        | /*/w:numbering 
                        | /*/w:docRels
                        | /*/w:footnoteRels
@@ -417,6 +444,10 @@
                        | mc:AlternateContent
                        | w:fldChar" mode="wml-to-dbk" priority="-0.25"/>    
 
+  <xsl:template match="css:rule/w:tblPr" mode="wml-to-dbk">
+    <xsl:apply-templates select="@*" mode="#current"/>
+  </xsl:template>
+
   <xsl:template match="dbk:* | css:*" mode="wml-to-dbk" priority="-0.1">
      <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current" />
@@ -425,14 +456,38 @@
   </xsl:template>
 
   <xsl:template match="css:rule | *:style" mode="wml-to-dbk">
+    <xsl:param name="content" as="element(*)*">
+      <!-- linked-style, css:attic -->
+    </xsl:param>
     <xsl:copy copy-namespaces="no">
       <xsl:if test="w:numPr">
         <xsl:variable name="ilvl" select="w:numPr/w:ilvl/@w:val"/>
         <xsl:variable name="lvl-properties" select="key('abstract-numbering-by-id',key('numbering-by-id',w:numPr/w:numId/@w:val)/w:abstractNumId/@w:val)/w:lvl[@w:ilvl=$ilvl]"/>
         <xsl:apply-templates select="$lvl-properties/@* except $lvl-properties/@w:ilvl" mode="#current"/>
       </xsl:if>
-      <xsl:apply-templates select="@*, *" mode="#current" />
+      <xsl:apply-templates select="@*, *, $content" mode="#current" />
     </xsl:copy>   
+  </xsl:template>
+  
+  <xsl:template match="css:rule[w:tblPr[@*[contains(local-name(), 'inside')]]]" mode="wml-to-dbk">
+    <xsl:copy copy-namespaces="no">
+      <xsl:attribute name="layout-type" select="'cell'"/>
+      <xsl:attribute name="name" select="docx2hub:linked-cell-style-name(@name)"/>
+      <xsl:apply-templates select="w:tblPr/@*[contains(local-name(), 'inside')]" mode="#current">
+        <xsl:with-param name="is-first-cell" select="false()" tunnel="yes"/>
+        <xsl:with-param name="is-last-cell" select="false()" tunnel="yes"/>
+        <xsl:with-param name="is-first-row-in-group" select="false()" tunnel="yes"/>
+        <xsl:with-param name="is-last-row-in-group" select="false()" tunnel="yes"/>
+      </xsl:apply-templates>
+    </xsl:copy>
+    <!-- Cell style will be generated before processing the table style. Reason: table border properties
+      will have CSS-precedence over cell border properties. We just need to make sure that a table with 
+      no outer borders will explicitly override the cell style borders if they are present. --> 
+    <xsl:next-match>
+      <xsl:with-param name="content" as="element(dbk:linked-style)">
+        <linked-style xmlns="http://docbook.org/ns/docbook" layout-type="cell" name="{docx2hub:linked-cell-style-name(@name)}"/>
+      </xsl:with-param>
+    </xsl:next-match>
   </xsl:template>
 
   <xsl:template match="@srcpath" mode="wml-to-dbk">

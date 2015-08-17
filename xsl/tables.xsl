@@ -22,6 +22,7 @@
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml docx2hub">
 
   <xsl:template match="w:tbl" mode="wml-to-dbk">
+    <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
     <informaltable css:border-collapse="collapse">
       <xsl:apply-templates select="  w:tblPr/@role
                                    | w:tblPr/@css:*[matches(name(.),'(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right))')]
@@ -31,6 +32,24 @@
         <xsl:attribute name="cols">
           <xsl:value-of select="count(w:tblGrid/w:gridCol)"/>
         </xsl:attribute>
+        <xsl:variable name="insideH-width" as="xs:string?" 
+          select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
+        <xsl:variable name="insideV-width" as="xs:string?" 
+          select="($styledef/w:tblPr/@css:border-insideV-width, w:tblPr/@css:border-insideV-width)[last()]"/>
+        <xsl:if test="exists($insideH-width) and not($insideH-width = '0pt')">
+          <xsl:attribute name="rowsep" select="'1'"/>
+        </xsl:if>
+        <xsl:if test="exists($insideV-width) and not($insideV-width = '0pt')">
+          <xsl:attribute name="colsep" select="'1'"/>
+        </xsl:if>
+        <xsl:variable name="cell-style" as="attribute(role)?">
+          <!-- We could set the condition to false() which means no entry/@role attribute will be created. 
+            Then we’d have to make sense of the linked-style instruction that will be generated 
+            in the table css:rule in any case. -->
+          <xsl:if test="$styledef/w:tblPr/@*[contains(local-name(), 'inside')]">
+            <xsl:attribute name="role" select="docx2hub:linked-cell-style-name($styledef/@name)"/>
+          </xsl:if>
+        </xsl:variable>
         <xsl:apply-templates select="w:tblGrid" mode="colspec">
           <xsl:with-param name="width" 
             select="if (not(w:tblPr/w:tblW) or w:tblPr/w:tblW/@w:type = 'pct') then 0 else w:tblPr/w:tblW/@w:w" tunnel="yes"/>
@@ -44,16 +63,18 @@
               <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
               <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
               <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
+              <xsl:with-param name="cell-style" tunnel="yes" as="attribute(role)?" select="$cell-style"/>
             </xsl:apply-templates>
           </thead>
         </xsl:if>
         <tbody>
           <xsl:apply-templates mode="tables"
-            select="if($every-row-is-a-header) then *
-                    else * except w:tr[w:trPr/w:tblHeader or w:tblHeader]">
+            select="if($every-row-is-a-header) then * except w:tblPr
+                    else * except (w:tblPr union w:tr[w:trPr/w:tblHeader or w:tblHeader])">
             <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
             <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
             <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
+            <xsl:with-param name="cell-style" tunnel="yes" as="attribute(role)?" select="$cell-style"/>
           </xsl:apply-templates>
         </tbody>
       </tgroup>
@@ -128,7 +149,9 @@
 
   <xsl:template match="w:tblGrid" mode="tables"/>
 
-  <xsl:template match="w:tblPr" mode="tables"/>
+  <xsl:template match="w:tblPr" mode="tables">
+    <xsl:apply-templates select="@css:*[not(contains(local-name(), 'inside'))]" mode="#current"/>
+  </xsl:template>
 
   <xsl:template match="w:bookmarkStart | w:bookmarkEnd" mode="tables">
     <!-- das sollte noch mal gecheckt werden -->
@@ -221,10 +244,12 @@
 
   <xsl:template match="w:tc[not(docx2hub:is-blind-vmerged-cell(.))]" mode="tables">
     <xsl:param name="is-first-row-in-group" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="cell-style" as="attribute(role)?" tunnel="yes"/>
     <xsl:param name="col-widths" tunnel="yes" as="xs:integer*"/>
     <xsl:param name="row-overrides" as="attribute(*)*"/>
     <xsl:element name="entry">
 <!--      <xsl:copy-of select="ancestor::w:tbl[1]/w:tblPr/@css:*[not(matches(local-name(), '^(border|background-color|width)'))]"/>-->
+      <xsl:copy-of select="$cell-style"/>
       <xsl:copy-of select="ancestor::w:tr[1]/@css:*[not(matches(local-name(), '^(background-color|(min-)?height|width)'))]"/>
       <xsl:variable name="is-first-cell" select="tr:node-index-of(../w:tc, .) = 1" as="xs:boolean"/>
       <xsl:variable name="is-last-cell" select="tr:node-index-of(../w:tc, .) = count(../w:tc)" as="xs:boolean"/>
@@ -259,6 +284,11 @@
       <xsl:attribute name="{replace(name(), 'insideH', 'bottom')}" select="."/>
     </xsl:if>
   </xsl:template>
+  
+  <xsl:function name="docx2hub:linked-cell-style-name" as="xs:string">
+    <xsl:param name="table-style-name" as="xs:string"/>
+    <xsl:sequence select="concat($table-style-name, '_cell')"/>
+  </xsl:function>
   
   <xsl:template match="@css:border-insideV-style | @css:border-insideV-width | @css:border-insideV-color" mode="wml-to-dbk" priority="10">
     <xsl:param name="is-first-cell" as="xs:boolean?" tunnel="yes"/>

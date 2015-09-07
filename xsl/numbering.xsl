@@ -159,7 +159,7 @@
             <xsl:with-param name="context" select="$context" tunnel="yes"/>
           </xsl:apply-templates>
         </xsl:variable>
-        <xsl:sequence select="$pPr, $style-atts[name() = $pPr/name()], $ad-hoc-atts[name() = $pPr/name()]"/>
+        <xsl:sequence select="$style-atts[name() = $pPr/name()], $pPr, $ad-hoc-atts[name() = $pPr/name()]"/>
         <xsl:apply-templates select="$context/dbk:tabs" mode="wml-to-dbk"/>
         <phrase role="hub:identifier">
           <xsl:sequence select="$rPr, $style-atts[name() = $rPr/name()], $ad-hoc-atts[name() = $rPr/name()]"/>

@@ -49,7 +49,10 @@
               'w:br',
               'v:imagedata',
               'o:OLEObject',
-              'w:drawing'
+              'w:drawing',
+              'w:comment',
+              'w:endnote',
+              'w:footnote'
             )"/>
 
   <xsl:template match="*[ $srcpaths = 'yes' ]
@@ -164,8 +167,8 @@
               select="document($docRels-uri)/rel:Relationships/rel:Relationship[
                                   @Type eq concat('http://schemas.openxmlformats.org/officeDocument/2006/relationships/', $type)
                                 ]">
-              <xsl:if test="doc-available(resolve-uri(@Target))">
-                <xsl:apply-templates select="document(resolve-uri(@Target))" mode="#current"/>
+              <xsl:if test="doc-available(resolve-uri(@Target, $base-dir))">
+                <xsl:apply-templates select="document(resolve-uri(@Target, $base-dir))" mode="#current"/>
               </xsl:if>
             </xsl:for-each>
           </xsl:element>
@@ -210,7 +213,11 @@
     <xsl:copy copy-namespaces="no">
       <xsl:attribute name="xml:base" select="base-uri()" />
       <!-- Font des Standardtextes -->
-      <xsl:variable name="normal" select="key('docx2hub:style', 'Normal')" as="element(w:style)?" />
+      <xsl:variable name="normal" as="element(w:style)?"
+        select="(
+                  w:style[@w:type = 'paragraph'][@w:default = '1'],
+                  w:style[w:name[@w:val = 'Normal']]
+                )[1]"  />
       <xsl:variable name="default-font" as="xs:string"
         select="if ($normal/w:rPr/w:rFonts/@w:ascii)
                 then $normal/w:rPr/w:rFonts/@w:ascii
@@ -224,25 +231,68 @@
         select="if ($normal/w:rPr/w:sz/@w:val)
                 then ($normal/w:rPr/w:sz/@w:val)[1]
                 else '20'" />
+      <xsl:variable name="default-lang" as="xs:string?"
+        select="if ($normal/w:rPr/w:lang/@w:val)
+                then $normal/w:rPr/w:lang/@w:val
+                else (
+                        w:docDefaults/w:rPrDefault/w:rPr/w:lang/@w:val,
+                        w:docDefaults/w:rPrDefault/w:lang/@w:val
+                      )[1]" />
       <xsl:apply-templates select="@*, * except w:latentStyles" mode="#current" >
         <xsl:with-param name="default-font" select="$default-font" tunnel="yes"/>
         <xsl:with-param name="default-font-size" select="$default-font-size" tunnel="yes"/>
+        <xsl:with-param name="default-lang" select="$default-lang" tunnel="yes"/>
       </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="key('docx2hub:style', 'Normal')/w:rPr" mode="insert-xpath">
+  <xsl:template match="w:style[@w:type = 'paragraph']
+                              [not(w:basedOn)]/w:rPr" mode="insert-xpath">
     <xsl:param name="default-font" as="xs:string?" tunnel="yes"/>
     <xsl:param name="default-font-size" as="xs:string" tunnel="yes"/>
+    <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*, *" mode="#current"/>
-      <xsl:if test="not(w:sz)">
+      <xsl:if test="not(w:sz) and $default-font-size">
         <w:sz w:val="{$default-font-size}"/>
       </xsl:if>
       <xsl:if test="not(w:rFonts) and $default-font">
         <w:rFonts w:ascii="{$default-font}"/>
       </xsl:if>
+      <xsl:if test="not(w:lang) and $default-lang">
+        <w:lang w:val="{$default-lang}"/>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="w:style[@w:type = 'paragraph']
+                              [not(w:basedOn)]/w:rPr/w:lang[not(@w:val)]" mode="insert-xpath">
+    <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
+    <xsl:copy copy-namespaces="no">
+      <xsl:attribute name="w:val" select="$default-lang"/>
+      <xsl:copy-of select="@*"/>
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="w:style[@w:type = 'paragraph']
+                              [not(w:basedOn)]
+                              [empty(w:rPr)]" mode="insert-xpath">
+    <xsl:param name="default-font" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="default-font-size" as="xs:string" tunnel="yes"/>
+    <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <w:rPr>
+        <xsl:if test="$default-font-size">
+          <w:sz w:val="{$default-font-size}"/>
+        </xsl:if>
+        <xsl:if test="$default-font">
+          <w:rFonts w:ascii="{$default-font}"/>
+        </xsl:if>
+        <xsl:if test="$default-lang">
+          <w:lang w:val="{$default-lang}"/>
+        </xsl:if>
+      </w:rPr>
+    </xsl:copy>
+  </xsl:template>
 </xsl:stylesheet>

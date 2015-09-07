@@ -13,7 +13,7 @@
   <xsl:param name="fail-on-error" select="'no'"/>
   
   <xsl:variable name="symbol-font-map" as="document-node(element(symbols))"
-    select="if (doc-available('Symbol.xml')) then document('Symbol.xml') else document('../Symbol.xml')"/>
+    select="document('../../fontmaps/Symbol.xml')"/>
   
   <xsl:template match="m:oMathPara">
     <equation role="omml">

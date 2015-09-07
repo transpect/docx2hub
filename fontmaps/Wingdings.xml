@@ -6,6 +6,8 @@
   <symbol number="F04B" entity="&#xF04B;" char="&#x1F610;" font="Segoe UI Symbol"/><!-- neutral smiley -->
   <symbol number="F04C" entity="&#xF04C;" char="&#x2639;" font="Segoe UI Symbol"/><!-- sad smiley -->
   <symbol number="004C" entity="L" char="&#x2639;" font="Segoe UI Symbol"/><!-- sad smiley -->
+  <symbol number="F061" entity="&#xF061;" char="&#x264B;"/><!-- CANCER -->
+  <symbol number="0061" entity="&#x0061;" char="&#x264B;"/><!-- CANCER -->
   <symbol number="F06E" entity="&#xF06E;" char="&#x25a0;"/><!-- BLACK SQUARE -->
   <symbol number="006E" entity="" char="&#x25a0;"/><!-- BLACK SQUARE -->
   <symbol number="F06F" entity="" char="&#x25A1;"/><!-- WHITE SQUARE -->
@@ -30,4 +32,14 @@
   <symbol number="0AEA" entity="&#x0AEA;" char="&#x2794;"/><!-- Heavy wide-headed rightwards arrow -->
   <symbol number="F0A8" entity="" char="&#x25FB;" font="Segoe UI Symbol"/><!-- WHITE MEDIUM SQUARE -->
   <symbol number="F0FC" entity="&#252;" char="&#x2713;" font="Segoe UI Symbol"/><!-- CHECK MARK -->
+  <symbol number="F081" entity="&#9312;" char="&#x2460;"/><!-- CIRCLED DIGIT ONE -->
+  <symbol number="F082" entity="&#9313;" char="&#x2461;"/><!-- CIRCLED DIGIT TWO -->
+  <symbol number="F083" entity="&#9314;" char="&#x2462;"/><!-- CIRCLED DIGIT THREE -->
+  <symbol number="F084" entity="&#9315;" char="&#x2463;"/><!-- CIRCLED DIGIT FOUR -->
+  <symbol number="F085" entity="&#9316;" char="&#x2464;"/><!-- CIRCLED DIGIT FIVE -->
+  <symbol number="F086" entity="&#9317;" char="&#x2465;"/><!-- CIRCLED DIGIT SIX -->
+  <symbol number="F087" entity="&#9318;" char="&#x2466;"/><!-- CIRCLED DIGIT SEVEN -->
+  <symbol number="F088" entity="&#9319;" char="&#x2467;"/><!-- CIRCLED DIGIT EIGHT -->
+  <symbol number="F089" entity="&#9320;" char="&#x2468;"/><!-- CIRCLED DIGIT NINE -->
+  <symbol number="F090" entity="&#9321;" char="&#x2469;"/><!-- CIRCLED DIGIT TEN -->
 </symbols>

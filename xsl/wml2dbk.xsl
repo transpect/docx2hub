@@ -53,6 +53,7 @@
 
 
   <!-- sorted includes -->
+  <xsl:include href="changemarkup.xsl"/>
   <xsl:include href="comments.xsl"/>
   <xsl:include href="endnotes.xsl"/>
   <xsl:include href="footnotes.xsl"/>
@@ -233,7 +234,7 @@
   </xsl:template>
   
   <xsl:template name="handle-nested-field-functions">
-    <xsl:param name="nodes" as="element()*"/>
+    <xsl:param name="nodes" as="node()*"/>
     <xsl:choose>
       <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin']) and $nodes//w:instrText and matches(string-join($nodes//w:instrText//text(),''),'^[A-Z\.]*[0-9]*$')">
         <xsl:copy-of select="$nodes//w:instrText/text()"/>
@@ -267,7 +268,7 @@
                       <xsl:apply-templates select="(current-group()[w:instrText])[1]" mode="wml-to-dbk">
                         <xsl:with-param name="instrText" select="string-join(current-group()//text()[parent::w:instrText], '')" tunnel="yes" as="xs:string?"/>
                         <xsl:with-param name="nodes" select="current-group()[descendant::w:instrText]" tunnel="yes" as="element(*)*"/>
-                        <xsl:with-param name="text" select="current-group()[.//text()[parent::w:t] or .//w:tab or .//w:br or .//w:pict or .//dbk:*]" tunnel="yes" as="element(*)*"/>
+                        <xsl:with-param name="text" select="current-group()[.//text()[parent::w:t] or .//w:tab or .//w:br or .//w:pict or descendant-or-self::dbk:*]" tunnel="yes" as="element(*)*"/>
                       </xsl:apply-templates>
                     </xsl:variable>
                     <xsl:for-each select="$prelim">
@@ -947,6 +948,9 @@
           <xsl:when test="matches($instrText,'^[\s&#160;]*$')">
             <xsl:apply-templates select="$text" mode="#current"/>
           </xsl:when>
+          <xsl:when test="$tokens[1] = 'PRINT'">
+            <xsl:processing-instruction name="PRINT" select="string-join($tokens[position() gt 1], ' ')"/>
+          </xsl:when>
           <xsl:when test="$tokens[1] = 'AUTOTEXT'">
             <xsl:call-template name="signal-error" xmlns="">
               <xsl:with-param name="error-code" select="'W2D_045'"/>
@@ -998,7 +1002,6 @@
     <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="2"/>
     <tr:field-function name="PAGE"/>
     <tr:field-function name="PAGEREF" element="link" attrib="linkend" value="2"/>
-    <tr:field-function name="PRINT" destroy="yes"/>
     <tr:field-function name="RD"/>
     <tr:field-function name="REF"/>
     <tr:field-function name="ADVANCE"/>
@@ -1018,7 +1021,7 @@
     <xsl:element name="mediaobject">
       <xsl:apply-templates select="($nodes//@srcpath)[1]" mode="#current"/>
       <imageobject>
-        <imagedata fileref="{replace(tokenize($instr, ' ')[matches(.,'^&#x22;.*&#x22;$')][1],'&#x22;','')}"/>
+        <imagedata fileref="{if (tokenize($instr, ' ')[matches(.,'^&#x22;.*&#x22;$')]) then replace(tokenize($instr, ' ')[matches(.,'^&#x22;.*&#x22;$')][1],'&#x22;','') else if (matches($instr,'&#x22;.*&#x22;')) then tokenize($instr,'&#x22;')[2] else tokenize($instr, ' ')[2]}"/>
       </imageobject>
     </xsl:element>
   </xsl:template>
@@ -1133,6 +1136,10 @@
 
   <xsl:template match="@*[parent::w:smartTag]" mode="wml-to-dbk">
     <!-- Attribute von smartTag vorerst ignoriert. -->
+  </xsl:template>
+  
+  <xsl:template match="w:sdt" mode="wml-to-dbk">
+    <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
   </xsl:template>
   
   <!-- The following template removes indentation if the document.xml was processed 

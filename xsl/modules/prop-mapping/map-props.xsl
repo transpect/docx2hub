@@ -25,8 +25,10 @@
 
   <xsl:import href="propmap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/colors/xsl/colors.xsl"/>
+
   <xsl:key name="docx2hub:style" match="w:style" use="@w:styleId" />
   <xsl:key name="docx2hub:style-by-role" match="css:rule | dbk:style" use="if ($hub-version eq '1.0') then @role else @name" />
+  <xsl:key name="docx2hub:font-by-name" match="w:font[@w:name]" use="@w:name"/> 
 
   <xsl:template match="/" mode="docx2hub:add-props">
     <xsl:apply-templates select="w:root/w:document/w:body" mode="#current" />
@@ -178,7 +180,11 @@
         <xsl:apply-templates select="* except w:basedOn" mode="#current" />
       </xsl:variable>
       <xsl:for-each-group select="$mergeable-atts[self::docx2hub:attribute]" group-by="@name">
-        <docx2hub:attribute name="{current-grouping-key()}"><xsl:value-of select="current-group()" /></docx2hub:attribute>
+        <docx2hub:attribute name="{current-grouping-key()}">
+          <xsl:value-of select="if (matches(current-grouping-key(), '^css:(margin|text-indent)'))
+                                then current-group()[last()]
+                                else current-group()"/>
+        </docx2hub:attribute>
       </xsl:for-each-group>
       <xsl:sequence select="$mergeable-atts[self::*][not(self::docx2hub:attribute)]"/>
     </xsl:variable>
@@ -233,7 +239,52 @@
   <xsl:template match="w:rPr[not(ancestor::m:oMath)] | w:pPr" mode="docx2hub:add-props" priority="2">
     <xsl:apply-templates select="*" mode="#current" />
   </xsl:template>
-
+  
+  <!-- The most specific style comes first, the one that it is based on comes next, etc.
+    I put it in a document node in order to avoid getting them ordered in document order 
+    when I output a sequence of w:style elements. -->
+  <xsl:function name="docx2hub:based-on-chain" as="document-node()">
+    <xsl:param name="initial" as="element(w:style)*"/>
+    <xsl:variable name="next" as="element(w:style)?" 
+      select="if (exists($initial)) 
+              then key('docx2hub:style', $initial[last()]/w:basedOn/@w:val, root($initial[last()]))
+              else ()"/>
+    <xsl:choose>
+      <xsl:when test="exists($next)">
+        <xsl:document>
+          <xsl:sequence select="docx2hub:based-on-chain(($initial, $next))/*"/>  
+        </xsl:document>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:document>
+          <xsl:sequence select="$initial"/>  
+        </xsl:document>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:template match="w:style/w:pPr[w:numPr]" mode="docx2hub:add-props" priority="3">
+    <xsl:variable name="based-on-chain" as="document-node()" select="docx2hub:based-on-chain(..)"/>
+    <xsl:variable name="numId" as="element(w:numId)?" select="$based-on-chain/*[w:pPr/w:numPr/w:numId][1]/w:pPr/w:numPr/w:numId"/>
+    <xsl:variable name="ilvl" as="xs:integer" 
+      select="(
+                for $i in $based-on-chain/*[w:pPr/w:numPr/w:ilvl][1]/w:pPr/w:numPr/w:ilvl/@w:val return xs:integer($i),
+                0
+              )[1]"/>
+    <xsl:variable name="lvl" as="element(w:lvl)?" select="key(
+                                                           'abstract-numbering-by-id', 
+                                                           key(
+                                                             'numbering-by-id', 
+                                                             $numId/@w:val 
+                                                           )/w:abstractNumId/@w:val
+                                                         )/w:lvl[@w:ilvl = $ilvl]"/>
+    <xsl:variable name="props" as="item()*">
+      <xsl:apply-templates select="$lvl/w:pPr" mode="#current"/>
+    </xsl:variable>
+    <xsl:sequence select="$props//docx2hub:attribute[starts-with(@name, 'css:')]"/>
+    <xsl:next-match/>
+  </xsl:template>
+  
   <xsl:template match="w:lvl/w:rPr | w:lvl/w:pPr" mode="docx2hub:add-props" priority="3">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="*" mode="#current" />
@@ -416,16 +467,22 @@
       </xsl:when>
 
       <xsl:when test=". eq 'lang'">
-        <docx2hub:attribute name="{../@target-name}">
-          <xsl:variable name="stringval" select="if ($val/self::w:lang) then ($val/@w:val, $val/@w:bidi)[1] else $val"/>
-          <xsl:value-of select="if (matches($stringval, 'German') or matches($stringval, '\Wde\W'))
-                                then 'de'
-                                else 
-                                  if (matches($stringval, 'English'))
-                                  then 'en'
-                                  else replace($stringval, '^(\p{Ll}+).*$', '$1')" />
+        <xsl:variable name="stringval" as="xs:string?" 
+          select="if ($val/self::w:lang) then ($val/@w:val, $val/@w:bidi)[1] else $val"/>
         <!-- stripping the country by default. If someone needs it, we need to introduce an option -->
-        </docx2hub:attribute>
+        <xsl:variable name="repl" as="xs:string" 
+          select="if (matches($stringval, 'German') or matches($stringval, '\Wde\W'))
+                  then 'de'
+                  else 
+                    if (matches($stringval, 'English'))
+                    then 'en'
+                    else replace($stringval, '^(\p{Ll}+).*$', '$1')" />
+        <xsl:if test="normalize-space($repl)">
+          <docx2hub:attribute name="{../@target-name}">
+            <xsl:value-of select="$repl"/>  
+          </docx2hub:attribute>
+        <!-- stripping the country by default. If someone needs it, we need to introduce an option -->
+        </xsl:if>
       </xsl:when>
 
       <xsl:when test=". eq 'docx-boolean-prop'">
@@ -496,8 +553,23 @@
       </xsl:when>
 
       <xsl:when test=". eq 'docx-font-family'">
-        <xsl:if test="$val/@w:ascii or $val/@w:cs">
-          <docx2hub:attribute name="{../@target-name}"><xsl:value-of select="$val/(@w:ascii, @w:cs)[1]" /></docx2hub:attribute>
+        <xsl:if test="$val/@w:ascii or $val/@w:hAnsi">
+          <!-- We should implement the complex font selection rules as defined in 
+            https://onedrive.live.com/view.aspx/Public%20Documents/2009/DR-09-0040.docx?cid=c8ba0861dc5e4adc&sc=documents -->
+          <xsl:variable name="font-name" select="($val/@w:ascii, $val/@w:hAnsi)[1]" as="xs:string"/>
+          <docx2hub:attribute name="{../@target-name}"><xsl:value-of select="$font-name"/></docx2hub:attribute>
+          <xsl:variable name="charset" as="xs:string*" 
+            select="distinct-values(key('docx2hub:font-by-name', $font-name, root($val))/w:charset/@w:val)"/>
+          <!-- xs:string* instead of xs:string? because there are docx files with multiple w:font entries for a given @w:name -->
+          <xsl:if test="exists($charset) 
+                        and not($charset = ('00', '80')) (: 80: Arial Unicode MS, MS Mincho, … :)
+                        and not($val/ancestor::w:style)">
+            <!-- I saw 'C8' for SMinionPlus. Don’t know whether this may be treated as Unicode. Probably not,
+            since it may contain variants of the Springer logo at various positions. We should supply a mapping 
+            for this. Also need to establish a mechanism for the situation when mosts characters of a font map to Unicode except 
+            for a few exceptions. -->
+            <docx2hub:attribute name="docx2hub:map-from"><xsl:value-of select="$font-name"/></docx2hub:attribute>
+          </xsl:if>
         </xsl:if>
       </xsl:when>
 
@@ -879,6 +951,8 @@
     </tab>
   </xsl:template>
 
+  <xsl:template match="w:tabs/w:tab[@w:val eq 'clear']" mode="docx2hub:add-props" priority="3"/>
+
 
   <xsl:key name="docx2hub:style" 
     match="CellStyle | CharacterStyle | ObjectStyle | ParagraphStyle | TableStyle" 
@@ -997,10 +1071,11 @@
   <xsl:template match="w:tblPr[following-sibling::w:tblPr]" mode="docx2hub:props2atts" />
   <xsl:template match="w:tcPr[following-sibling::w:tcPr]" mode="docx2hub:props2atts" />
 
-  <xsl:template match="w:numPr[not(following-sibling::w:numPr)][not(w:numId)]" mode="docx2hub:props2atts">
+  <xsl:template match="w:numPr[not(following-sibling::w:numPr)]" mode="docx2hub:props2atts">
     <w:numPr>
-      <xsl:apply-templates select="(preceding-sibling::w:numPr/w:numId)[1]" mode="#current"/>
-      <xsl:apply-templates select="node()" mode="#current"/>
+      <xsl:apply-templates select="(w:numId, preceding-sibling::w:numPr/w:numId)[1]" mode="#current"/>
+      <xsl:apply-templates select="(w:ilvl, preceding-sibling::w:numPr/w:ilvl)[1]" mode="#current"/>
+      <xsl:apply-templates select="node() except w:numId, w:ilvl" mode="#current"/>
     </w:numPr>
   </xsl:template>
    
@@ -1029,7 +1104,28 @@
                           /@*[matches(name(), '^(css:|xml:lang)')]" mode="docx2hub:remove-redundant-run-atts" 
                 priority="10"/>
   
-
+  <!-- collateral: denote numbering resets -->
+  <xsl:template match="w:p" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:copy copy-namespaces="no">
+      <xsl:variable name="style" select="key('docx2hub:style-by-role', @role)" as="element(css:rule)?"/>
+      <xsl:variable name="numId" as="element(w:numId)?" 
+        select="(w:numPr/w:numId, $style/w:numPr/w:numId)[1]"/>
+      <xsl:variable name="ilvl" as="xs:integer" 
+        select="(
+                  for $i in 
+                    (w:numPr/w:ilvl/@w:val,
+                     $style/w:numPr/w:ilvl/@w:val)[1] 
+                  return xs:integer($i),
+                  0
+                )[1]"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="$numId" mode="docx2hub:abstractNum">
+        <xsl:with-param name="ilvl" select="$ilvl"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
 
   <xsl:template match="*[w:p[w:pgSz]]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:copy>

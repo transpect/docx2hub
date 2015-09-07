@@ -1,6 +1,60 @@
 de:
   xslt_error:
     base:
-      W2D_test: "Testfehler: {{info-text}}"
+      W2D_001: "Unerwartetes Kontrollzeichen innerhalb index: '{{info-text}}'"
 
-      W2D_999: "Standardfehler: {{info-text}}"
+      W2D_010: "Letzter Absatz einer Feldfunktion über mehrere Absätze ist kein 'end'."
+
+      W2D_011: "Anzahl der 'begin' und 'end' sind verschieden im template handle-field-function: '{{info-text}}'"
+
+      W2D_012: "Erster Knoten muss innerhalb des templates handle-field-function ein 'begin' sein."
+
+      W2D_013: "Unerwartete Anzahl von 'begin' innerhalb handle-field-function: '{{info-text}}'"
+
+      W2D_014: "Abweichende Anzahl von 'begin' und 'end' innerhalb des templates inline-field-function: '{{info-text}}'"
+
+      W2D_020: "Unbekanntes Element im Mode '{{mode}}': '{{info-text}}'"
+
+      W2D_021: "Unbekanntes Attribut im Mode '{{mode}}': '{{info-text}}'"
+
+      W2D_022: "Kommentar ignoriert im Mode '{{mode}}': '{{info-text}}'"
+
+      W2D_023: "PI ignoriert im Mode '{{mode}}': '{{info-text}}'"
+
+      W2D_030: "Unerwartete(s) Element(e) innerhalb w:p: '{{info-text}}'"
+
+      W2D_040: "Unbekannte Feldfunktion: '{{info-text}}'"
+
+      W2D_050: "Innerhalb w:tcBorders kann w:inside noch nicht verarbeitet werden."
+
+      W2D_051: "Unbekanntes Element für Tabellenzellen: '{{info-text}}'"
+
+      W2D_052: "Summe der Spaltenbreiten und Breite der Tabelle stimmen nicht überein: '{{info-text}}'"
+
+      W2D_060: "Kontext für tr:insert-numbering stimmt nicht: '{{info-text}}'"
+
+      W2D_061: "Kein w:lvlText innerhalb von w:lvl."
+
+      W2D_062: "Unbekanntes Format innerhalb w:numFmt: '{{info-text}}'"
+
+      W2D_070: "'{{info-text}}' für @w:val wird innerhalb von w:jc nicht beachtet."
+
+      W2D_071: "w:jc/@w:val ist nicht vom Typ ST_Jc simple type: '{{info-text}}'"
+
+      W2D_080: "Kein Font zu w:sym."
+
+      W2D_090: "Falscher Kontext innerhalb des templates format-text: '{{info-text}}'"
+
+      W2D_091: "Unbekanntes Element zur Formatierung mit ST_OnOff simple type: '{{info-text}}'"
+
+      W2D_092: "Unerwarteter Wert für w:vertAlign: '{{info-text}}'"
+
+      W2D_501: "Strichzeichnung kann nicht konvertiert werden."
+
+      W2D_502: "Eingebettetes Bild: '{{info-text}}'"
+
+      W2D_601: "Zeichen aus Font '{{info-text}}' kann nicht richtig dargestellt werden."
+
+      W2D_602: "Symbol in Feldfunktion kann nicht interpretiert werden: '{{info-text}}'"
+      
+      W2D_093: "In sich geschachtelte Feldfunktion: '{{info-text}}'"

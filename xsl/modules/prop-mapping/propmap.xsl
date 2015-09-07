@@ -105,9 +105,11 @@
         <prop name="w:pgSz/@w:orient" target-name="css:orientation" type="linear"/>
         <prop name="w:position" target-name="css:top" type="docx-length-attr-negated"/>
         <prop name="w:position" target-name="css:position" target-value="relative"/>
+        <prop name="w:pPrChange"/>
         <prop name="w:pStyle" type="docx-parastyle" />
         <prop name="w:qFormat" />
         <prop name="w:rFonts" type="docx-font-family" target-name="css:font-family" />
+        <prop name="w:rPrChange"/>
         <prop name="w:rsid" />
         <prop name="w:rsidDel" /><!-- 17.3.2.25 suggests that it identifies deleted runs. But see for example
             DIN_EN_1673_A1_nf_11758779.doc for two rsidDel runs that are part of the final document. -->

@@ -44,6 +44,8 @@
                          [if (matches(., '%\d')) then not(../../w:numFmt/@w:val = 'decimal') else true()]
                        " mode="wml-to-dbk" priority="1.5">
     <!-- priority = 1.5 because of priority = 1 ("default for attributes") in wml2dbk.xsl -->
+    
+ 
     <xsl:variable name="font" select="if (self::w:sym) 
                                       then @w:font
                                       else
@@ -112,12 +114,6 @@
     </xsl:variable>
 
     <xsl:choose>
-      <xsl:when test="$text[self::text[@mapped eq 'true']]">
-        <phrase xmlns="http://docbook.org/ns/docbook" role="hub:ooxml-symbol"
-          srcpath="{(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]}">
-          <xsl:sequence select="$text/node()"/>
-        </phrase>
-      </xsl:when>
       <xsl:when test="$text[self::text]">
         <xsl:sequence select="$text/node()"/>
       </xsl:when>
@@ -135,7 +131,7 @@
         </xsl:call-template>
         <xsl:for-each select="$text">
           <xsl:copy>
-            <xsl:copy-of select="@*"/>
+            <xsl:copy-of select="@* except @docx2hub:map-to"/>
             <xsl:value-of select="."/>
           </xsl:copy>
         </xsl:for-each>
@@ -145,7 +141,7 @@
 
   <xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?">
     <xsl:param name="font-name" as="xs:string"/>
-    <xsl:variable name="font-map-name" select="concat('../fontmaps/', replace($font-name, ' ', '_'), '.xml')" as="xs:string" />
+    <xsl:variable name="font-map-name" select="concat('fontmaps/', replace($font-name, ' ', '_'), '.xml')" as="xs:string" />
     <xsl:sequence select="if (doc-available($font-map-name)) then document($font-map-name) else ()"/>
   </xsl:function>
 
@@ -242,5 +238,6 @@
                             substring('0123456789abcdef', ($in mod 16) + 1, 1)
                           )"/>
   </xsl:function>
+
 
 </xsl:stylesheet>

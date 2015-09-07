@@ -26,6 +26,7 @@
   <xsl:template match="w:footnoteReference" mode="wml-to-dbk">
     <footnote>
       <xsl:variable name="id" select="@w:id"/>
+      <xsl:apply-templates select="/*/w:footnotes/w:footnote[@w:id = $id]/@srcpath" mode="#current"/>
       <xsl:apply-templates select="/*/w:footnotes/w:footnote[@w:id = $id]" mode="#current"/>
     </footnote>
   </xsl:template>
@@ -49,10 +50,16 @@
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="*" 
             group-adjacent="if (
-                              docx2hub:element-is-footnoteref(.) or 
+                              (
+                                w:footnoteRef and
+                                docx2hub:element-is-footnoteref(.) and
+                                not(preceding-sibling::*[docx2hub:element-is-footnoteref(.)])
+                              )
+                              or 
                               (
                                 matches(.,'^[\s&#160;]*$') and 
-                                following-sibling::*[1][docx2hub:element-is-footnoteref(.)])
+                                following-sibling::*[1][docx2hub:element-is-footnoteref(.)][w:footnoteRef]) and
+                                not(preceding-sibling::*[docx2hub:element-is-footnoteref(.)])
                               ) 
                             then true() else false()">
             <xsl:choose>
@@ -72,7 +79,10 @@
               <xsl:otherwise/>
             </xsl:choose>
           </xsl:for-each-group>
-      <xsl:apply-templates select="node() except *[docx2hub:element-is-footnoteref(.)]" mode="#current"/>
+      <xsl:apply-templates select="node() except *[
+                                     docx2hub:element-is-footnoteref(.) and 
+                                     not(preceding-sibling::*[docx2hub:element-is-footnoteref(.)])
+                                   ]" mode="#current"/>
     </para>
   </xsl:template>
 

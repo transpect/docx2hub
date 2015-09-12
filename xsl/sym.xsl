@@ -141,7 +141,7 @@
 
   <xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?">
     <xsl:param name="font-name" as="xs:string"/>
-    <xsl:variable name="font-map-name" select="concat('fontmaps/', replace($font-name, ' ', '_'), '.xml')" as="xs:string" />
+    <xsl:variable name="font-map-name" select="concat('../fontmaps/', replace($font-name, ' ', '_'), '.xml')" as="xs:string" />
     <xsl:sequence select="if (doc-available($font-map-name)) then document($font-map-name) else ()"/>
   </xsl:function>
 

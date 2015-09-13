@@ -81,11 +81,15 @@
     <xsl:variable name="field-code" select="normalize-space(string-join($nodes/w:instrText, ''))" as="xs:string"/>
     <xsl:choose>
       <!-- construct link element -->
-      <xsl:when test="matches($field-code, '^REF\s.+')">
+      <xsl:when test="matches($field-code, '^REF\s_([a-z]+\d+)\s?.+\\h(\s|$)')"><!-- hyperlink to bookmark -->
         <xsl:variable name="linkend" select="replace($field-code, '^REF\s_([a-z]+\d+)\s?.+$', '$1', 'i')" as="xs:string"/>
         <link linkend="{$linkend}">
           <xsl:apply-templates select="$nodes" mode="#current"/>
         </link>    
+      </xsl:when>
+      <xsl:when test="matches($field-code, '^REF\s.+')"><!-- other refs, e.g., to variable that was set using SET.
+        We assume that the value of SET is identical with the content, so dissolve this. Is this assumption justified? --> 
+        <xsl:apply-templates select="$nodes" mode="#current"/>
       </xsl:when>
       <xsl:when test="$is-multi-para">
         <xsl:choose>

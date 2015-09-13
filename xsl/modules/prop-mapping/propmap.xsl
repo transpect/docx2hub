@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:docx2hub="http://transpect.io/docx2hub"
     version="2.0"
@@ -8,7 +9,7 @@
   <!-- The predicate prop[…] is needed when there are multiple entries with different @hubversion
     attributes. The key picks, of all prop declarations that are compatible with the requested $hub-version, 
     the prop declaration for the most recent version. Versions numbers are expected to be dot-separated integers.
-    -->  
+    -->
   <xsl:key 
     name="docx2hub:prop" 
     match="prop[
@@ -87,9 +88,13 @@
         <prop name="w:next" />
         <prop name="w:noProof" />
         <prop name="w:noWrap" type="docx-boolean-prop" target-name="css:white-space" default="normal" active="nowrap"/>
+        <prop name="w14:numForm">
+          <!-- if there are multiple modifiers (tabular-nums, etc.), we need to establish a type docx-numForm for this prop -->
+          <val match="oldStyle" target-name="css:font-variant-numeric" target-value="oldstyle-nums" />
+        </prop>
         <prop name="w:numPr" type="passthru" />
         <prop name="w:outline">
-          <val eq="true" target-name="css:border-bottom-width" target-value="1px 0px"/>
+          <val eq="true" target-name="css:text-shadow" target-value="1px 0px"/>
           <val eq="false" />
         </prop>
         <prop name="w:outlineLvl" type="docx-hierarchy-level"/>
@@ -130,6 +135,7 @@
         <!--<prop name="w:sectPr" />--><!-- provisional -->
         <prop name="w:semiHidden" />
         <prop name="w:shadow" type="docx-boolean-prop" target-name="css:text-shadow" default="none" active="1pt 1pt"/>
+        <prop name="w14:shadow" implement="maybe later"/>
         <prop name="w:shd" type="docx-shd" />
         <prop name="w:smallCaps" type="docx-boolean-prop" target-name="css:font-variant" default="normal" active="small-caps"/>
       	<prop name="w:snapToGrid" />
@@ -194,6 +200,8 @@
         <prop name="w:tcMar/w:top" type="docx-padding" />
         <prop name="w:tcW/@w:w" type="docx-length-attr" target-name="css:width"/>
         <prop name="w:textDirection" type="docx-text-direction"/>
+        <prop name="w14:textFill" implement="maybe later"/>
+        <prop name="w14:textOutline" implement="maybe later"/>
         <prop name="w:trHeight" type="docx-table-row-height"/>
         <!-- trPr/… -->
         <prop name="w:gridBefore" type="linear" target-name="w:fill-cells-before"/>

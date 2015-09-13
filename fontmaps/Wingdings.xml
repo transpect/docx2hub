@@ -17,6 +17,7 @@
   <symbol number="F08E" entity="&#xF08E;" char="&#x2778;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT THREE -->
   <symbol number="F08F" entity="&#xF08F;" char="&#x2779;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FOUR -->
   <symbol number="F090" entity="&#xF090;" char="&#x277a;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FIVE -->
+  <symbol number="F09E" entity="" char="&#xb7;"/><!-- MIDDLE DOT -->
   <symbol number="F09F" entity="" char="&#x2022;"/><!-- BULLET -->
   <symbol number="F0A6" entity="&#xF0A6;" char="&#x274D;" font="Segoe UI Symbol"/><!-- SHADOWED WHITE CIRCLE -->
   <symbol number="F0A7" entity="&#xF0A7;" char="&#x25aa;" font="Segoe UI Symbol"/><!-- BLACK SMALL SQUARE -->
@@ -31,6 +32,7 @@
   <symbol number="00E8" entity="&#x00E8;" char="&#x2794;" font="Segoe UI Symbol"/><!-- Heavy wide-headed rightwards arrow -->
   <symbol number="0AEA" entity="&#x0AEA;" char="&#x2794;"/><!-- Heavy wide-headed rightwards arrow -->
   <symbol number="F0A8" entity="" char="&#x25FB;" font="Segoe UI Symbol"/><!-- WHITE MEDIUM SQUARE -->
+  <symbol number="F0F0" entity="&#xF0F0;" char="&#x21E8;" /><!-- RIGHTWARDS WHITE ARROW -->
   <symbol number="F0FC" entity="&#252;" char="&#x2713;" font="Segoe UI Symbol"/><!-- CHECK MARK -->
   <symbol number="F081" entity="&#9312;" char="&#x2460;"/><!-- CIRCLED DIGIT ONE -->
   <symbol number="F082" entity="&#9313;" char="&#x2461;"/><!-- CIRCLED DIGIT TWO -->

@@ -282,7 +282,19 @@
       <xsl:apply-templates select="$lvl/w:pPr" mode="#current"/>
     </xsl:variable>
     <xsl:sequence select="$props//docx2hub:attribute[starts-with(@name, 'css:')]"/>
-    <xsl:next-match/>
+    <xsl:next-match>
+      <xsl:with-param name="ilvl" as="xs:integer" select="$ilvl" tunnel="yes"/>
+    </xsl:next-match>
+  </xsl:template>
+  
+  <xsl:template match="w:style/w:pPr/w:numPr[not(w:ilvl)]" mode="docx2hub:add-props" priority="1">
+    <xsl:param name="ilvl" as="xs:integer?" tunnel="yes"/>
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="*" mode="#current"/>
+      <xsl:if test="$ilvl">
+        <w:ilvl w:val="{$ilvl}"/>  
+      </xsl:if>
+    </xsl:copy>
   </xsl:template>
   
   <xsl:template match="w:lvl/w:rPr | w:lvl/w:pPr" mode="docx2hub:add-props" priority="3">
@@ -905,7 +917,7 @@
 
   <xsl:template match="val/@match" mode="docx2hub:add-props" as="element(*)?">
     <xsl:param name="val" as="item()" tunnel="yes" />
-    <xsl:if test="matches($val/@w:val, .)">
+    <xsl:if test="matches($val/@*:val, .)">
       <xsl:call-template name="docx2hub:XML-Hubformat-atts" />
     </xsl:if>
   </xsl:template>

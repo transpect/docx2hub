@@ -32,9 +32,13 @@
                         preceding-sibling::*[1][docx2hub:is-merged-changemarkup-para(.)]">
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
-            <xsl:variable name="merged-para" as="element(w:p)">
-              <xsl:element name="w:p">
+            <xsl:variable name="merged-para" as="element(*)">
+              <!-- element name (15-09-14):
+                     in case of a para merged with a table (para deleted, table alive) we need w:tbl as element name 
+                     otherwise w:p will be set, usually -->
+              <xsl:element name="{name(current-group()[not(docx2hub:is-merged-changemarkup-para(.))][1])}">
                 <xsl:copy-of select="current-group()[1]/@*"/>
+                <xsl:attribute name="srcpath" select="string-join(current-group()/@srcpath, '&#x20;')"/>
                 <xsl:copy-of select="current-group()[1]/node()"/>
                 <xsl:copy-of select="current-group()[position() != 1][not(docx2hub:is-changemarkup-removed-para(.))]/node() except w:pPr"/>
               </xsl:element>

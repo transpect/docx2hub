@@ -25,7 +25,7 @@
     <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
     <informaltable css:border-collapse="collapse">
       <xsl:apply-templates select="  w:tblPr/@role
-                                   | w:tblPr/@css:*[matches(name(.),'(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right))')]
+                                   | w:tblPr/@css:*[matches(name(.),'(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')]
                                    | w:tblPr/w:tblW
                                    | @srcpath | @css:orientation" mode="#current"/>
       <tgroup>

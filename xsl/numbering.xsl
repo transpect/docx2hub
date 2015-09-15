@@ -379,6 +379,8 @@
       </xsl:when>
       <xsl:when test="$format = 'none'">none</xsl:when><!--GR-->
       <xsl:otherwise>
+        <!-- fallback: return 'none' (http://mantis.le-tex.de/mantis/view.php?id=13389#c36016) -->
+        <xsl:text>none</xsl:text>
         <xsl:call-template name="signal-error">
           <xsl:with-param name="error-code" select="'W2D_062'"/>
           <xsl:with-param name="fail-on-error" select="$fail-on-error"/>

@@ -316,7 +316,8 @@
     </xsl:attribute>
   </xsl:template>
   
-  <xsl:template match="css:rule[$is-libre-office-document]/@name" mode="docx2hub:join-runs">
+  <!-- matches(@native-name, '~'): use @native-name instead of @name even if docx is saved by MS Word -->
+  <xsl:template match="css:rule[$is-libre-office-document or matches(@native-name, '~')]/@name" mode="docx2hub:join-runs">
     <xsl:attribute name="{name()}">
       <xsl:choose>
         <xsl:when test="matches(../@native-name, '(Kein Absatzformat|^\s*$)')">
@@ -332,7 +333,8 @@
     </xsl:attribute> 
   </xsl:template>
   
-  <xsl:template match="*[not((local-name(.) = ('keyword', 'keywordset', 'anchor')))][$is-libre-office-document]/@role" mode="docx2hub:join-runs">
+  <xsl:template match="*[not((local-name(.) = ('keyword', 'keywordset', 'anchor')))]
+                        [$is-libre-office-document or matches(key('natives', @role)/@native-name, '~')]/@role" mode="docx2hub:join-runs">
     <xsl:attribute name="{name()}">
       <xsl:choose>
         <xsl:when test="key('natives', .)[matches(@native-name, 'Kein Absatzformat')]">

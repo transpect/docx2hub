@@ -46,7 +46,7 @@
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
-  <p:import href="http://transpect.le-tex.de/calabash-extensions/ltx-lib.xpl"/>
+  <p:import href="http://transpect.io/calabash-extensions/transpect-lib.xpl"/>
   
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
   <p:import href="http://transpect.io/xproc-util/file-uri/xpl/file-uri.xpl"/>
@@ -60,7 +60,7 @@
   </tr:file-uri>
 
   <!-- unzip or error message -->
-  <letex:unzip name="unzip">
+  <tr:unzip name="unzip">
     <p:with-option name="zip" select="/c:result/@os-path">
       <p:pipe step="locate-docx" port="result"/>
     </p:with-option>
@@ -71,7 +71,7 @@
       <p:pipe step="locate-docx" port="result"/>
     </p:with-option>
     <p:with-option name="overwrite" select="'yes'"/>
-  </letex:unzip>
+  </tr:unzip>
 
   <p:choose>
     <p:when test="name(/*) eq 'c:error'">

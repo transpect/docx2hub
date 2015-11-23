@@ -21,7 +21,7 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml docx2hub">
 
-  <!--<xsl:import href="http://transpect.le-tex.de/xslt-util/hex/hex.xsl"/>-->
+  <!--<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>-->
 
   <!-- w:r is here for historic reasons. We used to group the text runs
        prematurely until we found out that it is better to group when

@@ -200,7 +200,7 @@
 
   <p:choose name="apply-changemarkup">
     <p:when test="exists(//w:del | //w:moveFrom | //w:ins)">
-      <letex:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup">
+      <tr:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup">
         <p:input port="parameters">
           <p:pipe step="params" port="result"/>
         </p:input>
@@ -214,7 +214,7 @@
         <p:with-option name="debug" select="$debug"/>
         <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
         <p:with-param name="fail-on-error" select="$fail-on-error"/>
-      </letex:xslt-mode>
+      </tr:xslt-mode>
     </p:when>
     <p:otherwise>
       <p:identity/>

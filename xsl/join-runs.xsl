@@ -308,7 +308,9 @@
 
   <!-- sidebar -->
   <xsl:template match="dbk:sidebar" mode="docx2hub:join-runs">
-    <anchor xml:id="side_{generate-id(.)}"/>
+    <anchor>
+      <xsl:attribute name="xml:id" select="concat('side_', generate-id(.))"/>
+    </anchor>
   </xsl:template>
 
   <!-- mode hub:fix-libre-office-issues -->

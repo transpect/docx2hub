@@ -196,7 +196,14 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="w:tr" mode="tables">
+  <xsl:template match="w:tr[docx2hub:is-blind-vmerged-row(.)]" mode="tables"/>
+  
+  <xsl:function name="docx2hub:is-blind-vmerged-row" as="xs:boolean">
+    <xsl:param name="row" as="element(w:tr)"/>
+    <xsl:sequence select="every $tc in $row/w:tc satisfies $tc[docx2hub:is-blind-vmerged-cell(.)]"/>
+  </xsl:function>
+
+  <xsl:template match="w:tr[not(docx2hub:is-blind-vmerged-row(.))]" mode="tables">
     <row>
       <xsl:apply-templates select="@css:*, w:tblPrEx/@css:background-color, @xml:lang, @srcpath" mode="wml-to-dbk"/>
       <xsl:apply-templates select="@w:fill-cells-before" mode="wml-to-dbk"/>
@@ -433,20 +440,27 @@
     <xsl:param name="cell" as="element(w:tc)"/>
     <xsl:sequence select="exists($cell/w:tcPr/w:vMerge)
                           and
-                          (every $att in $cell/w:tcPr/w:vMerge/@* satisfies ($att/self::attribute(srcpath) or $att/self::attribute(w:val)[. = 'continue']))"/>
+                          (every $att in $cell/w:tcPr/w:vMerge/@* satisfies (
+                             $att/self::attribute(srcpath) or 
+                             $att/self::attribute(w:val)[. = 'continue'] or 
+                             $att/namespace-uri() eq 'http://www.w3.org/1996/css'
+                          ))"/>
   </xsl:function>
 
   <xsl:template name="cell.morerows">
     <xsl:if test="w:tcPr/w:vMerge/@w:val = 'restart'">
       <xsl:variable name="is-thead-tr" as="xs:boolean" 
         select="exists(parent::w:tr[w:trPr/w:tblHeader or w:tblHeader])"/>
+      <xsl:variable name="next-non-vmerged-tr" as="element(w:tr)?"
+        select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]"/>
       <xsl:variable name="counts" as="xs:integer*">
         <xsl:choose>
           <xsl:when test="$is-thead-tr = true() and not(../following-sibling::w:tr[1][w:trPr/w:tblHeader or w:tblHeader])">
             <xsl:sequence select="999"/>
           </xsl:when>
-          <xsl:when test="../following-sibling::w:tr[1]/w:tc[tr:colcount(1, .) = tr:colcount(1, current())][docx2hub:is-blind-vmerged-cell(.)]">
-            <xsl:for-each-group select="../following-sibling::w:tr/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]" 
+          <xsl:when test="$next-non-vmerged-tr/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]
+                                                   [docx2hub:is-blind-vmerged-cell(.)]">
+            <xsl:for-each-group select="../following-sibling::w:tr[. is $next-non-vmerged-tr or . &gt;&gt; $next-non-vmerged-tr]/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]" 
               group-adjacent="docx2hub:is-blind-vmerged-cell(.)">
               <xsl:sequence select="count(current-group())"/>
             </xsl:for-each-group>

@@ -46,7 +46,7 @@
     <xsl:variable name="instr-from-nodes-text" as="xs:string?"
       select="string-join($instr-from-nodes, '')"/>
     <xsl:choose>
-      <xsl:when test="matches(string-join($instr-from-nodes,''),'&quot;(\s*\\[a-z])*\s*$')">
+      <xsl:when test="matches(string-join($instr-from-nodes,''),'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">
         <xsl:for-each-group select="$instr-from-nodes" group-starting-with="node()[matches(.,'^[\s&#160;]*[Xx][eE][\s&#160;]+')]">
           <xsl:variable name="current-instr-from-nodes-text" select="string-join(current-group(),'')"/>
           <xsl:if test="matches($current-instr-from-nodes-text, '\\[^bfrity]')">

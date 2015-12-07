@@ -12,11 +12,13 @@
   <pattern id="dangling-indexterm-ranges">
     <rule context="w:instrText[matches(., '^\s*XE.+ \\r ')]">
       <let name="bookmark-name" value="replace(., '^.+\\r\s+&quot;([^&quot;]*)&quot;.*$', '$1')"/>
-      <assert test="exists(//w:bookmarkStart[@w:name = $bookmark-name])" id="range-not-found"  role="warning"><!-- diagnostics="range-not-found_de" -->
+      <assert test="exists(//w:bookmarkStart[@w:name = $bookmark-name])" id="range-not-found"  role="warning" diagnostics="range-not-found_de">
         <span class="srcpath"><xsl:value-of select="concat(
                                                       $base-dir, 
                                                       ancestor::w:p[1]/@srcpath
                                                     )"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Bookmark range not found</span>
            The index term instruction text '<value-of select="."/>' requested a bookmark range '<value-of select="$bookmark-name"/>' 
         that could not be located in the document. Reverting to a plain (non-range) index term.
       </assert>
@@ -26,27 +28,14 @@
   <pattern id="fnmarks">
     <rule context="w:p[w:r/w:footnoteRef]">
       <let name="marker-style" value="w:r[w:footnoteRef]/@role"/>
-      <assert test="count(w:r[@role = $marker-style]) le 1" role="warning" id="footnote_mark_style">
+      <assert test="count(w:r[@role = $marker-style]) le 1" role="warning" id="footnote_mark_style" diagnostics="footnote_mark_style_de">
         <span class="srcpath"><xsl:value-of select="concat($base-dir,@srcpath)"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Footnote marker style</span>
         Apparently more text than just the footnote marker has the footnote marker style, '<value-of select="$marker-style"/>'.
         Text with this marker style: '<value-of select="string-join(w:r[@role = $marker-style], '')"/>'.
         This text may be removed during conversion.
       </assert>
-    </rule>
-  </pattern>
-
-  <pattern id="docx_changes">
-    <rule context="w:moveTo | w:ins | w:del">
-      <report test="true()" role="error" id="change_markup" diagnostics="change_markup_de">
-        <span class="srcpath"><xsl:value-of select="string-join(
-                                                      (
-                                                        $base-dir, 
-                                                        ((ancestor::*[@srcpath][1] | descendant::*[@srcpath][1])/@srcpath)[last()]
-                                                      ), ''
-                                                    )"/></span>
-        The docx converter is currently unable to handle change markup such as '<value-of 
-        select="name()"/>' properly. Please remove the markup, e.g., by accepting all changes. (Note that the 
-        content that contains the markup might be removed already during conversion.)</report>
     </rule>
   </pattern>
 
@@ -59,16 +48,45 @@
                                                         ((ancestor::*[@srcpath][1] | descendant::*[@srcpath][1])/@srcpath)[last()]
                                                       ), ''
                                                     )"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Table headers only</span>
         All table rows are marked as table header, found no body rows. The docx converter moves all table header rows to table body, otherwise the resulting XML would be invalid.</report>
     </rule>
   </pattern>
   
+  <pattern id="unsupported">
+    <rule context="w:instrText">
+      <assert test="matches(., '^\s*(AUTOTEXT|EQ|eq|FORMCHECKBOX|HYPERLINK|INCLUDEPICTURE|PRINT|SET|SYMBOL|XE|xe)\s+')" 
+        role="warning" id="unsupported_field_function" diagnostics="unsupported_field_function_de">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, ../@srcpath), '')"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Unsupported field function</span>
+        The field function '<xsl:value-of select="."/>' is not supported.</assert>
+    </rule>
+  </pattern>
+
+
   <diagnostics>
-    <diagnostic id="instrText_de" xml:lang="de">Feldfunktion!</diagnostic>
-    <diagnostic id="change_markup_de" xml:lang="de">Der docx-Konverter kann nicht richtig mit Änderungs-Markup wie '<value-of 
-        select="name()"/>' umgehen. Bitte entfernen Sie dieses Markup, z.B. indem Sie alle Änderungen akzeptieren. (Bitte
-    beachten Sie, dass der Inhalt, der dieses Markup enthielt, während der weiteren Konvertierung</diagnostic>
-    <diagnostic id="table_headers_only_de" xml:lang="de">In dieser Tabelle wurden alle Tabellenzeilen als TabellenkÃpfe ausgezeichnet. Der docx-Konverter hat deshalb alle Tabellenzeilen in den Bauch der Tabelle verschoben, da sonst das resultierende XML invalide wÃŒrde.</diagnostic>
+    <diagnostic id="range-not-found_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Lesezeichen-Bereich nicht gefunden</span>
+      Der Indexbegriff '<value-of select="."/>' verweist auf einen Lesezeichen-Bereich '<value-of select="$bookmark-name"/>', 
+        der im Dokument nicht gefunden wurde. Er wird deshalb nun wie ein normaler (Nicht-Bereichs-) Indexbegriff behandelt.
+    </diagnostic>
+    <diagnostic id="footnote_mark_style_de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Fußnotenzeichenstil</span>
+      Anscheinend hat mehr Text als bloß der Fußnotenmarker das Zeichenformat '<value-of select="$marker-style"/>'.
+        Text mit diesem Format: '<value-of select="string-join(w:r[@role = $marker-style], '')"/>'.
+        Dieser Text könnte während der Konvertierung entfernt werden.
+    </diagnostic>
+    <diagnostic id="unsupported_field_function_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Nicht unterstützte Feldfunktion</span>
+      Die Feldfunktion '<xsl:value-of select="."/>' wird nicht unterstützt.</diagnostic>
+    <diagnostic id="table_headers_only_de" xml:lang="de"><span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Nur Tabellenkopf</span>
+      In dieser Tabelle wurden alle Tabellenzeilen als TabellenkÃpfe ausgezeichnet. Der docx-Konverter hat deshalb alle Tabellenzeilen in den Bauch der Tabelle verschoben, da sonst das resultierende XML invalide wÃŒrde.</diagnostic>
   </diagnostics>
   
 </schema>

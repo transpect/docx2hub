@@ -39,6 +39,7 @@
     </xsl:variable>
     <xsl:element name="{$elt-name}">
       <xsl:attribute name="role" select="'hub:foreign'"/>
+      <xsl:copy-of select="parent::*/@srcpath"/>
       <xsl:apply-templates select="." mode="foreign"/>
     </xsl:element>
   </xsl:template>
@@ -314,7 +315,7 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="@*" mode="vml">
+  <xsl:template match="@*[not(starts-with(name(), 'docx2hub:generated'))]" mode="vml" priority="-0.5">
     <xsl:call-template name="signal-error">
       <xsl:with-param name="error-code" select="'W2D_021'"/>
       <xsl:with-param name="fail-on-error" select="$fail-on-error"/>

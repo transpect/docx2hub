@@ -61,12 +61,26 @@
             <!-- /w:root/@xml:base example: file:/data/docx/M_001.docx.tmp/ -->
             <xsl:value-of select="replace(/w:root/@xml:base, '^.*/(.+)\.doc[xm](\.tmp/?)?$', '$1')"/>
           </keyword>
-          <xsl:if test="/w:root/w:containerProps/*:Properties/*:Application">
+          <xsl:if test="/w:root/w:containerProps/extendedProps:Properties/extendedProps:Application">
             <keyword role="source-application">
-              <xsl:value-of select="/w:root/w:containerProps/*:Properties/*:Application"/>
+              <xsl:value-of select="/w:root/w:containerProps/extendedProps:Properties/extendedProps:Application"/>
             </keyword>
           </xsl:if>
         </keywordset>
+        <xsl:if test="exists(../../w:containerProps/(extendedProps:Properties|cp:coreProperties))">
+          <keywordset role="docProps">
+            <xsl:for-each select="../../w:containerProps/cp:*/*[not(*)]">
+              <keyword role="{name()}">
+                <xsl:value-of select="."/>
+              </keyword>
+            </xsl:for-each>
+            <xsl:for-each select="../../w:containerProps/extendedProps:Properties/extendedProps:*[not(*)]">
+              <keyword role="extendedProps:{local-name()}">
+                <xsl:value-of select="."/>
+              </keyword>
+            </xsl:for-each>
+          </keywordset>
+        </xsl:if>
         <xsl:if test="exists(../../w:settings/w:docVars/w:docVar)">
           <keywordset role="docVars">
             <xsl:for-each select="../../w:settings/w:docVars/w:docVar">
@@ -265,8 +279,11 @@
   
   <xsl:template match="w:style/w:pPr[w:numPr]" mode="docx2hub:add-props" priority="3">
     <xsl:variable name="based-on-chain" as="document-node()" select="docx2hub:based-on-chain(..)"/>
-    <xsl:variable name="numId" as="element(w:numId)?" select="$based-on-chain/*[w:pPr/w:numPr/w:numId][1]/w:pPr/w:numPr/w:numId"/>
-    <xsl:variable name="ilvl" as="xs:integer" 
+    <xsl:variable name="numId-chain-item" as="element(w:style)?" select="$based-on-chain/*[w:pPr/w:numPr/w:numId][1]"/>
+    <xsl:variable name="numId-chain-item-pos" as="xs:integer?" 
+      select="index-of(for $item in $based-on-chain/* return generate-id($item), generate-id($numId-chain-item))"/>
+    <xsl:variable name="numId" as="element(w:numId)?" select="$numId-chain-item/w:pPr/w:numPr/w:numId"/>
+    <xsl:variable name="ilvl" as="xs:integer?" 
       select="(
                 for $i in $based-on-chain/*[w:pPr/w:numPr/w:ilvl][1]/w:pPr/w:numPr/w:ilvl/@w:val return xs:integer($i),
                 0
@@ -280,6 +297,8 @@
                                                          )/w:lvl[@w:ilvl = $ilvl]"/>
     <xsl:variable name="props" as="item()*">
       <xsl:apply-templates select="$lvl/w:pPr" mode="#current"/>
+    <xsl:apply-templates select="for $style in reverse($based-on-chain/*[position() le $numId-chain-item-pos])
+                                   return $style/w:pPr/*[not(self::w:numPr)]" mode="#current"/>
     </xsl:variable>
     <xsl:sequence select="$props//docx2hub:attribute[starts-with(@name, 'css:')]"/>
     <xsl:next-match>
@@ -357,6 +376,11 @@
   <xsl:template match="w:tcW" mode="docx2hub:add-props" priority="2">
     <xsl:apply-templates select="@w:w" mode="#current" />
   </xsl:template>
+
+  <!-- ISO/IEC 29500-1 (2008-11-15):
+       „If this run has any background shading specified using the shd element (§17.3.2.32), 
+       then the background shading shall be superseded by the highlighting color“ -->
+  <xsl:template match="w:shd[../w:highlight]" mode="docx2hub:add-props" priority="2"/>
 
   <xsl:template match="w:sectPr[parent::w:pPr]" mode="docx2hub:add-props" priority="+2">
     <xsl:apply-templates select="w:pgSz" mode="#current"/>
@@ -480,7 +504,7 @@
 
       <xsl:when test=". eq 'lang'">
         <xsl:variable name="stringval" as="xs:string?" 
-          select="if ($val/self::w:lang) then ($val/@w:val, $val/@w:bidi)[1] else $val"/>
+          select="if ($val/self::w:lang) then $val/@w:val[1] else $val"/>
         <!-- stripping the country by default. If someone needs it, we need to introduce an option -->
         <xsl:variable name="repl" as="xs:string" 
           select="if (matches($stringval, 'German') or matches($stringval, '\Wde\W'))
@@ -494,6 +518,11 @@
             <xsl:value-of select="$repl"/>  
           </docx2hub:attribute>
         <!-- stripping the country by default. If someone needs it, we need to introduce an option -->
+        </xsl:if>
+      <xsl:if test="$val/self::w:lang[not(@w:val)]/@w:bidi">
+          <docx2hub:attribute name="docx2hub:rtl-lang">
+            <xsl:value-of select="replace($val/@w:bidi, '^(\p{Ll}+).*$', '$1')"/>  
+          </docx2hub:attribute>
         </xsl:if>
       </xsl:when>
 
@@ -972,7 +1001,20 @@
 
   <xsl:function name="docx2hub:css-compatible-name" as="xs:string">
     <xsl:param name="input" as="xs:string"/>
-    <xsl:sequence select="replace(replace(normalize-unicode($input, 'NFKD'), '\p{Mn}', ''), '[^-_a-z0-9]', '_', 'i')"/>
+    <xsl:sequence select="replace(  
+                            replace(
+                              replace(
+                                normalize-unicode($input, 'NFKD'), 
+                                '\p{Mn}', 
+                                ''
+                              ), 
+                              '[^-_a-z0-9]', 
+                              '_', 
+                              'i'
+                            ),
+                            '^(\I)',
+                            '_$1'
+                          )"/>
   </xsl:function>
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -1015,6 +1057,16 @@
                         every $el in $content[self::*] 
                         satisfies $el[self::w:t[@xml:space eq 'preserve'][matches(., '^\p{Zs}*$')]]
                       )">
+        <xsl:copy>
+          <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
+        </xsl:copy>
+      </xsl:when>
+      <!-- do not wrap field function elements in subscript or superscript-->
+      <xsl:when test="docx2hub:wrap/@element = ('superscript', 'subscript') 
+                      and
+                      (exists(self::w:fldChar | self::w:instrText | self::docx2hub:*))
+                      and
+                      (every $i in * satisfies $i[self::w:fldChar or self::w:instrText or self::docx2hub:*])">
         <xsl:copy>
           <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
         </xsl:copy>
@@ -1118,6 +1170,7 @@
   
   <!-- collateral: denote numbering resets -->
   <xsl:template match="w:p" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">
       <xsl:variable name="style" select="key('docx2hub:style-by-role', @role)" as="element(css:rule)?"/>
       <xsl:variable name="numId" as="element(w:numId)?" 
@@ -1130,6 +1183,9 @@
                   return xs:integer($i),
                   0
                 )[1]"/>
+      <xsl:if test="$css:orientation">
+        <xsl:attribute name="css:orientation" select="$css:orientation"/>
+      </xsl:if>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:apply-templates select="$numId" mode="docx2hub:abstractNum">
         <xsl:with-param name="ilvl" select="$ilvl"/>
@@ -1149,7 +1205,9 @@
               <xsl:choose>
                 <xsl:when test="current-group()[last()][self::w:p[w:pgSz[@css:orientation='landscape']]]">
                   <xsl:apply-templates select="current-group()[1]" mode="#current"/>
-                  <xsl:apply-templates select="current-group()[position() gt 1]" mode="add-attribute"/>
+                  <xsl:apply-templates select="current-group()[position() gt 1]" mode="docx2hub:remove-redundant-run-atts">
+                    <xsl:with-param name="css:orientation" select="'landscape'" tunnel="yes"/>
+                  </xsl:apply-templates>
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:apply-templates select="current-group()" mode="#current"/>
@@ -1165,19 +1223,4 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="*" mode="add-attribute">
-    <xsl:copy>
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:apply-templates mode="docx2hub:remove-redundant-run-atts"/>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="w:tbl | w:p[descendant::v:imagedata]" mode="add-attribute">
-    <xsl:copy>
-      <xsl:attribute name="css:orientation" select="'landscape'"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:apply-templates mode="docx2hub:remove-redundant-run-atts"/>
-    </xsl:copy>
-  </xsl:template>
-
 </xsl:stylesheet>

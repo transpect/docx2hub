@@ -23,6 +23,24 @@
 
   <!--<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>-->
 
+  <xsl:template match="dbk:para[
+                         dbk:br[@role eq 'column'][preceding-sibling::node() and following-sibling::node()]
+                       ]" mode="docx2hub:join-runs" priority="5">
+    <xsl:variable name="context" select="." as="element(dbk:para)"/>
+    <xsl:variable name="splitted" as="element(dbk:para)+">
+      <xsl:for-each-group select="node()" group-starting-with="dbk:br[@role eq 'column']">
+        <para>
+          <xsl:sequence select="$context/@*"/>
+          <xsl:if test="$context/@srcpath and position() != 1 and $context/@srcpath">
+            <xsl:attribute name="srcpath" select="concat($context/@srcpath, ';n=', position())"/>
+          </xsl:if>
+          <xsl:sequence select="current-group()[not(self::dbk:br[@role eq 'column'])]"/>
+        </para>
+      </xsl:for-each-group>
+    </xsl:variable>
+    <xsl:apply-templates select="$splitted" mode="#current"/>
+  </xsl:template>
+
   <!-- w:r is here for historic reasons. We used to group the text runs
        prematurely until we found out that it is better to group when
        there's docbook markup. So we implemented the special case of
@@ -45,7 +63,7 @@
           <xsl:otherwise>
             <xsl:copy copy-namespaces="no">
               <xsl:apply-templates select="@role, @* except (@srcpath, @role)" mode="#current"/>
-              <xsl:if test="$srcpaths = 'yes'">
+              <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
               <xsl:apply-templates select="current-group()[not(self::dbk:anchor)]/node() 
@@ -343,7 +361,7 @@
         <xsl:when test="key('natives', .)[matches(@native-name, '(Einfaches Absatzformat|^p$)', 'i')]">
           <xsl:sequence select="'para'"/>
         </xsl:when>
-        <xsl:when test="matches(., 'hub:identifier')">
+        <xsl:when test="matches(., 'hub:')">
           <xsl:sequence select="."/>
         </xsl:when>
         <xsl:otherwise>
@@ -381,7 +399,7 @@
           <xsl:when test="current-grouping-key()">
             <xsl:copy copy-namespaces="no">
               <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
-              <xsl:if test="$srcpaths = 'yes'">
+              <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
               <w:instrText xsl:exclude-result-prefixes="#all">
@@ -390,7 +408,26 @@
             </xsl:copy>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:copy-of select="current-group()"/>
+            <xsl:apply-templates select="current-group()" mode="#current"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each-group>
+    </xsl:copy>
+  </xsl:template>
+  
+<!-- group more than one mml:mi[@mathvariant='normal'] element to mtext -->
+  <xsl:template match="mml:*[mml:mi]" mode="docx2hub:join-runs">
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'])">
+        <xsl:choose>
+          <xsl:when test="current-grouping-key() and string-length(string-join(current-group(), '')) gt 1">
+            <mml:mtext>
+              <xsl:apply-templates select="current-group()/node()" mode="#current"/>
+            </mml:mtext>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates select="current-group()" mode="#current"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:for-each-group>

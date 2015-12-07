@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:dbk="http://docbook.org/ns/docbook"
+  queryBinding="xslt2">
+  
+  <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
+  <ns prefix="dbk" uri="http://docbook.org/ns/docbook" />
+
+  <let name="base-dir" value="/*/dbk:info/dbk:keywordset[@role eq 'hub']/dbk:keyword[@role eq 'source-dir-uri']"/>
+  
+  <pattern id="docx_unbalanced_field_functions_pattern">
+    <rule context="*[processing-instruction(letex)[starts-with(., 'W2D_094')]]">
+      <let name="pi-text"  value="string-join(
+                                    for $pi in processing-instruction(letex)[starts-with(., 'W2D_094')]
+                                    return concat('''', replace($pi, '^W2D_094\s+', ''), ''''),
+                                    ', '
+                                  )"/>
+      <report test="true()" id="docx_unbalanced_field_functions" diagnostics="docx_unbalanced_field_functions_de" role="error">
+        <span class="srcpath"><xsl:value-of 
+          select="for $s in tokenize(ancestor-or-self::*[@srcpath][1]/@srcpath, '\s+')
+                  return concat($base-dir, $s)"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Unbalanced field functions</span>
+        There was an error (infinite loop) in finding matching start/end markers for field functions.
+        This is typically caused by inadvertent removal of one of the markers while “track changes” is active.
+        Word has some autocorrection capability for these things that this converter lacks. 
+        Please accept all changes in the document and convert it again. If there are no tracked changes,
+        please ask for help. In the absence of a more specific contact, you may turn to <a xmlns="http://www.w3.org/1999/xhtml" 
+          href="mailto:support@le-tex.de">support@le-tex.de</a>. This text – probably a mix of instruction 
+        text and regular text – might give you a hint where the error occured: <xsl:value-of select="$pi-text"/>.
+      </report>
+      
+    </rule>
+  </pattern>
+
+
+
+  <diagnostics>
+    <diagnostic id="docx_unbalanced_field_functions_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Feldfunktionen: Schachtelung falsch</span>
+      Es gab einen Fehler (unendliche Rekursion) beim Zuordnen von Start-/Endemarkierungen für Feldfunktionen.
+      Dies wird typischerweise dadurch verursacht, dass solche Markierungen bei eingeschalteter Änderungsverfolgung 
+      unbeabsichtigt mit entfernt werden. Word kann derlei wohl korrigieren, dieser Konverter jedoch nicht.
+      Deshalb bitten wir Sie, sämtliche Änderungen zu akzeptieren und das Dokument erneut zu konvertieren.
+      Sollte das Dokument keine Änderungsmarkierung enthalten, so wenden Sie sich bitte an den Support (wenn nichts
+      anderes angegeben, an <a xmlns="http://www.w3.org/1999/xhtml" href="mailto:support@le-tex.de">support@le-tex.de</a>).
+      Dieser Text könnte einen Hinweis auf den Fehlerort und -text geben: <xsl:value-of select="$pi-text"/>.
+    </diagnostic>
+  </diagnostics>
+  
+</schema>

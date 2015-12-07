@@ -194,7 +194,8 @@
               <xsl:when test="$nodes/w:fldChar[@w:fldCharType = 'begin'][following::w:fldChar[@w:fldCharType = ('begin','end')][1][self::w:fldChar[@w:fldCharType = 'begin']]]">
                 <xsl:call-template name="handle-nested-field-functions">
                   <xsl:with-param name="nodes" select="$nodes"/>
-                  </xsl:call-template>
+                  <xsl:with-param name="depth" select="0"/>
+                </xsl:call-template>
                 </xsl:when>
             <xsl:otherwise>
                 <xsl:for-each-group select="$nodes" group-starting-with="w:r[w:fldChar[@w:fldCharType = 'begin']]">
@@ -239,8 +240,11 @@
   
   <xsl:template name="handle-nested-field-functions">
     <xsl:param name="nodes" as="node()*"/>
+    <xsl:param name="depth" as="xs:integer"/>
     <xsl:choose>
-      <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin']) and $nodes//w:instrText and matches(string-join($nodes//w:instrText//text(),''),'^[A-Z\.]*[0-9]*$')">
+      <xsl:when test="$depth lt 16">
+        <xsl:choose>
+          <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin']) and $nodes//w:instrText and matches(string-join($nodes//w:instrText//text(),''),'^[A-Z\.]*[0-9]*$')">
         <xsl:copy-of select="$nodes//w:instrText/text()"/>
       </xsl:when>
       <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin'])">
@@ -303,7 +307,22 @@
         </xsl:variable>
         <xsl:call-template name="handle-nested-field-functions">
           <xsl:with-param name="nodes" select="$new-nodes/*/node()"/>
-        </xsl:call-template>
+        <xsl:with-param name="depth" select="$depth + 1"/>
+            </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="signal-error" xmlns="">
+            <xsl:with-param name="error-code" select="'W2D_094'"/>
+            <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
+            <xsl:with-param name="hash">
+              <value key="xpath"><xsl:value-of select="$nodes[1]/@srcpath"/></value>
+              <value key="level">ERR</value>
+              <value key="info-text"><xsl:value-of select="$nodes//text()"/></value>
+              <value key="pi">W2D_094 <xsl:value-of select="$nodes//text()"/></value>
+            </xsl:with-param>
+          </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -507,7 +526,7 @@
     <xsl:copy/>
   </xsl:template>
 
-  <xsl:template match="@*" mode="wml-to-dbk">
+  <xsl:template match="@*[not(starts-with(name(), 'docx2hub:generated'))]" mode="wml-to-dbk" priority="-0.5">
     <xsl:call-template name="signal-error" xmlns="">
       <xsl:with-param name="error-code" select="'W2D_021'"/>
       <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
@@ -815,7 +834,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="w:hyperlink/@w:history" mode="wml-to-dbk" priority="1.5"/>
+  <xsl:template match="w:hyperlink/@w:history | w:hyperlink/@w:tgtFrame" mode="wml-to-dbk" priority="1.5"/>
  
   <xsl:template match="w:smartTagPr" mode="wml-to-dbk"/>
 
@@ -848,14 +867,36 @@
     <xsl:variable name="ancestors-with-langs" as="element(*)+">
       <xsl:for-each select="ancestor::*">
         <xsl:copy>
-          <xsl:copy-of select="key('style-by-name', @role)/@xml:lang"/>
-          <xsl:copy-of select="@xml:lang except $context"/>
+          <xsl:copy-of select="key('style-by-name', @role)/(@xml:lang, @css:direction, @docx2hub:rtl-lang)"/>
+          <xsl:copy-of select="@xml:lang except $context, ../@css:direction, ../@docx2hub:rtl-lang"/>
         </xsl:copy>
       </xsl:for-each>
     </xsl:variable>
+    <xsl:variable name="dir" as="xs:string?" select="($ancestors-with-langs, ..)[@css:direction][last()]/@css:direction"/>
+    <xsl:variable name="last-lang" select="($ancestors-with-langs[@docx2hub:rtl-lang][@css:direction = 'rtl'][last()]/@docx2hub:rtl-lang,
+                                           $ancestors-with-langs[@xml:lang][not(@css:direction = 'rtl')][last()]/@xml:lang)[last()]"/>
     <!-- Only output the next specific xml:lang if its string value differs from the current one’s: -->
-    <xsl:if test="not($ancestors-with-langs[@xml:lang][last()]/@xml:lang = $context)">
-      <xsl:next-match/>
+    <xsl:if test="not($dir = 'rtl') and not($last-lang = $context)">
+      <xsl:attribute name="xml:lang" select="$context"/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@docx2hub:rtl-lang" mode="wml-to-dbk" priority="5">
+    <xsl:variable name="context" select="." as="attribute(*)"/>
+    <xsl:variable name="ancestors-with-langs" as="element(*)+">
+      <xsl:for-each select="ancestor::*">
+        <xsl:copy>
+          <xsl:copy-of select="key('style-by-name', @role)/(@xml:lang, @css:direction, @docx2hub:rtl-lang)"/>
+          <xsl:copy-of select="@docx2hub:rtl-lang except $context, ../@css:direction, ../@xml:lang"/>
+        </xsl:copy>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:variable name="dir" as="xs:string?" select="($ancestors-with-langs, ..)[@css:direction][last()]/@css:direction"/>
+    <xsl:variable name="last-lang" select="($ancestors-with-langs[@docx2hub:rtl-lang][@css:direction = 'rtl'][last()]/@docx2hub:rtl-lang,
+                                           $ancestors-with-langs[@xml:lang][not(@css:direction = 'rtl')][last()]/@xml:lang)[last()]"/>
+    <!-- Only output the next specific xml:lang if its string value differs from the current one’s: -->
+    <xsl:if test="$dir = 'rtl' and not($last-lang = $context)">
+      <xsl:attribute name="xml:lang" select="$context"/>
     </xsl:if>
   </xsl:template>
 
@@ -991,7 +1032,11 @@
               </xsl:if>
             </xsl:element>
           </xsl:when>
-          <xsl:when test="$func/@destroy = 'yes'"/>
+          <xsl:when test="$func/@destroy = 'yes'">
+            <xsl:if test="$text[descendant::w:fldChar]">
+              <xsl:apply-templates select="$text" mode="#current"/>
+            </xsl:if> 
+          </xsl:when>
           <xsl:otherwise>
             <xsl:apply-templates select="$text" mode="#current"/>
           </xsl:otherwise>
@@ -1049,14 +1094,11 @@
 
   <!-- whitespace elements, etc. -->
   <xsl:template match="w:tab" mode="wml-to-dbk">
-    <xsl:choose>
-      <xsl:when test="$srcpaths eq 'yes'">
-        <tab xml:space="preserve" srcpath="{@srcpath}">&#9;</tab>
-      </xsl:when>
-      <xsl:otherwise>
-        <tab xml:space="preserve">&#9;</tab>
-      </xsl:otherwise>
-    </xsl:choose>
+    <tab>
+      <xsl:attribute name="xml:space" select="'preserve'"/>
+        <xsl:apply-templates select="@*"/>
+      <xsl:text>&#9;</xsl:text>
+    </tab>
   </xsl:template>
 
   <xsl:template match="w:br" mode="wml-to-dbk">
@@ -1122,7 +1164,6 @@
   </xsl:template>
 
  <xsl:template match="w:sym" mode="omml2mml" priority="120">
-    <xsl:message select="'hurz'"/>
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
 

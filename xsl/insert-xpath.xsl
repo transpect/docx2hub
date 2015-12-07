@@ -23,6 +23,8 @@
   exclude-result-prefixes="xs docx2hub mml tr dbk cp"
   version="2.0">
   
+  <xsl:param name="srcpaths-on-runs" as="xs:string" select="'yes'"/>
+
   <xsl:function name="docx2hub:srcpath" as="xs:string">
     <xsl:param name="elt" as="element(*)?"/>
     <xsl:sequence select="string-join(
@@ -39,21 +41,35 @@
   </xsl:function>
 
   <xsl:variable name="docx2hub:srcpath-elements" as="xs:string+"
-    select="( 'w:p',
-              'w:t',
-              'w:tbl',
-              'w:tc',
-              'w:hyperlink',
-              'w:r',
-              'w:tab',
-              'w:br',
-              'v:imagedata',
-              'o:OLEObject',
-              'w:drawing',
-              'w:comment',
-              'w:endnote',
-              'w:footnote'
-            )"/>
+    select="if ($srcpaths-on-runs = 'yes')
+            then ('w:p',
+                  'w:t',
+                  'w:tbl',
+                  'w:tc',
+                  'w:hyperlink',
+                  'w:r',
+                  'w:tab',
+                  'w:br',
+                  'v:imagedata',
+                  'o:OLEObject',
+                  'w:drawing',
+                  'w:comment',
+                  'w:endnote',
+                  'w:footnote'
+                 )
+             else ('w:p',
+                  'w:tbl',
+                  'w:tc',
+                  'w:hyperlink',
+                  'w:tab',
+                  'w:br',
+                  'v:imagedata',
+                  'o:OLEObject',
+                  'w:drawing',
+                  'w:comment',
+                  'w:endnote',
+                  'w:footnote'
+                 )"/>
 
   <xsl:template match="*[ $srcpaths = 'yes' ]
                         [ name() = $docx2hub:srcpath-elements ]

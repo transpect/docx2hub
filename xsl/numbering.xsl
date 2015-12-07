@@ -69,6 +69,7 @@
     <xsl:attribute name="docx2hub:num-abstract" select="../@w:abstractNumId"/>
     <xsl:attribute name="docx2hub:num-ilvl" select="@w:ilvl"/>
     <xsl:attribute name="docx2hub:num-id" select="$numId"/>
+    <xsl:attribute name="docx2hub:num-lvlRestart" select="w:lvlRestart/@w:val"/>
     <xsl:if test="exists($restart)">
       <xsl:attribute name="docx2hub:num-restart-level" select="$restart"/>
     </xsl:if>
@@ -107,6 +108,8 @@
     <xsl:variable name="super-level-before" as="xs:boolean"
       select="some $p in $same-abstract-in-between satisfies 
               $p/@docx2hub:num-ilvl &lt; $context/@docx2hub:num-ilvl"/>
+    <xsl:attribute name="docx2hub:num-super-level-before" select="$super-level-before"/>
+    <xsl:attribute name="docx2hub:num-last-same-signature" select="exists($last-same-signature)"/>
     <xsl:choose>
       <xsl:when test="empty ($last-same-signature)
                       or 
@@ -149,7 +152,7 @@
         </xsl:if>
         <xsl:variable name="style-atts" select="key('style-by-name', $context/@role, $context/root())/@*" as="attribute(*)*"/>
         <xsl:variable name="ad-hoc-atts" select="$context/@*" as="attribute(*)*"/>
-        <xsl:variable name="pPr" as="attribute(*)*">
+        <xsl:variable name="pPr-from-numPr" as="attribute(*)*">
           <xsl:apply-templates mode="numbering" select="$lvl/w:pPr/@*">
             <xsl:with-param name="context" select="$context" tunnel="yes"/>
           </xsl:apply-templates>
@@ -159,7 +162,19 @@
             <xsl:with-param name="context" select="$context" tunnel="yes"/>
           </xsl:apply-templates>
         </xsl:variable>
-        <xsl:sequence select="$style-atts[name() = $pPr/name()], $pPr, $ad-hoc-atts[name() = $pPr/name()]"/>
+        <xsl:variable name="immediate-first" as="attribute(*)*">
+          <xsl:choose>
+            <xsl:when test="$context/w:numPr">
+              <xsl:sequence select="$style-atts[name() = $pPr-from-numPr/name()], $pPr-from-numPr"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <!-- the declaration priorities within $pPr (taking into account style inheritance) should have
+                been sorted out when calculating $pPr during prop mapping -->
+              <xsl:sequence select="$pPr-from-numPr, $style-atts[name() = $pPr-from-numPr/name()]"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:sequence select="$immediate-first, $ad-hoc-atts[name() = $pPr-from-numPr/name()]"/>
         <xsl:apply-templates select="$context/dbk:tabs" mode="wml-to-dbk"/>
         <phrase role="hub:identifier">
           <xsl:sequence select="$rPr, $style-atts[name() = $rPr/name()], $ad-hoc-atts[name() = $rPr/name()]"/>
@@ -394,7 +409,8 @@
   </xsl:function>
   
   <xsl:template match="@docx2hub:num-signature | @docx2hub:num-continue | @docx2hub:num-abstract | @docx2hub:num-id 
-                       | @docx2hub:num-restart-val | @docx2hub:num-ilvl | @docx2hub:num-restart-level
+                       | @docx2hub:num-restart-val | @docx2hub:num-ilvl | @docx2hub:num-restart-level | @docx2hub:num-lvlRestart
+                       | @docx2hub:num-super-level-before | @docx2hub:num-last-same-signature
                        | @docx2hub:num-initial-skip-increment" mode="docx2hub:join-runs"/>
   
 </xsl:stylesheet>

@@ -18,7 +18,8 @@
   xmlns:letex		= "http://www.le-tex.de/namespace"
   xmlns:mml             = "http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"
   xmlns:css="http://www.w3.org/1996/css"
-  xmlns:docx2hub = "http://www.le-tex.de/namespace/docx2hub"
+  xmlns:docx2hub ="http://transpect.io/docx2hub"
+  xmlns:tr="http://transpect.io"
   xmlns="http://docbook.org/ns/docbook"
 
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn letex mml"

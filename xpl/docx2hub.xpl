@@ -38,7 +38,7 @@
     <p:documentation>Schematron that will validate the intermediate format after merging/splitting Word field functions.</p:documentation>
   </p:input>
   <p:input port="result-schematron">
-    <p:document href="schematron/result.sch.xml"/>
+    <p:document href="../sch/result.sch.xml"/>
     <p:documentation>Schematron that will validate the flat Hub. It will chiefly report error messages that were 
       embedded during conversion.</p:documentation>
   </p:input>

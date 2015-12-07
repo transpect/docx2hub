@@ -81,8 +81,8 @@
     <xsl:variable name="field-code" select="normalize-space(string-join($nodes/w:instrText, ''))" as="xs:string"/>
     <xsl:choose>
       <!-- construct link element -->
-      <xsl:when test="matches($field-code, '^REF\s_([a-z]+\d+)\s?.+\\h(\s|$)')"><!-- hyperlink to bookmark -->
-        <xsl:variable name="linkend" select="replace($field-code, '^REF\s_([a-z]+\d+)\s?.+$', '$1', 'i')" as="xs:string"/>
+      <xsl:when test="matches($field-code, '^REF\s([_A-Za-z]+\d+)\s?.+\\h(\s|$)')"><!-- hyperlink to bookmark -->
+        <xsl:variable name="linkend" select="replace($field-code, '^REF\s([_A-Za-z]+\d+)\s?.+$', '$1')" as="xs:string"/>
         <link linkend="{$linkend}">
           <xsl:apply-templates select="$nodes" mode="#current"/>
         </link>    
@@ -1096,7 +1096,7 @@
   <xsl:template match="w:tab" mode="wml-to-dbk">
     <tab>
       <xsl:attribute name="xml:space" select="'preserve'"/>
-        <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:text>&#9;</xsl:text>
     </tab>
   </xsl:template>

@@ -198,6 +198,7 @@
         <prop name="w:tcMar/w:left" type="docx-padding" />
         <prop name="w:tcMar/w:right" type="docx-padding" />
         <prop name="w:tcMar/w:top" type="docx-padding" />
+        <prop name="w:tcPrChange"/>
         <prop name="w:tcW/@w:w" type="docx-length-attr" target-name="css:width"/>
         <prop name="w:textDirection" type="docx-text-direction"/>
         <prop name="w14:textFill" implement="maybe later"/>

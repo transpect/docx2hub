@@ -15,14 +15,13 @@
   xmlns:rel		= "http://schemas.openxmlformats.org/package/2006/relationships"
   xmlns:exsl		= 'http://exslt.org/common'
   xmlns:saxon		= "http://saxon.sf.net/"
-  xmlns:letex		= "http://www.le-tex.de/namespace"
   xmlns:mml             = "http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns:docx2hub ="http://transpect.io/docx2hub"
   xmlns:tr="http://transpect.io"
   xmlns="http://docbook.org/ns/docbook"
 
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn letex mml"
+  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn mml"
   >
 
   <!-- We don’t need to include MS Word localized style names if we trust it to

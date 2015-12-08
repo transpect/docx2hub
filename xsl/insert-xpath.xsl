@@ -5,7 +5,7 @@
   xmlns:dbk="http://docbook.org/ns/docbook"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
   xmlns:tr="http://transpect.io"
-  xmlns:mml="http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
   xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main"

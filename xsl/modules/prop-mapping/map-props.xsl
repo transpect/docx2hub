@@ -6,7 +6,7 @@
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:tr="http://transpect.io"
   xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
-  xmlns:mml="http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:o="urn:schemas-microsoft-com:office:office"
   xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"

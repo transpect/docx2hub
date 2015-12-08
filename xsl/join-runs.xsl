@@ -15,7 +15,7 @@
   xmlns:saxon="http://saxon.sf.net/"
   xmlns:tr="http://transpect.io"
   xmlns:docx2hub="http://transpect.io/docx2hub"
-  xmlns:mml="http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"

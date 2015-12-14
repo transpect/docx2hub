@@ -5,7 +5,6 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:docx2hub="http://transpect.io/docx2hub"
-  xmlns:letex="http://www.le-tex.de/namespace"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:tr="http://transpect.io"
   version="1.0" 

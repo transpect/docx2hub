@@ -81,7 +81,7 @@
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
-  <p:import href="http://transpect.le-tex.de/calabash-extensions/ltx-lib.xpl"/>
+  <p:import href="http://transpect.io/calabash-extensions/transpect-lib.xpl"/>
   
   <p:import href="http://transpect.io/xproc-util/file-uri/xpl/file-uri.xpl"/>
   <p:import href="http://transpect.io/xproc-util/xml-model/xpl/prepend-hub-xml-model.xpl"/>

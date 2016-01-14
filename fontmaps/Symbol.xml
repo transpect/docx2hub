@@ -354,6 +354,7 @@
   <symbol number="00EF" entity="&#x00EF;" char="&#x23AA;"/><!-- CURLY BRACKET EXTENSION # for Unicode 3.2 and later -->
 <!--  <symbol number="F0F0" entity="&#xF0F0;" char="&#xF8FF;"/> Apple logo -->
 <!--  <symbol number="00F0" entity="&#x00F0;" char="&#xF8FF;"/> Apple logo -->
+  <symbol number="F080" entity="&#xF080;" char="&#x25A1;"/><!-- WHITE SQUARE -->
   <symbol number="F0F1" entity="&#xF0F1;" char="&#x3009;"/><!-- RIGHT ANGLE BRACKET -->
   <symbol number="00F1" entity="&#x00F1;" char="&#x3009;"/><!-- RIGHT ANGLE BRACKET -->
   <symbol number="F0F2" entity="&#xF0F2;" char="&#x222B;"/><!-- INTEGRAL -->

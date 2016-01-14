@@ -68,6 +68,7 @@
   <symbol number="003F" entity="&#x003F;" char="&#x003F;"/><!-- QUESTION MARK -->
   <symbol number="F040" entity="&#xF040;" char="&#x2245;"/><!-- APPROXIMATELY EQUAL TO -->
   <symbol number="0040" entity="&#x0040;" char="&#x2245;"/><!-- APPROXIMATELY EQUAL TO -->
+  <symbol number="F060" entity="&#xF060;" char="&#x0304;"/><!-- COMBINING MACRON -->
   <symbol number="F041" entity="&#xF041;" char="&#x0391;"/><!-- GREEK CAPITAL LETTER ALPHA -->
   <symbol number="0041" entity="&#x0041;" char="&#x0391;"/><!-- GREEK CAPITAL LETTER ALPHA -->
   <symbol number="F042" entity="&#xF042;" char="&#x0392;"/><!-- GREEK CAPITAL LETTER BETA -->
@@ -384,4 +385,7 @@
   <symbol number="F0FE" entity="&#xF0FE;" char="&#x23AD;"/><!-- RIGHT CURLY BRACKET LOWER HOOK # for Unicode 3.2 and later -->
   <symbol number="00FE" entity="&#x00FE;" char="&#x23AD;"/><!-- RIGHT CURLY BRACKET LOWER HOOK # for Unicode 3.2 and later -->
   <symbol number="F0FF" entity="&#xF0FF;" char="&#x2610;" font="Segoe UI Symbol"/><!-- BALLOT BOX -->
+
+  
+  
 </symbols>

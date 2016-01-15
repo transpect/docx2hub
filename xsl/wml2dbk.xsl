@@ -1092,6 +1092,15 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
+  <xsl:template match="w:fldSimple[
+                         matches(@w:instr, '^\s*REF\s(_[A-Za-z]+\d+)\s?.+\\h.+$')
+                       ]" mode="wml-to-dbk" priority="1">
+    <xsl:variable name="linkend" select="replace(@w:instr, '^\s*REF\s(_[A-Za-z]+\d+)\s?.+$', '$1', 'i')" as="xs:string"/>
+    <link linkend="{$linkend}">
+      <xsl:apply-templates mode="#current"/>
+    </link>
+  </xsl:template>
+
   <!-- whitespace elements, etc. -->
   <xsl:template match="w:tab" mode="wml-to-dbk">
     <tab>

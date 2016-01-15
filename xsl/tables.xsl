@@ -258,6 +258,9 @@
 <!--      <xsl:copy-of select="ancestor::w:tbl[1]/w:tblPr/@css:*[not(matches(local-name(), '^(border|background-color|width)'))]"/>-->
       <xsl:copy-of select="$cell-style"/>
       <xsl:copy-of select="ancestor::w:tr[1]/@css:*[not(matches(local-name(), '^(background-color|(min-)?height|width)'))]"/>
+      <xsl:if test="w:p[@css:text-align] and (every $t in w:p satisfies ($t[@css:text-align] and $t/@css:text-align=w:p[1]/@css:text-align))">
+        <xsl:copy-of select="w:p[1]/@css:text-align"/>  
+      </xsl:if>
       <xsl:variable name="is-first-cell" select="tr:node-index-of(../w:tc, .) = 1" as="xs:boolean"/>
       <xsl:variable name="is-last-cell" select="tr:node-index-of(../w:tc, .) = count(../w:tc)" as="xs:boolean"/>
       <xsl:variable name="is-first-row-in-group" select="tr:node-index-of(../../w:tr, ..) = 1" as="xs:boolean"/>

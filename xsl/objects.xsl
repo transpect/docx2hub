@@ -23,26 +23,30 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr w10 mml">
 
-  <!-- for the time being, encapsulate this markup in a <sidebar role="hub:foreign">.
-    If there is content within this markup for which a Hub conversion exists, the usual
-    conversion rules will apply. -->
+  <!-- OOXML spec 17.17.3 Roundtripping Alternate Content
+       mc:AlternateContent specifies a markup for the storage of content which is not defined by ISO/IEC 29500.
+       The new mc:Choice is used for the new extensions and mc:Fallback is generated for backward compatibility.
+       The templates below drop mc:Choice and use mc:Fallback per default to comply with ISO/IEC 29500.
+       
+       <mc:AlternateContent>
+         <mc:Choice require="something">...</mc:Choice>
+         <mc:Fallback>...</mc:Fallback>
+       </mc:AlternateContent>
+  -->
+  
   <xsl:template match="mc:AlternateContent" mode="wml-to-dbk">
-    <xsl:variable name="elt-name" as="xs:string">
-      <xsl:choose>
-        <xsl:when test="parent::w:r | parent::w:p">
-          <xsl:sequence select="'phrase'"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:sequence select="'sidebar'"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:element name="{$elt-name}">
+    <xsl:variable name="element-name" select="if(parent::w:r|parent::w:p) then 'phrase' else 'sidebar'" as="xs:string"/>
+    <xsl:element name="{$element-name}">
       <xsl:attribute name="role" select="'hub:foreign'"/>
       <xsl:copy-of select="parent::*/@srcpath"/>
-      <xsl:apply-templates select="." mode="foreign"/>
+      <xsl:apply-templates select="mc:Fallback/node()" mode="foreign"/>
     </xsl:element>
   </xsl:template>
+  
+  <!-- This markup tends to be very verbose. We drop it in a very early stage to save memory and 
+       accelerate subsequent processing. -->
+  
+  <xsl:template match="mc:AlternateContent/mc:Choice" mode="insert-xpath"/>
 
   <xsl:template match="@* | * | w:drawing | w:txbxContent | w:pict" mode="foreign">
     <xsl:copy copy-namespaces="no">

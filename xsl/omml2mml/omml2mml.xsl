@@ -242,8 +242,9 @@
   </xsl:template>
 
   <xsl:template name="CreateMathMLMatrixAttr">
-    <xsl:param name="mcJc"/>
-    <xsl:variable name="sLowerCaseMcjc" select="translate($mcJc, $alpha-uppercase, $alpha-lowercase)"/>
+    <xsl:param name="mcJc" as="xs:string+"/>
+    <xsl:variable name="sLowerCaseMcjc" select="translate(string-join($mcJc, ' '), $alpha-uppercase, $alpha-lowercase)"/>
+    
     <xsl:choose>
       <xsl:when test="$sLowerCaseMcjc='left'">
         <xsl:attribute name="columnalign">left</xsl:attribute>

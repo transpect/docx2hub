@@ -110,19 +110,13 @@
                                                and count(w:r/w:fldChar[@w:fldCharType = 'end']) = count(w:r/w:fldChar[@w:fldCharType = 'begin'])
                                                and w:r[w:fldChar/@w:fldCharType = 'begin'][1]/preceding-sibling::w:r[w:fldChar/@w:fldCharType = 'end']
                                                and not(.//w:t)]"/>
-<!--             <xsl:message> -->
-<!--               <xsl:copy-of select="$first-cut" copy-namespaces="no"/> -->
-<!--             </xsl:message> -->
             <xsl:variable name="first-node">
               <xsl:element name="{$nodes[1]/name()}">
                 <xsl:copy-of select="$nodes[1]/@*"/>
-                <xsl:copy-of select="$nodes[1]/w:pPr"/>
+                <xsl:copy-of select="$nodes[1]/*"/>
                 <xsl:copy-of select="$nodes[1]/node()[. &gt;&gt; $first-cut]"/>                
               </xsl:element>
             </xsl:variable>
-<!--             <xsl:message> -->
-<!--               <xsl:copy-of select="$first-node" copy-namespaces="no"/> -->
-<!--             </xsl:message> -->
             <xsl:apply-templates select="$first-node" mode="wml-to-dbk"/>
             <xsl:apply-templates select="$nodes[position() &gt; 1 and not(position() = last())] except $split" mode="wml-to-dbk"/>
           </xsl:when>

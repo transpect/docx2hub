@@ -104,21 +104,11 @@
                 </xsl:with-param>
               </xsl:call-template>
             </xsl:if>
-            <xsl:variable name="first-cut" select="($nodes[1]/w:r/w:fldChar[@w:fldCharType = 'separate'])[1]"/>
-            <xsl:variable name="first-beg" select="($nodes[1]/w:r/w:fldChar[@w:fldCharType = 'begin'])[1]"/>
             <xsl:variable name="split" select="$nodes[w:r/w:fldChar[@w:fldCharType = 'begin'] and w:r/w:fldChar[@w:fldCharType = 'end']
                                                and count(w:r/w:fldChar[@w:fldCharType = 'end']) = count(w:r/w:fldChar[@w:fldCharType = 'begin'])
                                                and w:r[w:fldChar/@w:fldCharType = 'begin'][1]/preceding-sibling::w:r[w:fldChar/@w:fldCharType = 'end']
                                                and not(.//w:t)]"/>
-            <xsl:variable name="first-node">
-              <xsl:element name="{$nodes[1]/name()}">
-                <xsl:copy-of select="$nodes[1]/@*"/>
-                <xsl:copy-of select="$nodes[1]/*"/>
-                <xsl:copy-of select="$nodes[1]/node()[. &gt;&gt; $first-cut]"/>                
-              </xsl:element>
-            </xsl:variable>
-            <xsl:apply-templates select="$first-node" mode="wml-to-dbk"/>
-            <xsl:apply-templates select="$nodes[position() &gt; 1 and not(position() = last())] except $split" mode="wml-to-dbk"/>
+            <xsl:apply-templates select="$nodes[not(position() = last())] except $split" mode="wml-to-dbk"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:variable name="first-node">

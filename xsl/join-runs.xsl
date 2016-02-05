@@ -417,6 +417,104 @@
     </xsl:copy>
   </xsl:template>
   
+  <!-- Making field function nesting explicit:
+       – 'separate' and 'end' fldChars link to their 'begin' fldChar
+       – the nesting level is given at each 'begin' fldChar, starting from 1 for the topmost nesting
+   -->
+  <xsl:template match="/" mode="docx2hub:join-instrText-runs">
+    <xsl:variable name="nested-field-functions" as="document-node()">
+      <xsl:call-template name="docx2hub:nest-field-functions">
+        <xsl:with-param name="input">
+          <xsl:document>
+            <xsl:sequence select="//w:fldChar"/>
+          </xsl:document>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:next-match>
+      <xsl:with-param name="nested-field-functions" select="$nested-field-functions" tunnel="yes"/>
+    </xsl:next-match>
+  </xsl:template>
+  
+  <!-- this happened in a previous mode: -->
+  <xsl:template match="w:fldChar" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:copy>
+      <xsl:attribute name="xml:id" select="concat('fldChar_', generate-id())"/>
+      <xsl:apply-templates select="@*" mode="#current"/>
+    </xsl:copy>    
+  </xsl:template>
+  
+  <xsl:template name="docx2hub:nest-field-functions" as="document-node()">
+    <xsl:param name="input" as="document-node()"/><!-- containing raw w:fldChar or nested docx2hub:field-function -->
+    <xsl:variable name="grouping" as="element(*)*">
+      <xsl:for-each-group select="$input/*" 
+                          group-starting-with="w:fldChar[@w:fldCharType = 'begin']
+                                                        [following-sibling::w:fldChar[1]/@w:fldCharType = 'separate']
+                                                        [following-sibling::w:fldChar[2]/@w:fldCharType = 'end']
+                                               | 
+                                               w:fldChar[@w:fldCharType = 'begin']
+                                                        [following-sibling::w:fldChar[1]/@w:fldCharType = 'end']">
+        <xsl:choose>
+          <xsl:when test="self::w:fldChar[@w:fldCharType = 'begin']
+                                         [following-sibling::w:fldChar[1]/@w:fldCharType = 'separate']
+                                         [following-sibling::w:fldChar[2]/@w:fldCharType = 'end']
+                          |
+                          self::w:fldChar[@w:fldCharType = 'begin']
+                                         [following-sibling::w:fldChar[1]/@w:fldCharType = 'end']">
+            <xsl:variable name="end" as="element(w:fldChar)" 
+              select="self::w:fldChar[@w:fldCharType = 'begin']
+                              /following-sibling::w:fldChar[position() = (1, 2)][@w:fldCharType = 'end']"/>
+            <docx2hub:field-function>
+              <xsl:apply-templates select="current-group()[. &lt;&lt; $end] union $end" mode="#current">
+                <xsl:with-param name="begin" as="element(w:fldChar)" select="." tunnel="yes"/>
+              </xsl:apply-templates>
+            </docx2hub:field-function>
+            <xsl:apply-templates select="current-group()[. &gt;&gt; $end]" mode="#current"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates select="current-group()" mode="#current"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each-group>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="count($grouping) = count($input/*)">
+        <xsl:document>
+          <xsl:sequence select="$grouping"/>
+        </xsl:document>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="docx2hub:nest-field-functions">
+          <xsl:with-param name="input">
+            <xsl:document>
+              <xsl:sequence select="$grouping"/>
+            </xsl:document>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="w:fldChar[@w:fldCharType = ('separate', 'end')]/@xml:id" mode="docx2hub:join-instrText-runs">
+    <!-- $begin is present while the field functions are nested, detached from their original context: --> 
+    <xsl:param name="begin" as="element(w:fldChar)?" tunnel="yes"/>
+    <!-- $nested-field-functions is present when the complete document is processed (after xsl:next-match for /),
+      adding the nesting info (@linkend that points to the begin fldChar) to the separate/end fldChars: --> 
+    <xsl:param name="nested-field-functions" as="document-node()?" tunnel="yes"/>
+    <xsl:copy/>
+    <xsl:if test="exists($begin)">
+      <xsl:attribute name="linkend" select="$begin/@xml:id"/>
+    </xsl:if>
+    <xsl:if test="exists($nested-field-functions)">
+      <xsl:variable name="corresponding-item-in-nesting" as="element(w:fldChar)" 
+        select="key('docx2hub:item-by-id', ., $nested-field-functions)"/>
+      <xsl:copy-of select="$corresponding-item-in-nesting/@linkend"/>
+      <xsl:attribute name="level" select="count($corresponding-item-in-nesting/ancestor::docx2hub:field-function)"/>
+    </xsl:if>
+  </xsl:template>
+  
+  
+  
 <!-- group more than one mml:mi[@mathvariant='normal'] element to mtext -->
   <xsl:template match="mml:*[mml:mi]" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">

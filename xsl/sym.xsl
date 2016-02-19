@@ -21,7 +21,7 @@
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x docx2hub exsl saxon fn tr mml">
 
   <xsl:variable name="docx2hub:symbol-font-names" as="xs:string+" 
-    select="('Math1', 'Symbol', 'Wingdings')"/>
+    select="('Math1', 'Symbol', 'Wingdings', 'Wingdings 3')"/>
 
   <xsl:variable name="docx2hub:symbol-replacement-rfonts" as="element(w:rFonts)">
     <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math"/>

@@ -35,6 +35,9 @@
                        |
                        w:t[string-length(.)=1 and ../w:rPr/w:rFonts/@w:ascii=$docx2hub:symbol-font-names]
                        |
+                       w:t[string-length(.)=1 and ../self::w:r/@role and 
+                       //css:rule[@layout-type eq 'inline'][@css:font-family=$docx2hub:symbol-font-names]/@name = ../self::w:r/@role]
+                       |
                        w:lvlText[../w:rPr/w:rFonts/@w:ascii=$docx2hub:symbol-font-names]/@w:val
                          [if (matches(., '%\d')) then not(../../w:numFmt/@w:val = 'decimal') else true()]
                        |
@@ -54,7 +57,10 @@
                                           if (parent::w:lvlText[../w:rPr/w:rFonts/@w:ascii=$docx2hub:symbol-font-names])
                                           then ../../w:rPr/w:rFonts/@w:ascii
                                           else parent::w:lvlText/../@css:font-family
-                                        else (../w:rPr/w:rFonts/@w:ascii, ../@css:font-family)[1]" as="xs:string?"/>
+                                        else 
+                                        if(//css:rule[@layout-type eq 'inline'][@css:font-family=$docx2hub:symbol-font-names]/@name = current()/../self::w:r/@role)
+                                        then //css:rule[@layout-type eq 'inline'][@name = current()/../self::w:r/@role]/@css:font-family
+                                          else (../w:rPr/w:rFonts/@w:ascii, ../@css:font-family)[1]" as="xs:string?"/>
     <xsl:if test="empty($font)">
       <xsl:call-template name="signal-error">
         <xsl:with-param name="error-code" select="'W2D_080'"/>

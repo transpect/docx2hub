@@ -15,7 +15,7 @@
   <xsl:function name="docx2hub:follow-styleLinks" as="element(w:abstractNum)?">
     <xsl:param name="abstractNum" as="element(w:abstractNum)?"/>
     <xsl:variable name="resolved" as="element(w:abstractNum)?"
-      select="key('abstractNum-by-styleLink', $abstractNum/w:numStyleLink/@w:val, root($abstractNum))"/>
+      select="key('abstractNum-by-styleLink', $abstractNum/w:numStyleLink/@w:val, $root)"/>
     <xsl:choose>
       <xsl:when test="exists($resolved)">
         <xsl:sequence select="docx2hub:follow-styleLinks($resolved)"/>
@@ -34,15 +34,18 @@
                   'abstract-numbering-by-id', 
                   key(
                     'numbering-by-id', 
-                    @w:val 
-                  )/w:abstractNumId/@w:val
+                    @w:val,
+                    $root
+                  )/w:abstractNumId/@w:val, 
+                  $root
                 )
               )"/>
     <xsl:variable name="lvl" as="element(w:lvl)?" select="$abstractNum/w:lvl[@w:ilvl = $ilvl]"/>
     <xsl:variable name="lvlOverride" as="element(w:lvlOverride)?"
       select="key(
                 'numbering-by-id', 
-                @w:val 
+                @w:val,
+                $root
               )/w:lvlOverride[@w:ilvl = $ilvl]"/>
     <xsl:apply-templates select="$lvl" mode="#current">
       <xsl:with-param name="numId" select="@w:val"/>

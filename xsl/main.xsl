@@ -71,4 +71,6 @@
     />
   
 
+<xsl:variable name="root" as="document-node()" select="/"/>
+
 </xsl:stylesheet>

@@ -12,6 +12,7 @@
   xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing"
   xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
   xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
+  xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex"
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:o="urn:schemas-microsoft-com:office:office"
   xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"

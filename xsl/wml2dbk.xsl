@@ -1012,6 +1012,9 @@
             <xsl:element name="{$func/@element}">
               <xsl:if test="$func/@attrib">
                 <xsl:attribute name="{$func/@attrib}" select="replace($tokens[position() = $func/@value], '&quot;', '')"/>
+                <xsl:if test="$func/@role">
+                  <xsl:attribute name="role" select="$func/@role"/>
+                </xsl:if>
                 <xsl:apply-templates select="$text" mode="#current"/>
               </xsl:if>
             </xsl:element>
@@ -1034,7 +1037,7 @@
     <tr:field-function name="INDEX" destroy="yes"/>
     <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="2"/>
     <tr:field-function name="PAGE"/>
-    <tr:field-function name="PAGEREF" element="link" attrib="linkend" value="2"/>
+    <tr:field-function name="PAGEREF" element="link" attrib="linkend" role="page" value="2"/>
     <tr:field-function name="RD"/>
     <tr:field-function name="REF"/>
     <tr:field-function name="ADVANCE"/>

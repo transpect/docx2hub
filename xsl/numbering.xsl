@@ -60,7 +60,23 @@
   </xsl:template>
 
   <!-- It seems that numId = '0' is for lists without marker? -->
-  <xsl:template match="w:numId[@w:val = '0']" mode="docx2hub:abstractNum"/>
+  <xsl:template match="w:numId[@w:val = '0']" mode="docx2hub:abstractNum" xml:id="manual-marker-aux-atts">
+      <!-- Happens for <w:numId w:val="0"/>, when there is a manually set list counter -->
+    <!-- Caution: key() seems to return empty sequence when this is invoked with saxon in mode {http://transpect.io/docx2hub}remove-redundant-run-atts -->
+    <xsl:variable name="numPr-from-style" 
+      select="key('docx2hub:style-by-role', ../../@role)/w:numPr" as="element(w:numPr)?"/>
+    <xsl:variable name="abstractNum-from-style" 
+      select="docx2hub:abstractNum-for-numPr($numPr-from-style)" as="element(w:abstractNum)?"/>
+    <xsl:if test="$abstractNum-from-style">
+      <!-- If the automatically generated numbering has been replaced with manually assigned numbering,
+        we still must convey the abstract numbering that originally pertained to this paragraph.
+        Otherwise the numbering will be reset at the next automatic numbering occasion for
+        this abstractNum/ilvl. See @xml:id=('continue1', 'continue2') -->
+      <xsl:attribute name="docx2hub:num-abstract" select="$abstractNum-from-style/@w:abstractNumId"/>
+      <xsl:attribute name="docx2hub:num-signature" 
+        select="string-join(($abstractNum-from-style/@w:abstractNumId, $numPr-from-style/w:ilvl[1]/@w:val), '_')"/>
+    </xsl:if>
+  </xsl:template>
 
   <xsl:template match="w:lvl" mode="docx2hub:abstractNum">
     <xsl:param name="numId" as="xs:string"/>
@@ -78,11 +94,19 @@
     </xsl:if>
     <xsl:attribute name="docx2hub:num-restart-val" 
         select="($start-override, for $s in w:start/@w:val return xs:integer($s), 1)[1]"/>
+    <xsl:if test="$start-override">
+      <xsl:attribute name="docx2hub:num-start-override" select="$start-override"/>
+    </xsl:if>
   </xsl:template>
   
   <!-- collateral (only the first in a row should trigger a reset) -->
-  <xsl:template match="@docx2hub:num-signature[../preceding-sibling::*[1]/@docx2hub:num-signature = current()]"
-    mode="docx2hub:join-instrText-runs">
+  <xsl:template match="@docx2hub:num-signature[../preceding-sibling::*[1]
+                                                                      [@docx2hub:num-signature = current()]
+                                              ][ (: not sure about this :)
+                                                not(../@docx2hub:num-start-override)
+                                              ]"
+    mode="docx2hub:join-instrText-runs" xml:id="continue1">
+    <!-- see @xml:id='manual-marker-aux-atts' -->
     <xsl:attribute name="docx2hub:num-continue" select="."/>
   </xsl:template>
 
@@ -119,6 +143,10 @@
                       $super-level-before">
         <xsl:copy/>
         <xsl:attribute name="docx2hub:num-restart-level" select="0"/>
+      </xsl:when>
+      <xsl:when test="(: $last-same-signature[not(@docx2hub:num-ilvl)] :) ../@docx2hub:num-start-override" xml:id="continue2">
+        <!-- see #manual-marker-aux-atts -->
+        <xsl:copy/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:attribute name="docx2hub:num-continue" select="."/>
@@ -343,6 +371,9 @@
                 select="if ($context-for-counter)
                         then tr:get-level-counter($context-for-counter, $pattern-lvl)
                         else $pattern-lvl/w:start/@w:val"/>
+              <xsl:if test="$context/@srcpath = 'word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[2026]'">
+                <xsl:message select="'QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQq ', $level-counter"/>
+              </xsl:if>
               <xsl:number value="$level-counter"
                           format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
             </xsl:matching-substring>
@@ -376,10 +407,14 @@
     <xsl:variable name="level-counter" as="xs:integer" 
       select="(for $s in $start-of-relevant/@docx2hub:num-restart-val return xs:integer($s), 1)[1] 
               + count(root($context)//w:p[. &gt;&gt; $start-of-relevant][. &lt;&lt; $context]
-                                         [@docx2hub:num-continue = $start-of-relevant/@docx2hub:num-signature])
+                                         [@docx2hub:num-continue = $start-of-relevant/@docx2hub:num-signature]
+                                         [not(w:numPr/w:numId/@w:val = '0')]
+                     )
               + count($context[not(. is $start-of-relevant)])
               + count($start-of-relevant/@docx2hub:num-initial-skip-increment)"/>
-    
+    <xsl:if test="$context/@srcpath = 'word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[2026]'">
+      <xsl:message select="'VVVVVVVVVVVVVVVVVVVVVVVVV ', $level-counter, $start-of-relevant/@docx2hub:num-restart-val"></xsl:message>
+    </xsl:if>
     <xsl:sequence select="$level-counter"/>
   </xsl:function>
 
@@ -414,6 +449,6 @@
   <xsl:template match="@docx2hub:num-signature | @docx2hub:num-continue | @docx2hub:num-abstract | @docx2hub:num-id 
                        | @docx2hub:num-restart-val | @docx2hub:num-ilvl | @docx2hub:num-restart-level | @docx2hub:num-lvlRestart
                        | @docx2hub:num-super-level-before | @docx2hub:num-last-same-signature
-                       | @docx2hub:num-initial-skip-increment" mode="docx2hub:join-runs"/>
+                       | @docx2hub:num-initial-skip-increment | @docx2hub:num-start-override" mode="docx2hub:join-runs"/>
   
 </xsl:stylesheet>

@@ -29,9 +29,10 @@
                                    | w:tblPr/w:tblW
                                    | @srcpath | @css:orientation" mode="#current"/>
       <tgroup>
-        <xsl:attribute name="cols">
-          <xsl:value-of select="count(w:tblGrid/w:gridCol)"/>
-        </xsl:attribute>
+        <xsl:attribute name="cols" select="(
+                                             count(w:tblGrid/w:gridCol),
+                                             max(for $row in w:tr return count($row/w:tc)) (: fallback if w:tblGrid is missing :) 
+                                           )[not(. = 0)][1]"/>
         <xsl:variable name="insideH-width" as="xs:string?" 
           select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
         <xsl:variable name="insideV-width" as="xs:string?" 

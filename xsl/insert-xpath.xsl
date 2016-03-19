@@ -219,6 +219,9 @@
              Spec sez dat w:asciiTheme has precedence over w:ascii (I don’t find it now, and it wasn’t all clear there) -->
         <xsl:sequence select="($themes/a:theme/a:themeElements/a:fontScheme/a:minorFont/a:latin/@typeface)[1]"/>
       </xsl:when>
+      <xsl:when test="not($rFonts/@w:ascii)">
+        <xsl:sequence select="'Arial'"/>
+      </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$rFonts/@w:ascii"/>
       </xsl:otherwise>

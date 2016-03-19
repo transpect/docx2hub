@@ -371,9 +371,6 @@
                 select="if ($context-for-counter)
                         then tr:get-level-counter($context-for-counter, $pattern-lvl)
                         else $pattern-lvl/w:start/@w:val"/>
-              <xsl:if test="$context/@srcpath = 'word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[2026]'">
-                <xsl:message select="'QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQq ', $level-counter"/>
-              </xsl:if>
               <xsl:number value="$level-counter"
                           format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
             </xsl:matching-substring>
@@ -412,9 +409,6 @@
                      )
               + count($context[not(. is $start-of-relevant)])
               + count($start-of-relevant/@docx2hub:num-initial-skip-increment)"/>
-    <xsl:if test="$context/@srcpath = 'word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[2026]'">
-      <xsl:message select="'VVVVVVVVVVVVVVVVVVVVVVVVV ', $level-counter, $start-of-relevant/@docx2hub:num-restart-val"></xsl:message>
-    </xsl:if>
     <xsl:sequence select="$level-counter"/>
   </xsl:function>
 

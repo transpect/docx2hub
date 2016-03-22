@@ -34,7 +34,7 @@
     <p:empty/>
   </p:input>
   <p:input port="single-tree-schematron">
-    <p:document href="schematron/single-tree.sch.xml"/>
+    <p:document href="../sch/single-tree.sch.xml"/>
     <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
   </p:input>
   <p:input port="field-functions-schematron">

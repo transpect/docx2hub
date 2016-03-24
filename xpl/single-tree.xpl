@@ -18,12 +18,26 @@
   <p:input port="xslt" primary="false">
     <p:document href="../xsl/main.xsl"/>
   </p:input>
-  <p:output port="result" primary="true"/>
+  <p:input port="insert-xpath-schematron">
+    <p:document href="../sch/insert-xpath.sch.xml"/>
+    <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
+  </p:input>
+  <p:input port="single-tree-schematron">
+    <p:document href="../sch/single-tree.sch.xml"/>
+    <p:documentation>Schematron that will validate the entire Word container document (after mode apply-changemarkup).</p:documentation>
+  </p:input>
+  <p:output port="result" primary="true">
+    <p:pipe port="result" step="add-xml-base-attr"/>
+  </p:output>
   <p:output port="params">
     <p:pipe port="result" step="params"/>
   </p:output>
   <p:output port="zip-manifest">
     <p:pipe port="result" step="zip-manifest"/>
+  </p:output>
+  <p:output port="report" sequence="true">
+    <p:pipe port="result" step="check-insert-xpath"/>
+    <p:pipe port="result" step="check-single-tree"/>
   </p:output>
 
   <p:option name="docx" required="true">
@@ -172,7 +186,7 @@
   
   <p:sink/>
   
-  <tr:xslt-mode msg="yes" mode="insert-xpath">
+  <tr:xslt-mode msg="yes" mode="insert-xpath" name="insert-xpath">
     <p:input port="source">
       <p:pipe step="document" port="result"/>
     </p:input>
@@ -220,10 +234,37 @@
     </p:otherwise>
   </p:choose>
 
-  <p:add-attribute attribute-name="xml:base" match="/*">
+  <p:add-attribute attribute-name="xml:base" match="/*" name="add-xml-base-attr">
     <p:with-option name="attribute-value" select="/c:files/@xml:base">
       <p:pipe port="result" step="unzip"/>
     </p:with-option>
   </p:add-attribute>
+
+  <p:add-attribute name="check-single-tree" match="/*" 
+    attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree">
+  </p:add-attribute>
+  
+  <p:sink/>
+  
+  <p:validate-with-schematron assert-valid="false" name="insert-xpath0">
+    <p:input port="source">
+      <p:pipe port="result" step="insert-xpath"/>
+    </p:input>
+    <p:input port="schema">
+      <p:pipe port="insert-xpath-schematron" step="docx-single-tree"/>
+    </p:input>
+    <p:input port="parameters"><p:empty/></p:input>
+    <p:with-param name="allow-foreign" select="'true'"/>
+  </p:validate-with-schematron>
+  
+  <p:add-attribute match="/*" 
+    attribute-name="tr:step-name" attribute-value="docx2hub">
+  </p:add-attribute>
+
+  <p:add-attribute name="check-insert-xpath" match="/*" 
+    attribute-name="tr:rule-family" attribute-value="docx2hub_insert-xpath">
+  </p:add-attribute>
+  
+  <p:sink/>
 
 </p:declare-step>

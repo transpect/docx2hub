@@ -1194,6 +1194,8 @@
     </xsl:copy>
   </xsl:template>
   
+<!--  collateral: remove w:proofErr (may cause problems in field functions)-->
+  <xsl:template match="w:proofErr" mode="docx2hub:add-props"/>
 
   <xsl:template match="*[w:p[w:pgSz]]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:copy>

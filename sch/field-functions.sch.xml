@@ -56,15 +56,21 @@
   
   <pattern id="unsupported">
     <rule context="w:instrText">
-      <assert test="matches(., '^\s*(AUTOTEXT|EQ|eq|FORMCHECKBOX|HYPERLINK|INCLUDEPICTURE|PRINT|SET|SYMBOL|XE|xe)\s+')" 
+      <assert test="matches(., '^\s*(AUTOTEXT|SEQ|STYLEREF|REF|EQ|eq|FORMCHECKBOX|HYPERLINK|INCLUDEPICTURE|PRINT|SET|SYMBOL|XE|xe)\s+')" 
         role="warning" id="unsupported_field_function" diagnostics="unsupported_field_function_de">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, ../@srcpath), '')"/></span>
         <span class="category">docx</span>
         <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Unsupported field function</span>
         The field function '<xsl:value-of select="."/>' is not supported.</assert>
+      <report test="matches(text(),'\w*:\w*:\w*:\w*')" role="warning" id="too_many_indexterms" diagnostics="too_many_indexterms_de">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, ../@srcpath), '')"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Too many indexterms</span>
+        At this field function '<xsl:value-of select="."/>' too many indexterm were used. Please use at maximum 3 indexterms.
+      </report>
     </rule>
   </pattern>
-
+  <!--xe "Wärmekapazität:spezifische:Tafel:Gas-->
 
   <diagnostics>
     <diagnostic id="range-not-found_de" xml:lang="de">
@@ -84,6 +90,10 @@
       <span class="category">docx</span>
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Nicht unterstützte Feldfunktion</span>
       Die Feldfunktion '<xsl:value-of select="."/>' wird nicht unterstützt.</diagnostic>
+    <diagnostic id="too_many_indexterms_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Zu viele Indexeinträge</span>
+      In dieser Feldfunktion '<xsl:value-of select="."/>' sind zu viele Indexeinträge verwendet worden. Bitte nutzen Sie maximal 3 Indexeinträge.</diagnostic>
     <diagnostic id="table_headers_only_de" xml:lang="de"><span class="category">docx</span>
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Nur Tabellenkopf</span>
       In dieser Tabelle wurden alle Tabellenzeilen als TabellenkÃpfe ausgezeichnet. Der docx-Konverter hat deshalb alle Tabellenzeilen in den Bauch der Tabelle verschoben, da sonst das resultierende XML invalide wÃŒrde.</diagnostic>

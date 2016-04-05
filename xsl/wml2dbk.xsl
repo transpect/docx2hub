@@ -1044,6 +1044,7 @@
     <tr:field-function name="QUOTE"/>
     <tr:field-function name="SEQ"/>
     <tr:field-function name="STYLEREF"/>
+    <tr:field-function name="USERPROPERTY" destroy="yes"/>
     <tr:field-function name="TOC" destroy="yes"/>
     <tr:field-function name="\IF"/>
   </tr:field-functions>

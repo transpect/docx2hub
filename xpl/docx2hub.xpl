@@ -33,6 +33,14 @@
     <p:documentation>This is to prevent a default readable port connecting to this step’s xslt port.</p:documentation>
     <p:empty/>
   </p:input>
+  <p:input port="insert-xpath-schematron">
+    <p:document href="../sch/insert-xpath.sch.xml"/>
+    <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
+  </p:input>
+  <p:input port="single-tree-schematron">
+    <p:document href="../sch/single-tree.sch.xml"/>
+    <p:documentation>Schematron that will validate the entire Word container document (after mode apply-changemarkup).</p:documentation>
+  </p:input>
   <p:input port="field-functions-schematron">
     <p:document href="../sch/field-functions.sch.xml"/>
     <p:documentation>Schematron that will validate the intermediate format after merging/splitting Word field functions.</p:documentation>
@@ -47,6 +55,7 @@
     <p:pipe step="single-tree" port="result"/>
   </p:output>
   <p:output port="report" sequence="true">
+    <p:pipe port="report" step="single-tree"/>
     <p:pipe port="result" step="check-field-functions"/>
     <p:pipe port="result" step="check-result"/>
   </p:output>
@@ -114,6 +123,12 @@
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="srcpaths" select="$srcpaths"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
+    <p:input port="insert-xpath-schematron">
+      <p:pipe step="docx2hub" port="insert-xpath-schematron"/>
+    </p:input>
+    <p:input port="single-tree-schematron">
+      <p:pipe step="docx2hub" port="single-tree-schematron"/>
+    </p:input>
     <p:input port="xslt">
       <p:pipe step="docx2hub" port="xslt"/>
     </p:input>

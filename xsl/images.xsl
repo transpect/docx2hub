@@ -83,15 +83,15 @@
     <xsl:param name="image-id" as="xs:string"/>
     <xsl:variable name="rels" as="element(rel:Relationships)"
       select="if (ancestor::w:footnote) 
-              then /*/w:footnoteRels/rel:Relationships
+              then $root/*/w:footnoteRels/rel:Relationships
               else 
                 if (ancestor::w:comment) 
-                then /*/w:commentRels/rel:Relationships 
+                then $root/*/w:commentRels/rel:Relationships 
                 else 
                   if (ancestor::w:endnote) 
-                  then /*/w:endnoteRels/rel:Relationships 
+                  then $root/*/w:endnoteRels/rel:Relationships 
                   else 
-                    /*/w:docRels/rel:Relationships"/>
+                    $root/*/w:docRels/rel:Relationships"/>
     <xsl:variable name="rel" as="element(rel:Relationship)"
       select="$rels/rel:Relationship[@Id = $image-id]"/>
     <xsl:variable name="patched-file-uri" select="replace($rel/@Target, '\\', '/')" as="xs:string"/>

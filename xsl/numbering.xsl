@@ -362,8 +362,9 @@
                                               'docx2hub:num-signature-or-continue',
                                               string-join(($context/@docx2hub:num-abstract, string($pattern-ilvl)), '_'), 
                                               root($context)
-                                            )[. &lt;&lt; $context]
-                                          )[last()]"/>
+                                            ) [not(w:numPr/w:numId/@w:val = '0')]
+                                              [. &lt;&lt; $context]
+                                          ) [last()]"/>
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:variable>
@@ -373,6 +374,12 @@
                         else $pattern-lvl/w:start/@w:val"/>
               <xsl:number value="$level-counter"
                           format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
+              <xsl:if
+                test="$context/@srcpath = ('word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[370]', 'word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[399]')">
+                <xsl:message
+                  select="'AAAAAAAAAAAAAAA ', $level-counter, $context-for-counter"
+                />
+              </xsl:if>
             </xsl:matching-substring>
             <xsl:non-matching-substring>
               <xsl:value-of select="."/>
@@ -403,7 +410,8 @@
                 )[last()]"/>
     <xsl:variable name="level-counter" as="xs:integer" 
       select="(for $s in $start-of-relevant/@docx2hub:num-restart-val return xs:integer($s), 1)[1] 
-              + count(root($context)//w:p[. &gt;&gt; $start-of-relevant][. &lt;&lt; $context]
+              + count(root($context)//w:p[. &gt;&gt; $start-of-relevant]
+                                         [. &lt;&lt; $context]
                                          [@docx2hub:num-continue = $start-of-relevant/@docx2hub:num-signature]
                                          [not(w:numPr/w:numId/@w:val = '0')]
                      )

@@ -239,9 +239,22 @@
       <p:pipe port="result" step="unzip"/>
     </p:with-option>
   </p:add-attribute>
+  
+  <p:validate-with-schematron assert-valid="false" name="single-tree0">
+    <p:input port="schema">
+      <p:pipe port="single-tree-schematron" step="docx-single-tree"/>
+    </p:input>
+    <p:input port="parameters"><p:empty/></p:input>
+    <p:with-param name="allow-foreign" select="'true'"/>
+  </p:validate-with-schematron>
+
+  <p:sink/>
 
   <p:add-attribute name="check-single-tree" match="/*" 
     attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree">
+    <p:input port="source">
+      <p:pipe port="report" step="single-tree0"/>
+    </p:input>
   </p:add-attribute>
   
   <p:sink/>
@@ -257,8 +270,13 @@
     <p:with-param name="allow-foreign" select="'true'"/>
   </p:validate-with-schematron>
   
+  <p:sink/>
+  
   <p:add-attribute match="/*" 
     attribute-name="tr:step-name" attribute-value="docx2hub">
+    <p:input port="source">
+      <p:pipe port="report" step="insert-xpath0"/>
+    </p:input>
   </p:add-attribute>
 
   <p:add-attribute name="check-insert-xpath" match="/*" 

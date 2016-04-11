@@ -558,7 +558,7 @@
         <docx2hub:attribute name="css:border-{$orientation}-style">
           <xsl:value-of select="docx2hub:border-style($val/@w:val)"/>
         </docx2hub:attribute>
-        <xsl:if test="not($val/@w:val = ('nil','none'))">
+        <xsl:if test="$val/@w:val and not($val/@w:val = ('nil','none'))">
           <docx2hub:attribute name="css:border-{$orientation}-width">
             <xsl:value-of select="docx2hub:pt-border-size($val/@w:sz)"/>
           </docx2hub:attribute>
@@ -924,7 +924,7 @@
   </xsl:function>
   
   <xsl:function name="docx2hub:border-style" as="xs:string" >
-    <xsl:param name="val" as="xs:string"/>
+    <xsl:param name="val" as="xs:string?"/>
     <xsl:choose>
       <xsl:when test="$val eq 'single'">
         <xsl:sequence select="'solid'" />
@@ -935,7 +935,7 @@
       <xsl:when test="$val eq 'threeDEmboss'">
         <xsl:sequence select="'groove'" />
       </xsl:when>
-      <xsl:when test="$val eq 'nil'">
+      <xsl:when test="$val eq 'nil' or not($val)">
         <xsl:sequence select="'none'" />
       </xsl:when>
       <xsl:otherwise>

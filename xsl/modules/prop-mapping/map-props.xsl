@@ -811,7 +811,7 @@
     This color therefore can be automatically be modified by a consumer as appropriate, 
     for example, in order to ensure that the underline can be distinguished against the 
     page's background color. --> 
-  <xsl:variable name="docx2hub:auto-color" select="'black'" as="xs:string"/>
+  <xsl:variable name="docx2hub:auto-color" select="'#000000'" as="xs:string"/>
 
   <xsl:function name="docx2hub:color" as="xs:string?" >
     <xsl:param name="val" as="xs:string"/>

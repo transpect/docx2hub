@@ -110,7 +110,7 @@
                                                and not(.//w:t)]"/>
             <xsl:apply-templates select="$nodes[not(position() = last())] except $split" mode="wml-to-dbk"/>
           </xsl:when>
-          <xsl:otherwise>
+          <xsl:when test="$nodes[1][self::w:p]">
             <xsl:variable name="first-node">
               <xsl:element name="{$nodes[1]/name()}">
                 <xsl:copy-of select="$nodes[1]/@*"/>
@@ -122,6 +122,9 @@
             </xsl:variable>
             <xsl:apply-templates select="$first-node" mode="wml-to-dbk"/>
             <xsl:apply-templates select="$nodes[position() &gt; 1 and not(position() = last())]" mode="wml-to-dbk"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates select="$nodes" mode="wml-to-dbk"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>

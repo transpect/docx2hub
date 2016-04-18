@@ -170,7 +170,7 @@
     <xsl:sequence select="$transformed"/>
   </xsl:template>
   
-  <xsl:template match="@docx2hub:map-from" mode="docx2hub:join-runs"/>
+  <xsl:template match="@docx2hub:map-from | @docx2hub:field-function" mode="docx2hub:join-runs"/>
 
 
   <xsl:template match="dbk:para" mode="docx2hub:join-runs">

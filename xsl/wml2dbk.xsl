@@ -234,7 +234,10 @@
           <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin']) and $nodes//w:instrText and matches(string-join($nodes//w:instrText//text(),''),'^[A-Z\.]*[0-9]*$')">
         <xsl:copy-of select="$nodes//w:instrText/text()"/>
       </xsl:when>
-      <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin'])">
+      <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin']) and (every $i in $nodes satisfies $i[self::w:r[w:instrText[text()]]])">
+            <xsl:copy-of select="$nodes//w:instrText/text()"/>
+          </xsl:when>
+          <xsl:when test="not($nodes/w:fldChar[@w:fldCharType='begin'])">
         <xsl:copy-of select="$nodes"/>
       </xsl:when>
       <xsl:otherwise>
@@ -959,7 +962,7 @@
             <xsl:variable name="local" as="xs:boolean" select="$tokens = '\l'"/>
             <xsl:variable name="target" select="replace($without-options[2], '(^&quot;|&quot;$)', '')"/>
             <xsl:variable name="tooltip" select="replace($without-options[3], '(^&quot;|&quot;$)', '')"/>
-            <link>
+            <link docx2hub:field-function="yes">
               <xsl:attribute name="{if ($local) then 'linkend' else 'xlink:href'}" select="$target"/>
               <xsl:if test="$tooltip">
                 <xsl:attribute name="xlink:title" select="$tooltip"/>
@@ -968,14 +971,11 @@
             </link>
           </xsl:when>
           <xsl:when test="$tokens[1] = 'SET'">
-            <xsl:choose>
-              <xsl:when test="$field-vars='yes'">
-                <keyword role="{concat('fieldVar_',$tokens[2])}">
-                  <xsl:value-of select="$tokens[3]"/>
-                </keyword>    
-              </xsl:when>
-              <xsl:otherwise/>
-            </xsl:choose>
+            <xsl:if test="$field-vars='yes'">
+              <keyword role="{concat('fieldVar_',$tokens[2])}" docx2hub:field-function="yes">
+                <xsl:value-of select="$tokens[3]"/>    
+              </keyword>
+              </xsl:if>
           </xsl:when>
           <xsl:when test="matches($instrText,'^[\s&#160;]*$')">
             <xsl:apply-templates select="$text" mode="#current"/>
@@ -1013,6 +1013,7 @@
         <xsl:choose>
           <xsl:when test="$func/@element">
             <xsl:element name="{$func/@element}">
+              <xsl:attribute name="docx2hub:field-function" select="'yes'"/>
               <xsl:if test="$func/@attrib">
                 <xsl:attribute name="{$func/@attrib}" select="replace($tokens[position() = $func/@value], '&quot;', '')"/>
                 <xsl:if test="$func/@role">
@@ -1023,7 +1024,7 @@
             </xsl:element>
           </xsl:when>
           <xsl:when test="$func/@destroy = 'yes'">
-            <xsl:if test="$text[descendant::w:fldChar]">
+            <xsl:if test="$text[descendant::w:fldChar or descendant-or-self::*[@docx2hub:field-function]]">
               <xsl:apply-templates select="$text" mode="#current"/>
             </xsl:if> 
           </xsl:when>
@@ -1059,6 +1060,7 @@
     <xsl:param name="nodes" as="element(*)*"/>
     <xsl:variable name="text-tokens" select="for $x in $nodes//text() return $x"/>
     <xsl:element name="mediaobject">
+      <xsl:attribute name="docx2hub:field-function" select="'yes'"/>
       <xsl:apply-templates select="($nodes//@srcpath)[1]" mode="#current"/>
       <imageobject>
         <imagedata fileref="{if (tokenize($instr, ' ')[matches(.,'^&#x22;.*&#x22;$')]) then replace(tokenize($instr, ' ')[matches(.,'^&#x22;.*&#x22;$')][1],'&#x22;','') else if (matches($instr,'&#x22;.*&#x22;')) then tokenize($instr,'&#x22;')[2] else tokenize($instr, ' ')[2]}"/>

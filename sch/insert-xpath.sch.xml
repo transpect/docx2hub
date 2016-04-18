@@ -8,4 +8,13 @@
 
   <let name="base-dir" value="//w:root/@extract-dir-uri"/>
   
+  <pattern id="change_tracking">
+    <rule context="w:p">
+      <report id="change_tracking_not_confirmed" role="warning" test=".//w:moveTo or .//w:moveToRangeStart or .//w:moveFrom or .//w:moveFromRangeStart or .//w:delText or .//w:ins or .//w:rPrChange or .//w:del">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        Hier befindet sich mindestens eine Änderung im Dokument, welche noch nicht angenommen wurde. Bitte prüfen. Betroffene Textstelle(n): <xsl:value-of select="concat('&quot;',string-join(.//text()[ancestor::w:moveTo or ancestor::w:moveToRangeStart or ancestor::w:moveFrom or ancestor::w:moveFromRangeStart or ancestor::w:delText or ancestor::w:ins or ancestor::w:t[preceding-sibling::w:*[1][self::w:rPr[child::w:rPrChange]]]  or ancestor::w:del],'&quot; | &quot;'),'&quot;')"/> 
+      </report>
+    </rule>
+  </pattern>
+
 </schema>

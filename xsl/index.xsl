@@ -143,7 +143,7 @@
             </xsl:for-each-group>
           </xsl:variable>
           <xsl:variable name="indexterm">
-            <indexterm>
+            <indexterm docx2hub:field-function="yes">
               <xsl:for-each-group select="$indexterm-attributes" group-by="name()">
                 <xsl:attribute name="{name()}" select="string-join(current-group(), ' ')"/>
               </xsl:for-each-group>

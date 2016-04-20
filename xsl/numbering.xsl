@@ -102,9 +102,9 @@
   <!-- collateral (only the first in a row should trigger a reset) -->
   <xsl:template match="@docx2hub:num-signature[../preceding-sibling::*[1]
                                                                       [@docx2hub:num-signature = current()]
-                                              ][ (: not sure about this :)
+                                              ](:[  not sure about this 
                                                 not(../@docx2hub:num-start-override)
-                                              ]"
+                                              ]:)"
     mode="docx2hub:join-instrText-runs" xml:id="continue1">
     <!-- see @xml:id='manual-marker-aux-atts' -->
     <xsl:attribute name="docx2hub:num-continue" select="."/>

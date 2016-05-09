@@ -40,6 +40,7 @@
         <prop name="v:shape/@style" type="linear" target-name="style"/>
         <prop name="v:shape/@type" />
         <prop name="w:adjustRightInd" />
+      	<prop name="w:autoRedefine"/>
         <prop name="w:autoSpaceDE" />
         <prop name="w:autoSpaceDN" />
         <prop name="w:b" type="docx-boolean-prop" target-name="css:font-weight" default="normal" active="bold"/>

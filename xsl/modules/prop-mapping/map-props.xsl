@@ -1194,6 +1194,17 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="w:tbl" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:if test="$css:orientation">
+        <xsl:attribute name="css:orientation" select="$css:orientation"/>  
+      </xsl:if>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
 <!--  collateral: remove w:proofErr (may cause problems in field functions)-->
   <xsl:template match="w:proofErr" mode="docx2hub:add-props"/>
 

@@ -379,6 +379,10 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="m:deg" mode="omml2mml">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
 
   <!-- %%Template match m:nary 
 		Process an n-ary. 

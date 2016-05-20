@@ -938,25 +938,41 @@
           <xsl:when test="$fLit=1">
             <mml:maction actiontype="lit">
               <xsl:for-each select="$text-nodes">
-                <xsl:call-template name="ParseMt">
-                  <xsl:with-param name="context" select="$context"/>
-                  <xsl:with-param name="sToParse" select="."/>
-                  <xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
-                  <xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
-                  <xsl:with-param name="nor" select="$context/m:rPr[last()]/m:nor/@m:val"/>
-                </xsl:call-template>
+                <xsl:choose>
+                  <!-- letex comment and PI for an unmapped w:sym -->
+                  <xsl:when test="self::processing-instruction() or self::comment()">
+                    <xsl:sequence select="."/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:call-template name="ParseMt">
+                      <xsl:with-param name="context" select="$context"/>
+                      <xsl:with-param name="sToParse" select="."/>
+                      <xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+                      <xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
+                      <xsl:with-param name="nor" select="$context/m:rPr[last()]/m:nor/@m:val"/>
+                    </xsl:call-template>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:for-each>
             </mml:maction>
           </xsl:when>
           <xsl:otherwise>
             <xsl:for-each select="$text-nodes">
-              <xsl:call-template name="ParseMt">
-                <xsl:with-param name="context" select="$context"/>
-                <xsl:with-param name="sToParse" select="."/>
-                <xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
-                <xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
-                <xsl:with-param name="nor" select="$context/m:rPr[last()]/m:nor/@m:val"/>
-              </xsl:call-template>
+              <xsl:choose>
+                <!-- letex comment and PI for an unmapped w:sym -->
+                <xsl:when test="self::processing-instruction() or self::comment()">
+                  <xsl:sequence select="."/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:call-template name="ParseMt">
+                    <xsl:with-param name="context" select="$context"/>
+                    <xsl:with-param name="sToParse" select="."/>
+                    <xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+                    <xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
+                    <xsl:with-param name="nor" select="$context/m:rPr[last()]/m:nor/@m:val"/>
+                  </xsl:call-template>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:for-each>
           </xsl:otherwise>
         </xsl:choose>

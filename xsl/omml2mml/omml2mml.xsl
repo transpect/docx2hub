@@ -929,7 +929,7 @@
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="text-nodes" as="xs:string*">
+        <xsl:variable name="text-nodes" as="node()*">
           <xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
         </xsl:variable>
         <xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym)[1]/.."/>

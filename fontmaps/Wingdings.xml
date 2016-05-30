@@ -12,6 +12,7 @@
   <symbol number="006E" entity="" char="&#x25a0;"/><!-- BLACK SQUARE -->
   <symbol number="F06F" entity="" char="&#x25A1;"/><!-- WHITE SQUARE -->
   <symbol number="006F" entity="o" char="&#x25A1;"/><!-- WHITE SQUARE -->
+  <symbol number="F070" entity="⬜" char="&#x2B1C;" font="Segoe UI Symbol"/><!-- WHITE LARGE SQUARE -->
   <symbol number="F08C" entity="&#xF08C;" char="&#x2776;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT ONE -->
   <symbol number="F08D" entity="&#xF08D;" char="&#x2777;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT TWO -->
   <symbol number="F08E" entity="&#xF08E;" char="&#x2778;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT THREE -->

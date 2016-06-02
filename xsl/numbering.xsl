@@ -26,6 +26,7 @@
     </xsl:choose>
   </xsl:function>
 
+  <!-- docx2hub:abstractNum is a collateral mode that is invoked from docx2hub:remove-redundant-run-atts (map-props.xsl) -->
   <xsl:template match="w:numId" mode="docx2hub:abstractNum">
     <xsl:param name="ilvl" as="xs:integer"/>
     <xsl:variable name="abstractNum" as="element(w:abstractNum)?"  
@@ -40,26 +41,32 @@
                   $root
                 )
               )"/>
-    <xsl:variable name="lvl" as="element(w:lvl)?" select="$abstractNum/w:lvl[@w:ilvl = $ilvl]"/>
     <xsl:variable name="lvlOverride" as="element(w:lvlOverride)?"
       select="key(
                 'numbering-by-id', 
                 @w:val,
                 $root
               )/w:lvlOverride[@w:ilvl = $ilvl]"/>
+    <xsl:variable name="lvl" as="element(w:lvl)?" 
+      select="($abstractNum/w:lvl[@w:ilvl = $ilvl], $lvlOverride/w:lvl[@w:ilvl = $ilvl])[1]"/>
     <xsl:apply-templates select="$lvl" mode="#current">
       <xsl:with-param name="numId" select="@w:val"/>
-      <xsl:with-param name="start-override" select="for $so in (
-                                                      $lvlOverride/w:startOverride/@w:val,
-                                                      0[exists($lvlOverride)] (: this is subtle: if there is an empty override,
-                                                                                 0 will be assumed as startOverride. Example:
-                                                                                 Beuth 24739 :)
-                                                    )[1]
-                                                    return xs:integer($so)"/>
+      <xsl:with-param name="start-override" 
+        select="for $so in (
+                             $lvlOverride/w:startOverride/@w:val,
+                             0[exists($lvlOverride[empty(*)])] (: this is subtle: if there is an empty override,
+                                                                  0 will be assumed as startOverride. Example:
+                                                                  Beuth 24739 :)
+                           )[1]
+                           return xs:integer($so)"/>
     </xsl:apply-templates>
   </xsl:template>
 
-  <!-- It seems that numId = '0' is for lists without marker? -->
+  <!-- docx2hub:abstractNum is a collateral mode that is invoked from docx2hub:remove-redundant-run-atts (map-props.xsl) -->
+  <!-- numId = '0' is for lists without marker:
+  17.9.19: “A value of 0 for the val attribute shall never be used to point to a numbering definition instance, and shall
+instead only be used to designate the removal of numbering properties at a particular level in the style hierarchy
+(typically via direct formatting).” -->
   <xsl:template match="w:numId[@w:val = '0']" mode="docx2hub:abstractNum" xml:id="manual-marker-aux-atts">
       <!-- Happens for <w:numId w:val="0"/>, when there is a manually set list counter -->
     <!-- Caution: key() seems to return empty sequence when this is invoked with saxon in mode {http://transpect.io/docx2hub}remove-redundant-run-atts -->
@@ -75,92 +82,172 @@
       <xsl:attribute name="docx2hub:num-abstract" select="$abstractNum-from-style/@w:abstractNumId"/>
       <xsl:attribute name="docx2hub:num-signature" 
         select="string-join(($abstractNum-from-style/@w:abstractNumId, $numPr-from-style/w:ilvl[1]/@w:val), '_')"/>
+      <xsl:attribute name="docx2hub:num-disabled" select="'true'"/>
     </xsl:if>
   </xsl:template>
 
+  <!-- docx2hub:abstractNum is a collateral mode that is invoked from docx2hub:remove-redundant-run-atts (map-props.xsl) -->
   <xsl:template match="w:lvl" mode="docx2hub:abstractNum">
     <xsl:param name="numId" as="xs:string"/>
     <xsl:param name="start-override" as="xs:integer?"/>
-    <xsl:variable name="restart" as="xs:integer?" select="(for $r in w:lvlRestart/@w:val 
-                                                           return xs:integer($r),
-                                                           0[$start-override])[last()]"/>
+    <!-- “17.9.11 lvlRestart (Restart Numbering Level Symbol)
+This element specifies a one-based index which determines when a numbering level should restart to its start
+value (§17.9.26). A numbering level restarts when an instance of the specified numbering level, which shall be
+higher (earlier than the this level) is used in the given document's contents.
+If this element is omitted, the numbering level shall restart each time the previous numbering level is used. If
+the specified level is higher than the current level, then this element shall be ignored. As well, a value of 0 shall
+specify that this level shall never restart.” 
+
+What follows in ISO/IEC 29500-1 (2006) are two examples, one with lvlRestart omitted and the other one with
+lvlRestart = 0. We now try to construct an example where an ilvl=2 list should be reset at each ilvl=0 heading
+but not at an ilvl=1 heading, as would be the default with omitted lvlRestart.
+<w:lvl w:ilvl="3">
+  <w:lvlRestart w:val="2">
+</w:lvl>
+This tells the ilvl=3 numbering to reset itself when an ilvl=1 (corresponds to lvlRestart=2) heading precedes
+it, but not when an ilvl=2 heading precedes it.
+    -->
+    <xsl:variable name="restart-level" as="xs:integer?" select="for $r in w:lvlRestart/@w:val  
+                                                                return xs:integer($r)"/>
     <xsl:attribute name="docx2hub:num-signature" select="string-join((../@w:abstractNumId, @w:ilvl), '_')"/>
     <xsl:attribute name="docx2hub:num-abstract" select="../@w:abstractNumId"/>
     <xsl:attribute name="docx2hub:num-ilvl" select="@w:ilvl"/>
     <xsl:attribute name="docx2hub:num-id" select="$numId"/>
-    <xsl:attribute name="docx2hub:num-lvlRestart" select="w:lvlRestart/@w:val"/>
-    <xsl:if test="exists($restart)">
-      <xsl:attribute name="docx2hub:num-restart-level" select="$restart"/>
-    </xsl:if>
-    <xsl:attribute name="docx2hub:num-restart-val" 
-        select="($start-override, for $s in w:start/@w:val return xs:integer($s), 1)[1]"/>
+    <xsl:variable name="restart-val" as="xs:integer"
+      select="($start-override, for $s in w:start/@w:val return xs:integer($s), 0)[1]"/>
+    <xsl:choose>
+      <xsl:when test="$restart-level = 0">
+        <xsl:attribute name="docx2hub:num-dont-restart" select="'yes'"/>
+      </xsl:when>
+      <xsl:when test="$restart-level &gt;= @w:ilvl">
+        <!-- “If the specified level is higher than the current level, then this element shall be ignored.”
+          What word does: It does not generate a number for this level. As I understood the spec, it says
+          the w:lvlRestart element should be ignored, i.e., treated as if it wasn’t present. -->
+        <xsl:attribute name="docx2hub:num-ignore-restart-level" select="'yes'"/>
+      </xsl:when>
+      <xsl:when test="exists($restart-level)">
+        <!-- restart after preceding ilvl number (of the same abstractNumbering, I guess) lower than or equal as this value: --> 
+        <xsl:attribute name="docx2hub:num-restart-after-ilvl" select="$restart-level - 1"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="docx2hub:num-restart-after-ilvl" select="@w:ilvl - 1"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:attribute name="docx2hub:num-restart-val" select="($restart-val, $start-override)[1]"/>
     <xsl:if test="$start-override">
       <xsl:attribute name="docx2hub:num-start-override" select="$start-override"/>
     </xsl:if>
   </xsl:template>
   
-  <!-- collateral (only the first in a row should trigger a reset) -->
-  <xsl:template match="@docx2hub:num-signature[../preceding-sibling::*[1]
-                                                                      [@docx2hub:num-signature = current()]
-                                              ](:[  not sure about this 
-                                                not(../@docx2hub:num-start-override)
-                                              ]:)"
-    mode="docx2hub:join-instrText-runs" xml:id="continue1">
-    <!-- see @xml:id='manual-marker-aux-atts' -->
-    <xsl:attribute name="docx2hub:num-continue" select="."/>
-  </xsl:template>
-
-  <xsl:template match="@docx2hub:num-signature[exists(../@docx2hub:num-restart-level)] (: should check whether 0 or a higher number :)
-                                              [
-                                                .. is (
-                                                       key('docx2hub:num-signature', current())
-                                                         [@docx2hub:num-id = current()/../@docx2hub:num-id]
-                                                     )[1]
-                                              ]" mode="docx2hub:join-instrText-runs" priority="2">
-    <!-- the first of a numId that defines a start value override for this ilvl -->
+  <xsl:template match="w:p/@docx2hub:num-signature" mode="docx2hub:join-instrText-runs">
     <xsl:copy/>
+    <xsl:variable name="counter-atts" as="attribute(*)*" 
+      select="docx2hub:level-counter(.., ../@docx2hub:num-ilvl)"/>
+    <xsl:if test="exists($counter-atts)">
+      <xsl:sequence select="$counter-atts"/>
+    </xsl:if>
   </xsl:template>
 
-  <xsl:template match="@docx2hub:num-signature" mode="docx2hub:join-instrText-runs">
-    <xsl:variable name="context" as="element(w:p)" select=".."/>
+  <!-- recursive function that calculates the counter for the given ilvl based on the counter of the previous (non-disabled) 
+    list paragraph. It outputs multiple attributes so that we can add more information to the intermediate debug file.
+    Of the recursive invocation results, only the @docx2hub:num-counter-ilvl{$ilvl} attribute is used.
+  -->
+  <xsl:function name="docx2hub:level-counter" as="attribute(*)*">
+    <xsl:param name="context" as="element(w:p)"/>
+    <xsl:param name="ilvl" as="xs:integer?"/>
+    <xsl:variable name="ilvl" as="xs:integer?" select="$context/@docx2hub:num-ilvl"/>
     <xsl:variable name="last-same-signature" as="element(w:p)?" 
-      select="(key('docx2hub:num-signature', current())[. &lt;&lt; $context])[last()]"/>
-    <xsl:variable name="in-between" as="element(w:p)*"
-      select="//w:p[if ($last-same-signature) 
-                    then (. &gt;&gt; $last-same-signature)
-                    else true()]
-                   [. &lt;&lt; current()/..]"/>
-    <xsl:variable name="same-abstract-in-between" as="element(w:p)*" 
-      select="$in-between[@docx2hub:num-abstract = $context/@docx2hub:num-abstract]"/>
-    <xsl:variable name="super-level-before" as="xs:boolean"
-      select="some $p in $same-abstract-in-between satisfies 
-              $p/@docx2hub:num-ilvl &lt; $context/@docx2hub:num-ilvl"/>
-    <xsl:attribute name="docx2hub:num-super-level-before" select="$super-level-before"/>
-    <xsl:attribute name="docx2hub:num-last-same-signature" select="exists($last-same-signature)"/>
-    <xsl:choose>
-      <xsl:when test="empty ($last-same-signature)
-                      or 
-                      $super-level-before">
-        <xsl:copy/>
-        <xsl:attribute name="docx2hub:num-restart-level" select="0"/>
-      </xsl:when>
-      <xsl:when test="(: $last-same-signature[not(@docx2hub:num-ilvl)] :) ../@docx2hub:num-start-override" xml:id="continue2">
-        <!-- see #manual-marker-aux-atts -->
-        <xsl:copy/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:attribute name="docx2hub:num-continue" select="."/>
-      </xsl:otherwise>
-    </xsl:choose>
-    <xsl:if test="empty($last-same-signature)">
-      <!-- special case: sub levels of the same abstract def are before context; implicitly increase starting value by 1 
-      So that it’s 1.1.1 instead of 0.0.1 if heading 3 is the first heading -->
-      <xsl:if test="some $p in $same-abstract-in-between satisfies 
-                    $p/@docx2hub:num-ilvl &gt; $context/@docx2hub:num-ilvl">
-        <xsl:attribute name="docx2hub:num-initial-skip-increment" select="'1'"/>
-      </xsl:if>
-    </xsl:if>  
-  </xsl:template>
+      select="(key('docx2hub:num-signature', $context/@docx2hub:num-signature, root($context))
+                 [. &lt;&lt; $context]
+                 (: 
+                 Not sure abt the following condition. Test with DIN_15921_tr_20241894.docx and
+                 EN_ISO_11819-2_D_2015-09-22_Validierungsfehler.docx, where '1 Messprinzip' should be '5 Messprinzip'.
+                 LibreOffice 5 renders it as '2 Messprinzip'. We can detect no differences between abstract numberings
+                 14 (headings) and 19 (lists). But headings should not restart while lists shoud.
+                 
+                 Explanation:
+                 Heading1 numbers '1', '2', '3' have a numbering ID that is different from Heading2 '3.1' and Heading1 '4'.
+                 3.1 was correctly starting ilvl1 at 1, and then the subsequent Heading1 increased ilvl0 counter by 1.
+                 
+                 It is not clear whether Word applied the rules correctly. Maybe the rules of ISO/IEC 29500-2 are underspecified.
+
+                 If Word’s behavior is to be mimicked, then we cannot calculate the counters for each ilvl individually.
+                 This recursive function will then be obliterated by a recursive (or iterative) variant of tr:get-identifier() 
+                 that takes into account that a '3.1' with a new numbering ID might create a '4' for the next 
+                 that has the same new numbering ID but would have been a '1' in the absence of '3.1'. This calls for
+                 a strict iterative approach where the next counter depends on the actual values for all counter levels
+                 in preceding same-abstractNumId paras.
+
+                 For A.11 and the small a), b), c) lists in DIN_EN_12602_tr_25461149.docx the following 
+                 the right condition.
+                 :)
+                 [if ($context/@docx2hub:num-start-override) then @docx2hub:num-id = $context/@docx2hub:num-id else true()]
+                 [not(@docx2hub:num-disabled = 'true')]
+              )[last()]"/>
+    <xsl:variable name="same-abstract-in-between" as="element(w:p)*"
+      select="key('docx2hub:num-abstract', $context/@docx2hub:num-abstract, root($context))
+                [if ($last-same-signature) 
+                 then (. &gt;&gt; $last-same-signature)
+                 else true()]
+                [. &lt;&lt; $context]"/>
+    <xsl:variable name="last-resetter" as="element(w:p)?" 
+      select="($same-abstract-in-between[@docx2hub:num-ilvl &lt;= $context/@docx2hub:num-restart-after-ilvl])[last()]"/>
+    <xsl:variable name="any-resetter" as="element(w:p)*" 
+      select="key('docx2hub:num-abstract', $context/@docx2hub:num-abstract, root($context))
+                [@docx2hub:num-ilvl &lt;= $context/@docx2hub:num-restart-after-ilvl or @docx2hub:num-ilvl = $context/@docx2hub:num-ilvl]
+                [. &lt;&lt; $context]"/>
+    <xsl:variable name="initial-sub-item" as="element(w:p)*"
+      select="key('docx2hub:num-abstract', $context/@docx2hub:num-abstract, root($context))
+                [empty($any-resetter) or (. &gt;&gt; $last-resetter)]
+                [. &lt;&lt; $context]
+                [@docx2hub:num-ilvl &gt; $context/@docx2hub:num-ilvl]"/>
+    <xsl:if test="exists($ilvl)">
+      <xsl:variable name="counter-name" as="xs:string" select="concat('docx2hub:num-counter-ilvl', $ilvl)"/>
+      <xsl:variable name="counter" as="attribute(*)*">
+        <xsl:choose>
+          <xsl:when test="empty($last-same-signature) and exists($context/@docx2hub:num-dont-restart)">
+            <xsl:attribute name="{$counter-name}" select="$context/@docx2hub:num-restart-val"/>
+            <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="'a'"/>
+          </xsl:when>
+          <xsl:when test="$context/@docx2hub:num-dont-restart">
+            <xsl:attribute name="{$counter-name}" 
+              select="for $a in docx2hub:level-counter($last-same-signature, $ilvl)[name() = $counter-name][. castable as xs:integer] 
+                        return xs:integer($a)
+                      + 1"/>
+            <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="'b'"/>
+          </xsl:when>
+          <xsl:when test="$last-resetter &gt;&gt; $last-same-signature">
+            <xsl:attribute name="{$counter-name}" 
+              select="$context/@docx2hub:num-restart-val cast as xs:integer + (1[exists($initial-sub-item)], 0)[1]"/>
+            <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="string-join(('c', '1'[exists($initial-sub-item)]), '')"/>
+          </xsl:when>
+          <xsl:when test="exists($last-same-signature)">
+            <xsl:variable name="by-lookup" as="xs:integer?" 
+              select="for $a in docx2hub:level-counter($last-same-signature, $ilvl)[name() = $counter-name][. castable as xs:integer] 
+                        return xs:integer($a)"/>
+            <xsl:choose>
+              <!--<xsl:when test="$context/@docx2hub:num-start-override"><!-\- what about @docx2hub:num-restart-val? -\->
+                <xsl:attribute name="{$counter-name}" select="$context/@docx2hub:num-start-override"/>
+              </xsl:when>-->
+              <xsl:when test="exists($by-lookup)">
+                <xsl:attribute name="{$counter-name}" select="$by-lookup + 1"/>    
+              </xsl:when>
+            </xsl:choose>
+            <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="'d'"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="{$counter-name}" 
+              select="$context/@docx2hub:num-restart-val cast as xs:integer + (1[exists($initial-sub-item)], 0)[1]"/>
+            <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="'e'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:sequence select="$counter"/>
+      <xsl:attribute name="docx2hub:num-debug-last-same-signature-p" select="normalize-space($last-same-signature)"/>
+      <xsl:attribute name="docx2hub:num-debug-last-resetter-p" select="normalize-space($last-resetter)"/>
+      <xsl:attribute name="docx2hub:num-debug-initial-sub-item" select="exists($initial-sub-item)"/>
+    </xsl:if>
+  </xsl:function>
 
   <xsl:function name="tr:insert-numbering" as="item()*">
     <xsl:param name="context" as="element(w:p)"/>
@@ -323,9 +410,8 @@
     </xsl:choose>
   </xsl:function>
 
+  <xsl:key name="docx2hub:num-abstract" match="*[@docx2hub:num-abstract]" use="@docx2hub:num-abstract"/>
   <xsl:key name="docx2hub:num-signature" match="*[@docx2hub:num-signature]" use="@docx2hub:num-signature"/>
-  <xsl:key name="docx2hub:num-signature-or-continue" match="*[@docx2hub:num-signature | @docx2hub:num-continue]" 
-    use="@docx2hub:num-signature | @docx2hub:num-continue"/>
 
   <xsl:function name="tr:get-identifier" as="xs:string">
     <xsl:param name="context" as="element(w:p)"/>
@@ -350,6 +436,26 @@
               <xsl:variable name="pattern-ilvl" as="xs:integer" select="xs:integer(regex-group(1)) - 1"/>
               <xsl:variable name="pattern-lvl" as="element(w:lvl)?" 
                 select="$lvl/ancestor::w:abstractNum/w:lvl[@w:ilvl = $pattern-ilvl]"/>
+              
+              <xsl:variable name="last-same-pattern-ilvl-signature" as="element(w:p)?" 
+                select="(
+                          key(
+                            'docx2hub:num-signature', 
+                            string-join(($context/@docx2hub:num-abstract, string($pattern-ilvl)), '_'), 
+                            root($context)
+                          )[. &lt;&lt; $context]
+                        )[last()]"/>
+              <xsl:variable name="same-abstract-in-between" as="element(w:p)*"
+                select="key('docx2hub:num-abstract', $context/@docx2hub:num-abstract, root($context))
+                          [if ($last-same-pattern-ilvl-signature) 
+                           then (. &gt;&gt; $last-same-pattern-ilvl-signature)
+                           else true()]
+                          [. &lt;&lt; $context]"/>
+              <xsl:variable name="last-resetter" as="element(w:p)?" 
+                select="($same-abstract-in-between[@docx2hub:num-ilvl 
+                                                   &lt;= 
+                                                   $last-same-pattern-ilvl-signature/@docx2hub:num-restart-after-ilvl]
+                        )[last()]"/>
               <xsl:variable name="context-for-counter" as="element(w:p)?">
                 <xsl:choose>
                   <xsl:when test="$pattern-ilvl = $ilvl">
@@ -359,7 +465,7 @@
                   <xsl:otherwise>
                     <xsl:sequence select="(
                                             key(
-                                              'docx2hub:num-signature-or-continue',
+                                              'docx2hub:num-signature',
                                               string-join(($context/@docx2hub:num-abstract, string($pattern-ilvl)), '_'), 
                                               root($context)
                                             ) [not(w:numPr/w:numId/@w:val = '0')]
@@ -368,18 +474,31 @@
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:variable>
-              <xsl:variable name="level-counter" as="xs:integer"
-                select="if ($context-for-counter)
-                        then tr:get-level-counter($context-for-counter, $pattern-lvl)
-                        else $pattern-lvl/w:start/@w:val"/>
-              <xsl:number value="$level-counter"
-                          format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
-              <xsl:if
-                test="$context/@srcpath = ('word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[370]', 'word/document.xml?xpath=/w:document[1]/w:body[1]/w:p[399]')">
-                <xsl:message
-                  select="'AAAAAAAAAAAAAAA ', $level-counter, $context-for-counter"
-                />
+              <xsl:variable name="level-counter" as="xs:integer?">
+                <xsl:choose>
+                  <xsl:when test="exists($last-resetter)
+                                  and 
+                                  not($context-for-counter is $context)">
+                    <!-- 2.1.4 preceded by 2. The pattern-ilvl=1 resetter is closer 
+                      than any same-ilvl para. Therefore use the start value. -->
+                    <xsl:sequence select="$pattern-lvl/w:start/@w:val"></xsl:sequence>
+                  </xsl:when>
+                  <xsl:when test="exists($context-for-counter)">
+                    <xsl:sequence select="$context-for-counter/@*[name() = concat('docx2hub:num-counter-ilvl', $pattern-ilvl)]
+                                          cast as xs:integer"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:sequence select="$pattern-lvl/w:start/@w:val"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:variable>
+              <xsl:if test="empty($level-counter)">
+                <xsl:message select="'Empty level counter for', $pattern-ilvl, ':', $context"/>
               </xsl:if>
+              <xsl:variable name="pattern-lvl" as="element(w:lvl)?" 
+                select="$lvl/ancestor::w:abstractNum/w:lvl[@w:ilvl = $pattern-ilvl]"/>
+              <xsl:number value="($level-counter, 9999)[1]"
+                          format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
             </xsl:matching-substring>
             <xsl:non-matching-substring>
               <xsl:value-of select="."/>
@@ -392,32 +511,6 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:sequence select="string-join($string,'')"/>
-  </xsl:function>
-
-  <xsl:function name="tr:get-level-counter" as="xs:integer">
-    <xsl:param name="context" as="element(w:p)"/>
-    <xsl:param name="lvl" as="element(w:lvl)"/>
-    <xsl:variable name="start-of-relevant" as="element(w:p)?"
-      select="if ($context/@docx2hub:num-signature)
-              then $context
-              else
-                (
-                  key(
-                    'docx2hub:num-signature', 
-                    ($context/@docx2hub:num-signature, $context/@docx2hub:num-continue), 
-                    root($context)
-                  )[. &lt;&lt; $context]
-                )[last()]"/>
-    <xsl:variable name="level-counter" as="xs:integer" 
-      select="(for $s in $start-of-relevant/@docx2hub:num-restart-val return xs:integer($s), 1)[1] 
-              + count(root($context)//w:p[. &gt;&gt; $start-of-relevant]
-                                         [. &lt;&lt; $context]
-                                         [@docx2hub:num-continue = $start-of-relevant/@docx2hub:num-signature]
-                                         [not(w:numPr/w:numId/@w:val = '0')]
-                     )
-              + count($context[not(. is $start-of-relevant)])
-              + count($start-of-relevant/@docx2hub:num-initial-skip-increment)"/>
-    <xsl:sequence select="$level-counter"/>
   </xsl:function>
 
   <xsl:function name="tr:get-numbering-format" as="xs:string">
@@ -448,9 +541,6 @@
     </xsl:choose>
   </xsl:function>
   
-  <xsl:template match="@docx2hub:num-signature | @docx2hub:num-continue | @docx2hub:num-abstract | @docx2hub:num-id 
-                       | @docx2hub:num-restart-val | @docx2hub:num-ilvl | @docx2hub:num-restart-level | @docx2hub:num-lvlRestart
-                       | @docx2hub:num-super-level-before | @docx2hub:num-last-same-signature
-                       | @docx2hub:num-initial-skip-increment | @docx2hub:num-start-override" mode="docx2hub:join-runs"/>
+  <xsl:template match="@*[starts-with(name(), 'docx2hub:num-')]" mode="docx2hub:join-runs"/>
   
 </xsl:stylesheet>

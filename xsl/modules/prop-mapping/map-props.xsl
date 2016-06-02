@@ -28,7 +28,9 @@
 
   <xsl:key name="docx2hub:style" match="w:style" use="@w:styleId" />
   <xsl:key name="docx2hub:style-by-role" match="css:rule | dbk:style" use="if ($hub-version eq '1.0') then @role else @name" />
-  <xsl:key name="docx2hub:font-by-name" match="w:font[@w:name]" use="@w:name"/> 
+  <xsl:key name="docx2hub:font-by-name" match="w:font[@w:name]" use="@w:name"/>
+  
+  <xsl:variable name="default-lang" select="/w:root/w:styles/w:docDefaults/w:rPrDefault/w:rPr/w:lang/@w:val" as="attribute(w:val)?"/>
 
   <xsl:template match="/" mode="docx2hub:add-props">
     <xsl:apply-templates select="w:root/w:document/w:body" mode="#current" />
@@ -40,6 +42,9 @@
 
   <xsl:template match="w:body" mode="docx2hub:add-props">
     <xsl:element name="{if ($hub-version eq '1.0') then 'Body' else 'hub'}">
+      <xsl:if test="$default-lang">
+        <xsl:attribute name="xml:lang" select="replace($default-lang, '\-[A-Z]+$', '')"/>  
+      </xsl:if>
       <xsl:attribute name="version" select="concat('5.1-variant le-tex_Hub-', $hub-version)"/>
       <xsl:attribute name="css:version" select="concat('3.0-variant le-tex_Hub-', $hub-version)" />
       <xsl:if test="not($hub-version eq '1.0')">

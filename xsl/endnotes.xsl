@@ -35,12 +35,24 @@
     <!-- setzt die Nummer der Fußnote. Prüfen!! -->
     <xsl:variable name="endnote-num-format" select="/*/w:settings/w:endnotePr/w:numFmt/@w:val" as="xs:string?"/>
     <phrase role="hub:identifier">
-          <xsl:number value="(count(preceding::w:endnoteRef) + 1)" 
+          <xsl:variable name="provisional-endnote-number">
+        <xsl:number value="(count(preceding::w:endnoteRef) + 1)" 
             format="{
                       if ($endnote-num-format) 
                       then tr:get-numbering-format($endnote-num-format, '') 
                       else '1'
                     }"/>
+    </xsl:variable>
+      <xsl:variable name="cardinality" select="if (matches($provisional-endnote-number,'^\*†‡§[0-9]+\*†‡§$')) 
+                                               then xs:integer(replace($provisional-endnote-number, '^\*†‡§([0-9]+)\*†‡§$', '$1'))
+                                               else 0"/>
+      <xsl:value-of select="if (matches($provisional-endnote-number,'^\*†‡§[0-9]+\*†‡§$')) 
+                            then string-join((for $i 
+                                              in (1 to xs:integer(ceiling($cardinality div 4))) 
+                                              return substring($provisional-endnote-number,if (($cardinality mod 4) ne 0) then ($cardinality mod 4) else 4,1)),'') 
+                            else if (matches($provisional-endnote-number,'^a[a-z]$')) 
+                                 then replace($provisional-endnote-number,'^a([a-z])$','$1$1')
+                                 else $provisional-endnote-number"/>
     </phrase>
   </xsl:template>
 

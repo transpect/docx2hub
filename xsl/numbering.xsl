@@ -497,8 +497,18 @@ it, but not when an ilvl=2 heading precedes it.
               </xsl:if>
               <xsl:variable name="pattern-lvl" as="element(w:lvl)?" 
                 select="$lvl/ancestor::w:abstractNum/w:lvl[@w:ilvl = $pattern-ilvl]"/>
+              <xsl:variable name="provisional-number">
               <xsl:number value="($level-counter, 9999)[1]"
                           format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
+            </xsl:variable>
+              <xsl:variable name="cardinality" select="if (matches($provisional-number,'^\*†‡§[0-9]+\*†‡§$')) then xs:integer(replace($provisional-number, '^\*†‡§([0-9]+)\*†‡§$', '$1')) else 0"/>
+              <xsl:value-of select="if (matches($provisional-number,'^\*†‡§[0-9]+\*†‡§$')) 
+                                    then string-join((for $i 
+                                                      in (1 to xs:integer(ceiling($cardinality div 4))) 
+                                                      return substring($provisional-number,if (($cardinality mod 4) ne 0) then ($cardinality mod 4) else 4,1)),'') 
+                                    else if (matches($provisional-number,'^a[a-z]$')) 
+                                         then replace($provisional-number,'^a([a-z])$','$1$1')
+                                         else $provisional-number"/>
             </xsl:matching-substring>
             <xsl:non-matching-substring>
               <xsl:value-of select="."/>
@@ -517,14 +527,15 @@ it, but not when an ilvl=2 heading precedes it.
     <xsl:param name="format" as="xs:string"/>
     <xsl:param name="default" as="xs:string?"/>
     <xsl:choose>
-      <xsl:when test="$format = 'lowerLetter'">a</xsl:when>
-      <xsl:when test="$format = 'upperLetter'">A</xsl:when>
+      <xsl:when test="$format = ('lowerLetter','lower-letter')">a</xsl:when>
+      <xsl:when test="$format = ('upperLetter','upper-letter')">A</xsl:when>
       <xsl:when test="$format = 'decimal'">1</xsl:when>
-      <xsl:when test="$format = 'lowerRoman'">i</xsl:when>
-      <xsl:when test="$format = 'upperRoman'">I</xsl:when>
+      <xsl:when test="$format = ('lowerRoman','lower-roman')">i</xsl:when>
+      <xsl:when test="$format = ('upperRoman','upper-roman')">I</xsl:when>
       <xsl:when test="$format = 'bullet'">
         <xsl:value-of select="$default"/>
       </xsl:when>
+      <xsl:when test="$format = 'chicago'">*†‡§</xsl:when>
       <xsl:when test="$format = 'none'">none</xsl:when><!--GR-->
       <xsl:otherwise>
         <!-- fallback: return 'none' (http://mantis.le-tex.de/mantis/view.php?id=13389#c36016) -->

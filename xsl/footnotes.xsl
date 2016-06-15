@@ -228,14 +228,33 @@
   <xsl:template match="w:footnoteRef" mode="docx2hub:separate-field-functions">
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
     <xsl:if test="$identifier">
-      <xsl:variable name="footnote-num-format" select="/*/w:settings/w:footnotePr/w:numFmt/@w:val" as="xs:string?"/>
+      <xsl:variable name="footnote-num-format" select="(//w:footnoteReference[@w:id=current()/ancestor::w:footnote/@w:id]/following::w:footnotePr[ancestor::w:p]/w:numFmt/@w:val, /*/w:settings/w:footnotePr/w:numFmt/@w:val)[1]" as="xs:string?"/>
+      <xsl:variable name="provisional-footnote-number">
+        <xsl:number 
+ value="if (//w:footnoteReference[@w:id = current()/ancestor::w:footnote/@w:id]) 
+                 then count(
+                        distinct-values(
+                          //w:footnoteReference[@w:id = current()/ancestor::w:footnote/@w:id][1]/preceding::w:footnoteReference[not(@customMarkFollows = '1')]/@w:id
+                        )
+                      ) + 1 
+                 else (count(preceding::w:footnoteRef) + 1)" 
+          format="{if ($footnote-num-format)
+                   then tr:get-numbering-format($footnote-num-format, '') 
+                   else '1'}"/>
+      </xsl:variable>
+      <xsl:variable name="cardinality" select="if (matches($provisional-footnote-number,'^\*†‡§[0-9]+\*†‡§$'))
+                                               then xs:integer(replace($provisional-footnote-number, '^\*†‡§([0-9]+)\*†‡§$', '$1'))
+                                               else 0"/>
       <xsl:variable name="footnote-number">
-        <xsl:number value="(count(preceding::w:footnoteRef) + 1)" 
-          format="{
-          if ($footnote-num-format)
-          then tr:get-numbering-format($footnote-num-format, '') 
-          else '1'
-          }"/>
+        <xsl:value-of select="if (matches($provisional-footnote-number,'^\*†‡§[0-9]+\*†‡§$')) 
+                              then string-join((for $i 
+                                                in (1 to xs:integer(ceiling($cardinality div 4))) 
+                                                return substring($provisional-footnote-number,if (($cardinality mod 4) ne 0) 
+                                                                                              then ($cardinality mod 4) 
+                                                                                              else 4,1)),'') 
+                              else if (matches($provisional-footnote-number,'^a[a-z]$')) 
+                                   then replace($provisional-footnote-number,'^a([a-z])$','$1$1')
+                                   else $provisional-footnote-number"/>
       </xsl:variable>
       <w:t>
         <xsl:choose>

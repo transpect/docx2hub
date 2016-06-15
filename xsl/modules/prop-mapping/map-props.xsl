@@ -388,7 +388,7 @@
   <xsl:template match="w:shd[../w:highlight]" mode="docx2hub:add-props" priority="2"/>
 
   <xsl:template match="w:sectPr[parent::w:pPr]" mode="docx2hub:add-props" priority="+2">
-    <xsl:apply-templates select="w:pgSz" mode="#current"/>
+    <xsl:apply-templates select="w:pgSz | w:footnotePr" mode="#current"/>
   </xsl:template>
 
   <xsl:template match="  w:style/*
@@ -1177,7 +1177,7 @@
   <xsl:template match="w:p" mode="docx2hub:remove-redundant-run-atts">
     <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">
-      <xsl:variable name="style" select="key('docx2hub:style-by-role', @role, $root)" as="element(css:rule)?"/>
+      <xsl:variable name="style" select="key('docx2hub:style-by-role', @role, $root)[1]" as="element(css:rule)?"/>
       <xsl:variable name="numId" as="element(w:numId)?" 
         select="(w:numPr/w:numId, $style/w:numPr/w:numId)[1]"/>
       <xsl:variable name="ilvl" as="xs:integer" 
@@ -1199,7 +1199,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="w:tbl" mode="docx2hub:remove-redundant-run-atts">
+  <xsl:template match="w:tbl" mode="docx2hub:remove-redundant-run-atts">      
     <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>

@@ -1240,4 +1240,21 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:function name="docx2hub:most-frequent-lang" as="xs:string?">
+    <xsl:param name="context" as="element(*)"/>
+    <xsl:variable name="langs" as="xs:string*">
+      <xsl:for-each-group select="$context//text()[not(ancestor::dbk:info)]" group-by="docx2hub:text-lang(.)">
+        <xsl:sort select="string-length(string-join(current-group(), ''))" order="descending"/>
+        <xsl:sequence select="current-grouping-key()"/>
+      </xsl:for-each-group>
+    </xsl:variable>
+    <xsl:sequence select="$langs[1]"/>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:text-lang" as="xs:string?">
+    <xsl:param name="text" as="node()"/>
+    <xsl:variable name="closest" select="$text/ancestor::*[@xml:lang | @role[key('style-by-name', ., $text)/@xml:lang]][1]" as="element(*)?"/>
+    <xsl:sequence select="($closest/@xml:lang, key('style-by-name', $closest/@role, root($text))/@xml:lang)[1]"/>
+  </xsl:function>
+
 </xsl:stylesheet>

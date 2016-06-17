@@ -41,6 +41,7 @@
   <xsl:template match="w:body" mode="docx2hub:add-props">
     <xsl:element name="{if ($hub-version eq '1.0') then 'Body' else 'hub'}">
       <xsl:if test="../../w:styles/@xml:lang">
+        <!-- might be superseded by the most frequently used language in a later mode --> 
         <xsl:attribute name="xml:lang" select="replace(../../w:styles/@xml:lang, '\-[A-Z]+$', '')"/>  
       </xsl:if>
       <xsl:attribute name="version" select="concat('5.1-variant le-tex_Hub-', $hub-version)"/>

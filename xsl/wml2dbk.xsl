@@ -573,11 +573,32 @@
   <xsl:template match="/dbk:*" mode="wml-to-dbk">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="wml-to-dbk"/>
+      <xsl:variable name="most-frequent-lang" select="docx2hub:most-frequent-lang(.)" as="xs:string?"/>
+      <xsl:if test="exists($most-frequent-lang)">
+        <xsl:attribute name="xml:lang" select="$most-frequent-lang"/>
+      </xsl:if>
       <xsl:call-template name="check-field-functions">
         <xsl:with-param name="nodes" select="*"/>
       </xsl:call-template>
     </xsl:copy>
   </xsl:template>
+  
+  <xsl:function name="docx2hub:most-frequent-lang" as="xs:string?">
+    <xsl:param name="context" as="element(*)"/>
+    <xsl:variable name="langs" as="xs:string*">
+      <xsl:for-each-group select="$context//text()[not(ancestor::dbk:info)]" group-by="docx2hub:text-lang(.)">
+        <xsl:sort select="string-length(string-join(current-group(), ''))" order="descending"/>
+        <xsl:sequence select="current-grouping-key()"/>
+      </xsl:for-each-group>
+    </xsl:variable>
+    <xsl:sequence select="$langs[1]"/>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:text-lang" as="xs:string?">
+    <xsl:param name="text" as="node()"/>
+    <xsl:variable name="closest" select="$text/ancestor::*[@xml:lang | @role[key('style-by-name', ., $text)/@xml:lang]][1]" as="element(*)?"/>
+    <xsl:sequence select="($closest/@xml:lang, key('style-by-name', $closest/@role, root($text))/@xml:lang)[1]"/>
+  </xsl:function>
 
   <!-- paragraphs (w:p) -->
 

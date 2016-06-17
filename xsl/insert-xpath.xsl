@@ -258,6 +258,9 @@
                         w:docDefaults/w:rPrDefault/w:rPr/w:lang/@w:val,
                         w:docDefaults/w:rPrDefault/w:lang/@w:val
                       )[1]" />
+      <xsl:if test="exists($default-lang)">
+        <xsl:attribute name="xml:lang" select="$default-lang"/>
+      </xsl:if>
       <xsl:apply-templates select="@*, * except w:latentStyles" mode="#current" >
         <xsl:with-param name="default-font" select="$default-font" tunnel="yes"/>
         <xsl:with-param name="default-font-size" select="$default-font-size" tunnel="yes"/>

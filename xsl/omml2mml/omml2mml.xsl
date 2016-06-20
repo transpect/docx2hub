@@ -829,12 +829,22 @@
         </mml:mover>
       </xsl:when>
       <xsl:otherwise>
-        <mml:munder>
-          <mml:mrow>
+        <mml:munder accentunder="true">
+          <xsl:variable name="mrow-content" as="node()*">
             <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
-          </mml:mrow>
+          </xsl:variable>
+          <xsl:choose>
+            <xsl:when test="count($mrow-content) = 1">
+              <xsl:sequence select="$mrow-content"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <mml:mrow>
+	        <xsl:sequence select="$mrow-content"/>
+              </mml:mrow>
+            </xsl:otherwise>
+          </xsl:choose>
           <mml:mo>
-            <xsl:text>&#x00332;</xsl:text>
+	    <xsl:text>&#x000AF;</xsl:text>
           </mml:mo>
         </mml:munder>
       </xsl:otherwise>

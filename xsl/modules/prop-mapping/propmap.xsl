@@ -158,13 +158,12 @@
         <prop name="w:tab/@w:leader" type="linear" target-name="leader" />
         <prop name="w:tab/@w:pos" type="docx-length-attr" target-name="horizontal-position" />
         <prop name="w:tab/@w:val">
-          <!-- TODO: implement the remainder of the ST_TabJc values in § 17.18.84 -->
-          <!-- Interestingly, 'left' and 'right' don't appear in that table. -->
-          <val match="left" target-name="align" target-value="left" />
-          <val match="center" target-name="align" target-value="center" />
-          <val match="right" target-name="align" target-value="right" />
-          <val match="num" />
-          <val match="clear" target-name="clear" target-value="yes" />
+          <val eq="decimal" target-name="align" target-value="decimal"/>
+          <val eq="left" target-name="align" target-value="left" />
+          <val eq="center" target-name="align" target-value="center" />
+          <val eq="right" target-name="align" target-value="right" />
+          <val eq="num" />
+          <val eq="clear" target-name="clear" target-value="yes" />
         </prop>
         <prop name="w:tabs" type="tablist" />
         <prop name="w:tblBorders" type="passthru" />

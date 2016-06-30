@@ -444,6 +444,10 @@
     </xsl:copy>    
   </xsl:template>
   
+  <!-- also in a previous mode, remove w:lastRenderedPageBreak as it may be in
+  runs that otherwise contain w:instrText, preventing adjacent w:instrText runs from being merged -->
+  <xsl:template match="w:lastRenderedPageBreak" mode="docx2hub:remove-redundant-run-atts"/>
+  
   <xsl:template name="docx2hub:nest-field-functions" as="document-node()">
     <xsl:param name="input" as="document-node()"/><!-- containing raw w:fldChar or nested docx2hub:field-function -->
     <xsl:variable name="grouping" as="element(*)*">
@@ -463,7 +467,7 @@
                                          [following-sibling::w:fldChar[1]/@w:fldCharType = 'end']">
             <xsl:variable name="end" as="element(w:fldChar)" 
               select="self::w:fldChar[@w:fldCharType = 'begin']
-                              /following-sibling::w:fldChar[position() = (1, 2)][@w:fldCharType = 'end']"/>
+                              /following-sibling::w:fldChar[position() = (1, 2)][@w:fldCharType = 'end'][1]"/>
             <docx2hub:field-function>
               <xsl:apply-templates select="current-group()[. &lt;&lt; $end] union $end" mode="#current">
                 <xsl:with-param name="begin" as="element(w:fldChar)" select="." tunnel="yes"/>

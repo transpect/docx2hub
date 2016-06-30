@@ -421,6 +421,84 @@
       </w:p>
     </xsl:for-each-group>
   </xsl:template>
+  
+  <!-- Links that stretch across para boundaries: Insert new instrTexts so that there are individual links per para.
+  Might need to put it into a mode of its own. -->
+  <!-- this is work in progress
+  <xsl:template match="/" mode="docx2hub:separate-field-functions">
+    <xsl:variable name="link-begins" as="element(w:fldChar)*" 
+      select="for $it in .//w:instrText[matches(., '\s*REF\s+')]
+              return $it/preceding::w:fldChar[1]"/>
+    <xsl:variable name="link-ends" as="element(w:fldChar)*" 
+      select=".//w:fldChar[@w:fldCharType = 'end']
+                          [exists(key('docx2hub:item-by-id', @linkend) intersect $link-begins)]"/>
+    <xsl:next-match>
+      <xsl:with-param name="link-begins" select="$link-begins" tunnel="yes"/>
+      <xsl:with-param name="link-ends" select="$link-ends" tunnel="yes"/>
+    </xsl:next-match>
+  </xsl:template>
+  
+  <xsl:template match="w:p" priority="2" mode="docx2hub:separate-field-functions">
+    <xsl:param name="link-begins" as="element(w:fldChar)*" tunnel="yes"/>
+    <xsl:param name="link-ends" as="element(w:fldChar)*" tunnel="yes"/>
+    <xsl:variable name="last-contained-begin" select="($link-begins intersect .//w:fldChar)[last()]" as="element(w:fldChar)?"/>
+    <xsl:variable name="last-contained-corresponding-end" as="element(w:fldChar)?"
+      select="key('docx2hub:linking-item-by-id', $last-contained-begin/@xml:id) intersect $link-ends"/>
+    <xsl:variable name="last-outside-begin" select="($link-begins[. &lt;&lt; current()])[last()]" as="element(w:fldChar)?"/>
+    <xsl:variable name="last-outside-corresponding-end" as="element(w:fldChar)?"
+      select="key('docx2hub:linking-item-by-id', $last-outside-begin/@xml:id) intersect $link-ends"/>
+    <xsl:message select="$last-outside-begin, exists($last-outside-corresponding-end intersect .//w:fldChar)"></xsl:message>
+    <xsl:choose>
+      <xsl:when test="exists($last-outside-begin) and exists($last-outside-corresponding-end intersect .//w:fldChar)">
+        <xsl:comment>hurz</xsl:comment>
+        <xsl:copy>
+          <xsl:apply-templates select="@*" mode="#current"/>
+          <xsl:apply-templates select="$last-contained-begin, node()" mode="#current">
+            <xsl:with-param name="id-suffix" select="generate-id()" tunnel="yes"/>
+            <xsl:with-param name="link-begin" select="$last-contained-begin" tunnel="yes"/>
+            <xsl:with-param name="link-end" select="$last-outside-corresponding-end" tunnel="yes"/>
+          </xsl:apply-templates>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:next-match/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="w:fldChar[@w:fldCharType = 'begin']" mode="docx2hub:separate-field-functions">
+    <xsl:param name="id-suffix" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="link-begin" as="element(w:fldChar)?" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="$link-begin is current()">
+        <xsl:copy>
+          <xsl:attribute name="xml:id" select="concat(@xml:id, '_', $id-suffix)"/>
+          <xsl:apply-templates select="@* except @xml:id"/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:next-match/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="w:fldChar[@w:fldCharType = 'end']" mode="docx2hub:separate-field-functions">
+    <xsl:param name="id-suffix" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="link-end" as="element(w:fldChar)?" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="$link-end is current()">
+        <xsl:copy>
+          <xsl:attribute name="xml:id" select="concat(@xml:id, '_', $id-suffix)"/>
+          <xsl:apply-templates select="@* except @xml:id"/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:next-match/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+-->
 
   <!-- ================================================================================ -->
   <!-- Mode: wml-to-dbk -->
@@ -748,12 +826,15 @@
   
   <xsl:template match="w:bookmarkEnd" mode="wml-to-dbk wml-to-dbk-bookmarkEnd">
     <xsl:if test="exists(key('docx2hub:bookmarkStart', @w:id)[not(@w:name='_GoBack')])">
-      <xsl:variable name="start" select="key('docx2hub:bookmarkStart', @w:id)[not(@w:name='_GoBack')]" as="element(w:bookmarkStart)"/>
+      <xsl:variable name="start" select="key('docx2hub:bookmarkStart', @w:id)[not(@w:name='_GoBack')]" as="element(w:bookmarkStart)+"/>
+      <xsl:if test="count($start) gt 1">
+        <xsl:message select="'Multiple bookmarkStart IDs ', @w:id, $start"/>
+      </xsl:if>
       <anchor role="end">
         <xsl:variable name="id" as="attribute(xml:id)">
-          <xsl:apply-templates select="$start/@w:name" mode="bookmark-id"/> 
+          <xsl:apply-templates select="$start[1]/@w:name" mode="bookmark-id"/> 
         </xsl:variable>
-        <xsl:apply-templates select="$start/@w:name" mode="bookmark-id">
+        <xsl:apply-templates select="$start[1]/@w:name" mode="bookmark-id">
           <xsl:with-param name="end" select="true()"/>
         </xsl:apply-templates>
         <xsl:attribute name="linkend" select="$id"/>
@@ -1103,9 +1184,6 @@
   <xsl:template match="w:sectPr | w:pgSz | w:footnotePr" mode="wml-to-dbk"/>
  
   <xsl:template match="w:tcPr" mode="wml-to-dbk"/>
-
-  <!-- Umbruchshilfe zur exakten Reproduktion des Umbruchs -->
-  <xsl:template match="w:lastRenderedPageBreak" mode="wml-to-dbk"/>
 
   <!-- Background -->
   <xsl:template match="w:background[parent::w:document]" mode="wml-to-dbk"/>

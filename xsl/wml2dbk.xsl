@@ -914,7 +914,7 @@
                 then 'comment-rel-by-id'
                 else 'doc-rel-by-id'" />
     <xsl:variable name="value" select="."/>
-    <xsl:variable name="rel-item" select="key($key-name, current())" as="element(rel:Relationship)" />
+    <xsl:variable name="rel-item" select="key($key-name, current(), $root)" as="element(rel:Relationship)" />
     <xsl:choose>
       <xsl:when test="exists(parent::w:hyperlink/@w:anchor)">
         <xsl:attribute name="xlink:href" select="concat(

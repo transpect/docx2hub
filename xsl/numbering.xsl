@@ -218,7 +218,12 @@ it, but not when an ilvl=2 heading precedes it.
           </xsl:when>
           <xsl:when test="$last-resetter &gt;&gt; $last-same-signature">
             <xsl:attribute name="{$counter-name}" 
-              select="$context/@docx2hub:num-restart-val cast as xs:integer + (1[exists($initial-sub-item)], 0)[1]"/>
+              select="(
+                        for $rv in $context/@docx2hub:num-restart-val[. castable as xs:integer]
+                        return xs:integer($rv),
+                        4321
+                      )[1]
+                      + (1[exists($initial-sub-item)], 0)[1]"/>
             <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="string-join(('c', '1'[exists($initial-sub-item)]), '')"/>
           </xsl:when>
           <xsl:when test="exists($last-same-signature)">
@@ -237,7 +242,12 @@ it, but not when an ilvl=2 heading precedes it.
           </xsl:when>
           <xsl:otherwise>
             <xsl:attribute name="{$counter-name}" 
-              select="$context/@docx2hub:num-restart-val cast as xs:integer + (1[exists($initial-sub-item)], 0)[1]"/>
+              select="(
+                        for $rv in $context/@docx2hub:num-restart-val[. castable as xs:integer]
+                        return xs:integer($rv),
+                        9876
+                      )[1]
+                      + (1[exists($initial-sub-item)], 0)[1]"/>
             <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="'e'"/>
           </xsl:otherwise>
         </xsl:choose>
@@ -483,9 +493,11 @@ it, but not when an ilvl=2 heading precedes it.
                       than any same-ilvl para. Therefore use the start value. -->
                     <xsl:sequence select="$pattern-lvl/w:start/@w:val"></xsl:sequence>
                   </xsl:when>
-                  <xsl:when test="exists($context-for-counter)">
-                    <xsl:sequence select="$context-for-counter/@*[name() = concat('docx2hub:num-counter-ilvl', $pattern-ilvl)]
-                                          cast as xs:integer"/>
+                  <xsl:when test="exists($context-for-counter)
+                                  and
+                                  $context-for-counter/@*[name() = concat('docx2hub:num-counter-ilvl', $pattern-ilvl)]
+                                  castable as xs:integer">
+                    <xsl:sequence select="xs:integer($context-for-counter/@*[name() = concat('docx2hub:num-counter-ilvl', $pattern-ilvl)])"/>
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:sequence select="$pattern-lvl/w:start/@w:val"/>

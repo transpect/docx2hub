@@ -202,6 +202,7 @@
     <p:with-option name="prefix" select="concat('docx2hub/', $basename, '/01')"/>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+    <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="srcpaths" select="$srcpaths"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
   <p:with-param name="srcpaths-on-runs" 
@@ -226,6 +227,7 @@
         <p:with-option name="prefix" select="concat('docx2hub/', $basename, '/02')"/>
         <p:with-option name="debug" select="$debug"/>
         <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+        <p:with-option name="fail-on-error" select="$fail-on-error"/>
         <p:with-param name="fail-on-error" select="$fail-on-error"/>
       </tr:xslt-mode>
     </p:when>

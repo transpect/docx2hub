@@ -382,7 +382,7 @@
           <xsl:attribute name="{.}" select="$attribute-values[position() eq $pos]"/>
         </xsl:for-each>
         <xsl:copy-of select="$pPr"/>
-        <xsl:apply-templates select="current-group()[not(self::w:pPr)]"/>
+        <xsl:apply-templates select="current-group()[not(self::w:pPr)]" mode="#current"/>
       </w:p>
     </xsl:for-each-group>
   </xsl:template>

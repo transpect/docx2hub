@@ -557,7 +557,7 @@
         <xsl:variable name="lvl-properties" select="key('abstract-numbering-by-id',key('numbering-by-id',w:numPr/w:numId/@w:val)/w:abstractNumId/@w:val)/w:lvl[@w:ilvl=$ilvl]"/>
         <xsl:apply-templates select="$lvl-properties/@* except $lvl-properties/@w:ilvl" mode="#current"/>
       </xsl:if>
-      <xsl:apply-templates select="@*, *, $content" mode="#current" />
+      <xsl:apply-templates select="@*, w:tblPr, *[not(self::w:tblPr)], $content" mode="#current" />
     </xsl:copy>   
   </xsl:template>
   

@@ -33,6 +33,8 @@
       <propmap>
         <prop name="v:shape/@fillcolor" type="docx-color" target-name="css:background-color"/>
         <prop name="v:shape/@id" />
+        <prop name="v:shape/@o:spid" />
+        <prop name="v:shape/@o:gfxdata" />
         <prop name="v:shape/@o:allowincell" implement="maybe later" />
         <prop name="v:shape/@o:allowoverlap" implement="maybe later" />
         <prop name="v:shape/@stroked" type="linear" target-name="stroked"/><!-- no passthru b/c no atts may be produced in mode add-atts -->

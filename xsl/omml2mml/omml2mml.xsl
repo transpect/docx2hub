@@ -873,6 +873,9 @@
 
       <!-- separator: the default is ',' for MathML, and '|' for OMML -->
       <xsl:choose>
+        <!-- Only one element to separate: no need for the separators attribute -->
+        <xsl:when test="count(m:e) = 1"/>
+      	
         <!-- Matches MathML default. Write nothing -->
         <xsl:when test="m:dPr[1]/m:sepChr/@m:val = ','"/>
 

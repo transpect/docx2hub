@@ -46,6 +46,7 @@
   <xsl:key name="comment-by-id" match="w:comment" use="@w:id" />
   <xsl:key name="doc-rel-by-id" match="w:docRels/rel:Relationships/rel:Relationship" use="@Id" />
   <xsl:key name="footnote-rel-by-id" match="w:footnoteRels/rel:Relationships/rel:Relationship" use="@Id" />
+  <xsl:key name="endnote-rel-by-id" match="w:endnoteRels/rel:Relationships/rel:Relationship" use="@Id" />
   <xsl:key name="comment-rel-by-id" match="w:commentRels/rel:Relationships/rel:Relationship" use="@Id" />
   <xsl:key name="symbol-by-number" match="symbol" use="upper-case(replace(@number, '^0*(.+?)$', '$1'))" />
   <xsl:key name="symbol-by-entity" match="symbol" use="@entity" />
@@ -528,6 +529,7 @@
                        | /*/w:numbering 
                        | /*/w:docRels
                        | /*/w:footnoteRels
+                       | /*/w:endnoteRels
                        | /*/w:commentRels
                        | /*/w:fonts 
                        | /*/w:comments 

@@ -150,6 +150,12 @@
               mode="#current"/>
           </w:footnoteRels>
         </xsl:if>
+        <xsl:if test="doc-available(resolve-uri('_rels/endnotes.xml.rels', $base-dir))">
+          <w:endnoteRels>
+            <xsl:apply-templates select="document(resolve-uri('_rels/endnotes.xml.rels', $base-dir))/rel:Relationships"
+              mode="#current"/>
+          </w:endnoteRels>
+        </xsl:if>
         <xsl:if test="doc-available(resolve-uri('_rels/comments.xml.rels', $base-dir))">
           <w:commentRels>
             <xsl:apply-templates select="document(resolve-uri('_rels/comments.xml.rels', $base-dir))/rel:Relationships"

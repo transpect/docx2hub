@@ -119,7 +119,7 @@
         </xsl:choose>
       </info>
       <xsl:apply-templates select="../../w:numbering" mode="#current"/>
-      <xsl:copy-of select="../../w:docRels, ../../w:footnoteRels, ../../w:commentRels, ../../w:fonts"/>
+      <xsl:copy-of select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>
       <xsl:apply-templates select="../../w:comments, ../../w:footnotes, ../../w:endnotes" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>

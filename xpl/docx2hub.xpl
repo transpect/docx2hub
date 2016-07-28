@@ -51,6 +51,7 @@
       embedded during conversion.</p:documentation>
   </p:input>
   <p:output port="result" primary="true"/>
+  <p:serialization port="result" omit-xml-declaration="false"/>
   <p:output port="insert-xpath">
     <p:pipe step="single-tree" port="result"/>
   </p:output>
@@ -86,7 +87,10 @@
   <p:option name="create-svg" required="false" select="'no'">
     <p:documentation>Whether Office Open Drawing ML should be mapped to SVG</p:documentation>
   </p:option>
-  <p:serialization port="result" omit-xml-declaration="false"/>
+  <p:option name="discard-alternate-choices" select="'yes'">
+    <p:documentation>Whether to remove mc:AlternateContent/mc:Choice at an early conversion stage (after insert-xpath 
+      though).</p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
@@ -152,6 +156,7 @@
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="field-vars" select="$field-vars"/>
+    <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
   </tr:xslt-mode>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:props2atts">

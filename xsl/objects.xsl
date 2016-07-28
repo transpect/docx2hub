@@ -43,10 +43,10 @@
     </xsl:element>
   </xsl:template>
   
-  <!-- This markup tends to be very verbose. We drop it in a very early stage to save memory and 
+  <!-- This markup tends to be very verbose. We drop it at an early stage to save memory and 
        accelerate subsequent processing. -->
   
-  <xsl:template match="mc:AlternateContent/mc:Choice" mode="insert-xpath"/>
+  <xsl:template match="mc:AlternateContent/mc:Choice[$docx2hub:discard-alternate-choices]" mode="docx2hub:add-props"/>
 
   <xsl:template match="@* | * | w:drawing | w:txbxContent | w:pict" mode="foreign">
     <xsl:copy copy-namespaces="no">

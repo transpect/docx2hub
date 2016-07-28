@@ -29,6 +29,7 @@
   <p:output port="result" primary="true">
     <p:pipe port="result" step="add-xml-base-attr"/>
   </p:output>
+  <p:serialization port="result" omit-xml-declaration="false"/>
   <p:output port="params">
     <p:pipe port="result" step="params"/>
   </p:output>
@@ -60,7 +61,6 @@
       a srcpath of their own. In principle, srcpath generation may be sped up by computing them more efficiently,
       building on a tunnelled parameter that contains the parent element’s already-computed srcpath.</p:documentation>
   </p:option>
-  <p:serialization port="result" omit-xml-declaration="false"/>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
@@ -205,7 +205,7 @@
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="srcpaths" select="$srcpaths"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
-  <p:with-param name="srcpaths-on-runs" 
+    <p:with-param name="srcpaths-on-runs" 
       select="if (count(//w:r) &gt; $no-srcpaths-for-text-runs-threshold)
               then 'no' else 'yes'">
       <p:pipe step="document" port="result"/>

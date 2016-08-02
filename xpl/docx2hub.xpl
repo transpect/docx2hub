@@ -217,7 +217,7 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
   </tr:xslt-mode>
 
-  <tr:xslt-mode msg="yes" mode="docx2hub:separate-field-functions" name="separate-field-functions">
+  <tr:xslt-mode msg="yes" mode="docx2hub:field-functions" name="field-functions">
     <p:input port="parameters">
       <p:pipe step="single-tree" port="params"/>
     </p:input>
@@ -227,7 +227,7 @@
     <p:input port="models">
       <p:empty/>
     </p:input>
-    <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/11')">
+    <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/14')">
       <p:pipe port="params" step="single-tree"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>

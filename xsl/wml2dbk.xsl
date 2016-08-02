@@ -429,8 +429,8 @@
   
   <!-- Links that stretch across para boundaries: Insert new instrTexts so that there are individual links per para.
   Might need to put it into a mode of its own. -->
-  <!-- this is work in progress
-  <xsl:template match="/" mode="docx2hub:separate-field-functions">
+<!--   this is work in progress-->
+  <xsl:template match="/" mode="docx2hub:field-functions">
     <xsl:variable name="link-begins" as="element(w:fldChar)*" 
       select="for $it in .//w:instrText[matches(., '\s*REF\s+')]
               return $it/preceding::w:fldChar[1]"/>
@@ -443,7 +443,7 @@
     </xsl:next-match>
   </xsl:template>
   
-  <xsl:template match="w:p" priority="2" mode="docx2hub:separate-field-functions">
+  <xsl:template match="w:p" priority="2" mode="docx2hub:field-functions">
     <xsl:param name="link-begins" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:param name="link-ends" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:variable name="last-contained-begin" select="($link-begins intersect .//w:fldChar)[last()]" as="element(w:fldChar)?"/>
@@ -471,7 +471,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="w:fldChar[@w:fldCharType = 'begin']" mode="docx2hub:separate-field-functions">
+  <xsl:template match="w:fldChar[@w:fldCharType = 'begin']" mode="docx2hub:field-functions">
     <xsl:param name="id-suffix" as="xs:string?" tunnel="yes"/>
     <xsl:param name="link-begin" as="element(w:fldChar)?" tunnel="yes"/>
     <xsl:choose>
@@ -487,7 +487,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="w:fldChar[@w:fldCharType = 'end']" mode="docx2hub:separate-field-functions">
+  <xsl:template match="w:fldChar[@w:fldCharType = 'end']" mode="docx2hub:field-functions">
     <xsl:param name="id-suffix" as="xs:string?" tunnel="yes"/>
     <xsl:param name="link-end" as="element(w:fldChar)?" tunnel="yes"/>
     <xsl:choose>
@@ -503,7 +503,7 @@
     </xsl:choose>
   </xsl:template>
 
--->
+
 
   <!-- ================================================================================ -->
   <!-- Mode: wml-to-dbk -->

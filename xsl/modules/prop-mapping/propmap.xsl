@@ -79,7 +79,7 @@
           <val match="center" target-name="css:text-align-last" target-value="center" />
         </prop>
       	<prop name="w:keepLines" />
-      	<prop name="w:keepNext" />
+      	<prop name="w:keepNext" type="docx-boolean-prop" default="auto" active="avoid" target-name="css:page-break-after"/>
       	<prop name="w:kern" />
         <prop name="w:kinsoku" />
         <prop name="w:lang" type="lang" target-name="xml:lang" />

@@ -95,7 +95,7 @@
         <xsl:with-param name="error-code" select="'W2D_052'"/>
         <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
         <xsl:with-param name="hash">
-          <value key="xpath"><xsl:value-of select="@srcpath"/></value>
+          <value key="xpath"><xsl:value-of select="ancestor-or-self::*[@srcpath][1]/@srcpath"/></value>
           <value key="level">WRN</value>
           <value key="comment"/>
           <value key="info-text"><xsl:value-of select="concat('Table-width: ', $width, '    Sum of col-widths: ', sum(w:gridCol/@w:w))"/></value>

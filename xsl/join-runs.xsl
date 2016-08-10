@@ -396,18 +396,20 @@
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" 
-        group-adjacent="exists(self::w:r[*][every $c in * satisfies ($c/self::w:instrText)])">
+        group-adjacent="exists(self::w:r[*][every $c in * satisfies $c/self::w:instrText]
+                               | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
         <xsl:choose>
-          <xsl:when test="current-grouping-key()">
-            <xsl:copy copy-namespaces="no">
-              <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
+          <xsl:when test="current-grouping-key() and exists(current-group()/self::w:r)">
+            <w:r>
+              <xsl:apply-templates select="current-group()/self::w:r/(@* except @srcpath)" mode="#current"/>
               <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:sequence select="string-join(current-group()/w:instrText, '')"/>
               </w:instrText>
-            </xsl:copy>
+            </w:r>
+            <xsl:sequence select="current-group()/(self::w:bookmarkStart | self::w:bookmarkEnd)"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:apply-templates select="current-group()" mode="#current"/>

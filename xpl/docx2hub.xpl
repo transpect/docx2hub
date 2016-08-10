@@ -275,7 +275,7 @@
 
   <tr:xslt-mode msg="yes" mode="wml-to-dbk">
     <p:input port="source">
-      <p:pipe port="result" step="separate-field-functions"/>
+      <p:pipe port="result" step="field-functions"/>
     </p:input>
     <p:input port="parameters">
       <p:pipe step="single-tree" port="params"/>

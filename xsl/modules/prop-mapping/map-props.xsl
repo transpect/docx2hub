@@ -16,6 +16,7 @@
   xmlns:word200x="http://schemas.microsoft.com/office/word/2003/wordml"
   xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint"
   xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
   xmlns:extendedProps="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
   xmlns:customProps="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties"
@@ -410,6 +411,7 @@
                        | w:u/@w:color
                        | w:spacing/@* 
                        | v:shape/@* 
+                       | wp:extent/@*
                        " 
     mode="docx2hub:add-props">
     <xsl:variable name="prop" select="key('docx2hub:prop', docx2hub:propkey(.), $docx2hub:propmap)" />
@@ -665,6 +667,10 @@
 
       <xsl:when test=". eq 'docx-length-attr'">
         <docx2hub:attribute name="{../@target-name}"><xsl:value-of select="docx2hub:pt-length(($val, $val/@w:val, $val/@w:w)[normalize-space()][1])" /></docx2hub:attribute>
+      </xsl:when>
+      
+      <xsl:when test=". eq 'docx-image-size-attr'">
+        <docx2hub:attribute name="{../@target-name}"><xsl:value-of select="concat(number($val) div 12700,'pt')" /></docx2hub:attribute>
       </xsl:when>
 
       <xsl:when test=". eq 'docx-length-attr-negated'">

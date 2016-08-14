@@ -630,14 +630,21 @@
                                               )"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:choose>
-          <xsl:when test="$rel-item/@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink'">
-            <xsl:attribute name="xlink:href" select="$rel-item/@Target" />
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:attribute name="linkend" select="$rel-item/@Target"/>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:call-template name="insert-target">
+          <xsl:with-param name="rel-item" select="$rel-item"/>
+        </xsl:call-template>        
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="insert-target">
+    <xsl:param name="rel-item" as="element(rel:Relationship)"/>
+    <xsl:choose>
+      <xsl:when test="$rel-item/@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink'">
+        <xsl:attribute name="xlink:href" select="$rel-item/@Target" />
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="linkend" select="$rel-item/@Target"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

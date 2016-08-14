@@ -99,7 +99,9 @@
       <xsl:apply-templates select="../a:srcRect" mode="wml-to-dbk"/>
       <imagedata fileref="{if ($rel/@TargetMode = 'External') 
                            then $patched-file-uri
-                           else concat('container:word/', $patched-file-uri)}"/>
+                           else concat('container:word/', $patched-file-uri)}">
+        <xsl:apply-templates select="ancestor-or-self::w:drawing//wp:extent/@*" mode="wml-to-dbk"/>
+      </imagedata>
     </imageobject>
   </xsl:template>
   

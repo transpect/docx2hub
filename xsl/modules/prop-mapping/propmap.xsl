@@ -3,6 +3,7 @@
     xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:docx2hub="http://transpect.io/docx2hub"
+    xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
     version="2.0"
     exclude-result-prefixes = "xs">
 
@@ -61,6 +62,8 @@
         <prop name="w:em">
           <val eq="none"/>
         </prop>
+        <prop name="wp:extent/@cx" target-name="css:width" type="docx-image-size-attr"/>
+        <prop name="wp:extent/@cy" target-name="css:height" type="docx-image-size-attr"/>
         <prop name="w:gridSpan" /><!-- will be calculated by tables.xsl -->
         <prop name="w:highlight" type="docx-color" target-name="css:background-color"/>
         <prop name="w:i" type="docx-boolean-prop" target-name="css:font-style" default="normal" active="italic"/>

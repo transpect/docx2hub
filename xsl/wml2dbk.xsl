@@ -100,7 +100,7 @@
     <!-- $result[1]: field function name, $result[2]: field function args -->
     <xsl:param name="begin" as="element(w:fldChar)"/>
     <xsl:variable name="prelim" as="xs:string+">
-      <xsl:analyze-string select="$begin/following::w:instrText[1]" regex="^\s*(\i\c*)\s+">
+      <xsl:analyze-string select="$begin/following::w:instrText[1]" regex="^\s*\\?(\i\c*)\s+">
         <xsl:matching-substring>
           <xsl:sequence select="regex-group(1)"/>
           <xsl:if test="empty(regex-group(1))">
@@ -114,7 +114,7 @@
       </xsl:analyze-string>
     </xsl:variable>
     <xsl:choose>
-      <xsl:when test="count($prelim) = 1">
+      <xsl:when test="count($prelim) = 1 and not(matches($prelim[1], '^\i\c*$'))">
         <xsl:sequence select="'BROKEN2'"/>
         <xsl:sequence select="$prelim"/>
       </xsl:when>

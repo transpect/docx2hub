@@ -99,14 +99,29 @@
   <xsl:function name="docx2hub:field-function" as="xs:string+">
     <!-- $result[1]: field function name, $result[2]: field function args -->
     <xsl:param name="begin" as="element(w:fldChar)"/>
-    <xsl:analyze-string select="$begin/following::w:instrText[1]" regex="^\s*(\w+)\s+">
-      <xsl:matching-substring>
-        <xsl:sequence select="regex-group(1)"/>    
-      </xsl:matching-substring>
-      <xsl:non-matching-substring>
-        <xsl:sequence select="normalize-space(.)"/>
-      </xsl:non-matching-substring>
-    </xsl:analyze-string>
+    <xsl:variable name="prelim" as="xs:string+">
+      <xsl:analyze-string select="$begin/following::w:instrText[1]" regex="^\s*(\i\c*)\s+">
+        <xsl:matching-substring>
+          <xsl:sequence select="regex-group(1)"/>
+          <xsl:if test="empty(regex-group(1))">
+            <xsl:sequence select="'BROKEN1'"/>
+            <xsl:sequence select="."/>
+          </xsl:if>
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:sequence select="normalize-space(.)"/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="count($prelim) = 1">
+        <xsl:sequence select="'BROKEN2'"/>
+        <xsl:sequence select="$prelim"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="$prelim"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:function>
 
   <xsl:variable name="docx2hub:block-field-functions" as="xs:string+" 

@@ -13,8 +13,9 @@
     xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
     xmlns:exsl='http://exslt.org/common'
     xmlns:saxon="http://saxon.sf.net/"
+    xmlns:docx2hub="http://transpect.io/docx2hub"
     xmlns:tr="http://transpect.io"
-    exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon tr fn"
+    exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon tr fn docx2hub"
     version="2.0">
 
   <xsl:param name="error-mode" select="'debug'"/>
@@ -95,5 +96,17 @@
       <xsl:message terminate="{$fail-on-error}"/>
     </xsl:if>
   </xsl:template>
+  
+  <xsl:function name="docx2hub:message" as="processing-instruction()">
+    <xsl:param name="context" as="node()"/>
+    <xsl:param name="terminate" as="xs:boolean"/>
+    <xsl:param name="code" as="xs:string"/>
+    <xsl:param name="severity" as="xs:string"/><!-- ('INFO', 'WRN', 'ERR', 'NRE') -->
+    <xsl:param name="mode" as="xs:string"/>
+    <xsl:param name="message" as="xs:string"/>
+    <xsl:variable name="srcpath" as="attribute(srcpath)?" select="$context/ancestor-or-self::*[@srcpath][1]/@srcpath"/>
+    <xsl:message terminate="{('yes'[$terminate], 'no')[1]}" select="$code, $severity, $srcpath, $message"/>
+    <xsl:processing-instruction name="tr" select="string-join(($code, $severity, $message), ' ')"/>
+  </xsl:function>
 
 </xsl:stylesheet>

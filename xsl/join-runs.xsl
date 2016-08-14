@@ -391,23 +391,25 @@
   
   <xsl:template match="*:keyword[matches(@role,'^fieldVar_')]" mode="docx2hub:join-runs"/>
   
-  <!-- This mode has to run before docx2hub:separate-field-functions --> 
-  <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs" >
+  <!-- This mode has to run before docx2hub:field-functions --> 
+  <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" 
-        group-adjacent="exists(self::w:r[*][every $c in * satisfies ($c/self::w:instrText)])">
+        group-adjacent="exists(self::w:r[*][every $c in * satisfies $c/self::w:instrText]
+                               | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
         <xsl:choose>
-          <xsl:when test="current-grouping-key()">
-            <xsl:copy copy-namespaces="no">
-              <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
+          <xsl:when test="current-grouping-key() and exists(current-group()/self::w:r)">
+            <w:r>
+              <xsl:apply-templates select="current-group()/self::w:r/(@* except @srcpath)" mode="#current"/>
               <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:sequence select="string-join(current-group()/w:instrText, '')"/>
               </w:instrText>
-            </xsl:copy>
+            </w:r>
+            <xsl:sequence select="current-group()/(self::w:bookmarkStart | self::w:bookmarkEnd)"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:apply-templates select="current-group()" mode="#current"/>
@@ -416,7 +418,18 @@
       </xsl:for-each-group>
     </xsl:copy>
   </xsl:template>
-  
+
+  <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1">
+    <xsl:variable name="prelim" as="document-node(element(*))">
+      <xsl:document>
+        <xsl:call-template name="docx2hub:first-note-para"/>
+      </xsl:document>
+    </xsl:variable>
+    <!-- the current template won’t match on $prelim, therefore the template above, that matches *[w:r/w:instrText], 
+      should match if there is w:instrText -->
+    <xsl:apply-templates select="$prelim" mode="#current"/>
+  </xsl:template>
+
   <!-- Making field function nesting explicit:
        – 'separate' and 'end' fldChars link to their 'begin' fldChar
        – the nesting level is given at each 'begin' fldChar, starting from 1 for the topmost nesting

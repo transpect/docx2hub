@@ -21,162 +21,116 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml">
 
-  <xsl:template name="handle-index">
-    <xsl:param name="instr" as="xs:string?"/>
-    <xsl:param name="text" as="element(*)*"/>
-    <xsl:param name="nodes" as="element(*)*"/>
-
-    <xsl:variable name="context" as="element(w:instrText)" select="."/>
-
-    <xsl:variable name="instr-from-nodes" as="node()*">
-      <xsl:for-each select="$nodes//w:instrText">
-        <xsl:choose>
-          <xsl:when test="exists(parent::*/@css:*)">
-            <phrase>
-              <xsl:apply-templates select="parent::*/@css:*" mode="#current"/>
-              <xsl:value-of select="replace(replace(replace(.,'\\&quot;','_quot_'),'&#8222;|&#8220;','&quot;'),'\\:', '#_-semi-_-colon-_#')"/>
-            </phrase>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="replace(replace(replace(.,'\\&quot;','_quot_'),'&#8222;|&#8220;','&quot;'),'\\:', '#_-semi-_-colon-_#')"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:for-each>
-    </xsl:variable>
-    <xsl:variable name="instr-from-nodes-text" as="xs:string?"
-      select="string-join($instr-from-nodes, '')"/>
+  <xsl:template match="XE[@fldArgs]" mode="wml-to-dbk" priority="2">
+    <xsl:variable name="context" as="element(XE)" select="."/>
     <xsl:choose>
-      <xsl:when test="matches(string-join($instr-from-nodes,''),'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">
-        <xsl:for-each-group select="$instr-from-nodes" group-starting-with="node()[matches(.,'^[\s&#160;]*[Xx][eE][\s&#160;]+')]">
-          <xsl:variable name="current-instr-from-nodes-text" select="string-join(current-group(),'')"/>
-          <xsl:if test="matches($current-instr-from-nodes-text, '\\[^bfrity]')">
-            <xsl:call-template name="signal-error">
-              <xsl:with-param name="error-code" select="'W2D_001'"/>
-              <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-              <xsl:with-param name="hash">
-                <value key="xpath"><xsl:value-of select="$nodes[1]/@srcpath"/></value>
-                <value key="level">INT</value>
-                <value key="info-text"><xsl:value-of select="$instr"/></value>
-              </xsl:with-param>
-            </xsl:call-template>
+      <xsl:when test="matches(@fldArgs,'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">
+        <xsl:if test="matches(@fldArgs, '\\[^bfrity]')">
+          <xsl:message>Unexpected index (XE) field function option in '<xsl:value-of select="@fldArgs"/>'.</xsl:message>
+        </xsl:if>
+        <xsl:variable name="see" as="xs:string?">
+          <xsl:if test="matches(@fldArgs, '\\t')">
+            <xsl:sequence select="replace(@fldArgs, '^.*\\t\s*&quot;(.+?)&quot;(.*$|$)', '$1')"/>
           </xsl:if>
-          <xsl:variable name="see" as="xs:string?">
+        </xsl:variable>
+        <xsl:variable name="type" as="xs:string?">
+          <xsl:choose>
+            <xsl:when test="matches(@fldArgs, '\\f')">
+              <xsl:value-of select="replace(@fldArgs, '^.*\\f\s*&quot;?(.+?)&quot;?\s*(\\.*$|$)', '$1')"/>
+            </xsl:when>
+            <xsl:when test="some $i in tokenize(@fldArgs,':') satisfies matches($i,'Register§§')">
+              <xsl:value-of select="replace(tokenize(@fldArgs,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:sequence select="()"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="indexterm-attributes" as="attribute()*">
+          <xsl:if test="matches(@fldArgs, '\\i')">
+            <xsl:attribute name="role" select="'hub:pagenum-italic'"/>
+          </xsl:if>
+          <xsl:if test="matches(@fldArgs, '\\b')">
+            <xsl:attribute name="role" select="'hub:pagenum-bold'"/>
+          </xsl:if>
+          <xsl:if test="matches(@fldArgs, '\\s')">
+            <xsl:attribute name="class" select="'startofrange'"/>
+          </xsl:if>
+          <xsl:if test="matches(@fldArgs, '\\e')">
+            <xsl:attribute name="class" select="'endofrange'"/>
+          </xsl:if>
+          <xsl:if test="matches(@fldArgs, '\\r')">
+            <xsl:variable name="id" as="xs:string" 
+              select="tr:rereplace-chars(replace(@fldArgs, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
+            <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)*" 
+              select="key('docx2hub:bookmarkStart-by-name', ($id, upper-case($id)), root($context))"/>
             <xsl:choose>
-              <xsl:when test="matches($current-instr-from-nodes-text, '\\t')">
-                <xsl:value-of select="replace($current-instr-from-nodes-text, '^.*\\t\s*&quot;(.+?)&quot;(.*$|$)', '$1')"/>
+              <xsl:when test="exists($bookmark-start)">
+                <xsl:variable name="start-id" as="attribute(xml:id)">
+                  <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id"/>
+                </xsl:variable>
+                <xsl:variable name="end-id" as="attribute(xml:id)">
+                  <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id">
+                    <xsl:with-param name="end" select="true()"/>
+                  </xsl:apply-templates>
+                </xsl:variable>
+                <xsl:attribute name="linkends" select="$start-id, $end-id" separator=" "/>
+                <!-- Create distinct startofrange/endofrange indexterms at the anchors specified by linkends in the next pass. -->
               </xsl:when>
+            </xsl:choose>
+          </xsl:if>
+          <xsl:if test="not(empty($type))">
+            <xsl:attribute name="type" select="tr:rereplace-chars($type)"/>
+          </xsl:if>
+        </xsl:variable>
+        <xsl:variable name="temporary-term" as="node()*">
+          <xsl:sequence select="tr:extract-chars(@fldArgs,'\','\\')"/>
+        </xsl:variable>
+        <xsl:variable name="real-term" as="node()*">
+          <xsl:for-each-group select="$temporary-term" group-starting-with="*:text[matches(.,'^\\')]">
+            <xsl:choose>
+              <xsl:when test="current-group()[1][self::*:text[matches(.,'^\\')]]"/>
               <xsl:otherwise>
-                <xsl:sequence select="()"/>
+                <xsl:for-each select="current-group()">
+                  <xsl:choose>
+                    <xsl:when test="self::*:text">
+                      <xsl:apply-templates select=".//text()" mode="#current"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:apply-templates select="." mode="#current"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:for-each>
               </xsl:otherwise>
             </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="type" as="xs:string?">
-            <xsl:choose>
-              <xsl:when test="matches($current-instr-from-nodes-text, '\\f')">
-                <xsl:value-of select="replace($current-instr-from-nodes-text, '^.*\\f\s*&quot;?(.+?)&quot;?\s*(\\.*$|$)', '$1')"/>
-              </xsl:when>
-              <xsl:when test="some $i in tokenize($current-instr-from-nodes-text,':') satisfies matches($i,'Register§§')">
-                <xsl:value-of select="replace(tokenize($current-instr-from-nodes-text,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:sequence select="()"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="indexterm-attributes" as="attribute()*">
-            <xsl:if test="matches($current-instr-from-nodes-text, '\\i')">
-              <xsl:attribute name="role" select="'hub:pagenum-italic'"/>
-            </xsl:if>
-            <xsl:if test="matches($current-instr-from-nodes-text, '\\b')">
-              <xsl:attribute name="role" select="'hub:pagenum-bold'"/>
-            </xsl:if>
-            <xsl:if test="matches($current-instr-from-nodes-text, '\\s')">
-              <xsl:attribute name="class" select="'startofrange'"/>
-            </xsl:if>
-            <xsl:if test="matches($current-instr-from-nodes-text, '\\e')">
-              <xsl:attribute name="class" select="'endofrange'"/>
-            </xsl:if>
-            <xsl:if test="matches($current-instr-from-nodes-text, '\\r')">
-              <xsl:variable name="id" as="xs:string" 
-                select="tr:rereplace-chars(replace($current-instr-from-nodes-text, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
-              <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)*" 
-                select="key('docx2hub:bookmarkStart-by-name', $id, root($context))"/>
-              <xsl:choose>
-                <xsl:when test="exists($bookmark-start)">
-                  <xsl:variable name="start-id" as="attribute(xml:id)">
-                    <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id"/>
-                  </xsl:variable>
-                  <xsl:variable name="end-id" as="attribute(xml:id)">
-                    <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id">
-                      <xsl:with-param name="end" select="true()"/>
-                    </xsl:apply-templates>
-                  </xsl:variable>
-                  <xsl:attribute name="linkends" select="$start-id, $end-id" separator=" "/>
-                  <!-- Create distinct startofrange/endofrange indexterms at the anchors specified by linkends in the next pass. -->
-                </xsl:when>
-              </xsl:choose>
-            </xsl:if>
-            <xsl:if test="not(empty($type))">
-              <xsl:attribute name="type" select="tr:rereplace-chars($type)"/>
-            </xsl:if>
-          </xsl:variable>
-          <xsl:variable name="temporary-term" as="node()*">
-            <xsl:sequence select="tr:extract-chars(current-group(),'\','\\')"/>
-          </xsl:variable>
-          <xsl:variable name="real-term" as="node()*">
-            <xsl:for-each-group select="$temporary-term" group-starting-with="*:text[matches(.,'^\\')]">
-              <xsl:choose>
-                <xsl:when test="current-group()[1][self::*:text[matches(.,'^\\')]]"/>
-                <xsl:otherwise>
-                  <xsl:for-each select="current-group()">
-                    <xsl:choose>
-                      <xsl:when test="self::*:text">
-                        <xsl:apply-templates select=".//text()" mode="#current"/>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:apply-templates select="." mode="#current"/>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </xsl:for-each>
-                </xsl:otherwise>
-              </xsl:choose>
+          </xsl:for-each-group>
+        </xsl:variable>
+        <xsl:variable name="indexterm">
+          <indexterm docx2hub:field-function="yes">
+            <xsl:for-each-group select="$indexterm-attributes" group-by="name()">
+              <xsl:attribute name="{name()}" select="string-join(current-group(), ' ')"/>
             </xsl:for-each-group>
-          </xsl:variable>
-          <xsl:variable name="indexterm">
-            <indexterm docx2hub:field-function="yes">
-              <xsl:for-each-group select="$indexterm-attributes" group-by="name()">
-                <xsl:attribute name="{name()}" select="string-join(current-group(), ' ')"/>
-              </xsl:for-each-group>
-              <xsl:for-each select="('primary', 'secondary', 'tertiary')">
-                <xsl:call-template name="indexterm-sub">
-                  <xsl:with-param name="pos" select="position()"/>
-                  <xsl:with-param name="real-term" select="$real-term"/>
-                  <xsl:with-param name="elt" select="."/>
-                </xsl:call-template>
-              </xsl:for-each>
-              <xsl:if test="not($see = '') and not(empty($see))">
-                <see>
-                  <xsl:value-of select="tr:rereplace-chars($see)"/>
-                </see>
-              </xsl:if>
-            </indexterm>  
-          </xsl:variable>
-          <xsl:if test="not(matches(string-join(current-group(),''),'^\s*$'))">
-            <xsl:apply-templates select="$indexterm" mode="index-processing-1"/>            
-          </xsl:if>
-        </xsl:for-each-group>
+            <xsl:for-each select="('primary', 'secondary', 'tertiary')">
+              <xsl:call-template name="indexterm-sub">
+                <xsl:with-param name="pos" select="position()"/>
+                <xsl:with-param name="real-term" select="$real-term"/>
+                <xsl:with-param name="elt" select="."/>
+              </xsl:call-template>
+            </xsl:for-each>
+            <xsl:if test="not($see = '') and not(empty($see))">
+              <see>
+                <xsl:value-of select="tr:rereplace-chars($see)"/>
+              </see>
+            </xsl:if>
+          </indexterm>  
+        </xsl:variable>
+        <xsl:if test="normalize-space(@fldArgs)">
+          <xsl:apply-templates select="$indexterm" mode="index-processing-1"/>            
+        </xsl:if>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:message select="$nodes[1]"/>
-        <xsl:call-template name="signal-error">
-          <xsl:with-param name="error-code" select="'W2D_002'"/>
-          <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-          <xsl:with-param name="hash">
-            <value key="xpath"><xsl:value-of select="$nodes[1]/@srcpath"/></value>
-            <value key="level">INT</value>
-            <value key="info-text"><xsl:value-of select="$instr-from-nodes"/></value>
-          </xsl:with-param>
-        </xsl:call-template>
+        <xsl:sequence select="docx2hub:message(., false(), 'W2D_041', 'WRN', 'wml-to-dbk', 
+                                               concat('Unexpected index (XE) field function content in ''', @fldArgs, ''''))"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -194,7 +148,7 @@
       <xsl:if test="$processed-text">
         <xsl:element name="{$elt}">
           <xsl:attribute name="sortas" 
-            select="normalize-space(replace(tr:rm-last-quot(tokenize($real-term-text,':')[not(matches(.,'Register§§'))][$pos]),'^[\s&#160;]*[Xx][eE][\s&#160;]+&quot;',''))"/>
+            select="normalize-space(replace(tr:rm-last-quot(tokenize($real-term-text,':')[not(matches(.,'Register§§'))][$pos]),'^&quot;',''))"/>
           <xsl:sequence select="$processed"/>
         </xsl:element>
       </xsl:if>
@@ -292,7 +246,7 @@
   </xsl:function>
   
   <xsl:function name="tr:extract-chars">
-    <xsl:param name="context" as="node()*"/>
+    <xsl:param name="context" as="item()*"/><!-- attribute(fldArgs), text(), or element -->
     <xsl:param name="string-char" as="xs:string"/>
     <xsl:param name="regex-char" as="xs:string"/>
     
@@ -300,7 +254,7 @@
       <xsl:choose>
         <xsl:when test="matches(.,$regex-char)">
           <xsl:choose>
-            <xsl:when test="self::text()">
+            <xsl:when test="self::text() | self::attribute(fldArgs)">
               <xsl:if test="not(tokenize(.,$regex-char)[1]='')">
                 <text>
                   <xsl:value-of select="tokenize(.,$regex-char)[1]"/>
@@ -332,12 +286,12 @@
               </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:sequence select="."/>
+              <xsl:value-of select="."/>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:sequence select="."/>
+          <xsl:value-of select="."/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>

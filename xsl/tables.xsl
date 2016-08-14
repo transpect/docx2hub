@@ -279,9 +279,7 @@
       <xsl:call-template name="cell.style"/>
       <xsl:call-template name="cell.align"/>
       -->
-      <xsl:call-template name="check-field-functions">
-        <xsl:with-param name="nodes" select="*"/>
-      </xsl:call-template>
+      <xsl:apply-templates select="*" mode="#current"/>
     </xsl:element>
   </xsl:template>
 

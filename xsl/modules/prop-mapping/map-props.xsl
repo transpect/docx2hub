@@ -1160,6 +1160,8 @@
   <!-- mode: docx2hub:remove-redundant-run-atts -->
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
+  <!-- there are also templates of this mode in other files -->
+
   <xsl:template match="w:r/@*[some $att in ../ancestor::w:p[1]/@* 
                        satisfies (
                          name($att) eq name(current())

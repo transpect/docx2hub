@@ -20,8 +20,7 @@
   xmlns:docx2hub ="http://transpect.io/docx2hub"
   xmlns:tr="http://transpect.io"
   xmlns="http://docbook.org/ns/docbook"
-
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn mml"
+  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn mml docx2hub tr"
   >
 
   <!-- We don’t need to include MS Word localized style names if we trust it to
@@ -72,7 +71,8 @@
 
   <xsl:variable name="docx2hub:footnote-marker-embellishment-regex" as="xs:string" select="'^[\p{P}\s\p{Zs}]*$'"/>
 
-  <xsl:template match="w:footnote/w:p[1]/w:r[w:tab]" mode="docx2hub:join-instrText-runs">
+  <!-- collateral, has to run before the templates below. They currently match in docx2hub:join-instrText-runs --> 
+  <xsl:template match="w:footnote/w:p[1]/w:r[w:tab]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:variable name="r" select="." as="element(w:r)"/>
     <xsl:for-each-group select="* except w:rPr" group-starting-with="*[self::w:tab]">
       <xsl:sequence select="current-group()[self::w:tab]"/>
@@ -119,7 +119,11 @@
     localized version, the variable $footnote-reference-styles needs to be extended.
     -->
 
-  <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:separate-field-functions" priority="+1">
+  <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" 
+    name="docx2hub:first-note-para" priority="1">
+    <!-- This template is also provided as a named variant because it will not match otherwise due to import precedence 
+      rules. It has to be called explicitly in join-runs.xsl. We don’t want to introduce an additional XSLT pass
+    just for first paras in footnotes. -->
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
     <xsl:variable name="root" select="/" as="document-node(element(dbk:hub))"/>
     <xsl:copy>
@@ -145,7 +149,7 @@
                 <xsl:with-param name="tab" select="$tab" tunnel="yes"/>
               </xsl:apply-templates>
             </phrase>
-            <xsl:apply-templates select="$tab" mode="docx2hub:separate-field-functions_footnote-tabs">
+            <xsl:apply-templates select="$tab" mode="docx2hub:join-instrText-runs_footnote-tabs">
               <xsl:with-param name="last" select="$tab[last()]"/>
             </xsl:apply-templates>
           </xsl:when>
@@ -159,7 +163,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="w:tab" mode="docx2hub:separate-field-functions">
+  <xsl:template match="w:tab[ancestor::w:footnote | ancestor::w:endnote]" mode="docx2hub:join-instrText-runs">
     <xsl:param name="tab" as="element(w:tab)*" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test=". is $tab[1]">
@@ -175,7 +179,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="w:tab" mode="docx2hub:separate-field-functions_footnote-tabs">
+  <xsl:template match="w:tab[ancestor::w:footnote | ancestor::w:endnote]" mode="docx2hub:join-instrText-runs_footnote-tabs">
     <xsl:param name="last" as="element(w:tab)"/>
     <xsl:choose>
       <xsl:when test=". is $last">
@@ -191,7 +195,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="w:footnote/w:p/w:r//w:tab" mode="docx2hub:separate-field-functions">
+  <xsl:template match="w:footnote/w:p/w:r//w:tab" mode="docx2hub:join-instrText-runs">
     <xsl:param name="tab" as="element(w:tab)*" tunnel="yes"/>
     <xsl:if test="not(some $t in $tab satisfies ($t is current()))">
       <xsl:next-match/>
@@ -199,11 +203,11 @@
   </xsl:template>
   
   <xsl:template match="w:footnote/w:p/w:r/@role[docx2hub:is-footnote-reference-style(.)]" 
-                mode="docx2hub:separate-field-functions"/>
+                mode="docx2hub:join-instrText-runs"/>
 
   <!-- There is a space after the marker in each Word-generated footnote. Convert it to a separator if there is no
     following separator tab. -->
-  <xsl:template match="w:footnote/w:p/w:r[preceding-sibling::w:r[1]/w:footnoteRef]/w:t/text()" mode="docx2hub:separate-field-functions">
+  <xsl:template match="w:footnote/w:p/w:r[preceding-sibling::w:r[1]/w:footnoteRef]/w:t/text()" mode="docx2hub:join-instrText-runs">
     <xsl:param name="tab" as="element(w:tab)*" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="empty($tab)">
@@ -225,7 +229,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="w:footnoteRef" mode="docx2hub:separate-field-functions">
+  <xsl:template match="w:footnoteRef" mode="docx2hub:join-instrText-runs">
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
     <xsl:if test="$identifier">
       <xsl:variable name="footnote-num-format" select="(//w:footnoteReference[@w:id=current()/ancestor::w:footnote/@w:id]/following::w:footnotePr[ancestor::w:p]/w:numFmt/@w:val, /*/w:settings/w:footnotePr/w:numFmt/@w:val)[1]" as="xs:string?"/>

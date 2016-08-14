@@ -21,7 +21,7 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml">
 
-  <xsl:template match="XE[@fldArgs]" mode="wml-to-dbk">
+  <xsl:template match="XE[@fldArgs]" mode="wml-to-dbk" priority="2">
     <xsl:variable name="context" as="element(XE)" select="."/>
     <xsl:choose>
       <xsl:when test="matches(@fldArgs,'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">
@@ -63,7 +63,7 @@
             <xsl:variable name="id" as="xs:string" 
               select="tr:rereplace-chars(replace(@fldArgs, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
             <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)*" 
-              select="key('docx2hub:bookmarkStart-by-name', $id, root($context))"/>
+              select="key('docx2hub:bookmarkStart-by-name', ($id, upper-case($id)), root($context))"/>
             <xsl:choose>
               <xsl:when test="exists($bookmark-start)">
                 <xsl:variable name="start-id" as="attribute(xml:id)">
@@ -129,7 +129,8 @@
         </xsl:if>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:message>Unexpected index (XE) field function content in '<xsl:value-of select="@fldArgs"/>'.</xsl:message>
+        <xsl:sequence select="docx2hub:message(., false(), 'W2D_041', 'WRN', 'wml-to-dbk', 
+                                               concat('Unexpected index (XE) field function content in ''', @fldArgs, ''''))"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

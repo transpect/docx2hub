@@ -12,9 +12,10 @@
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+  xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0" 
-  exclude-result-prefixes = "w xs dbk r rel tr m mc xlink docx2hub wp">
+  exclude-result-prefixes = "w xs dbk r rel tr m mc xlink docx2hub v wp">
 
   <!-- ================================================================================ -->
   <!-- IMPORT OF OTHER STYLESHEETS -->
@@ -125,23 +126,22 @@
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
       <!-- Assumption 1: Block field functions are not nested. There may be inline field functions
-      nested within block field functions, but no block field functions within other block field functions.
-      Therefore, we may use group-starting-with/group-ending-with to balance them.
+      nested within block field functions, but there are no block field functions within other block field functions.
+      Therefore, we may use group-starting-with/group-ending-with to balance them, without recurring to recursion.
       Assumption 2: There is at most only one block field function begin per paragraph.
       Caveat: Since block field functions may be contained in table cells, we should only consider the 
       w:p/w:r/w:fldChars in this context, not arbitrarily deep .//w:fldChars (those in w:tbl/w:tc/w:p). -->
-      <xsl:for-each-group select="*" group-starting-with="w:p[w:r/w:fldChar/generate-id() = $block-begins/generate-id()]">
+      <xsl:for-each-group select="*" group-starting-with="w:p[.//w:fldChar/generate-id() = $block-begins/generate-id()]">
         <xsl:variable name="begin-fldChar" as="element(w:fldChar)?"
-          select="w:r/w:fldChar[generate-id() = $block-begins/generate-id()]"/>
+          select=".//w:fldChar[generate-id() = $block-begins/generate-id()]"/>
         <xsl:choose>
           <xsl:when test="$begin-fldChar">
-            <xsl:variable name="end-fldChar" as="element(w:fldChar)?" 
-              select="current-group()/w:r/w:fldChar[@linkend = $begin-fldChar/@xml:id][@w:fldCharType = 'end']"/>
+            <xsl:variable name="end-fldChar" as="element(w:fldChar)?" select="docx2hub:corresponding-end-fldChar($begin-fldChar)"/>
             <xsl:variable name="name-and-args" as="xs:string+" select="docx2hub:field-function($begin-fldChar)"/>
             <xsl:for-each-group select="current-group()" 
-              group-ending-with="w:p[w:r/w:fldChar/generate-id() = $end-fldChar/generate-id()]">
+              group-ending-with="w:p[.//w:fldChar/generate-id() = $end-fldChar/generate-id()]">
               <xsl:choose>
-                <xsl:when test="$end-fldChar">
+                <xsl:when test="current-group()[last()]//w:fldChar/generate-id() = $end-fldChar/generate-id()">
                   <xsl:element name="{$name-and-args[1]}">
                     <xsl:attribute name="fldArgs" select="$name-and-args[2]"/>
                     <xsl:apply-templates select="current-group()" mode="#current">
@@ -166,7 +166,15 @@
   
   <xsl:function name="docx2hub:corresponding-end-fldChar" as="element(w:fldChar)">
     <xsl:param name="begin" as="element(w:fldChar)"/>
-    <xsl:sequence select="key('docx2hub:linking-item-by-id', $begin/@xml:id, root($begin))[@w:fldCharType = 'end']"/>
+    <xsl:variable name="prelim" as="element(w:fldChar)*"
+      select="key('docx2hub:linking-item-by-id', $begin/@xml:id, root($begin))[@w:fldCharType = 'end']"/>
+    <xsl:if test="count($prelim) gt 1">
+      <xsl:message terminate="yes" select="'More than one docx2hub:corresponding-end-fldChar() result for ', $begin"/>
+    </xsl:if>
+    <xsl:if test="count($prelim) eq 0">
+      <xsl:message terminate="yes" select="'No docx2hub:corresponding-end-fldChar() result for ', $begin"/>
+    </xsl:if>
+    <xsl:sequence select="$prelim[1]"/>
   </xsl:function>
   
   <xsl:function name="docx2hub:corresponding-begin-fldChar" as="element(w:fldChar)">
@@ -174,12 +182,13 @@
     <xsl:sequence select="key('docx2hub:item-by-id', $end/@linkend, root($end))"/>
   </xsl:function>
 
-  <!-- convert inline field functions to elements same names -->
-  <xsl:template match="w:p" mode="docx2hub:field-functions">
+  <!-- convert inline field functions to elements of the same names -->
+  <xsl:template match="w:p | w:hyperlink" mode="docx2hub:field-functions">
     <xsl:param name="field-begins" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:param name="field-ends" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:variable name="begins-before-para" as="element(w:r)*">
       <xsl:for-each select="$field-begins[. &lt;&lt; current()]
+                                         [not(docx2hub:field-function(.)[1] = $docx2hub:block-field-functions)]
                                          [not(docx2hub:corresponding-end-fldChar(.) &lt;&lt; current())]">
         <w:r>
           <xsl:sequence select="., following::w:instrText[1]"/>
@@ -187,7 +196,7 @@
       </xsl:for-each>
     </xsl:variable>
     <xsl:variable name="ends-after-para" as="element(w:r)*"
-      select="for $last-in-para in (current()/*[last()], current())[1]
+      select="for $last-in-para in (current()/*[last()]/w:fldChar, current()/*[last()], current())[1]
               return $field-ends[. &gt;&gt; $last-in-para]
                                 [not(docx2hub:corresponding-begin-fldChar(.) &gt;&gt; $last-in-para)]
                 /.."/>
@@ -208,6 +217,7 @@
     <xsl:param name="para-contents" as="document-node()"/>
     <xsl:variable name="innermost-nesting-begins" as="element(w:fldChar)*" 
       select="for $f in $para-contents/w:r/w:fldChar[@w:fldCharType = 'begin']
+                                                    [not(docx2hub:field-function(.)[1] = $docx2hub:block-field-functions)]
               return $f[docx2hub:corresponding-end-fldChar(.) 
                         is 
                         ($para-contents/w:r/w:fldChar[not(@w:fldCharType = 'separate')]
@@ -221,14 +231,12 @@
         <xsl:variable name="innermost-nesting-end" as="element(w:fldChar)" 
           select="docx2hub:corresponding-end-fldChar($innermost-nesting-begin)"/>
         <xsl:variable name="name-and-args" as="xs:string+" select="docx2hub:field-function($innermost-nesting-begin)"/>
-        <xsl:if test="empty($innermost-nesting-end)">
-          <xsl:message select="'HHHHHHHHHHHHHHH ', $innermost-nesting-begin"></xsl:message>
-        </xsl:if>
         <xsl:call-template name="docx2hub:nest-inline-field-function">
           <xsl:with-param name="para-contents">
             <xsl:document>
               <xsl:sequence select="$para-contents/*[. &lt;&lt; $innermost-nesting-begin/..]"/>
-              <xsl:element name="{$name-and-args[1]}" xmlns="">
+              <xsl:element name="{upper-case(replace($name-and-args[1], '\\', ''))}" xmlns="">
+                <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms --> 
                 <xsl:attribute name="fldArgs" select="$name-and-args[2]"/>
                 <xsl:sequence select="$para-contents/*[. &gt;&gt; $innermost-nesting-begin/..]
                                                       [. &lt;&lt; $innermost-nesting-end/..]"/>
@@ -397,7 +405,7 @@
 
   <!-- collateral, has to happen before wml-to-hub because redundant xml:lang attributes will
     be eliminated then (redundant = same as this top-level language) -->
-  <xsl:template match="/dbk:*" mode="docx2hub:separate-field-functions">
+  <xsl:template match="/dbk:*" mode="docx2hub:join-instrText-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:variable name="most-frequent-lang" select="docx2hub:most-frequent-lang(.)" as="xs:string?"/>
@@ -486,7 +494,8 @@
     </anchor>
   </xsl:template>
   
-  <xsl:key name="docx2hub:bookmarkStart-by-name" match="w:bookmarkStart[@w:name]" use="docx2hub:normalize-name-for-id(@w:name)"/>
+  <xsl:key name="docx2hub:bookmarkStart-by-name" match="w:bookmarkStart[@w:name]" 
+    use="for $n in docx2hub:normalize-name-for-id(@w:name) return ($n, upper-case($n), lower-case($n))"/>
   
   <xsl:function name="docx2hub:normalize-name-for-id" as="xs:string?">
     <xsl:param name="name" as="xs:string?"/>
@@ -698,15 +707,38 @@
       <xsl:attribute name="xml:lang" select="$context"/>
     </xsl:if>
   </xsl:template>
+  
+  <!-- Field functions -->
 
-  <xsl:template match="REF[@fldArgs]" mode="wml-to-dbk">
-    <xsl:variable name="linkend" select="replace(@fldArgs, '^([_A-Za-z]+\d+)\s?.+$', '$1')" as="xs:string"/>
-    <link linkend="{$linkend}">
-      <xsl:apply-templates mode="#current"/>
-    </link> 
+  <xsl:template match="REF[@fldArgs]" mode="wml-to-dbk" priority="2">
+    <xsl:variable name="linkend" select="replace(@fldArgs, '^([_A-Za-z\d]+)(.*)$', '$1')" as="xs:string"/>
+    <xsl:choose>
+    <!-- Unwrap, don’t link, a REF like this: 
+    <REF xmlns="" fldArgs="DINDOKYEAR \* CHARFORMAT \* MERGEFORMAT">
+      <w:r css:font-weight="normal" css:color="#000000" css:font-size="10pt">
+        <w:t>2015</w:t>
+      </w:r>
+    </REF>
+    if it points to within a SET field:
+    <SET xmlns="" fldArgs="DINDOKYEAR &#34;2015&#34;">
+      <w:bookmarkStart w:id="12" w:name="DINDOKYEAR"/>
+      <w:r css:color="#000000">
+        <w:t>2015</w:t>
+      </w:r>
+      <w:bookmarkEnd w:id="12"/>
+    </SET> -->
+      <xsl:when test="key('docx2hub:bookmarkStart-by-name', ($linkend, upper-case($linkend)))/ancestor::SET">
+        <xsl:apply-templates mode="#current"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <link linkend="{$linkend}">
+          <xsl:apply-templates mode="#current"/>
+        </link>    
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="*[@fldArgs]" mode="wml-to-dbk_">
+  <xsl:template match="*[@fldArgs]" mode="wml-to-dbk">
     <xsl:variable name="tokens" as="xs:string*">
       <xsl:analyze-string select="(@fldArgs, ' ')[ . ne ''][1]" regex="&quot;(.*?)&quot;">
         <xsl:matching-substring>
@@ -717,10 +749,11 @@
         </xsl:non-matching-substring>
       </xsl:analyze-string>
     </xsl:variable>
-    <xsl:variable name="func" select="$tr:field-functions/tr:field-functions/tr:field-function[@name = name()]" as="element(tr:field-function)?"/>
+    <xsl:variable name="func" select="$tr:field-functions/tr:field-functions/tr:field-function[@name = current()/name()]" as="element(tr:field-function)?"/>
     <xsl:choose>
       <xsl:when test="not($func)">
         <xsl:choose>
+          <!-- Should rewrite this case switch to matching templates --> 
           <xsl:when test="name() = 'SYMBOL'">
             <!-- Template in sym.xsl -->
             <xsl:call-template name="create-symbol">
@@ -740,7 +773,7 @@
               if the w:pict is contained in a field function, but if there is any 
               w:pict in the current paragraph. Is this assumption justified?
               -->
-              <xsl:when test="ancestor::w:p//w:pict">
+              <xsl:when test="ancestor::w:p//w:pict[.//v:imagedata]">
                 <xsl:apply-templates mode="#current"/>    
               </xsl:when>
               <xsl:otherwise>
@@ -761,8 +794,8 @@
           <xsl:when test="name() = 'HYPERLINK'">
             <xsl:variable name="without-options" select="$tokens[not(matches(., '\\[lo]'))]" as="xs:string+"/>
             <xsl:variable name="local" as="xs:boolean" select="$tokens = '\l'"/>
-            <xsl:variable name="target" select="replace($without-options[2], '(^&quot;|&quot;$)', '')"/>
-            <xsl:variable name="tooltip" select="replace($without-options[3], '(^&quot;|&quot;$)', '')"/>
+            <xsl:variable name="target" select="replace($without-options[1], '(^&quot;|&quot;$)', '')"/>
+            <xsl:variable name="tooltip" select="replace($without-options[2], '(^&quot;|&quot;$)', '')"/>
             <link docx2hub:field-function="yes">
               <xsl:attribute name="{if ($local) then 'linkend' else 'xlink:href'}" select="$target"/>
               <xsl:if test="$tooltip">
@@ -773,8 +806,8 @@
           </xsl:when>
           <xsl:when test="name() = 'SET'">
             <xsl:if test="$field-vars='yes'">
-              <keyword role="{concat('fieldVar_',$tokens[2])}" docx2hub:field-function="yes">
-                <xsl:value-of select="$tokens[3]"/>    
+              <keyword role="{concat('fieldVar_',$tokens[1])}" docx2hub:field-function="yes">
+                <xsl:value-of select="$tokens[2]"/>    
               </keyword>
               </xsl:if>
           </xsl:when>
@@ -782,7 +815,7 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:when test="name() = 'PRINT'">
-            <xsl:processing-instruction name="PRINT" select="string-join($tokens[position() gt 1], ' ')"/>
+            <xsl:processing-instruction name="PRINT" select="string-join($tokens, ' ')"/>
           </xsl:when>
           <xsl:when test="name() = 'AUTOTEXT'">
             <xsl:call-template name="signal-error" xmlns="">
@@ -797,15 +830,8 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:call-template name="signal-error" xmlns="">
-              <xsl:with-param name="error-code" select="'W2D_040'"/>
-              <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-              <xsl:with-param name="hash">
-                <value key="xpath"><xsl:value-of select="@srcpath"/></value>
-                <value key="level">INT</value>
-                <value key="info-text"><xsl:value-of select="@fldArgs"/></value>
-              </xsl:with-param>
-            </xsl:call-template>
+            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_040', 'WRN', 'wml-to-dbk', 
+                                                   concat('Unrecognized field function in ''', name(), ' ', @fldArgs, ''''))"/>
             <xsl:apply-templates mode="#current"/>
           </xsl:otherwise>
         </xsl:choose>
@@ -827,6 +853,11 @@
           <xsl:when test="$func/@destroy = 'yes'">
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
+          <xsl:when test="$func[@name][count(@*) = 1]">
+            <!-- Same handling as for @destroy = 'yes'? At least necessary for SEQ.
+              Probably a consequence of the 2016-08 change in handling field functions -->
+            <xsl:apply-templates mode="#current"/>
+          </xsl:when>
         </xsl:choose>
       </xsl:otherwise>
     </xsl:choose>
@@ -836,9 +867,9 @@
     <xsl:document>
       <tr:field-functions>
         <tr:field-function name="INDEX" destroy="yes"/>
-        <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="2"/>
+        <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="PAGE"/>
-        <tr:field-function name="PAGEREF" element="link" attrib="linkend" role="page" value="2"/>
+        <tr:field-function name="PAGEREF" element="link" attrib="linkend" role="page" value="1"/>
         <tr:field-function name="RD"/>
         <tr:field-function name="REF"/>
         <tr:field-function name="ADVANCE"/>

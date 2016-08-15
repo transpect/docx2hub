@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+  xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
+  xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing"
+  xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk"
+  xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:w10="urn:schemas-microsoft-com:office:word"
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
+  xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex"
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+  xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+  xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+  xmlns:ct="http://schemas.openxmlformats.org/package/2006/content-types"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:word200x="http://schemas.microsoft.com/office/word/2003/wordml"
@@ -12,15 +24,12 @@
   xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
-  xmlns:exsl="http://exslt.org/common"
-  xmlns:saxon="http://saxon.sf.net/"
   xmlns:tr="http://transpect.io"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:m = "http://schemas.openxmlformats.org/officeDocument/2006/math"
-  xmlns:css="http://www.w3.org/1996/css"
   xmlns:docx2hub ="http://transpect.io/docx2hub"
   xmlns="http://docbook.org/ns/docbook"
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml">
+  exclude-result-prefixes = "xs dbk docx2hub tr">
 
   <!-- mode docx2hub:changemarkup is for applying user`s tracked changes -->
 

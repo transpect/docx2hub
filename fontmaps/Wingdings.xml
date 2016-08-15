@@ -24,6 +24,7 @@
   <symbol number="F0A7" entity="&#xF0A7;" char="&#x25aa;" font="Segoe UI Symbol"/><!-- BLACK SMALL SQUARE -->
   <symbol number="F0DF" entity="&#xF0DF;" char="&#x2190;"/><!-- LEFTWARDS ARROW -->
   <symbol number="F0E0" entity="&#xF0E0;" char="&#x2192;"/><!-- RIGHTWARDS ARROW -->
+  <symbol number="00E0" entity="&#x00E0;" char="&#x2192;"/><!-- RIGHTWARDS ARROW -->
   <symbol number="F0FA" entity="&#xF0FA;" char="&#x25ab;" font="Segoe UI Symbol"/><!-- WHITE SMALL SQUARE -->
   <symbol number="0072" entity="&#x0072;" char="&#x2610;"/><!-- BALLOT BOX -->
   <symbol number="F0FD" entity="&#xF0FD;" char="&#x2612;" font="Segoe UI Symbol"/><!-- BALLOT BOX WITH X -->

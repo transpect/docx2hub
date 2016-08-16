@@ -108,8 +108,12 @@
   <!-- despite ISO 29100-1, which states that the clipping coordinates are always percentages, you’ll find
     large numbers as in <a:srcRect l="57262" t="34190" r="7344" b="42485"/> 
     These are called emu. 1 pt = 12700 emu, 1 mm = 36000 emu  -->
-  <xsl:template match="a:srcRect[@l][@t][@r][@b][every $a in (@l, @t, @r, @b) satisfies (matches($a, '^\d+$'))]" mode="wml-to-dbk">
+  <xsl:template match="a:srcRect[@l][@t][@r][@b][every $a in (@l, @t, @r, @b) satisfies (matches($a, '^\d+$'))]" mode="wml-to-dbk" priority="2">
     <xsl:attribute name="css:clip" select="concat('rect(', string-join(for $a in (@t, @r, @b, @l) return  concat(round(number($a) * 0.0015748) * 0.05, 'pt'), ', '), ')')"/>
+  </xsl:template>
+  
+  <xsl:template match="a:srcRect[not(@*)]" mode="wml-to-dbk">
+    <!-- don’t know whether the empty a:srcRect conveys some meaning; just wanted to get rid of W2D_020 messages -->
   </xsl:template>
   
 </xsl:stylesheet>

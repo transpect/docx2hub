@@ -159,29 +159,6 @@ it, but not when an ilvl=2 heading precedes it.
     <xsl:variable name="last-same-signature" as="element(w:p)?" 
       select="(key('docx2hub:num-signature', $context/@docx2hub:num-signature, root($context))
                  [. &lt;&lt; $context]
-                 (: 
-                 Not sure abt the following condition. Test with DIN_15921_tr_20241894.docx and
-                 EN_ISO_11819-2_D_2015-09-22_Validierungsfehler.docx, where '1 Messprinzip' should be '5 Messprinzip'.
-                 LibreOffice 5 renders it as '2 Messprinzip'. We can detect no differences between abstract numberings
-                 14 (headings) and 19 (lists). But headings should not restart while lists shoud.
-                 
-                 Explanation:
-                 Heading1 numbers '1', '2', '3' have a numbering ID that is different from Heading2 '3.1' and Heading1 '4'.
-                 3.1 was correctly starting ilvl1 at 1, and then the subsequent Heading1 increased ilvl0 counter by 1.
-                 
-                 It is not clear whether Word applied the rules correctly. Maybe the rules of ISO/IEC 29500-2 are underspecified.
-
-                 If Word’s behavior is to be mimicked, then we cannot calculate the counters for each ilvl individually.
-                 This recursive function will then be obliterated by a recursive (or iterative) variant of tr:get-identifier() 
-                 that takes into account that a '3.1' with a new numbering ID might create a '4' for the next 
-                 that has the same new numbering ID but would have been a '1' in the absence of '3.1'. This calls for
-                 a strict iterative approach where the next counter depends on the actual values for all counter levels
-                 in preceding same-abstractNumId paras.
-
-                 For A.11 and the small a), b), c) lists in DIN_EN_12602_tr_25461149.docx the following 
-                 the right condition.
-                 :)
-                 [if ($context/@docx2hub:num-start-override) then @docx2hub:num-id = $context/@docx2hub:num-id else true()]
                  [not(@docx2hub:num-disabled = 'true')]
               )[last()]"/>
     <xsl:variable name="same-abstract-in-between" as="element(w:p)*"
@@ -191,7 +168,15 @@ it, but not when an ilvl=2 heading precedes it.
                  else true()]
                 [. &lt;&lt; $context]"/>
     <xsl:variable name="last-resetter" as="element(w:p)?" 
-      select="($same-abstract-in-between[@docx2hub:num-ilvl &lt;= $context/@docx2hub:num-restart-after-ilvl])[last()]"/>
+      select="($same-abstract-in-between[@docx2hub:num-ilvl &lt;= $context/@docx2hub:num-restart-after-ilvl],
+               $context[@docx2hub:num-restart-val]
+                       [@docx2hub:num-start-override]
+                       [. is 
+                          (//w:p[@docx2hub:num-id = $context/@docx2hub:num-id]
+                                [not(@docx2hub:num-disabled = 'true')]
+                           )[1] (: the first of a given numId may trigger a reset :)
+                       ]
+               )[last()]"/>
     <xsl:variable name="any-resetter" as="element(w:p)*" 
       select="key('docx2hub:num-abstract', $context/@docx2hub:num-abstract, root($context))
                 [@docx2hub:num-ilvl &lt;= $context/@docx2hub:num-restart-after-ilvl or @docx2hub:num-ilvl = $context/@docx2hub:num-ilvl]

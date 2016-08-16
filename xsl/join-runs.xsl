@@ -396,7 +396,7 @@
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" 
-        group-adjacent="exists(self::w:r[*][every $c in * satisfies $c/self::w:instrText]
+        group-adjacent="exists(self::w:r[w:instrText][every $c in * satisfies $c/(self::w:instrText | self::w:br (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]
                                | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
         <xsl:choose>
           <xsl:when test="current-grouping-key() and exists(current-group()/self::w:r)">

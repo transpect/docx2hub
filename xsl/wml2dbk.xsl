@@ -760,7 +760,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="*[@fldArgs]" mode="wml-to-dbk">
+  <xsl:template match="*[@fldArgs]" mode="wml-to-dbk tables">
     <xsl:variable name="tokens" as="xs:string*">
       <xsl:analyze-string select="(@fldArgs, ' ')[ . ne ''][1]" regex="&quot;(.*?)&quot;">
         <xsl:matching-substring>
@@ -863,13 +863,22 @@
           <xsl:when test="$func/@element">
             <xsl:element name="{$func/@element}">
               <xsl:attribute name="docx2hub:field-function" select="'yes'"/>
-              <xsl:if test="$func/@attrib">
-                <xsl:attribute name="{$func/@attrib}" select="replace($tokens[position() = $func/@value], '&quot;', '')"/>
-                <xsl:if test="$func/@role">
+              <xsl:choose>
+                <xsl:when test="exists($func/@role) and not($func/@attrib)">
                   <xsl:attribute name="role" select="$func/@role"/>
-                </xsl:if>
-                <xsl:apply-templates mode="#current"/>
-              </xsl:if>
+                  <xsl:apply-templates mode="#current"/>
+                </xsl:when>
+                <xsl:when test="$func/@attrib">
+                  <xsl:attribute name="{$func/@attrib}" select="replace($tokens[position() = $func/@value], '&quot;', '')"/>
+                  <xsl:if test="$func/@role">
+                    <xsl:attribute name="role" select="$func/@role"/>
+                  </xsl:if>
+                  <xsl:apply-templates mode="#current"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <!-- no apply-templates? -->
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:element>
           </xsl:when>
           <xsl:when test="$func/@destroy = 'yes'">
@@ -888,7 +897,7 @@
   <xsl:variable name="tr:field-functions" as="document-node(element(tr:field-functions))">
     <xsl:document>
       <tr:field-functions>
-        <tr:field-function name="INDEX" destroy="yes"/>
+        <tr:field-function name="INDEX" element="div" role="hub:index"/>
         <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="PAGE"/>
         <tr:field-function name="PAGEREF" element="link" attrib="linkend" role="page" value="1"/>
@@ -899,7 +908,7 @@
         <tr:field-function name="SEQ"/>
         <tr:field-function name="STYLEREF"/>
         <tr:field-function name="USERPROPERTY" destroy="yes"/>
-        <tr:field-function name="TOC" destroy="yes"/>
+        <tr:field-function name="TOC" element="div" role="hub:toc"/>
         <tr:field-function name="\IF"/>
       </tr:field-functions>
     </xsl:document>  

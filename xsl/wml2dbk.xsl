@@ -897,6 +897,7 @@
   <xsl:variable name="tr:field-functions" as="document-node(element(tr:field-functions))">
     <xsl:document>
       <tr:field-functions>
+        <tr:field-function name="BIBLIOGRAPHY" element="div" role="hub:bibliography"/>
         <tr:field-function name="INDEX" element="div" role="hub:index"/>
         <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="PAGE"/>
@@ -908,6 +909,7 @@
         <tr:field-function name="SEQ"/>
         <tr:field-function name="STYLEREF"/>
         <tr:field-function name="USERPROPERTY" destroy="yes"/>
+        <tr:field-function name="TOA" element="div" role="hub:toa"/>
         <tr:field-function name="TOC" element="div" role="hub:toc"/>
         <tr:field-function name="\IF"/>
       </tr:field-functions>

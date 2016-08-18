@@ -105,7 +105,7 @@
     <xsl:param name="mode" as="xs:string"/>
     <xsl:param name="message" as="xs:string"/>
     <xsl:variable name="srcpath" as="attribute(srcpath)?" select="$context/ancestor-or-self::*[@srcpath][1]/@srcpath"/>
-    <xsl:message terminate="{('yes'[$terminate], 'no')[1]}" select="$code, $severity, $srcpath, $message"/>
+    <xsl:message terminate="{('yes'[$terminate][$severity = ('ERR', 'NRE')], 'no')[1]}" select="$code, $severity, $srcpath, $message"/>
     <xsl:processing-instruction name="tr" select="string-join(($code, $severity, $message), ' ')"/>
   </xsl:function>
 

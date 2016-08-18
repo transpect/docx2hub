@@ -852,7 +852,7 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_040', 'WRN', 'wml-to-dbk', 
+            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_040', 'WRN', 'wml-to-dbk', 
                                                    concat('Unrecognized field function in ''', name(), ' ', @fldArgs, ''''))"/>
             <xsl:apply-templates mode="#current"/>
           </xsl:otherwise>

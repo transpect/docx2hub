@@ -99,13 +99,17 @@
   
   <xsl:function name="docx2hub:message" as="processing-instruction()">
     <xsl:param name="context" as="node()"/>
-    <xsl:param name="terminate" as="xs:boolean"/>
+    <xsl:param name="terminate-on-error" as="xs:boolean"/>
+    <xsl:param name="terminate-on-warning" as="xs:boolean"/>
     <xsl:param name="code" as="xs:string"/>
     <xsl:param name="severity" as="xs:string"/><!-- ('INFO', 'WRN', 'ERR', 'NRE') -->
     <xsl:param name="mode" as="xs:string"/>
     <xsl:param name="message" as="xs:string"/>
     <xsl:variable name="srcpath" as="attribute(srcpath)?" select="$context/ancestor-or-self::*[@srcpath][1]/@srcpath"/>
-    <xsl:message terminate="{('yes'[$terminate][$severity = ('ERR', 'NRE')], 'no')[1]}" select="$code, $severity, $srcpath, $message"/>
+    <xsl:message terminate="{('yes'[$terminate-on-error][$severity = ('ERR', 'NRE')],
+                              'yes'[$terminate-on-warning][$severity = ('WRN', 'ERR', 'NRE')],
+                              'no')[1]}" 
+      select="string-join(('>>>>=====================', $severity, $code, $srcpath, $message, '=====================&lt;&lt;&lt;&lt;'), '&#xa;')"/>
     <xsl:processing-instruction name="tr" select="string-join(($code, $severity, $message), ' ')"/>
   </xsl:function>
 

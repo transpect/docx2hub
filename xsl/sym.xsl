@@ -102,16 +102,8 @@
             <xsl:otherwise>
               <text>
                 <xsl:value-of select="$number"/>
-                <xsl:call-template name="signal-error">
-                  <xsl:with-param name="error-code" select="'W2D_601'"/>
-                  <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-                  <xsl:with-param name="hash">
-                    <value key="xpath"><xsl:value-of select="(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]"/></value>
-                    <value key="level">WRN</value>
-                    <value key="info-text"><xsl:value-of select="$font"/> (0x<xsl:value-of select="tr:dec-to-hex(string-to-codepoints($number))"/>)</value>
-                    <value key="pi">Could not map char <xsl:value-of select="string-to-codepoints($number)"/> in font <xsl:value-of select="$font"/> (message c)</value>
-                  </xsl:with-param>
-                </xsl:call-template>              
+                <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                                        concat('Could not map char ', string-to-codepoints($number), ' in font ', $font, ' (message c)'))"/>
               </text>
             </xsl:otherwise>
           </xsl:choose>
@@ -124,17 +116,8 @@
         <xsl:sequence select="$text/node()"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:call-template name="signal-error">
-          <xsl:with-param name="error-code" select="'W2D_601'"/>
-          <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-          <xsl:with-param name="hash">
-            <value key="xpath"><xsl:value-of select="(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]"/></value>
-            <value key="level">WRN</value>
-            <value key="info-text"><xsl:value-of select="$font"/> (0x<xsl:value-of select="($text[normalize-space(.)], $number)[1]"/>)</value>
-            <value key="pi">Could not map char <xsl:value-of select="(string-to-codepoints($text), $number)[1]"/> in font <xsl:value-of select="$font"/> (message d)</value>
-            <value key="comment"/>
-          </xsl:with-param>
-        </xsl:call-template>
+        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                                concat('Could not map char ', (string-to-codepoints($text), $number)[1], ' in font ', $font, ' (message d)'))"/>
         <xsl:for-each select="$text">
           <xsl:copy>
             <xsl:copy-of select="@* except @docx2hub:map-to"/>
@@ -178,17 +161,8 @@
             <xsl:variable name="number" select="if (matches($sym, '^[0-9]+$')) then tr:dec-to-hex(xs:integer($sym)) else 'NaN'"/>
             <xsl:choose>
               <xsl:when test="$number = 'NaN'">
-                <xsl:call-template name="signal-error">
-                  <xsl:with-param name="error-code" select="'W2D_601'"/>
-                  <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-                  <xsl:with-param name="hash">
-                    <value key="xpath"><xsl:value-of select="$context/(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]"/></value>
-                    <value key="level">WRN</value>
-                    <value key="info-text"><xsl:value-of select="concat($font, ': ', $sym)"/></value>
-                    <value key="pi">Could not map char <xsl:value-of select="string-to-codepoints($sym)"/> in font <xsl:value-of select="$font"/> (message b)</value>
-                    <value key="comment"/>
-                  </xsl:with-param>
-                </xsl:call-template>
+                <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                        concat('Could not map char ', string-to-codepoints($sym), ' in font ', $font, ' (message b)'))"/>
                 <xsl:call-template name="create-replacement">
                   <xsl:with-param name="font" select="$font"/>
                   <xsl:with-param name="number" select="$sym"/>
@@ -200,17 +174,8 @@
             </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:call-template name="signal-error">
-              <xsl:with-param name="error-code" select="'W2D_601'"/>
-              <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-              <xsl:with-param name="hash">
-                <value key="xpath"><xsl:value-of select="$context/(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]"/></value>
-                <value key="level">WRN</value>
-                <value key="info-text"><xsl:value-of select="concat($font, ': ', $sym)"/></value>
-                <value key="pi">Could not map char <xsl:value-of select="string-to-codepoints($sym)"/> in font <xsl:value-of select="$font"/> (message a)</value>
-                <value key="comment"/>
-              </xsl:with-param>
-            </xsl:call-template>
+            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                    concat('Could not map char ', string-to-codepoints($sym), ' in font ', $font, ' (message a)'))"/>
             <xsl:call-template name="create-replacement">
               <xsl:with-param name="font" select="$font"/>
               <xsl:with-param name="number" select="$sym"/>
@@ -219,16 +184,7 @@
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:call-template name="signal-error">
-          <xsl:with-param name="error-code" select="'W2D_602'"/>
-          <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-          <xsl:with-param name="hash">
-            <value key="xpath"><xsl:value-of select="$context/(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]"/></value>
-            <value key="level">WRN</value>
-            <value key="info-text"><xsl:value-of select="string-join($tokens, ' ')"/></value>
-            <value key="comment"/>
-          </xsl:with-param>
-        </xsl:call-template>
+        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_602', 'WRN', 'wml-to-dbk', string-join($tokens, ' '))"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

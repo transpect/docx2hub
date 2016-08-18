@@ -103,6 +103,7 @@
   <p:import href="http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl" 
     use-when="doc-available('http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl')"/>
   <p:import href="single-tree.xpl"/>
+  <p:import href="http://transpect.io/htmlreports/xpl/errorPI2svrl.xpl"/>
 
   <p:group use-when="doc-available('http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl')">
     <tr:simple-progress-msg name="start-msg" file="docx2hub-start.txt">

@@ -116,12 +116,14 @@
         <xsl:sequence select="$text/node()"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
-                                concat('Could not map char ', (string-to-codepoints($text), $number)[1], ' in font ', $font, ' (message d)'))"/>
+        <xsl:if test="not($text//processing-instruction(tr))">
+          <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                                  concat('Could not map char ', (string-to-codepoints($text), $number)[1], ' in font ', $font, ' (message d)'))"/>  
+        </xsl:if>
         <xsl:for-each select="$text">
           <xsl:copy>
             <xsl:copy-of select="@* except @docx2hub:map-to"/>
-            <xsl:value-of select="."/>
+            <xsl:sequence select="node()"/>
           </xsl:copy>
         </xsl:for-each>
       </xsl:otherwise>
@@ -144,7 +146,10 @@
       </xsl:when>
       <xsl:otherwise>
         <phrase xmlns="http://docbook.org/ns/docbook" role="hub:ooxml-symbol" css:font-family="{$font}" annotations="{$number}"
-          srcpath="{(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]}"/>
+          srcpath="{(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]}">
+          <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                                  concat('Could not map char ', $number, ' in font ', $font, ' (message e)'))"/>
+        </phrase>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

@@ -59,6 +59,7 @@
     <p:pipe port="report" step="single-tree"/>
     <p:pipe port="result" step="check-field-functions"/>
     <p:pipe port="result" step="check-result"/>
+    <p:pipe port="result" step="rename-errorPI2svrl-reports"/>
   </p:output>
   <p:output port="schema" sequence="true">
     <p:pipe port="result" step="decorate-field-functions-schematron"/>
@@ -326,7 +327,29 @@
     </p:with-option>
   </p:add-attribute>
 
+  <tr:errorPI2svrl name="errorPI2svrl" pi-names="tr" group-by-srcpath="no">
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+  </tr:errorPI2svrl>
+  
+  <p:sink/>
+  
+  <p:for-each name="rename-errorPI2svrl-reports">
+    <p:output port="result" primary="true"/>
+    <p:iteration-source>
+      <p:pipe port="report" step="errorPI2svrl"/>
+    </p:iteration-source>
+    <p:add-attribute attribute-name="tr:rule-family" match="/*" name="rename-errorPI2svrl-reports0">
+      <p:with-option name="attribute-value" select="replace(/*/@tr:rule-family, '^W2D', 'docx2hub_PI')"/>
+    </p:add-attribute>
+  </p:for-each>
+  
+  <p:sink/>
+
   <tr:prepend-hub-xml-model name="pi">
+    <p:input port="source">
+      <p:pipe port="result" step="errorPI2svrl"/>
+    </p:input>
     <p:with-option name="hub-version" select="$hub-version"/>
   </tr:prepend-hub-xml-model>
 

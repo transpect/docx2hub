@@ -109,7 +109,7 @@
     <xsl:message terminate="{('yes'[$terminate-on-error][$severity = ('ERR', 'NRE')],
                               'yes'[$terminate-on-warning][$severity = ('WRN', 'ERR', 'NRE')],
                               'no')[1]}" 
-      select="string-join(('>>>>=====================', $severity, $code, $srcpath, $message, '=====================&lt;&lt;&lt;&lt;'), '&#xa;')"/>
+      select="string-join(('&#xa;///////=====================', $severity, $code, $srcpath, $message, '=====================///////'), '&#xa;')"/>
     <xsl:processing-instruction name="tr" select="string-join(($code, $severity, $message), ' ')"/>
   </xsl:function>
 

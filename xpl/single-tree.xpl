@@ -20,11 +20,14 @@
   </p:input>
   <p:input port="insert-xpath-schematron">
     <p:document href="../sch/insert-xpath.sch.xml"/>
-    <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
+    <p:documentation>Schematron that will validate the entire Word container document (before mode apply-changemarkup).
+    The tr:rule-family for this Schematron is 'docx2hub_single-tree'. We have kept the port and Schematron file names
+    (insert-xpath) for compatibility reasons.</p:documentation>
   </p:input>
   <p:input port="single-tree-schematron">
     <p:document href="../sch/single-tree.sch.xml"/>
-    <p:documentation>Schematron that will validate the entire Word container document (after mode apply-changemarkup).</p:documentation>
+    <p:documentation>Schematron that will validate the entire Word container document (after mode apply-changemarkup).
+    The tr:rule-family for this Schematron is 'docx2hub_single-tree_changes-accepted'</p:documentation>
   </p:input>
   <p:output port="result" primary="true">
     <p:pipe port="result" step="add-xml-base-attr"/>
@@ -253,7 +256,7 @@
   <p:sink/>
 
   <p:add-attribute name="check-single-tree" match="/*" 
-    attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree">
+    attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree_changes-accepted">
     <p:input port="source">
       <p:pipe port="report" step="single-tree0"/>
     </p:input>
@@ -282,7 +285,8 @@
   </p:add-attribute>
 
   <p:add-attribute name="check-insert-xpath" match="/*" 
-    attribute-name="tr:rule-family" attribute-value="docx2hub_insert-xpath">
+    attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree">
+    <p:documentation>Please note that tr:rule-family="docx2hub_single-tree" is checked by insert-xpath-schematron</p:documentation>
   </p:add-attribute>
   
   <p:sink/>

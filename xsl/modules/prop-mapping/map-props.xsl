@@ -681,6 +681,15 @@
                                 else docx2hub:pt-length(concat('-', $string-val))" />
         </docx2hub:attribute>
       </xsl:when>
+      
+      <xsl:when test=". eq 'docx-position-attr-negated'">
+        <xsl:variable name="string-val" select="string(number(($val/@w:val, $val)[1]) * 10)" as="xs:string"/>
+        <docx2hub:attribute name="{../@target-name}">
+          <xsl:value-of select="if (matches($string-val, '^-'))
+                                  then docx2hub:pt-length(replace($string-val, '^-', ''))
+                                  else docx2hub:pt-length(concat('-', $string-val))" />
+        </docx2hub:attribute>
+      </xsl:when>
 
       <xsl:when test=". eq 'docx-parastyle'">
         <xsl:call-template name="docx2hub:style-name">

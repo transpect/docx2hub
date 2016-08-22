@@ -466,13 +466,13 @@
 <!--      <xsl:if test=".//w:r">-->
         <xsl:sequence select="tr:insert-numbering(.)"/>
       <!--</xsl:if>-->
-      <!-- Only necessary in tables? They'll get lost otherwise. -->
+      <!-- Only necessary in tables? They'll get lost otherwise. -->     
       <xsl:variable name="bookmarkstart-before-p" as="element(w:bookmarkStart)*"
-        select="preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/preceding-sibling::*[not(self::w:bookmarkStart)][1]]"/>
+        select="preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/preceding-sibling::*[not(self::w:bookmarkStart or self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkstart-before-tc" as="element(w:bookmarkStart)*"
-        select="parent::w:tc[current() is w:p[1]]/preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/parent::w:tc/preceding-sibling::*[not(self::w:bookmarkStart)][1]]"/>
+        select="parent::w:tc[current() is w:p[1]]/preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/parent::w:tc/preceding-sibling::*[not(self::w:bookmarkStart or self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkstart-before-tr" as="element(w:bookmarkStart)*"
-        select="parent::w:tc/parent::w:tr[current() is (w:tc/w:p)[1]]/preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/parent::w:tc/parent::w:tr/preceding-sibling::*[not(self::w:bookmarkStart)][1]]"/>
+        select="parent::w:tc/parent::w:tr[current() is (w:tc/w:p)[1]]/preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/parent::w:tc/parent::w:tr/preceding-sibling::*[not(self::w:bookmarkStart or self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkend-after-p" as="element(w:bookmarkEnd)*"
         select="following-sibling::w:bookmarkEnd[. &lt;&lt; current()/following-sibling::*[not(self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkend-after-tc" as="element(w:bookmarkEnd)*"
@@ -486,7 +486,7 @@
     </xsl:element>
   </xsl:template>
 
-
+  
   <!-- Verlauf -->
   <xsl:template match="w:del" mode="wml-to-dbk">
     <!-- gelöschten Text wegwerfen -->

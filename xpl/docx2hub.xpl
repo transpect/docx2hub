@@ -57,7 +57,14 @@
   </p:output>
   <p:output port="report" sequence="true">
     <p:pipe port="report" step="single-tree"/>
+    <p:pipe port="report" step="add-props"/>
+    <p:pipe port="report" step="props2atts"/>
+    <p:pipe port="report" step="remove-redundant-run-atts"/>
+    <p:pipe port="report" step="join-instrText-runs"/>
+    <p:pipe port="report" step="field-functions"/>
     <p:pipe port="result" step="check-field-functions"/>
+    <p:pipe port="report" step="wml-to-dbk"/>
+    <p:pipe port="report" step="join-runs"/>
     <p:pipe port="result" step="check-result"/>
     <p:pipe port="result" step="rename-errorPI2svrl-reports"/>
   </p:output>
@@ -140,7 +147,7 @@
     </p:input>
   </docx2hub:single-tree>
 
-  <tr:xslt-mode msg="yes" mode="docx2hub:add-props">
+  <tr:xslt-mode msg="yes" mode="docx2hub:add-props" name="add-props">
     <p:input port="parameters">
       <p:pipe step="single-tree" port="params"/>
     </p:input>
@@ -161,7 +168,7 @@
     <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
   </tr:xslt-mode>
 
-  <tr:xslt-mode msg="yes" mode="docx2hub:props2atts">
+  <tr:xslt-mode msg="yes" mode="docx2hub:props2atts" name="props2atts">
     <p:input port="parameters">
       <p:pipe step="single-tree" port="params"/>
     </p:input>
@@ -180,7 +187,7 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
   </tr:xslt-mode>
 
-  <tr:xslt-mode msg="yes" mode="docx2hub:remove-redundant-run-atts">
+  <tr:xslt-mode msg="yes" mode="docx2hub:remove-redundant-run-atts" name="remove-redundant-run-atts">
     <p:input port="parameters">
       <p:pipe step="single-tree" port="params"/>
     </p:input>
@@ -199,7 +206,7 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
   </tr:xslt-mode>
 
-  <tr:xslt-mode msg="yes" mode="docx2hub:join-instrText-runs">
+  <tr:xslt-mode msg="yes" mode="docx2hub:join-instrText-runs" name="join-instrText-runs">
     <p:input port="parameters">
       <p:pipe step="single-tree" port="params"/>
     </p:input>
@@ -275,7 +282,7 @@
   
   <p:sink/>
 
-  <tr:xslt-mode msg="yes" mode="wml-to-dbk">
+  <tr:xslt-mode msg="yes" mode="wml-to-dbk" name="wml-to-dbk">
     <p:input port="source">
       <p:pipe port="result" step="field-functions"/>
     </p:input>
@@ -301,7 +308,7 @@
     <p:with-param name="field-vars" select="$field-vars"/>
   </tr:xslt-mode>
 
-  <tr:xslt-mode msg="yes" mode="docx2hub:join-runs">
+  <tr:xslt-mode msg="yes" mode="docx2hub:join-runs" name="join-runs">
     <p:input port="parameters">
       <p:pipe step="single-tree" port="params"/>
     </p:input>

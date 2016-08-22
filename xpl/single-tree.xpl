@@ -42,6 +42,8 @@
   <p:output port="report" sequence="true">
     <p:pipe port="result" step="check-insert-xpath"/>
     <p:pipe port="result" step="check-single-tree"/>
+    <p:pipe port="report" step="insert-xpath"/>
+    <p:pipe port="report" step="apply-changemarkup"/>
   </p:output>
 
   <p:option name="docx" required="true">
@@ -217,7 +219,11 @@
 
   <p:choose name="apply-changemarkup">
     <p:when test="exists(//w:del | //w:moveFrom | //w:ins)">
-      <tr:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup">
+      <p:output port="result" primary="true"/>
+      <p:output port="report" sequence="true">
+        <p:pipe port="report" step="apply-changemarkup-xslt"/>
+      </p:output>
+      <tr:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup" name="apply-changemarkup-xslt">
         <p:input port="parameters">
           <p:pipe step="params" port="result"/>
         </p:input>
@@ -235,6 +241,10 @@
       </tr:xslt-mode>
     </p:when>
     <p:otherwise>
+      <p:output port="result" primary="true"/>
+      <p:output port="report" sequence="true">
+        <p:empty/>
+      </p:output>
       <p:identity/>
     </p:otherwise>
   </p:choose>

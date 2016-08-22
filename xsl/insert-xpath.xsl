@@ -82,7 +82,7 @@
                         " mode="insert-xpath">
     <xsl:copy copy-namespaces="no">
       <xsl:attribute name="srcpath" select="docx2hub:srcpath(.)"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="@* except @srcpath" mode="#current"/><!-- there was a case where the input was overwritten with an output that contained srcpaths -->
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
   </xsl:template>

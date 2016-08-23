@@ -338,6 +338,7 @@
   <tr:errorPI2svrl name="errorPI2svrl" pi-names="tr" group-by-srcpath="no">
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+    <p:with-option name="debug-dir-uri" select="$status-dir-uri"/>
   </tr:errorPI2svrl>
   
   <p:sink/>

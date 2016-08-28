@@ -108,7 +108,8 @@
       be the first phrase in the para;
     – there should be an element (phrase or tab, both in DocBook namespace) that has an attribute role="hub:separator"
       and that should immediately follow hub:identifier. If it doesn’t follow immediately, there is probably manually 
-      added content between the footnote marker and the tab. 
+      added content between the footnote marker and the tab. The hub:separator should not be enclosed by the 
+      hub:identifier.
       
     The absence of either feature should evoke a Schematron warning. A missing separator, especially if there is no
     following text content and the hub:identifier does not match an enumeration regex, is an indicator that they 
@@ -228,6 +229,13 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <!-- correct (remove) an embellishment that has been marked as hub:separator when there was also a regular tab separator: -->
+  <xsl:template match="dbk:phrase[@role = 'hub:identifier']
+                                 [following-sibling::*[1]/self::w:tab[@role = 'hub:separator']]
+                         /w:r[w:t[dbk:phrase/@role = 'hub:separator']
+                                 [count(node()) = 1]
+                             ]" mode="wml-to-dbk"/>
   
   <xsl:template match="w:footnoteRef" mode="docx2hub:join-instrText-runs">
     <xsl:param name="identifier" select="false()" tunnel="yes"/>

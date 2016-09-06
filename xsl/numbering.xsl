@@ -194,7 +194,7 @@ it, but not when an ilvl=2 heading precedes it.
             <xsl:attribute name="{$counter-name}" select="$context/@docx2hub:num-restart-val"/>
             <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="'a'"/>
           </xsl:when>
-          <xsl:when test="$context/@docx2hub:num-dont-restart">
+          <xsl:when test="$context/@docx2hub:num-dont-restart and not($last-resetter is $context)">
             <xsl:attribute name="{$counter-name}" 
               select="for $a in docx2hub:level-counter($last-same-signature, $ilvl)[name() = $counter-name][. castable as xs:integer] 
                         return xs:integer($a)

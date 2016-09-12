@@ -789,9 +789,9 @@
           <xsl:when test="name() = 'INCLUDEPICTURE'">
             <xsl:choose>
               <!-- figures are preferably handled by looking at the relationships 
-              because INLCUDEPICTURE is more like a history of all locations where
+              because INCLUDEPICTURE is more like a history of all locations where
               the image was once included from.  
-              Because there may be multiple INCLUDEPICTURES, we ignore them not only
+              Because there may be multiple INCLUDEPICTUREs, we ignore them not only
               if the w:pict is contained in a field function, but if there is any 
               w:pict in the current paragraph. Is this assumption justified?
               -->

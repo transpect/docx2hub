@@ -736,10 +736,10 @@
   <xsl:template match="@css:top[not(ancestor::css:rule)]
                                [not(local-name(..) = ('para', 'simpara', 'title'))]
                                [some $para in (ancestor::*[local-name() = ('para', 'simpara', 'title')])[1] 
-                                satisfies (key('style-by-name', $para/@role)/@css:top, $para/@css:top)[last()] = current()]" 
-    mode="wml-to-dbk" priority="1"/>
+                                satisfies ((key('style-by-name', $para/@role)/@css:top, $para/@css:top)[last()] = current())]" 
+    mode="wml-to-dbk" priority="1.5"/>
 
-  <xsl:template match="@css:top[not(ancestor::css:rule)][. = '0pt']" mode="wml-to-dbk"/>
+  <xsl:template match="@css:top[not(ancestor::css:rule)][. = '0pt']" mode="wml-to-dbk" priority="1"/>
   
   <xsl:template match="@css:position[. = 'relative']" mode="wml-to-dbk" priority="1">
     <!-- only keep this if the corresponding offset is also kept -->
@@ -842,7 +842,7 @@
             </xsl:variable>
             <xsl:variable name="without-options" select="$tokens[not(matches(., '\\[lo]'))]" as="xs:string*"/>
             <xsl:variable name="local" as="xs:boolean" select="$tokens = '\l'"/>
-            <xsl:variable name="target" select="if($without-options) then replace($without-options[1], '(^&quot;|&quot;$)', '') 
+            <xsl:variable name="target" select="if(exists($without-options)) then replace($without-options[1], '(^&quot;|&quot;$)', '') 
                                                 else string-join($link-content/descendant-or-self::text(), '')"/>
             <xsl:variable name="tooltip" select="replace($without-options[2], '(^&quot;|&quot;$)', '')"/>
             <link docx2hub:field-function="yes">

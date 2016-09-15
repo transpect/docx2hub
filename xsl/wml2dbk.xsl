@@ -251,7 +251,7 @@
             <xsl:document>
               <xsl:sequence select="$para-contents/*[. &lt;&lt; $innermost-nesting-begin/..]"/>
               <xsl:element name="{upper-case(replace($name-and-args[1], '\\', ''))}" xmlns="">
-                <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms --> 
+                <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms -->
                 <xsl:attribute name="fldArgs" select="$name-and-args[2]"/>
                 <xsl:sequence select="$para-contents/*[. &gt;&gt; $innermost-nesting-begin/..]
                                                       [. &lt;&lt; $innermost-nesting-end/..]"/>
@@ -778,6 +778,8 @@
     </xsl:choose>
   </xsl:template>
   
+  <xsl:variable name="mail-regex" as="xs:string" select="'^[-a-zA-Z0-9.!#$~_]+@[-a-zA-Z0-9]+\.[a-zA-Z0-9]+$'"/>
+  
   <xsl:template match="*[@fldArgs]" mode="wml-to-dbk tables">
     <xsl:variable name="tokens" as="xs:string*">
       <xsl:analyze-string select="(@fldArgs, ' ')[ . ne ''][1]" regex="&quot;(.*?)&quot;">
@@ -832,16 +834,21 @@
             </xsl:choose>
           </xsl:when>
           <xsl:when test="name() = 'HYPERLINK'">
-            <xsl:variable name="without-options" select="$tokens[not(matches(., '\\[lo]'))]" as="xs:string+"/>
+            <xsl:variable name="link-content" as="node()*">
+              <xsl:apply-templates select="*" mode="#current"/>
+            </xsl:variable>
+            <xsl:variable name="without-options" select="$tokens[not(matches(., '\\[lo]'))]" as="xs:string*"/>
             <xsl:variable name="local" as="xs:boolean" select="$tokens = '\l'"/>
-            <xsl:variable name="target" select="replace($without-options[1], '(^&quot;|&quot;$)', '')"/>
+            <xsl:variable name="target" select="if($without-options) then replace($without-options[1], '(^&quot;|&quot;$)', '') 
+                                                else string-join($link-content/descendant-or-self::text(), '')"/>
             <xsl:variable name="tooltip" select="replace($without-options[2], '(^&quot;|&quot;$)', '')"/>
             <link docx2hub:field-function="yes">
-              <xsl:attribute name="{if ($local) then 'linkend' else 'xlink:href'}" select="$target"/>
+              <xsl:attribute name="{if ($local) then 'linkend' else 'xlink:href'}" 
+                select="if(matches($target, $mail-regex)) then concat('mailto:', $target) else $target"/>
               <xsl:if test="$tooltip">
                 <xsl:attribute name="xlink:title" select="$tooltip"/>
               </xsl:if>
-              <xsl:apply-templates select="(.//@srcpath)[1], *" mode="#current"/>
+              <xsl:sequence select="(.//@srcpath)[1], $link-content"/>
             </link>
           </xsl:when>
           <xsl:when test="name() = 'SET'">

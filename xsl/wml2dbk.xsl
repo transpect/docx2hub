@@ -732,10 +732,11 @@
   
   <!-- This occured in a file without styles. It had w:position/@w:val="0" all over the place, which
   is particularly bad for docx2tex, where each span will be converted to a \raisebox --> 
-  <xsl:template match="@css:top[(key('style-by-name', ../@role), ..)[last()]/@css:top = current()]" 
+  <xsl:template match="@css:top[not(ancestor::css:rule)]
+                               [(key('style-by-name', ../@role), ..)[last()]/@css:top = current()]" 
     mode="wml-to-dbk" priority="1"/>
 
-  <xsl:template match="@css:top[. = '0pt']" mode="wml-to-dbk"/>
+  <xsl:template match="@css:top[not(ancestor::css:rule)][. = '0pt']" mode="wml-to-dbk"/>
   
   <xsl:template match="@css:position[. = 'relative']" mode="wml-to-dbk" priority="1">
     <!-- only keep this if the corresponding offset is also kept -->

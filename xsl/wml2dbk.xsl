@@ -730,6 +730,23 @@
     </xsl:if>
   </xsl:template>
   
+  <!-- This occured in a file without styles. It had w:position/@w:val="0" all over the place, which
+  is particularly bad for docx2tex, where each span will be converted to a \raisebox --> 
+  <xsl:template match="@css:top[(key('style-by-name', ../@role), ..)[last()]/@css:top = current()]" 
+    mode="wml-to-dbk" priority="1"/>
+
+  <xsl:template match="@css:top[. = '0pt']" mode="wml-to-dbk"/>
+  
+  <xsl:template match="@css:position[. = 'relative']" mode="wml-to-dbk" priority="1">
+    <!-- only keep this if the corresponding offset is also kept -->
+    <xsl:variable name="top" as="attribute(css:top)?">
+      <xsl:apply-templates select="../@css:top" mode="#current"/>
+    </xsl:variable>
+    <xsl:if test="exists($top)">
+      <xsl:next-match/>
+    </xsl:if>
+  </xsl:template>
+
   <!-- Field functions -->
 
   <xsl:template match="REF[@fldArgs]" mode="wml-to-dbk" priority="2">

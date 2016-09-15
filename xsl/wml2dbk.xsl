@@ -739,6 +739,9 @@
                                 satisfies ((key('style-by-name', $para/@role)/@css:top, $para/@css:top)[last()] = current())]" 
     mode="wml-to-dbk" priority="1.5"/>
 
+  <!-- I think removing this is justified even for this superscript in DIN_EN_12602_tr_25461149 that previously read:
+    <superscript role="TableFootNoteXref" css:top="0pt" css:position="relative" css:font-size="9.5pt" xml:lang="de">a</superscript>
+    It can be seen in Word that it is just plain superscript without any additional shift. -->
   <xsl:template match="@css:top[not(ancestor::css:rule)][. = '0pt']" mode="wml-to-dbk" priority="1"/>
   
   <xsl:template match="@css:position[. = 'relative']" mode="wml-to-dbk" priority="1">

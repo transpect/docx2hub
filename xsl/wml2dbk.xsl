@@ -731,9 +731,12 @@
   </xsl:template>
   
   <!-- This occured in a file without styles. It had w:position/@w:val="0" all over the place, which
-  is particularly bad for docx2tex, where each span will be converted to a \raisebox --> 
+  is particularly bad for docx2tex, where each span will be converted to a \raisebox.
+  The first template removes it if it is in a phrase within a para that has the same property. --> 
   <xsl:template match="@css:top[not(ancestor::css:rule)]
-                               [(key('style-by-name', ../@role), ..)[last()]/@css:top = current()]" 
+                               [not(local-name(..) = ('para', 'simpara', 'title'))]
+                               [for $para in (ancestor::*[local-name() = ('para', 'simpara', 'title')])[1] 
+                                return (key('style-by-name', $para/@role)/@css:top, $para/@css:top)[last()] = current()]" 
     mode="wml-to-dbk" priority="1"/>
 
   <xsl:template match="@css:top[not(ancestor::css:rule)][. = '0pt']" mode="wml-to-dbk"/>

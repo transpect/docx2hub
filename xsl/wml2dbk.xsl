@@ -735,8 +735,8 @@
   The first template removes it if it is in a phrase within a para that has the same property. --> 
   <xsl:template match="@css:top[not(ancestor::css:rule)]
                                [not(local-name(..) = ('para', 'simpara', 'title'))]
-                               [for $para in (ancestor::*[local-name() = ('para', 'simpara', 'title')])[1] 
-                                return (key('style-by-name', $para/@role)/@css:top, $para/@css:top)[last()] = current()]" 
+                               [some $para in (ancestor::*[local-name() = ('para', 'simpara', 'title')])[1] 
+                                satisfies (key('style-by-name', $para/@role)/@css:top, $para/@css:top)[last()] = current()]" 
     mode="wml-to-dbk" priority="1"/>
 
   <xsl:template match="@css:top[not(ancestor::css:rule)][. = '0pt']" mode="wml-to-dbk"/>

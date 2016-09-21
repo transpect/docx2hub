@@ -96,6 +96,12 @@
     <p:with-option name="overwrite" select="'yes'"/>
   </tr:unzip>
 
+  <tr:store-debug>
+    <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/00-unzip')"/>
+    <p:with-option name="active" select="$debug"/>
+    <p:with-option name="base-uri" select="$debug-dir-uri"/>
+  </tr:store-debug>
+  
   <p:choose>
     <p:when test="name(/*) eq 'c:error'">
       <cx:message>

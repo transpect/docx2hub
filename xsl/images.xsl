@@ -53,7 +53,7 @@
         </alt>
       </xsl:if>
       <xsl:call-template name="create-imageobject">
-        <xsl:with-param name="image-id" select="@r:id"/>
+        <xsl:with-param name="image-id" select="(@r:href, @r:id)[1]"/>
       </xsl:call-template>
     </xsl:element>
   </xsl:template>

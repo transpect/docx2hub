@@ -463,6 +463,12 @@
   <xsl:template match="w:p" mode="wml-to-dbk">
     <xsl:element name="para">
       <xsl:apply-templates select="@* except @*[matches(name(),'^w:rsid')]" mode="#current"/>
+      <xsl:if test="w:r[1][count(*)=1][w:br[@w:type='page']]">
+        <xsl:attribute name="css:page-break-before" select="'always'"/>
+      </xsl:if>
+      <xsl:if test="w:r[last()][count(*)=1][w:br[@w:type='page']] and count(w:r[count(*)=1][w:br[@w:type='page']]) gt 1">
+        <xsl:attribute name="css:page-break-after" select="'always'"/>
+      </xsl:if>
 <!--      <xsl:if test=".//w:r">-->
         <xsl:sequence select="tr:insert-numbering(.)"/>
       <!--</xsl:if>-->

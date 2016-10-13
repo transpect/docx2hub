@@ -155,9 +155,13 @@
             <xsl:variable name="name-and-args" as="xs:string+" select="docx2hub:field-function($begin-fldChar)"/>
             <!-- GI 2010-16-13: It turns out that if the block end field function is at the beginning of a paragraph, then this
     paragraph must be excluded from the block. -->
-            <xsl:variable name="end-p" as="element(w:p)"
+            <xsl:variable name="end-p" as="element(w:p)?"
               select="for $p in current-group()/self::w:p[.//w:fldChar/generate-id() = $end-fldChar/generate-id()]
-                      return if (empty($end-fldChar/ancestor::w:p[1]//w:t intersect $end-fldChar/parent::w:r/preceding::w:t))
+                      return if (
+                                  empty($end-fldChar/ancestor::w:p[1]//w:t intersect $end-fldChar/parent::w:r/preceding::w:t)
+                                  and
+                                  exists($p/preceding-sibling::*[1])
+                                )
                              then $p/preceding-sibling::*[1]
                              else $p"/>
             <xsl:for-each-group select="current-group()" group-ending-with="w:p[. is $end-p]">

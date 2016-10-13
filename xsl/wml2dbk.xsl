@@ -132,7 +132,7 @@
   
   <!-- Handle block field functions. The inline field functions will be handled when processing
     the individual current-group()s in docx2hub:field-functions mode, with tunneled begin/end
-    field chars -->
+    field chars.  -->
   <xsl:template match="*[w:p]" mode="docx2hub:field-functions">
     <xsl:param name="field-begins" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:param name="field-ends" as="element(w:fldChar)*" tunnel="yes"/>
@@ -153,10 +153,16 @@
           <xsl:when test="$begin-fldChar">
             <xsl:variable name="end-fldChar" as="element(w:fldChar)?" select="docx2hub:corresponding-end-fldChar($begin-fldChar)"/>
             <xsl:variable name="name-and-args" as="xs:string+" select="docx2hub:field-function($begin-fldChar)"/>
-            <xsl:for-each-group select="current-group()" 
-              group-ending-with="w:p[.//w:fldChar/generate-id() = $end-fldChar/generate-id()]">
+            <!-- GI 2010-16-13: It turns out that if the block end field function is at the beginning of a paragraph, then this
+    paragraph must be excluded from the block. -->
+            <xsl:variable name="end-p" as="element(w:p)"
+              select="for $p in current-group()/self::w:p[.//w:fldChar/generate-id() = $end-fldChar/generate-id()]
+                      return if (empty($end-fldChar/ancestor::w:p[1]//w:t intersect $end-fldChar/parent::w:r/preceding::w:t))
+                             then $p/preceding-sibling::*[1]
+                             else $p"/>
+            <xsl:for-each-group select="current-group()" group-ending-with="w:p[. is $end-p]">
               <xsl:choose>
-                <xsl:when test="current-group()[last()]//w:fldChar/generate-id() = $end-fldChar/generate-id()">
+                <xsl:when test="current-group()[last()] is $end-p">
                   <xsl:element name="{$name-and-args[1]}">
                     <xsl:attribute name="fldArgs" select="$name-and-args[2]"/>
                     <xsl:apply-templates select="current-group()" mode="#current">

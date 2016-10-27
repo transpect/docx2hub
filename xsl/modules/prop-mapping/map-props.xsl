@@ -804,10 +804,10 @@
       <xsl:when test=". eq 'docx-position'">
         <xsl:choose>
           <xsl:when test="$val/@w:val eq 'superscript'">
-            <docx2hub:attribute name="css:top">-3pt</docx2hub:attribute>
+            <docx2hub:attribute name="css:vertical-align">super</docx2hub:attribute>
           </xsl:when>
           <xsl:when test="$val/@w:val eq 'subscript'">
-            <docx2hub:attribute name="css:top">3pt</docx2hub:attribute>
+            <docx2hub:attribute name="css:vertical-align">sub</docx2hub:attribute>
           </xsl:when>
           <xsl:when test="$val/@w:val eq 'baseline'" />
           <xsl:otherwise>

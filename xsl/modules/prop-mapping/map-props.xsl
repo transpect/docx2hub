@@ -1074,7 +1074,7 @@
       <!-- do not wrap field function elements in subscript or superscript-->
       <xsl:when test="docx2hub:wrap/@element = ('superscript', 'subscript') 
                       and
-                      (exists(w:fldChar | w:instrText | docx2hub:*))
+                      (exists(w:fldChar | w:instrText))
                       and
                       (every $i in * satisfies $i[self::w:fldChar or self::w:instrText or self::docx2hub:*])">
         <xsl:copy>

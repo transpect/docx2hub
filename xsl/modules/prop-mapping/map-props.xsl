@@ -1062,15 +1062,6 @@
     <xsl:choose>
       <!-- do not wrap whitespace only subscript or superscript -->
       <xsl:when test="w:t and docx2hub:wrap/@element = ('superscript', 'subscript') 
-                      and exists(docx2hub:wrap/@element[ . ne 'superscript' and . ne 'subscript'])
-                      and (
-                        every $el in $content[self::*] 
-                        satisfies $el[self::w:t[@xml:space eq 'preserve'][matches(., '^\p{Zs}*$')]]
-                      )">
-        <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
-      </xsl:when>
-      <!-- do not wrap whitespace only subscript or superscript -->
-      <xsl:when test="w:t and docx2hub:wrap/@element = ('superscript', 'subscript') 
                       and not(exists(docx2hub:wrap/@element[ . ne 'superscript' and . ne 'subscript']))
                       and (
                         every $el in $content[self::*] 
@@ -1083,7 +1074,7 @@
       <!-- do not wrap field function elements in subscript or superscript-->
       <xsl:when test="docx2hub:wrap/@element = ('superscript', 'subscript') 
                       and
-                      (exists(self::w:fldChar | self::w:instrText | self::docx2hub:*))
+                      (exists(w:fldChar | w:instrText | docx2hub:*))
                       and
                       (every $i in * satisfies $i[self::w:fldChar or self::w:instrText or self::docx2hub:*])">
         <xsl:copy>

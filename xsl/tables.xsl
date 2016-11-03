@@ -24,10 +24,13 @@
   <xsl:template match="w:tbl" mode="wml-to-dbk">
     <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
     <informaltable css:border-collapse="collapse">
-      <xsl:apply-templates select="  w:tblPr/@role
-                                   | w:tblPr/@css:*[matches(name(.),'(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')]
-                                   | w:tblPr/w:tblW
-                                   | @srcpath | @css:orientation" mode="#current"/>
+      <xsl:apply-templates select="w:tblPr/@role,
+                                   $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')], 
+                                   w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')],
+                                   $styledef/w:tblPr/w:tblW, 
+                                   w:tblPr/w:tblW,
+                                   @srcpath, 
+                                   @css:orientation" mode="#current"/>
       <tgroup>
         <xsl:attribute name="cols" select="(
                                              count(w:tblGrid/w:gridCol),

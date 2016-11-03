@@ -258,6 +258,7 @@
     <xsl:param name="cell-style" as="attribute(role)?" tunnel="yes"/>
     <xsl:param name="col-widths" tunnel="yes" as="xs:integer*"/>
     <xsl:param name="row-overrides" as="attribute(*)*"/>
+    <xsl:variable name="pos" select="position()"/>
     <xsl:element name="entry">
 <!--      <xsl:copy-of select="ancestor::w:tbl[1]/w:tblPr/@css:*[not(matches(local-name(), '^(border|background-color|width)'))]"/>-->
       <xsl:copy-of select="$cell-style"/>
@@ -277,7 +278,21 @@
       </xsl:apply-templates>
       <!-- Process any spans -->
       <xsl:call-template name="cell.span"/>
-      <xsl:call-template name="cell.morerows"/>
+      <xsl:variable name="morerows" as="attribute()*">
+        <xsl:call-template name="cell.morerows"/>
+      </xsl:variable>
+      <xsl:variable name="morerows-value" as="xs:integer">
+        <xsl:value-of select="if (empty($morerows)) then 0 else $morerows"/>
+      </xsl:variable>
+      <xsl:if test="$morerows-value gt 0">
+        <xsl:apply-templates select="ancestor::w:tr[1]/following-sibling::w:tr[position() = $morerows-value]/w:tc[position() = $pos]/@css:*[matches(name(),'border\-bottom\-')]" mode="wml-to-dbk">
+          <xsl:with-param name="is-first-cell" select="$is-first-cell" tunnel="yes"/>
+          <xsl:with-param name="is-last-cell" select="$is-last-cell" tunnel="yes"/>
+          <xsl:with-param name="is-first-row-in-group" select="$is-first-row-in-group" tunnel="yes"/>
+          <xsl:with-param name="is-last-row-in-group" select="$is-last-row-in-group" tunnel="yes"/>
+        </xsl:apply-templates>
+      </xsl:if>
+      <xsl:copy-of select="$morerows"/>
       <!-- will be treated by map-props.xsl:
       <xsl:call-template name="cell.style"/>
       <xsl:call-template name="cell.align"/>

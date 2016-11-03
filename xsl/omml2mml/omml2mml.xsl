@@ -202,16 +202,8 @@
       <xsl:call-template name="ParseMt">
         <xsl:with-param name="context" select="."/>
         <xsl:with-param name="sToParse" select="$chAcc"/>
-        <xsl:with-param name="scr" select="if (m:e[1]/*/m:rPr[last()]/m:scr/@m:val) 
-																					 then m:e[1]/*/m:rPr[last()]/m:scr/@m:val 
-																					 else if (count(m:e[1]/*/m:rPr[last()]/m:scr) gt 0) 
-																					 			then 'on' 
-																					 			else 'off'"/>
-        <xsl:with-param name="sty" select="if (m:e[1]/*/m:rPr[last()]/m:sty/@m:val) 
-																					 then m:e[1]/*/m:rPr[last()]/m:sty/@m:val 
-																					 else if (count(m:e[1]/*/m:rPr[last()]/m:sty) gt 0) 
-																					 			then 'on' 
-																					 			else 'off'"/>
+        <xsl:with-param name="scr" select="m:e[1]/*/m:rPr[last()]/m:scr/@m:val"/>
+        <xsl:with-param name="sty" select="m:e[1]/*/m:rPr[last()]/m:sty/@m:val"/>
         <xsl:with-param name="nor" select="if (m:e[1]/*/m:rPr[last()]/m:nor/@m:val) 
 																					 then m:e[1]/*/m:rPr[last()]/m:nor/@m:val 
 																					 else if (count(m:e[1]/*/m:rPr[last()]/m:nor) gt 0) 
@@ -979,16 +971,8 @@
 														<xsl:call-template name="ParseMt">
 															<xsl:with-param name="context" select="$context"/>
 															<xsl:with-param name="sToParse" select="."/>
-															<xsl:with-param name="scr" select="if ($context/m:rPr[last()]/m:scr/@m:val) 
-																					 											 then $context/m:rPr[last()]/m:scr/@m:val
-																					 											 else if (count($context/m:rPr[last()]/m:scr) gt 0) 
-																					 														then 'on'
-																					 														else 'off'"/>
-															<xsl:with-param name="sty" select="if ($context/m:rPr[last()]/m:sty/@m:val) 
-																																 then $context/m:rPr[last()]/m:sty/@m:val
-																																 else if (count($context/m:rPr[last()]/m:sty) gt 0) 
-																																			then 'on'
-																																			else 'off'"/>
+															<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+															<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
 															<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
 																																 then $context/m:rPr[last()]/m:nor/@m:val 
 																																 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
@@ -1011,16 +995,8 @@
 													<xsl:call-template name="ParseMt">
 														<xsl:with-param name="context" select="$context"/>
 														<xsl:with-param name="sToParse" select="."/>
-														<xsl:with-param name="scr" select="if ($context/m:rPr[last()]/m:scr/@m:val) 
-																															 then $context/m:rPr[last()]/m:scr/@m:val
-																															 else if (count($context/m:rPr[last()]/m:scr) gt 0) 
-																																	  then 'on'
-																																		else 'off'"/>
-														<xsl:with-param name="sty" select="if ($context/m:rPr[last()]/m:sty/@m:val) 
-																															 then $context/m:rPr[last()]/m:sty/@m:val
-																															 else if (count($context/m:rPr[last()]/m:sty) gt 0) 
-																																		then 'on'
-																																		else 'off'"/>
+														<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+														<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
 														<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
 																															 then $context/m:rPr[last()]/m:nor/@m:val 
 																															 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
@@ -1076,16 +1052,8 @@
 												<xsl:call-template name="ParseMt">
 													<xsl:with-param name="context" select="$context"/>
 													<xsl:with-param name="sToParse" select="."/>
-													<xsl:with-param name="scr" select="if ($context/m:rPr[last()]/m:scr/@m:val) 
-																														 then $context/m:rPr[last()]/m:scr/@m:val
-																														 else if (count($context/m:rPr[last()]/m:scr) gt 0) 
-																																	then 'on'
-																																	else 'off'"/>
-													<xsl:with-param name="sty" select="if ($context/m:rPr[last()]/m:sty/@m:val) 
-																														 then $context/m:rPr[last()]/m:sty/@m:val
-																														 else if (count($context/m:rPr[last()]/m:sty) gt 0) 
-																																	then 'on'
-																																	else 'off'"/>
+													<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+													<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
 													<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
 																														 then $context/m:rPr[last()]/m:nor/@m:val 
 																														 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
@@ -1108,16 +1076,8 @@
 											<xsl:call-template name="ParseMt">
 												<xsl:with-param name="context" select="$context"/>
 												<xsl:with-param name="sToParse" select="."/>
-												<xsl:with-param name="scr" select="if ($context/m:rPr[last()]/m:scr/@m:val) 
-																													 then $context/m:rPr[last()]/m:scr/@m:val
-																													 else if (count($context/m:rPr[last()]/m:scr) gt 0) 
-																																then 'on'
-																																else 'off'"/>
-												<xsl:with-param name="sty" select="if ($context/m:rPr[last()]/m:sty/@m:val) 
-																													 then $context/m:rPr[last()]/m:sty/@m:val
-																													 else if (count($context/m:rPr[last()]/m:sty) gt 0) 
-																																then 'on'
-																																else 'off'"/>
+												<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+												<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
 												<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
 																													 then $context/m:rPr[last()]/m:nor/@m:val 
 																													 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
@@ -1262,16 +1222,8 @@
       <xsl:when test="$ndCur/self::m:r">
         <xsl:call-template name="ParseEqArrMr">
           <xsl:with-param name="sToParse" select="$sAllMt"/>
-          <xsl:with-param name="scr" select="if ($ndCur/m:rPr[last()]/m:scr/@m:val) 
-				        																		 then $ndCur/m:rPr[last()]/m:scr/@m:val
-				        																		 else if (count($ndCur/m:rPr[last()]/m:scr) gt 0) 
-				        																					then 'on'
-				        																					else 'off'"/>
-          <xsl:with-param name="sty" select="if ($ndCur/m:rPr[last()]/m:sty/@m:val) 
-				        																		 then $ndCur/m:rPr[last()]/m:sty/@m:val
-				        																		 else if (count($ndCur/m:rPr[last()]/m:sty) gt 0) 
-				        																					then 'on'
-				        																					else 'off'"/>
+          <xsl:with-param name="scr" select="$ndCur/m:rPr[last()]/m:scr/@m:val"/>
+          <xsl:with-param name="sty" select="$ndCur/m:rPr[last()]/m:sty/@m:val"/>
           <xsl:with-param name="nor" select="if ($ndCur/m:rPr[last()]/m:nor/@m:val) 
 				        																		 then $ndCur/m:rPr[last()]/m:nor/@m:val 
 				        																		 else if (count($ndCur/m:rPr[last()]/m:nor) gt 0) 

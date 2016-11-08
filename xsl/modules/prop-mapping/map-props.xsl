@@ -798,7 +798,7 @@
       </xsl:when>
 
       <xsl:when test=". eq 'passthru'">
-        <xsl:sequence select="$val" copy-namespaces="no"/>
+        <xsl:copy-of select="$val" copy-namespaces="no"/>
       </xsl:when>
 
       <xsl:when test=". eq 'docx-position'">

@@ -150,7 +150,10 @@
         <prop name="w:spacing/@w:afterLines" implement="maybe later" />
         <prop name="w:spacing/@w:beforeLines" implement="maybe later" />
         <prop name="w:spacing/@w:line" type="docx-line" target-name="css:line-height" />
-        <prop name="w:spacing/@w:val" type="docx-length-attr" target-name="css:letter-spacing" />
+        <prop name="w:spacing/@w:val" type="docx-length-attr" target-name="css:letter-spacing" >
+          <!-- GI 2016-11-08: Although contemporary browsers implement letter-spacing like this docx
+          property, they really shouldn’t. https://twitter.com/gimsieke/status/796107927916605440 -->
+        </prop>
         <prop name="w:strike" target-name="css:text-decoration-line">
           <val eq="true" target-value="line-through"/>
           <val eq="false" />

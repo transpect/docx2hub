@@ -525,7 +525,7 @@
     <xsl:if test="exists($nested-field-functions)">
       <xsl:variable name="corresponding-item-in-nesting" as="element(w:fldChar)" 
         select="key('docx2hub:item-by-id', ., $nested-field-functions)"/>
-      <xsl:copy-of select="$corresponding-item-in-nesting/@linkend"/>
+      <xsl:sequence select="$corresponding-item-in-nesting/@linkend"/>
       <xsl:attribute name="level" select="count($corresponding-item-in-nesting/ancestor::docx2hub:field-function)"/>
     </xsl:if>
   </xsl:template>

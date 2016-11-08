@@ -302,7 +302,7 @@
     <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">
       <xsl:attribute name="w:val" select="$default-lang"/>
-      <xsl:copy-of select="@*"/>
+      <xsl:sequence select="@*"/>
     </xsl:copy>
   </xsl:template>
   

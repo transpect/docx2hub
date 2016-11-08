@@ -713,8 +713,8 @@
     <xsl:variable name="ancestors-with-langs" as="element(*)+">
       <xsl:for-each select="ancestor::*">
         <xsl:copy>
-          <xsl:copy-of select="key('style-by-name', @role)/(@xml:lang, @css:direction, @docx2hub:rtl-lang)"/>
-          <xsl:copy-of select="@xml:lang except $context, ../@css:direction, ../@docx2hub:rtl-lang"/>
+          <xsl:sequence select="key('style-by-name', @role)/(@xml:lang, @css:direction, @docx2hub:rtl-lang)"/>
+          <xsl:sequence select="@xml:lang except $context, ../@css:direction, ../@docx2hub:rtl-lang"/>
         </xsl:copy>
       </xsl:for-each>
     </xsl:variable>
@@ -732,8 +732,8 @@
     <xsl:variable name="ancestors-with-langs" as="element(*)+">
       <xsl:for-each select="ancestor::*">
         <xsl:copy>
-          <xsl:copy-of select="key('style-by-name', @role)/(@xml:lang, @css:direction, @docx2hub:rtl-lang)"/>
-          <xsl:copy-of select="@docx2hub:rtl-lang except $context, ../@css:direction, ../@xml:lang"/>
+          <xsl:sequence select="key('style-by-name', @role)/(@xml:lang, @css:direction, @docx2hub:rtl-lang)"/>
+          <xsl:sequence select="@docx2hub:rtl-lang except $context, ../@css:direction, ../@xml:lang"/>
         </xsl:copy>
       </xsl:for-each>
     </xsl:variable>

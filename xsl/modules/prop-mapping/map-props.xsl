@@ -120,7 +120,7 @@
         </xsl:choose>
       </info>
       <xsl:apply-templates select="../../w:numbering" mode="#current"/>
-      <xsl:copy-of select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>
+      <xsl:sequence select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>
       <xsl:apply-templates select="../../w:comments, ../../w:footnotes, ../../w:endnotes" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
@@ -134,7 +134,7 @@
   
   <xsl:template match="*[ancestor-or-self::w:numbering]" mode="docx2hub:add-props" priority="-1">
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:sequence select="@*"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
   </xsl:template>
@@ -325,7 +325,7 @@
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="*" mode="#current" />
       <!-- in order for subsequent (numbering.xsl) symbol mappings, the original rFonts must also be preserved -->
-      <xsl:copy-of select="*"/>
+      <xsl:sequence select="*"/>
     </xsl:copy>
   </xsl:template>
   
@@ -353,7 +353,7 @@
   <xsl:template match="w:tcPr" mode="docx2hub:add-props" priority="2">
     <xsl:apply-templates select="*" mode="#current" />
     <!-- for cellspan etc. processing as defined in tables.xsl: -->
-    <xsl:copy-of select="." />
+    <xsl:sequence select="." />
   </xsl:template>
 
   <xsl:template match="w:u" mode="docx2hub:add-props" priority="2">
@@ -548,7 +548,7 @@
           <w:pBdr>
             <xsl:for-each select="('left', 'right', 'bottom', 'top')">
               <xsl:element name="w:{.}">
-                <xsl:copy-of select="$val/@*"/>
+                <xsl:sequence select="$val/@*"/>
               </xsl:element>
             </xsl:for-each>
           </w:pBdr>
@@ -717,14 +717,14 @@
               </xsl:when>
               <xsl:otherwise>
                 <xsl:message>map-props.xsl: w:shd/@w:val='pct*' only implemented for existing @w:fill and @w:color
-                <xsl:copy-of select="$val" />
+                <xsl:sequence select="$val" />
               </xsl:message>
             </xsl:otherwise>
             </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
             <xsl:message>map-props.xsl: w:shd/@w:val other than 'clear', 'nil', 'pct*', and 'solid' not implemented.
-            <xsl:copy-of select="$val" />
+            <xsl:sequence select="$val" />
             </xsl:message>
           </xsl:otherwise>
         </xsl:choose>
@@ -798,7 +798,7 @@
       </xsl:when>
 
       <xsl:when test=". eq 'passthru'">
-        <xsl:copy-of select="$val" copy-namespaces="no"/>
+        <xsl:sequence select="$val" copy-namespaces="no"/>
       </xsl:when>
 
       <xsl:when test=". eq 'docx-position'">

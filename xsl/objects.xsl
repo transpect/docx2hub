@@ -38,7 +38,7 @@
     <xsl:variable name="element-name" select="if(parent::w:r|parent::w:p) then 'phrase' else 'sidebar'" as="xs:string"/>
     <xsl:element name="{$element-name}">
       <xsl:attribute name="role" select="'hub:foreign'"/>
-      <xsl:copy-of select="parent::*/@srcpath"/>
+      <xsl:sequence select="parent::*/@srcpath"/>
       <xsl:apply-templates select="mc:Fallback/node()" mode="foreign"/>
     </xsl:element>
   </xsl:template>
@@ -158,7 +158,7 @@
   </xsl:template>
 
   <xsl:template match="@css:*" mode="vml">
-    <xsl:copy-of select="." />
+    <xsl:sequence select="." />
   </xsl:template>
 
   <xsl:template match="@alt[parent::v:shape]" mode="vml">

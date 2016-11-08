@@ -99,7 +99,7 @@
   <xsl:template match="w:tblGridChange" mode="colspec"/>
 
   <xsl:template match="w:tblPr/@css:background-color" priority="10" mode="wml-to-dbk">
-    <xsl:copy-of select="."/>
+    <xsl:sequence select="."/>
   </xsl:template>
   
   <xsl:template match="w:tblGrid" mode="colspec">
@@ -259,10 +259,10 @@
     <xsl:variable name="pos" select="position()"/>
     <xsl:element name="entry">
 <!--      <xsl:copy-of select="ancestor::w:tbl[1]/w:tblPr/@css:*[not(matches(local-name(), '^(border|background-color|width)'))]"/>-->
-      <xsl:copy-of select="$cell-style"/>
-      <xsl:copy-of select="ancestor::w:tr[1]/@css:*[not(matches(local-name(), '^(background-color|(min-)?height|width)'))]"/>
+      <xsl:sequence select="$cell-style"/>
+      <xsl:sequence select="ancestor::w:tr[1]/@css:*[not(matches(local-name(), '^(background-color|(min-)?height|width)'))]"/>
       <xsl:if test="w:p[@css:text-align] and (every $t in w:p satisfies ($t[@css:text-align] and $t/@css:text-align=w:p[1]/@css:text-align))">
-        <xsl:copy-of select="w:p[1]/@css:text-align"/>  
+        <xsl:sequence select="w:p[1]/@css:text-align"/>  
       </xsl:if>
       <xsl:variable name="is-first-cell" select="tr:node-index-of(../w:tc, .) = 1" as="xs:boolean"/>
       <xsl:variable name="is-last-cell" select="tr:node-index-of(../w:tc, .) = count(../w:tc)" as="xs:boolean"/>
@@ -290,7 +290,7 @@
           <xsl:with-param name="is-last-row-in-group" select="$is-last-row-in-group" tunnel="yes"/>
         </xsl:apply-templates>
       </xsl:if>
-      <xsl:copy-of select="$morerows"/>
+      <xsl:sequence select="$morerows"/>
       <!-- will be treated by map-props.xsl:
       <xsl:call-template name="cell.style"/>
       <xsl:call-template name="cell.align"/>
@@ -371,17 +371,17 @@
     <xsl:param name="alternative" as="xs:string"/>
     <xsl:choose>
       <xsl:when test="$flag">
-        <xsl:copy-of select="$borders/*[name() = $name]"/>
+        <xsl:sequence select="$borders/*[name() = $name]"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>
           <xsl:when test="$borders/*[name() = $alternative]">
             <xsl:element name="{$name}">
-              <xsl:copy-of select="$borders/*[name() = $alternative]/@*"/>
+              <xsl:sequence select="$borders/*[name() = $alternative]/@*"/>
             </xsl:element>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:copy-of select="$borders/*[name() = $name]"/>
+            <xsl:sequence select="$borders/*[name() = $name]"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:otherwise>

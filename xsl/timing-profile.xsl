@@ -15,14 +15,14 @@
                 <xsl:sort select="@name"/>
                 <xsl:sort select="@match"/>
             <fn>
-            <xsl:copy-of select="@* except @time"/>
+            <xsl:sequence select="@* except @time"/>
             <xsl:attribute name="construct" select="name()"/>
             <xsl:variable name="count" select="count(current-group())"/>
             
             <xsl:variable name="group">
                 <xsl:for-each select="current-group()">
                     <entry>
-                    <xsl:copy-of select="@*"/>
+                    <xsl:sequence select="@*"/>
                     <xsl:variable name="gross" select="end/@time - @time"/>
                     <xsl:attribute name="t" select="$gross"/>
                     <xsl:attribute name="t2" select="$gross * $gross"/>
@@ -66,7 +66,7 @@
 <!-- entry point to get the analyzed XML data out -->
 
 <xsl:template match="/trace[$output='xml']" priority="2">
-  <xsl:copy-of select="$summary"/>
+  <xsl:sequence select="$summary"/>
 </xsl:template>
 
 <xsl:template match="/trace">

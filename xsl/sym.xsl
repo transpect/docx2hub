@@ -122,7 +122,7 @@
         </xsl:if>
         <xsl:for-each select="$text">
           <xsl:copy>
-            <xsl:copy-of select="@* except @docx2hub:map-to"/>
+            <xsl:sequence select="@* except @docx2hub:map-to"/>
             <xsl:sequence select="node()"/>
           </xsl:copy>
         </xsl:for-each>
@@ -142,7 +142,7 @@
     <xsl:param name="leave-unmappable-symbols-unchanged" as="xs:boolean?" select="$keep-unmappable-syms = 'yes'" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="$leave-unmappable-symbols-unchanged">
-        <xsl:copy-of select="."/>
+        <xsl:sequence select="."/>
       </xsl:when>
       <xsl:otherwise>
         <phrase xmlns="http://docbook.org/ns/docbook" role="hub:ooxml-symbol" css:font-family="{$font}" annotations="{$number}"

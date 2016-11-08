@@ -224,7 +224,7 @@
       <xsl:copy>
         <xsl:apply-templates select="@* except @sortas" mode="#current"/>
         <xsl:if test="not(@sortas = $processed-text)">
-          <xsl:copy-of select="@sortas"/>
+          <xsl:sequence select="@sortas"/>
         </xsl:if>
         <xsl:sequence select="$processed"/>
       </xsl:copy>
@@ -271,7 +271,7 @@
               <xsl:variable name="attributes" select="./@*" as="attribute()*"/>
               <xsl:if test="not(tokenize(./text(),$regex-char)[1]='')">
                 <xsl:element name="{$element-name}">
-                  <xsl:copy-of select="$attributes"/>
+                  <xsl:sequence select="$attributes"/>
                   <xsl:value-of select="tokenize(./text(),$regex-char)[1]"/>
                 </xsl:element>
               </xsl:if>
@@ -280,7 +280,7 @@
                   <xsl:value-of select="$string-char"/>
                 </text>
                 <xsl:element name="{$element-name}">
-                  <xsl:copy-of select="$attributes"/>
+                  <xsl:sequence select="$attributes"/>
                   <xsl:value-of select="."/>
                 </xsl:element>
               </xsl:for-each>

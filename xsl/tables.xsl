@@ -84,12 +84,6 @@
 
   <xsl:function name="docx2hub:is-tableheader-row" as="xs:boolean">
     <xsl:param name="row" as="element(w:tr)"/>
-    <xsl:if test="exists($row//@srcpath[contains(., ']/w:tbl[2]/w:tr[2]/w')])">
-      <xsl:message select="exists($row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]), '########', exists($row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]
-                              [preceding-sibling::*[1]/self::w:tr[docx2hub:is-tableheader-row(.)]]),
-                              
-                              '##', ($row//@srcpath)[1]"/>
-    </xsl:if>
     <xsl:sequence select="$row/w:trPr/w:tblHeader or 
                           $row/w:tblHeader or
                           $row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]

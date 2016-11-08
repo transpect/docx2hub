@@ -54,16 +54,13 @@
             <xsl:attribute name="role" select="docx2hub:linked-cell-style-name($styledef/@name)"/>
           </xsl:if>
         </xsl:variable>
-        <xsl:apply-templates select="w:tblGrid" mode="colspec">
-          <xsl:with-param name="width" 
-            select="if (not(w:tblPr/w:tblW) or w:tblPr/w:tblW/@w:type = 'pct') then 0 else w:tblPr/w:tblW/@w:w" tunnel="yes"/>
-        </xsl:apply-templates>
+        <xsl:apply-templates select="w:tblGrid" mode="colspec"/>
         <xsl:variable name="every-row-is-a-header" as="xs:boolean"
-          select="every $tr in w:tr satisfies $tr[w:trPr/w:tblHeader or w:tblHeader]"/>
-        <xsl:if test="w:tr[w:trPr/w:tblHeader or w:tblHeader] and 
+          select="every $tr in w:tr satisfies $tr[docx2hub:is-tableheader-row(.)]"/>
+        <xsl:if test="w:tr[docx2hub:is-tableheader-row(.)] and 
                       not($every-row-is-a-header)">
           <thead>
-            <xsl:apply-templates select="w:tr[w:trPr/w:tblHeader or w:tblHeader]" mode="tables">
+            <xsl:apply-templates select="w:tr[docx2hub:is-tableheader-row(.)]" mode="tables">
               <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
               <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
               <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
@@ -74,7 +71,7 @@
         <tbody>
           <xsl:apply-templates mode="tables"
             select="if($every-row-is-a-header) then * except w:tblPr
-                    else * except (w:tblPr union w:tr[w:trPr/w:tblHeader or w:tblHeader])">
+                    else * except (w:tblPr union w:tr[docx2hub:is-tableheader-row(.)])">
             <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
             <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
             <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
@@ -85,6 +82,20 @@
     </informaltable>
   </xsl:template>
 
+  <xsl:function name="docx2hub:is-tableheader-row" as="xs:boolean">
+    <xsl:param name="row" as="element(w:tr)"/>
+    <xsl:if test="exists($row//@srcpath[contains(., ']/w:tbl[2]/w:tr[2]/w')])">
+      <xsl:message select="exists($row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]), '########', exists($row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]
+                              [preceding-sibling::*[1]/self::w:tr[docx2hub:is-tableheader-row(.)]]),
+                              
+                              '##', ($row//@srcpath)[1]"/>
+    </xsl:if>
+    <xsl:sequence select="$row/w:trPr/w:tblHeader or 
+                          $row/w:tblHeader or
+                          $row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]
+                              [preceding-sibling::*[not(docx2hub:is-blind-vmerged-row(.))][1]/self::w:tr[docx2hub:is-tableheader-row(.)]]"/>
+  </xsl:function>
+
   <xsl:template match="w:tblGridChange" mode="colspec"/>
 
   <xsl:template match="w:tblPr/@css:background-color" priority="10" mode="wml-to-dbk">
@@ -92,19 +103,6 @@
   </xsl:template>
   
   <xsl:template match="w:tblGrid" mode="colspec">
-    <xsl:param name="width" tunnel="yes" as="xs:integer"/>
-    <xsl:if test="not(sum(w:gridCol/@w:w) = $width) and not($width = 0)">
-      <xsl:call-template name="signal-error" xmlns="">
-        <xsl:with-param name="error-code" select="'W2D_052'"/>
-        <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-        <xsl:with-param name="hash">
-          <value key="xpath"><xsl:value-of select="ancestor-or-self::*[@srcpath][1]/@srcpath"/></value>
-          <value key="level">WRN</value>
-          <value key="comment"/>
-          <value key="info-text"><xsl:value-of select="concat('Table-width: ', $width, '    Sum of col-widths: ', sum(w:gridCol/@w:w))"/></value>
-        </xsl:with-param>
-      </xsl:call-template>
-    </xsl:if>
     <xsl:apply-templates mode="colspec"/>
   </xsl:template>
   
@@ -470,12 +468,12 @@
   <xsl:template name="cell.morerows">
     <xsl:if test="w:tcPr/w:vMerge/@w:val = 'restart'">
       <xsl:variable name="is-thead-tr" as="xs:boolean" 
-        select="exists(parent::w:tr[w:trPr/w:tblHeader or w:tblHeader])"/>
+        select="exists(parent::w:tr[docx2hub:is-tableheader-row(.)])"/>
       <xsl:variable name="next-non-vmerged-tr" as="element(w:tr)?"
         select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]"/>
       <xsl:variable name="counts" as="xs:integer*">
         <xsl:choose>
-          <xsl:when test="$is-thead-tr = true() and not(../following-sibling::w:tr[1][w:trPr/w:tblHeader or w:tblHeader])">
+          <xsl:when test="$is-thead-tr = true() and not(../following-sibling::w:tr[1][docx2hub:is-tableheader-row(.)])">
             <xsl:sequence select="999"/>
           </xsl:when>
           <xsl:when test="$next-non-vmerged-tr/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]

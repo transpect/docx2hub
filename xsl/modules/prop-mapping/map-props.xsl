@@ -1118,7 +1118,12 @@
   </xsl:template>
 
   <xsl:template match="docx2hub:attribute[@name = ('fill-tint')]" mode="docx2hub:props2atts"/>
-  
+
+  <xsl:template match="docx2hub:attribute[@name = 'css:letter-spacing'] 
+                                         [not(parent::css:rule)]
+                                         [not(../docx2hub:attribute[@name eq 'role'])]
+                                         [. = '0pt']" mode="docx2hub:props2atts"/>
+
   <xsl:template match="docx2hub:attribute[@name = 'css:text-decoration-line']" mode="docx2hub:props2atts">
     <xsl:variable name="all-atts" select="preceding-sibling::docx2hub:attribute[@name = current()/@name], ."
       as="element(docx2hub:attribute)+"/>

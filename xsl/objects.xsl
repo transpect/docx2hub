@@ -126,17 +126,10 @@
   </xsl:template>
 
   <xsl:template match="o:OLEObject[parent::w:object]" mode="vml">
-    <xsl:variable name="key-name" as="xs:string"
-      select="if (ancestor::w:footnote)
-              then 'footnote-rel-by-id'
-              else 
-                if (ancestor::w:endnote)
-                then 'endnote-rel-by-id'
-                else 'doc-rel-by-id'" />
     <inlinemediaobject role="OLEObject" annotations="{concat('object_',generate-id(parent::w:object))}">
       <imageobject>
         <xsl:apply-templates select="@* except @r:id" mode="#current"/>
-        <imagedata fileref="{key($key-name, current()/@r:id)/@Target}"/>
+        <imagedata fileref="{docx2hub:rel-lookup(current()/@r:id)/@Target}"/>
       </imageobject>
     </inlinemediaobject>        
   </xsl:template>

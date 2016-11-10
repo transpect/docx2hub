@@ -76,6 +76,21 @@
     <xsl:param name="node" as="node()"/>
     <xsl:sequence select="index-of(for $n in $nodes return generate-id($n), generate-id($node))"/>
   </xsl:function>
+  
+  <xsl:function name="docx2hub:rel-lookup" as="element(rel:Relationship)">
+    <xsl:param name="rid" as="attribute(r:id)"/>
+    <xsl:variable name="key-name" as="xs:string"
+      select="if ($rid/../ancestor::w:footnote)
+              then 'footnote-rel-by-id'
+              else 
+                if ($rid/../ancestor::w:endnote)
+                then 'endnote-rel-by-id'
+                else
+                  if ($rid/../ancestor::w:comment)
+                  then 'comment-rel-by-id'
+                  else 'doc-rel-by-id'" />
+    <xsl:sequence select="key($key-name, $rid, root($rid))"/>
+  </xsl:function>
 
   <!-- ================================================================================ -->
   <!-- Mode: docx2hub:field-functions -->
@@ -644,14 +659,8 @@
   </xsl:template>
 
   <xsl:template match="@r:id[parent::w:hyperlink]" mode="wml-to-dbk" priority="1.5">
-    <xsl:variable name="key-name" as="xs:string"
-      select="if (ancestor::w:footnote)
-              then 'footnote-rel-by-id'
-              else if (ancestor::w:comment) 
-                then 'comment-rel-by-id'
-                else 'doc-rel-by-id'" />
     <xsl:variable name="value" select="."/>
-    <xsl:variable name="rel-item" select="key($key-name, current(), $root)" as="element(rel:Relationship)" />
+    <xsl:variable name="rel-item" select="docx2hub:rel-lookup(.)" as="element(rel:Relationship)" />
     <xsl:choose>
       <xsl:when test="exists(parent::w:hyperlink/@w:anchor)">
         <xsl:attribute name="xlink:href" select="concat(

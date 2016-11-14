@@ -130,8 +130,8 @@
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
     <xsl:variable name="root" select="/" as="document-node(element(dbk:hub))"/>
     <xsl:copy>
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="*" 
+      <xsl:apply-templates select="@*, dbk:tabs" mode="#current"/>
+      <xsl:for-each-group select="* except dbk:tabs" 
             group-adjacent="(
                               docx2hub:element-is-footnoteref(.) 
                               or 

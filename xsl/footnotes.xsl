@@ -62,6 +62,8 @@
       <xsl:apply-templates select="/*/w:footnotes/w:footnote[@w:id = $id]" mode="#current"/>
     </footnote>
   </xsl:template>
+  
+  <xsl:template match="w:t[preceding-sibling::w:footnoteReference/@w:customMarkFollows=('1', 'on', 'true')]" mode="wml-to-dbk"/>
 
   <xsl:template match="w:footnote" mode="wml-to-dbk">
     <xsl:apply-templates mode="#current"/>

@@ -66,7 +66,11 @@
       a srcpath of their own. In principle, srcpath generation may be sped up by computing them more efficiently,
       building on a tunnelled parameter that contains the parent element’s already-computed srcpath.</p:documentation>
   </p:option>
-
+  <p:option name="apply-changemarkup" required="false" select="'yes'">
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Apply all change markup on the compound word document.</p>
+    </p:documentation>
+  </p:option>
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -81,6 +85,12 @@
   <tr:file-uri name="locate-docx">
     <p:with-option name="filename" select="$docx"/>
   </tr:file-uri>
+  
+  <tr:store-debug>
+    <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/00-file-uri')"/>
+    <p:with-option name="active" select="$debug"/>
+    <p:with-option name="base-uri" select="$debug-dir-uri"/>
+  </tr:store-debug>
 
   <!-- unzip or error message -->
   <tr:unzip name="unzip">
@@ -132,6 +142,7 @@
         <xsl:stylesheet version="2.0">
           <xsl:template match="c:files">
             <c:zip-manifest>
+              <xsl:copy-of select="@xml:base"/>
               <xsl:apply-templates/>
             </c:zip-manifest>
           </xsl:template>
@@ -148,6 +159,12 @@
       <p:empty/>
     </p:input>
   </p:xslt>
+  
+  <tr:store-debug>
+    <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/00-zip-manifest')"/>
+    <p:with-option name="active" select="$debug"/>
+    <p:with-option name="base-uri" select="$debug-dir-uri"/>
+  </tr:store-debug>
   
   <p:sink/>
 
@@ -167,6 +184,13 @@
     </p:input>
   </p:add-attribute>
   
+  <p:add-attribute attribute-name="value" match="/c:param" name="srcpaths">
+    <p:with-option name="attribute-value" select="$srcpaths"/>
+    <p:input port="source">
+      <p:inline><c:param name="srcpaths"/></p:inline>
+    </p:input>
+  </p:add-attribute>
+
   <p:add-attribute attribute-name="value" match="/c:param" name="extract-dir-uri">
     <p:with-option name="attribute-value" select="/c:files/@xml:base">
       <p:pipe port="result" step="unzip"/>
@@ -186,6 +210,7 @@
       <p:pipe port="result" step="error-msg-file-path"/>
       <p:pipe port="result" step="extract-dir-uri"/>
       <p:pipe port="result" step="local-href"/>
+      <p:pipe port="result" step="srcpaths"/>
     </p:input>
   </p:insert>
 
@@ -224,7 +249,7 @@
   </tr:xslt-mode>
 
   <p:choose name="apply-changemarkup">
-    <p:when test="exists(//w:del | //w:moveFrom | //w:ins)">
+    <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
       <p:output port="result" primary="true"/>
       <p:output port="report" sequence="true">
         <p:pipe port="report" step="apply-changemarkup-xslt"/>

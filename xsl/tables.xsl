@@ -472,7 +472,7 @@
           </xsl:when>
           <xsl:when test="$next-non-vmerged-tr/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]
                                                    [docx2hub:is-blind-vmerged-cell(.)]">
-            <xsl:for-each-group select="../following-sibling::w:tr[. is $next-non-vmerged-tr or . &gt;&gt; $next-non-vmerged-tr]/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]" 
+            <xsl:for-each-group select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][. is $next-non-vmerged-tr or . &gt;&gt; $next-non-vmerged-tr]/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]" 
               group-adjacent="docx2hub:is-blind-vmerged-cell(.)">
               <xsl:sequence select="count(current-group())"/>
             </xsl:for-each-group>

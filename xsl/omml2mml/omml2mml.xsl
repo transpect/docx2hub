@@ -1513,7 +1513,9 @@
               <xsl:with-param name="nor" select="$nor"/>
               <xsl:with-param name="sTokenType" select="'mo'"/>
             </xsl:call-template>
-            <xsl:value-of select="substring($sToParse,1,1)"/>
+            <!-- replace some combining characters, because they cause 
+                 a messy MathML rendering when used in mml:mo -->
+            <xsl:value-of select="mml:replace-combining-chars(substring($sToParse, 1, 1))"/>
           </mml:mo>
           <xsl:call-template name="ParseMt">
             <xsl:with-param name="context" select="$context"/>
@@ -2003,6 +2005,13 @@
       <xsl:apply-templates select="node()" mode="#current"/>
     </mml:math>
   </xsl:template>
-
+  
+  <xsl:function name="mml:replace-combining-chars" as="xs:string?">
+    <xsl:param name="string" as="xs:string?"/>
+    <xsl:value-of select="translate($string, 
+                                    '&#xaf;&#x302;&#x303;&#x304;&#x305;', 
+                                    '&#x203e;&#x5e;&#x7e;&#x203e;&#x203e;'
+                                    )"/>
+  </xsl:function>
 
 </xsl:stylesheet>

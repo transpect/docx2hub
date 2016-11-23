@@ -87,7 +87,7 @@
     <xsl:sequence select="$row/w:trPr/w:tblHeader or 
                           $row/w:tblHeader or
                           $row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]
-                              [preceding-sibling::*[not(docx2hub:is-blind-vmerged-row(.))][1]/self::w:tr[docx2hub:is-tableheader-row(.)]]"/>
+                              [preceding-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]/self::w:tr[docx2hub:is-tableheader-row(.)]]"/>
   </xsl:function>
 
   <xsl:template match="w:tblGridChange" mode="colspec"/>

@@ -311,6 +311,8 @@
                             docx2hub:is-footnote-reference-style(@role)
                             or
                             key('style-by-name', @role, root(.))/@remap eq 'superscript'
+                            or
+                            (matches(@css:top,'^-') and @css:position eq 'relative')
                           ]
                         ]
                         [

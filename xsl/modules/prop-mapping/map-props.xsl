@@ -1124,6 +1124,16 @@
                                          [not(../docx2hub:attribute[@name eq 'role'])]
                                          [. = '0pt']" mode="docx2hub:props2atts"/>
 
+  <xsl:template match="docx2hub:attribute[@name='role']
+                                         [parent::w:p[w:pgSz]
+                                                     [every $i 
+                                                      in child::* 
+                                                      satisfies $i[not(self::w:r) and 
+                                                                   not(self::m:oMathPara) and 
+                                                                   not(self::m:oMath) and 
+                                                                   not(self::w:fldSimple) and 
+                                                                   not(self::w:hyperlink)]]]" mode="docx2hub:props2atts"/>
+  
   <xsl:template match="docx2hub:attribute[@name = 'css:text-decoration-line']" mode="docx2hub:props2atts">
     <xsl:variable name="all-atts" select="preceding-sibling::docx2hub:attribute[@name = current()/@name], ."
       as="element(docx2hub:attribute)+"/>
@@ -1251,6 +1261,15 @@
         </xsl:choose>
       </xsl:for-each-group>
     </xsl:copy>
+  </xsl:template>
+  
+<xsl:template match="w:tbl/w:tr[every $i 
+                                  in w:tc 
+                                  satisfies (not(exists($i/@css:border-bottom-style)) and 
+                                             not(exists($i/@css:border-bottom-width)) and 
+                                             $i/w:tcPr[w:vMerge[not(exists(@w:val)) or (@w:val  ne 'restart')]] and 
+                                             $i/w:p[not(child::node()[not(self::w:pPr)])])]" 
+                mode="docx2hub:remove-redundant-run-atts">
   </xsl:template>
   
 </xsl:stylesheet>

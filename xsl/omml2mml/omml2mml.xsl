@@ -2009,7 +2009,7 @@
   <xsl:function name="mml:replace-combining-chars" as="xs:string?">
     <xsl:param name="string" as="xs:string?"/>
     <xsl:value-of select="translate($string, 
-                                    '&#xaf;&#x301;&#x302;&#x303;&#x304;&#x305;&#x306;&#x307;&#x308;&#x309;',
+                                    '&#xaf;&#x301;&#x302;&#x303;&#x304;&#x305;&#x306;&#x307;&#x308;',
                                     '&#x203e;&#xb4;&#x5e;&#x7e;&#x203e;&#x203e;&#x2d8;&#x2d9;&#xa8;'
                                     )"/>
   </xsl:function>

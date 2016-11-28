@@ -5,6 +5,8 @@
   queryBinding="xslt2">
   
   <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
+  <ns prefix="a" uri="http://schemas.openxmlformats.org/drawingml/2006/main"/>
+  <ns prefix="pic" uri="http://schemas.openxmlformats.org/drawingml/2006/picture"/>
 
   <let name="base-dir" value="//w:root/@extract-dir-uri"/>
   
@@ -14,6 +16,15 @@
       <report id="multipe_formattings_for_tablecolumnhead" role="warning" test="preceding::w:p[w:pPr/w:pStyle/@w:val=('Tablebody')][. &gt;&gt; $current_table]">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
         Dieser Absatz wurde als Tabellenkopf ausgezeichnet. Vorher (innerhalb dieser Tabelle) befinden sich allerdings schon Tablebody-Zellen. Durch die Konvertierung wurden alle als Kopf ausgezeichneten Absätze nach ganz oben in die Tabelle verschoben. Wenn dies nicht gewünscht ist, Auszeichnung bitte korrigieren und noch einmal konvertieren.
+      </report>
+    </rule>
+  </pattern>
+  
+    <pattern id="crop">
+      <rule context="a:graphic">
+      <report id="cropped_image" role="warning" test="a:graphicData/pic:pic/pic:blipFill/a:srcRect[@r or @b]">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(ancestor::w:p/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+       Dieses Bild wurde zugeschnitten
       </report>
     </rule>
   </pattern>

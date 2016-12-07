@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:word200x="http://schemas.microsoft.com/office/word/2003/wordml"
@@ -41,6 +42,12 @@
       <xsl:sequence select="parent::*/@srcpath"/>
       <xsl:apply-templates select="mc:Fallback/node()" mode="foreign"/>
     </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="mc:AlternateContent[mc:Choice/w:drawing[descendant::a:blip]]" mode="wml-to-dbk">
+    <!-- This will be transformed into a mediaobject. Let’s process this instead of the fallback content.
+      In any case, don’t just create a hub:foreign phrase here. --> 
+    <xsl:apply-templates select="mc:Choice/w:drawing" mode="#current"/>
   </xsl:template>
   
   <!-- This markup tends to be very verbose. We drop it at an early stage to save memory and 

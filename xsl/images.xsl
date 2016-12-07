@@ -3,6 +3,7 @@
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"

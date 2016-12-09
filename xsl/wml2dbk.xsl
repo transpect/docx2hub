@@ -204,15 +204,15 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:function name="docx2hub:corresponding-end-fldChar" as="element(w:fldChar)">
+  <xsl:function name="docx2hub:corresponding-end-fldChar" as="element(w:fldChar)?">
     <xsl:param name="begin" as="element(w:fldChar)"/>
     <xsl:variable name="prelim" as="element(w:fldChar)*"
       select="key('docx2hub:linking-item-by-id', $begin/@xml:id, root($begin))[@w:fldCharType = 'end']"/>
     <xsl:if test="count($prelim) gt 1">
-      <xsl:message terminate="yes" select="'More than one docx2hub:corresponding-end-fldChar() result for ', $begin"/>
+      <xsl:message terminate="no" select="'More than one docx2hub:corresponding-end-fldChar() result for ', $begin"/>
     </xsl:if>
     <xsl:if test="count($prelim) eq 0">
-      <xsl:message terminate="yes" select="'No docx2hub:corresponding-end-fldChar() result for ', $begin"/>
+      <xsl:message terminate="no" select="'No docx2hub:corresponding-end-fldChar() result for ', $begin"/>
     </xsl:if>
     <xsl:sequence select="$prelim[1]"/>
   </xsl:function>

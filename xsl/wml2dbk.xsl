@@ -760,6 +760,13 @@
     </xsl:if>
   </xsl:template>
   
+  <xsl:template match="w:dir" mode="wml-to-dbk">
+    <xsl:if test="@w:val eq 'rtl'">
+      <xsl:message select="'WRN: unimplemented rtl direction element with nested children'"></xsl:message>
+    </xsl:if>
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
   <!-- This occured in a file without styles. It had w:position/@w:val="0" all over the place, which
   is particularly bad for docx2tex, where each span will be converted to a \raisebox.
   The first template removes it if it is in a phrase within a para that has the same property. --> 

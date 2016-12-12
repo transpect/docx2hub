@@ -36,6 +36,7 @@
   <xsl:param name="unwrap-tooltip-links" select="'no'" as="xs:string?"/>
   <xsl:param name="hub-version" select="'1.0'" as="xs:string"/>
   <xsl:param name="discard-alternate-choices" select="'yes'" as="xs:string"/>
+  <xsl:param name="convert-footer" select="false()" as="xs:boolean"/>
   
   <xsl:variable name="docx2hub:discard-alternate-choices" as="xs:boolean"
     select="$discard-alternate-choices = ('yes', 'true', '1')"/>
@@ -527,6 +528,10 @@
     <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
 
+  <!-- footer (w:ftr) -->
+  <xsl:template match="w:ftr[$convert-footer]" mode="wml-to-dbk">
+    <xsl:apply-templates select="node()" mode="#current"/>
+  </xsl:template>
 
   <!-- bookmarks -->
 

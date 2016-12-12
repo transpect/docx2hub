@@ -114,7 +114,7 @@
           <xsl:otherwise>
             <xsl:call-template name="docx2hub:hub-1.1-styles">
               <xsl:with-param name="version" select="$hub-version" tunnel="yes"/>
-              <xsl:with-param name="contexts" select="., /w:root/w:footnotes, /w:root/w:endnotes"/>
+              <xsl:with-param name="contexts" select="., /w:root/w:footnotes, /w:root/w:endnotes, /w:root/w:footer/w:ftr[$convert-footer]"/>
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
@@ -123,6 +123,7 @@
       <xsl:sequence select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>
       <xsl:apply-templates select="../../w:comments, ../../w:footnotes, ../../w:endnotes" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates select="../../w:footer/w:ftr[$convert-footer]" mode="#current"/>
     </xsl:element>
   </xsl:template>
   

@@ -164,7 +164,10 @@
       w:p/w:r/w:fldChars in this context, not arbitrarily deep .//w:fldChars (those in w:tbl/w:tc/w:p). -->
       <xsl:for-each-group select="*" group-starting-with="w:p[.//w:fldChar/generate-id() = $block-begins/generate-id()]">
         <xsl:variable name="begin-fldChar" as="element(w:fldChar)?"
-          select=".//w:fldChar[generate-id() = $block-begins/generate-id()]"/>
+          select="(.//w:fldChar[generate-id() = $block-begins/generate-id()])[1]"/>
+        <xsl:if test="count(.//w:fldChar[generate-id() = $block-begins/generate-id()]) gt 1">
+          <xsl:message select="'More than one begin w:fldChar found for ', $block-begins/@xml:id"/>
+        </xsl:if>
         <xsl:choose>
           <xsl:when test="$begin-fldChar">
             <xsl:variable name="end-fldChar" as="element(w:fldChar)?" select="docx2hub:corresponding-end-fldChar($begin-fldChar)"/>

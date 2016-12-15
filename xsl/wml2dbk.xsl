@@ -115,27 +115,36 @@
   <xsl:function name="docx2hub:field-function" as="xs:string+">
     <!-- $result[1]: field function name, $result[2]: field function args -->
     <xsl:param name="begin" as="element(w:fldChar)"/>
-    <xsl:variable name="prelim" as="xs:string+">
-      <xsl:analyze-string select="$begin/following::w:instrText[1]" regex="^\s*\\?(\i\c*)\s+">
-        <xsl:matching-substring>
-          <xsl:sequence select="regex-group(1)"/>
-          <xsl:if test="empty(regex-group(1))">
-            <xsl:sequence select="'BROKEN1'"/>
-            <xsl:sequence select="."/>
-          </xsl:if>
-        </xsl:matching-substring>
-        <xsl:non-matching-substring>
-          <xsl:sequence select="normalize-space(.)"/>
-        </xsl:non-matching-substring>
-      </xsl:analyze-string>
-    </xsl:variable>
+    <xsl:variable name="instrText" select="$begin/following::w:instrText[1]" as="element(w:instrText)?"/>
     <xsl:choose>
-      <xsl:when test="count($prelim) = 1 and not(matches($prelim[1], '^\i\c*$'))">
-        <xsl:sequence select="'BROKEN2'"/>
-        <xsl:sequence select="$prelim"/>
+      <xsl:when test="empty($instrText)">
+        <xsl:sequence select="'BROKEN3'"/>
+        <xsl:sequence select="string-join(('(missing or wrongly named w:instrText element)', $begin/following::*[1]), ' ')"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="$prelim"/>
+        <xsl:variable name="prelim" as="xs:string+">
+          <xsl:analyze-string select="$begin/following::w:instrText[1]" regex="^\s*\\?(\i\c*)\s+">
+            <xsl:matching-substring>
+              <xsl:sequence select="regex-group(1)"/>
+              <xsl:if test="empty(regex-group(1))">
+                <xsl:sequence select="'BROKEN1'"/>
+                <xsl:sequence select="."/>
+              </xsl:if>
+            </xsl:matching-substring>
+            <xsl:non-matching-substring>
+              <xsl:sequence select="normalize-space(.)"/>
+            </xsl:non-matching-substring>
+          </xsl:analyze-string>
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="count($prelim) = 1 and not(matches($prelim[1], '^\i\c*$'))">
+            <xsl:sequence select="'BROKEN2'"/>
+            <xsl:sequence select="$prelim"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:sequence select="$prelim"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
@@ -241,11 +250,15 @@
         </w:r>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:variable name="ends-after-para" as="element(w:r)*"
+    <xsl:variable name="ends-after-para" as="element(*)*"
       select="for $last-in-para in (current()/*[last()]/w:fldChar, current()/*[last()], current())[1]
               return $field-ends[. &gt;&gt; $last-in-para]
                                 [not(docx2hub:corresponding-begin-fldChar(.) &gt;&gt; $last-in-para)]
                 /.."/>
+    <xsl:for-each select="$ends-after-para[not(name() = ('w:r', 'm:r'))]">
+      <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_096', 'WRN', 'wml-to-dbk', 
+                                             concat('Unexpected field function context ''', name(), ''' with content ''', string(.), ''''))"/>
+    </xsl:for-each>
     <xsl:variable name="props" as="element(*)*" select="w:numPr, w:pPr"/>
     <xsl:copy>
       <xsl:apply-templates select="@*, $props" mode="#current"/>

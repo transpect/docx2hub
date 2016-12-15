@@ -11,7 +11,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:mml="http://www.w3.org/1998/Math/MathML"
-  version="2.0" exclude-result-prefixes="m w mml">
+  version="2.0" exclude-result-prefixes="m w mml xs">
   <!-- %% Global Definitions -->
 
   <xsl:variable name="alpha-uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" as="xs:string"/>
@@ -2547,6 +2547,39 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:param name="mml-space-handling" as="xs:string" select="'figure-space'"/><!-- 'xml-space', 'mspace', 'none', 'figure-space'-->
+
+  <xsl:template name="mtext-or-mspace">
+    <xsl:param name="string" as="xs:string"/>
+    <xsl:choose>
+      <xsl:when test="$mml-space-handling = ('mspace')">
+        <xsl:analyze-string select="$string" regex="(^\s+|\s+$)">
+          <xsl:matching-substring><!-- consider tabs and newlines? Or is everything that arrives here a space? -->
+            <mml:mspace width="{string-length(.) * 0.25}em"/>
+          </xsl:matching-substring>
+          <xsl:non-matching-substring>
+            <mml:mtext>
+              <xsl:value-of select="."/>
+            </mml:mtext>
+          </xsl:non-matching-substring>
+        </xsl:analyze-string>
+      </xsl:when>
+      <xsl:otherwise>
+        <mml:mtext>
+          <xsl:if test="$mml-space-handling = 'xml-space' 
+                        and 
+                        (matches($string, '^\s') or matches($string, '\s$'))">
+            <xsl:attribute name="xml:space" select="'preserve'"/>
+          </xsl:if>
+          <xsl:value-of select="if ($mml-space-handling = 'figure-space') 
+                                then replace($string, ' ', '&#x2007;')
+                                else $string"/>
+        </mml:mtext>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+
   <!-- %%Template: ParseMt
 
 			Produce a run of text. Technically, OMML makes no distinction 
@@ -2561,76 +2594,59 @@
     <xsl:param name="sty"/>
     <xsl:param name="scr"/>
     <xsl:param name="nor"/>
+    
+    <xsl:variable name="sRepNumWith0">
+      <xsl:call-template name="SReplaceNumWithZero">
+        <xsl:with-param name="sToParse" select="$sToParse"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="sRepOperWith-">
+      <xsl:call-template name="SReplaceOperWithMinus">
+        <xsl:with-param name="sToParse" select="$sRepNumWith0"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="iFirstOper"
+      select="string-length($sRepOperWith-) - string-length(substring-after($sRepOperWith-, '-'))"/>
+    <xsl:variable name="iFirstNum"
+      select="string-length($sRepOperWith-) - string-length(substring-after($sRepOperWith-, '0'))"/>
+    <xsl:variable name="fNumAtPos1">
+      <xsl:choose>
+        <xsl:when test="substring($sRepOperWith-,1,1)='0'">1</xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="fOperAtPos1">
+      <xsl:choose>
+        <xsl:when test="substring($sRepOperWith-,1,1)='-'">1</xsl:when>
+        <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
     <xsl:if test="string-length($sToParse) &gt; 0">
-      <xsl:variable name="sRepNumWith0">
-        <xsl:call-template name="SReplaceNumWithZero">
-          <xsl:with-param name="sToParse" select="$sToParse"/>
-        </xsl:call-template>
-      </xsl:variable>
-      <xsl:variable name="sRepOperWith-">
-        <xsl:call-template name="SReplaceOperWithMinus">
-          <xsl:with-param name="sToParse" select="$sRepNumWith0"/>
-        </xsl:call-template>
-      </xsl:variable>
-
-      <xsl:variable name="iFirstOper"
-        select="string-length($sRepOperWith-) - string-length(substring-after($sRepOperWith-, '-'))"/>
-      <xsl:variable name="iFirstNum"
-        select="string-length($sRepOperWith-) - string-length(substring-after($sRepOperWith-, '0'))"/>
-      <xsl:variable name="fNumAtPos1">
-        <xsl:choose>
-          <xsl:when test="substring($sRepOperWith-,1,1)='0'">1</xsl:when>
-          <xsl:otherwise>0</xsl:otherwise>
-        </xsl:choose>
-      </xsl:variable>
-      <xsl:variable name="fOperAtPos1">
-        <xsl:choose>
-          <xsl:when test="substring($sRepOperWith-,1,1)='-'">1</xsl:when>
-          <xsl:otherwise>0</xsl:otherwise>
-        </xsl:choose>
-      </xsl:variable>
-
+      <xsl:variable name="space-stripped" as="xs:string" select="replace($sToParse, '[\s\p{Zs}]', '')"/>
       <xsl:choose>
 
-        <!-- Case I: The string begins with neither a number, nor an operator -->
-        <xsl:when test="$fOperAtPos1='0' and $fNumAtPos1='0'">
-          <xsl:variable name="nCharToPrint">
-            <xsl:choose>
-              <xsl:when test="$context/ancestor::m:fName">
-                <xsl:choose>
-                  <xsl:when
-                    test="($iFirstOper=$iFirstNum) and             ($iFirstOper=string-length($sToParse)) and                        (substring($sRepOperWith-, string-length($sRepOperWith-))!='0') and                         (substring($sRepOperWith-, string-length($sRepOperWith-))!='-')">
-                    <xsl:value-of select="string-length($sToParse)"/>
-                  </xsl:when>
-                  <xsl:when test="$iFirstOper &lt; $iFirstNum">
-                    <xsl:value-of select="$iFirstOper - 1"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="$iFirstNum - 1"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:when>
-              <xsl:otherwise>1</xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-
-          <mml:mi>
-            <xsl:call-template name="CreateTokenAttributes">
-              <xsl:with-param name="scr" select="$scr"/>
-              <xsl:with-param name="sty" select="$sty"/>
-              <xsl:with-param name="nor" select="$nor"/>
-              <xsl:with-param name="nCharToPrint" select="$nCharToPrint"/>
-              <xsl:with-param name="sTokenType" select="'mi'"/>
-            </xsl:call-template>
-            <xsl:value-of select="substring($sToParse, 1, $nCharToPrint)"/>
+        <xsl:when test="$sToParse = ('arccos', 'cos', 'csc', 'exp', 'ker', 'limsup', 'min', 'sinh', 'arcsin', 'cosh', 'deg', 
+          'gcd', 'lg', 'ln', 'Pr', 'sup', 'arctan', 'cot', 'det', 'hom', 'lim', 'log', 'sec', 'tan', 
+          'arg', 'coth', 'dim', 'inf', 'liminf', 'max', 'sin', 'tanh')
+          and ($scr='roman' or not($scr) or $scr='')
+          and $sty='p'">
+          <mml:mi mathvariant="normal"><!-- multichar mi should be rendered upright by default anyway -->
+            <xsl:value-of select="$sToParse"/>
           </mml:mi>
-          <xsl:call-template name="ParseMt">
-            <xsl:with-param name="context" select="$context"/>
-            <xsl:with-param name="sToParse" select="substring($sToParse, $nCharToPrint+1)"/>
-            <xsl:with-param name="scr" select="$scr"/>
-            <xsl:with-param name="sty" select="$sty"/>
-            <xsl:with-param name="nor" select="$nor"/>
-          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="(
+                          matches($space-stripped, '^\p{L}{2,}')
+                          or
+                          matches($sToParse, '^[\s\p{Zs}]+$') (: treat space chars as mtext, not as mspace, for the time being :)
+                        )
+                        and ($scr='roman' or not($scr) or $scr='')
+                        and $sty='p'">
+          <mml:mtext>
+            <xsl:value-of select="$sToParse"/><!-- apply mtext-or-space in a postprocessing mode because there are also
+            other places where mtext will be created -->
+          </mml:mtext>
         </xsl:when>
 
         <!-- Case II: There is an operator at position 1 -->
@@ -2657,28 +2673,124 @@
 
         <!-- Case III: There is a number at position 1 -->
         <xsl:otherwise>
-          <xsl:variable name="sConsecNum">
-            <xsl:call-template name="SNumStart">
+          <xsl:variable name="sRepNumWith0">
+            <xsl:call-template name="SReplaceNumWithZero">
               <xsl:with-param name="sToParse" select="$sToParse"/>
-              <xsl:with-param name="sPattern" select="$sRepNumWith0"/>
             </xsl:call-template>
           </xsl:variable>
-          <mml:mn>
-            <xsl:call-template name="CreateTokenAttributes">
-              <xsl:with-param name="scr" select="$scr"/>
-              <xsl:with-param name="sty" select="'p'"/>
-              <xsl:with-param name="nor" select="$nor"/>
-              <xsl:with-param name="sTokenType" select="'mn'"/>
+          <xsl:variable name="sRepOperWith-">
+            <xsl:call-template name="SReplaceOperWithMinus">
+              <xsl:with-param name="sToParse" select="$sRepNumWith0"/>
             </xsl:call-template>
-            <xsl:value-of select="$sConsecNum"/>
-          </mml:mn>
-          <xsl:call-template name="ParseMt">
-            <xsl:with-param name="context" select="$context"/>
-            <xsl:with-param name="sToParse" select="substring-after($sToParse, $sConsecNum)"/>
-            <xsl:with-param name="scr" select="$scr"/>
-            <xsl:with-param name="sty" select="$sty"/>
-            <xsl:with-param name="nor" select="$nor"/>
-          </xsl:call-template>
+          </xsl:variable>
+    
+          <xsl:variable name="iFirstOper"
+            select="string-length($sRepOperWith-) - string-length(substring-after($sRepOperWith-, '-'))"/>
+          <xsl:variable name="iFirstNum"
+            select="string-length($sRepOperWith-) - string-length(substring-after($sRepOperWith-, '0'))"/>
+          <xsl:variable name="fNumAtPos1">
+            <xsl:choose>
+              <xsl:when test="substring($sRepOperWith-,1,1)='0'">1</xsl:when>
+              <xsl:otherwise>0</xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
+          <xsl:variable name="fOperAtPos1">
+            <xsl:choose>
+              <xsl:when test="substring($sRepOperWith-,1,1)='-'">1</xsl:when>
+              <xsl:otherwise>0</xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
+    
+          <xsl:choose>
+    
+            <!-- Case I: The string begins with neither a number, nor an operator -->
+            <xsl:when test="$fOperAtPos1='0' and $fNumAtPos1='0'">
+              <xsl:variable name="nCharToPrint">
+                <xsl:choose>
+                  <xsl:when test="$context/ancestor::m:fName">
+                    <xsl:choose>
+                      <xsl:when
+                        test="($iFirstOper=$iFirstNum) and             ($iFirstOper=string-length($sToParse)) and                        (substring($sRepOperWith-, string-length($sRepOperWith-))!='0') and                         (substring($sRepOperWith-, string-length($sRepOperWith-))!='-')">
+                        <xsl:value-of select="string-length($sToParse)"/>
+                      </xsl:when>
+                      <xsl:when test="$iFirstOper &lt; $iFirstNum">
+                        <xsl:value-of select="$iFirstOper - 1"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="$iFirstNum - 1"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:when>
+                  <xsl:otherwise>1</xsl:otherwise>
+                </xsl:choose>
+              </xsl:variable>
+    
+              <mml:mi>
+                <xsl:call-template name="CreateTokenAttributes">
+                  <xsl:with-param name="scr" select="$scr"/>
+                  <xsl:with-param name="sty" select="$sty"/>
+                  <xsl:with-param name="nor" select="$nor"/>
+                  <xsl:with-param name="nCharToPrint" select="$nCharToPrint"/>
+                  <xsl:with-param name="sTokenType" select="'mi'"/>
+                </xsl:call-template>
+                <xsl:value-of select="substring($sToParse, 1, $nCharToPrint)"/>
+              </mml:mi>
+              <xsl:call-template name="ParseMt">
+                <xsl:with-param name="context" select="$context"/>
+                <xsl:with-param name="sToParse" select="substring($sToParse, $nCharToPrint+1)"/>
+                <xsl:with-param name="scr" select="$scr"/>
+                <xsl:with-param name="sty" select="$sty"/>
+                <xsl:with-param name="nor" select="$nor"/>
+              </xsl:call-template>
+            </xsl:when>
+    
+            <!-- Case II: There is an operator at position 1 -->
+            <xsl:when test="$fOperAtPos1='1'">
+              <mml:mo>
+                <xsl:call-template name="CreateTokenAttributes">
+                  <xsl:with-param name="scr"/>
+                  <xsl:with-param name="sty"/>
+                  <xsl:with-param name="nor" select="$nor"/>
+                  <xsl:with-param name="sTokenType" select="'mo'"/>
+                </xsl:call-template>
+                <xsl:value-of select="substring($sToParse,1,1)"/>
+              </mml:mo>
+              <xsl:call-template name="ParseMt">
+                <xsl:with-param name="context" select="$context"/>
+                <xsl:with-param name="sToParse" select="substring($sToParse, 2)"/>
+                <xsl:with-param name="scr" select="$scr"/>
+                <xsl:with-param name="sty" select="$sty"/>
+                <xsl:with-param name="nor" select="$nor"/>
+              </xsl:call-template>
+            </xsl:when>
+    
+            <!-- Case III: There is a number at position 1 -->
+            <xsl:otherwise>
+              <xsl:variable name="sConsecNum">
+                <xsl:call-template name="SNumStart">
+                  <xsl:with-param name="sToParse" select="$sToParse"/>
+                  <xsl:with-param name="sPattern" select="$sRepNumWith0"/>
+                </xsl:call-template>
+              </xsl:variable>
+              <mml:mn>
+                <xsl:call-template name="CreateTokenAttributes">
+                  <xsl:with-param name="scr" select="$scr"/>
+                  <xsl:with-param name="sty" select="'p'"/>
+                  <xsl:with-param name="nor" select="$nor"/>
+                  <xsl:with-param name="sTokenType" select="'mn'"/>
+                </xsl:call-template>
+                <xsl:value-of select="$sConsecNum"/>
+              </mml:mn>
+              <xsl:call-template name="ParseMt">
+                <xsl:with-param name="context" select="$context"/>
+                <xsl:with-param name="sToParse" select="substring-after($sToParse, $sConsecNum)"/>
+                <xsl:with-param name="scr" select="$scr"/>
+                <xsl:with-param name="sty" select="$sty"/>
+                <xsl:with-param name="nor" select="$nor"/>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+          
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>

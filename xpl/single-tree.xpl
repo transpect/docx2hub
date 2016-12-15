@@ -54,6 +54,9 @@
   <p:option name="debug-dir-uri" required="false" select="'file:/tmp/debug'"/>
   <p:option name="srcpaths" required="false" select="'no'"/>
   <p:option name="unwrap-tooltip-links" required="false" select="'no'"/>
+  <p:option name="mml-space-handling" select="'mspace'">
+    <p:documentation>see corresponding documentation for docx2hub</p:documentation>
+  </p:option>
   <p:option name="hub-version" required="false" select="'1.2'"/>
   <p:option name="fail-on-error" select="'no'"/>
   <p:option name="field-vars" required="false" select="'no'"/>

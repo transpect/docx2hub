@@ -551,4 +551,10 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="mml:mtext" mode="docx2hub:join-runs">
+    <xsl:call-template name="mtext-or-mspace">
+      <xsl:with-param name="string" as="xs:string" select="."/>
+    </xsl:call-template>
+  </xsl:template>
+  
 </xsl:stylesheet>

@@ -85,6 +85,21 @@
   <p:option name="status-dir-uri" select="'status'"/>
   <p:option name="srcpaths" select="'no'"/>
   <p:option name="unwrap-tooltip-links" select="'no'"/>
+  <p:option name="mml-space-handling" select="'mspace'">
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Whitespace conversion from OMML to MathML</p>
+      <dl>
+        <dt>none</dt>
+        <dd>All whitespace will be in mtext, without xml:space attributes</dd>
+        <dt>xml-space</dt>
+        <dd>Same mtext as for 'none', with xml:space="preserve" attribute when \s at the beginning or end</dd>
+        <dt>figure-space</dt>
+        <dd>Each \s char will converted to U+2007, still within mtext. Special handling for tabs and newlines tbd</dd>
+        <dt>mspace</dt>
+        <dd>Start and end \s will be converted to mspace with a width of 0.25em for each char</dd>
+      </dl>
+    </p:documentation>
+  </p:option>
   <p:option name="hub-version" select="'1.2'"/>
   <p:option name="fail-on-error" select="'no'"/>
   <p:option name="field-vars" select="'no'"/>
@@ -132,6 +147,7 @@
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     <p:with-option name="hub-version" select="$hub-version"/>
     <p:with-option name="unwrap-tooltip-links" select="$unwrap-tooltip-links"/>
+    <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="srcpaths" select="$srcpaths"/>

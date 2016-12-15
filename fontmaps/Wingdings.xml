@@ -13,11 +13,17 @@
   <symbol number="F06F" entity="" char="&#x25A1;"/><!-- WHITE SQUARE -->
   <symbol number="006F" entity="o" char="&#x25A1;"/><!-- WHITE SQUARE -->
   <symbol number="F070" entity="⬜" char="&#x2B1C;" font="Segoe UI Symbol"/><!-- WHITE LARGE SQUARE -->
+  <symbol number="F08B" entity="&#xF08C;" char="&#x24FF;"/><!-- NEGATIVE CIRCLED DIGIT ZERO -->
   <symbol number="F08C" entity="&#xF08C;" char="&#x2776;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT ONE -->
   <symbol number="F08D" entity="&#xF08D;" char="&#x2777;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT TWO -->
   <symbol number="F08E" entity="&#xF08E;" char="&#x2778;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT THREE -->
   <symbol number="F08F" entity="&#xF08F;" char="&#x2779;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FOUR -->
   <symbol number="F090" entity="&#xF090;" char="&#x277a;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FIVE -->
+  <symbol number="F091" entity="&#xF091;" char="&#x277b;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT SIX -->
+  <symbol number="F092" entity="&#xF092;" char="&#x277c;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT SEVEN -->
+  <symbol number="F093" entity="&#xF093;" char="&#x277d;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT EIGHT -->
+  <symbol number="F094" entity="&#xF094;" char="&#x277e;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT NINE -->
+  <symbol number="F095" entity="&#xF095;" char="&#x277f;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT TEN -->
   <symbol number="F09E" entity="" char="&#xb7;"/><!-- MIDDLE DOT -->
   <symbol number="F09F" entity="" char="&#x2022;"/><!-- BULLET -->
   <symbol number="F0A1" entity="&#xF0A1;" char="&#x1f785;" font="Segoe UI Symbol"/><!-- MEDIUM BOLD WHITE CIRCLE -->
@@ -34,7 +40,13 @@
   <symbol number="F0E8" entity="&#xF0E8;" char="&#x2794;" font="Segoe UI Symbol"/><!-- Heavy wide-headed rightwards arrow -->
   <symbol number="00E8" entity="&#x00E8;" char="&#x2794;" font="Segoe UI Symbol"/><!-- Heavy wide-headed rightwards arrow -->
   <symbol number="0AEA" entity="&#x0AEA;" char="&#x2794;"/><!-- Heavy wide-headed rightwards arrow -->
-  <symbol number="F0A8" entity="" char="&#x25FB;" font="Segoe UI Symbol"/><!-- WHITE MEDIUM SQUARE -->
+  <symbol number="F0A8" entity="&#xF0A8;" char="&#x25FB;" font="Segoe UI Symbol"/><!-- WHITE MEDIUM SQUARE -->
+  <symbol number="F0E1" entity="&#xF0E1;" char="&#x2191;"/><!-- ARROW UP -->
+  <symbol number="F0E2" entity="&#xF0E2;" char="&#x2193;"/><!-- ARROW DOWN -->
+  <symbol number="F0E3" entity="&#xF0E3;" char="&#x2196;"/><!-- NORTH WEST ARROW -->
+  <symbol number="F0E4" entity="&#xF0E4;" char="&#x2197;"/><!-- NORTH EAST ARROW -->
+  <symbol number="F0E5" entity="&#xF0E5;" char="&#x2199;"/><!-- SOUTH WEST ARROW -->
+  <symbol number="F0E6" entity="&#xF0E6;" char="&#x2198;"/><!-- SOUTH EAST ARROW -->
   <symbol number="F0F0" entity="&#xF0F0;" char="&#x21E8;" /><!-- RIGHTWARDS WHITE ARROW -->
   <symbol number="F0FC" entity="&#252;" char="&#x2713;" font="Segoe UI Symbol"/><!-- CHECK MARK -->
   <symbol number="F081" entity="&#9312;" char="&#x2460;"/><!-- CIRCLED DIGIT ONE -->
@@ -46,5 +58,5 @@
   <symbol number="F087" entity="&#9318;" char="&#x2466;"/><!-- CIRCLED DIGIT SEVEN -->
   <symbol number="F088" entity="&#9319;" char="&#x2467;"/><!-- CIRCLED DIGIT EIGHT -->
   <symbol number="F089" entity="&#9320;" char="&#x2468;"/><!-- CIRCLED DIGIT NINE -->
-  <symbol number="F090" entity="&#9321;" char="&#x2469;"/><!-- CIRCLED DIGIT TEN -->
+  <symbol number="F08A" entity="&#9321;" char="&#x2469;"/><!-- CIRCLED DIGIT TEN -->
 </symbols>

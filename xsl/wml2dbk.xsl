@@ -163,9 +163,11 @@
       Caveat: Since block field functions may be contained in table cells, we should only consider the 
       w:p/w:r/w:fldChars in this context, not arbitrarily deep .//w:fldChars (those in w:tbl/w:tc/w:p). -->
       <xsl:for-each-group select="*" group-starting-with="w:p[.//w:fldChar/generate-id() = $block-begins/generate-id()]">
+        <xsl:variable name="begin-fldChar-candidates" as="element(w:fldChar)*"
+          select=".//w:fldChar[generate-id() = $block-begins/generate-id()]"/>
         <xsl:variable name="begin-fldChar" as="element(w:fldChar)?"
-          select="(.//w:fldChar[generate-id() = $block-begins/generate-id()])[1]"/>
-        <xsl:if test="count(.//w:fldChar[generate-id() = $block-begins/generate-id()]) gt 1">
+          select="($begin-fldChar-candidates)[1]"/>
+        <xsl:if test="count($begin-fldChar-candidates) gt 1">
           <xsl:message select="'More than one begin w:fldChar found for ', $block-begins/@xml:id"/>
         </xsl:if>
         <xsl:choose>

@@ -2622,7 +2622,7 @@
         </xsl:analyze-string>
       </xsl:when>
       <xsl:otherwise>
-        <mml:mtext origin="4">
+        <mml:mtext>
           <xsl:if test="$mml-space-handling = 'xml-space' 
                         and 
                         (matches($string, '^\s') or matches($string, '\s$'))">
@@ -2707,13 +2707,13 @@
           </xsl:call-template>
         </xsl:when>
         <xsl:when test="(
-                          matches($space-stripped, '^\p{L}{2,}')
+                          matches($space-stripped, '^\p{L}{2,}$')
                           or
                           matches($sToParse, '^[\s\p{Zs}]+$') (: treat space chars as mtext, not as mspace, for the time being :)
                         )
                         and ($scr='roman' or not($scr) or $scr='')
                         and $sty='p'">
-          <mml:mtext  origin="5">
+          <mml:mtext>
             <xsl:for-each select="$context">
               <xsl:call-template name="checkDirectFormatting"/>
             </xsl:for-each>

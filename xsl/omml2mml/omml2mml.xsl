@@ -2055,7 +2055,7 @@
                   <xsl:value-of select="$space-at-start"/>
                 </mml:mtext>
               </xsl:if>
-              <mml:mi mathvariant="normal"><!-- multichar mi should be rendered upright by default anyway -->
+              <mml:mi><!-- no mathvariant="normal": multichar mi should be rendered upright by default anyway -->
                 <xsl:for-each select="$context">
                   <xsl:call-template name="checkDirectFormatting"/>
                 </xsl:for-each>
@@ -2650,7 +2650,7 @@
   <xsl:variable name="upright-mi-names" as="xs:string+" select="('arccos', 'cos', 'csc', 'exp', 'ker', 'limsup', 'min', 'sinh', 'arcsin', 'cosh', 'deg', 
           'gcd', 'lg', 'ln', 'Pr', 'sup', 'arctan', 'cot', 'det', 'hom', 'lim', 'log', 'sec', 'tan', 
           'arg', 'coth', 'dim', 'inf', 'liminf', 'max', 'sin', 'tanh',
-          'artanh', 'arsinh', 'arcosh', 'e',
+          'artanh', 'arsinh', 'arcosh',
           'dB', 'dBW', 'dBm')"/>
 
   <!-- %%Template: ParseMt

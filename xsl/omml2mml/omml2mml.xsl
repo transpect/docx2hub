@@ -2650,8 +2650,7 @@
   <xsl:variable name="upright-mi-names" as="xs:string+" select="('arccos', 'cos', 'csc', 'exp', 'ker', 'limsup', 'min', 'sinh', 'arcsin', 'cosh', 'deg', 
           'gcd', 'lg', 'ln', 'Pr', 'sup', 'arctan', 'cot', 'det', 'hom', 'lim', 'log', 'sec', 'tan', 
           'arg', 'coth', 'dim', 'inf', 'liminf', 'max', 'sin', 'tanh',
-          'artanh', 'arsinh', 'arcosh',
-          'dB', 'dBW', 'dBm')"/>
+          'artanh', 'arsinh', 'arcosh')"/>
 
   <!-- %%Template: ParseMt
 

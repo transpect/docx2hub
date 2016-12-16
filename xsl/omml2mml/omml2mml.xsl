@@ -2031,6 +2031,55 @@
       </xsl:for-each>
     </mml:mfenced>
   </xsl:template>
+  
+  
+  <xsl:template name="m:preliminary-mtext">
+    <xsl:param name="text-nodes" as="node()*"/><!-- already a result of transforming *:/text() and w:sym in mode="wml-to-dbk" -->
+    <xsl:param name="context" as="element(*)?"/>
+    <xsl:for-each select="$text-nodes">
+      <xsl:choose>
+        <!-- letex comment and PI for an unmapped w:sym -->
+        <xsl:when test="self::processing-instruction() or self::comment()">
+          <xsl:sequence select="."/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="space-stripped" as="xs:string" select="replace(., '(^[\s\p{Zs}]+|[\s\p{Zs}]+$)', '')"/>
+          <xsl:choose>
+            <xsl:when test="$space-stripped = $upright-mi-names">
+              <xsl:variable name="space-at-start" as="xs:string" 
+                select="replace(.[matches(., '^([\s\p{Zs}]+).+')], '^([\s\p{Zs}]+).+', '$1')"/>
+              <xsl:variable name="space-at-end" as="xs:string" 
+                select="replace(.[matches(., '^.+([\s\p{Zs}]+)$')], '^.+([\s\p{Zs}]+)$', '$1')"/>
+              <xsl:if test="$space-at-start">
+                <mml:mtext>
+                  <xsl:value-of select="$space-at-start"/>
+                </mml:mtext>
+              </xsl:if>
+              <mml:mi mathvariant="normal"><!-- multichar mi should be rendered upright by default anyway -->
+                <xsl:for-each select="$context">
+                  <xsl:call-template name="checkDirectFormatting"/>
+                </xsl:for-each>
+                <xsl:value-of select="$space-stripped"/>
+              </mml:mi>
+              <xsl:if test="$space-at-end">
+                <mml:mtext>
+                  <xsl:value-of select="$space-at-end"/>
+                </mml:mtext>
+              </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+              <mml:mtext>
+                <xsl:for-each select="$context">
+                  <xsl:call-template name="checkDirectFormatting"/>
+                </xsl:for-each>
+                <xsl:value-of select="."/>
+              </mml:mtext>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:otherwise>
+      </xsl:choose> 
+    </xsl:for-each>
+  </xsl:template>
 
   <xsl:template match="m:r" mode="omml2mml">
     <xsl:variable name="sLowerCaseNor"
@@ -2054,38 +2103,42 @@
     <xsl:variable name="fSub">
       <xsl:choose>
         <xsl:when test="number(w:rPr/w:position/@w:val) lt 0">1</xsl:when>
-      <xsl:otherwise>0</xsl:otherwise>
+        <xsl:otherwise>0</xsl:otherwise>
 			</xsl:choose>
-      </xsl:variable>
-  <xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym)[1]/.."/>
+    <xsl:choose>
 			<xsl:when test="$fSub=1">
 				<mml:msub>
 					<mml:mrow/>
 					<mml:mrow>
+            <xsl:variable name="text-nodes" as="node()*">
+              <xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
+            </xsl:variable>
 						<xsl:choose>
 							<xsl:when test="$fNor=1">
 								<xsl:choose>
 									<xsl:when test="$fLit=1">
 										<mml:maction actiontype="lit">
-											<mml:mtext>
-												<xsl:call-template name="checkDirectFormatting"/>
-												<xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
-											</mml:mtext>
+										  <xsl:call-template name="m:preliminary-mtext">
+										    <xsl:with-param name="context" select="$context"/>
+										    <xsl:with-param name="text-nodes">
+										      <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>  
+										    </xsl:with-param>
+										  </xsl:call-template>
 										</mml:maction>
 									</xsl:when>
 									<xsl:otherwise>
-										<mml:mtext>
-											<xsl:call-template name="checkDirectFormatting"/>
-											<xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
-										</mml:mtext>
+                    <xsl:call-template name="m:preliminary-mtext">
+                      <xsl:with-param name="context" select="$context"/>
+                      <xsl:with-param name="text-nodes">
+                        <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
+                      </xsl:with-param>
+                    </xsl:call-template>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:variable name="text-nodes" as="node()*">
-									<xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
-								</xsl:variable>
-								<xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym)[1]/.."/>
 								<xsl:choose>
 									<xsl:when test="not($context)"></xsl:when>
 									<xsl:when test="$fLit=1">
@@ -2148,17 +2201,21 @@
 						<xsl:choose>
 							<xsl:when test="$fLit=1">
 								<mml:maction actiontype="lit">
-									<mml:mtext>
-										<xsl:call-template name="checkDirectFormatting"/>
-										<xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
-									</mml:mtext>
+                  <xsl:call-template name="m:preliminary-mtext">
+                    <xsl:with-param name="context" select="$context"/>
+                    <xsl:with-param name="text-nodes">
+                      <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
 								</mml:maction>
 							</xsl:when>
 							<xsl:otherwise>
-								<mml:mtext>
-									<xsl:call-template name="checkDirectFormatting"/>
-									<xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
-								</mml:mtext>
+                <xsl:call-template name="m:preliminary-mtext">
+                  <xsl:with-param name="context" select="$context"/>
+                  <xsl:with-param name="text-nodes">
+                    <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
+                  </xsl:with-param>
+                </xsl:call-template>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:when>
@@ -2565,7 +2622,7 @@
         </xsl:analyze-string>
       </xsl:when>
       <xsl:otherwise>
-        <mml:mtext>
+        <mml:mtext origin="4">
           <xsl:if test="$mml-space-handling = 'xml-space' 
                         and 
                         (matches($string, '^\s') or matches($string, '\s$'))">
@@ -2579,6 +2636,22 @@
     </xsl:choose>
   </xsl:template>
   
+  <xsl:function name="m:is-normal-font" as="xs:boolean">
+    <xsl:param name="nor" as="xs:string?"/>
+    <xsl:param name="scr" as="xs:string?"/>
+    <xsl:param name="sty" as="xs:string?"/>
+    <xsl:sequence select="lower-case($nor) = 'on'
+                          or (
+                            ($scr='roman' or not($scr) or $scr='')
+                            and $sty='p'
+                          )"></xsl:sequence>
+  </xsl:function>
+  
+  <xsl:variable name="upright-mi-names" as="xs:string+" select="('arccos', 'cos', 'csc', 'exp', 'ker', 'limsup', 'min', 'sinh', 'arcsin', 'cosh', 'deg', 
+          'gcd', 'lg', 'ln', 'Pr', 'sup', 'arctan', 'cot', 'det', 'hom', 'lim', 'log', 'sec', 'tan', 
+          'arg', 'coth', 'dim', 'inf', 'liminf', 'max', 'sin', 'tanh',
+          'artanh', 'arsinh', 'arcosh', 'e',
+          'dB', 'dBW', 'dBm')"/>
 
   <!-- %%Template: ParseMt
 
@@ -2624,19 +2697,15 @@
     </xsl:variable>
 
     <xsl:if test="string-length($sToParse) &gt; 0">
-      <xsl:variable name="space-stripped" as="xs:string" select="replace($sToParse, '[\s\p{Zs}]', '')"/>
+      <xsl:variable name="space-stripped" as="xs:string" select="replace($sToParse, '(^[\s\p{Zs}]+|[\s\p{Zs}]+$)', '')"/>
       <xsl:choose>
-
-        <xsl:when test="$sToParse = ('arccos', 'cos', 'csc', 'exp', 'ker', 'limsup', 'min', 'sinh', 'arcsin', 'cosh', 'deg', 
-          'gcd', 'lg', 'ln', 'Pr', 'sup', 'arctan', 'cot', 'det', 'hom', 'lim', 'log', 'sec', 'tan', 
-          'arg', 'coth', 'dim', 'inf', 'liminf', 'max', 'sin', 'tanh',
-          'artanh', 'arsinh', 'arcosh', 'e',
-          'dB', 'dBW', 'dBm')
-          and ($scr='roman' or not($scr) or $scr='')
-          and $sty='p'">
-          <mml:mi mathvariant="normal"><!-- multichar mi should be rendered upright by default anyway -->
-            <xsl:value-of select="$sToParse"/>
-          </mml:mi>
+        <xsl:when test="$space-stripped = $upright-mi-names and m:is-normal-font($nor, $scr, $sty)">
+          <xsl:call-template name="m:preliminary-mtext">
+            <xsl:with-param name="context" select="$context"/>
+            <xsl:with-param name="text-nodes">
+              <xsl:value-of select="$sToParse"/>
+            </xsl:with-param>
+          </xsl:call-template>
         </xsl:when>
         <xsl:when test="(
                           matches($space-stripped, '^\p{L}{2,}')
@@ -2645,7 +2714,10 @@
                         )
                         and ($scr='roman' or not($scr) or $scr='')
                         and $sty='p'">
-          <mml:mtext>
+          <mml:mtext  origin="5">
+            <xsl:for-each select="$context">
+              <xsl:call-template name="checkDirectFormatting"/>
+            </xsl:for-each>
             <xsl:value-of select="$sToParse"/><!-- apply mtext-or-space in a postprocessing mode because there are also
             other places where mtext will be created -->
           </mml:mtext>

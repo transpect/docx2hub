@@ -2629,7 +2629,9 @@
 
         <xsl:when test="$sToParse = ('arccos', 'cos', 'csc', 'exp', 'ker', 'limsup', 'min', 'sinh', 'arcsin', 'cosh', 'deg', 
           'gcd', 'lg', 'ln', 'Pr', 'sup', 'arctan', 'cot', 'det', 'hom', 'lim', 'log', 'sec', 'tan', 
-          'arg', 'coth', 'dim', 'inf', 'liminf', 'max', 'sin', 'tanh')
+          'arg', 'coth', 'dim', 'inf', 'liminf', 'max', 'sin', 'tanh',
+          'artanh', 'arsinh', 'arcosh', 'e',
+          'dB', 'dBW', 'dBm')
           and ($scr='roman' or not($scr) or $scr='')
           and $sty='p'">
           <mml:mi mathvariant="normal"><!-- multichar mi should be rendered upright by default anyway -->

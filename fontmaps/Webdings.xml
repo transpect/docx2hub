@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<symbols>
+  <!--  *
+        * Thanks to Alan Wood for providing a comprehensive list with 
+        * Webdings character set and equivalent Unicode characters
+        * and allowing us to use it here.
+        *
+        * http://www.alanwood.net/demos/webdings.html
+        * 
+        * -->
+  <!--SPACE-->
+  <symbol number="F020" entity="&#xF020;" char="&#x0020;"/>
+  <!--SPIDER-->
+  <symbol number="F021" entity="&#xF021;" char="&#x1F577;"/>
+  <!--SPIDER WEB-->
+  <symbol number="F022" entity="&#xF022;" char="&#x1F578;"/>
+  <!--NO PIRACY-->
+  <symbol number="F023" entity="&#xF023;" char="&#x1F572;"/>
+  <!--DARK SUNGLASSES-->
+  <symbol number="F024" entity="&#xF024;" char="&#x1F576;"/>
+  <!--TROPHY-->
+  <symbol number="F025" entity="&#xF025;" char="&#x1F3C6;"/>
+  <!--MILITARY MEDAL-->
+  <symbol number="F026" entity="&#xF026;" char="&#x1F396;"/>
+  <!--LINKED PAPERCLIPS-->
+  <symbol number="F027" entity="&#xF027;" char="&#x1F587;"/>
+  <!--LEFT SPEECH BUBBLE-->
+  <symbol number="F028" entity="&#xF028;" char="&#x1F5E8;"/>
+  <!--RIGHT SPEECH BUBBLE-->
+  <symbol number="F029" entity="&#xF029;" char="&#x1F5E9;"/>
+  <!--MOOD BUBBLE-->
+  <symbol number="F02A" entity="&#xF02A;" char="&#x1F5F0;"/>
+  <!--LIGHTNING MOOD BUBBLE-->
+  <symbol number="F02B" entity="&#xF02B;" char="&#x1F5F1;"/>
+  <!--HOT PEPPER-->
+  <symbol number="F02C" entity="&#xF02C;" char="&#x1F336;"/>
+  <!--REMINDER RIBBON-->
+  <symbol number="F02D" entity="&#xF02D;" char="&#x1F397;"/>
+  <!--QUADRANT UPPER RIGHT AND LOWER LEFT-->
+  <symbol number="F02E" entity="&#xF02E;" char="&#x259E;"/>
+  <!--VERY HEAVY SOLIDUS-->
+  <symbol number="F02F" entity="&#xF02F;" char="&#x1F67C;"/>
+  <!--MINIMIZE-->
+  <symbol number="F030" entity="&#xF030;" char="&#x1F5D5;"/>
+  <!--MAXIMIZE-->
+  <symbol number="F031" entity="&#xF031;" char="&#x1F5D6;"/>
+  <!--OVERLAP-->
+  <symbol number="F032" entity="&#xF032;" char="&#x1F5D7;"/>
+  <!--BLACK MEDIUM LEFT-POINTING TRIANGLE-->
+  <symbol number="F033" entity="&#xF033;" char="&#x23F4;"/>
+  <!--BLACK MEDIUM RIGHT-POINTING TRIANGLE-->
+  <symbol number="F034" entity="&#xF034;" char="&#x23F5;"/>
+  <!--BLACK MEDIUM UP-POINTING TRIANGLE-->
+  <symbol number="F035" entity="&#xF035;" char="&#x23F6;"/>
+  <!--BLACK MEDIUM DOWN-POINTING TRIANGLE-->
+  <symbol number="F036" entity="&#xF036;" char="&#x23F7;"/>
+  <!--BLACK LEFT-POINTING DOUBLE TRIANGLE-->
+  <symbol number="F037" entity="&#xF037;" char="&#x23EA;"/>
+  <!--BLACK RIGHT-POINTING DOUBLE TRIANGLE-->
+  <symbol number="F038" entity="&#xF038;" char="&#x23E9;"/>
+  <!--BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR-->
+  <symbol number="F039" entity="&#xF039;" char="&#x23EE;"/>
+  <!--BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR-->
+  <symbol number="F03A" entity="&#xF03A;" char="&#x23ED;"/>
+  <!--DOUBLE VERTICAL BAR-->
+  <symbol number="F03B" entity="&#xF03B;" char="&#x23F8;"/>
+  <!--BLACK SQUARE FOR STOP-->
+  <symbol number="F03C" entity="&#xF03C;" char="&#x23F9;"/>
+  <!--BLACK CIRCLE FOR RECORD-->
+  <symbol number="F03D" entity="&#xF03D;" char="&#x23FA;"/>
+  <!--INCREASE FONT SIZE SYMBOL-->
+  <symbol number="F03E" entity="&#xF03E;" char="&#x1F5DA;"/>
+  <!--BALLOT BOX WITH BALLOT-->
+  <symbol number="F03F" entity="&#xF03F;" char="&#x1F5F3;"/>
+  <!--HAMMER AND WRENCH-->
+  <symbol number="F040" entity="&#xF040;" char="&#x1F6E0;"/>
+  <!--BUILDING CONSTRUCTION-->
+  <symbol number="F041" entity="&#xF041;" char="&#x1F3D7;"/>
+  <!--HOUSE BUILDINGS-->
+  <symbol number="F042" entity="&#xF042;" char="&#x1F3D8;"/>
+  <!--CITYSCAPE-->
+  <symbol number="F043" entity="&#xF043;" char="&#x1F3D9;"/>
+  <!--DERELICT HOUSE BUILDING-->
+  <symbol number="F044" entity="&#xF044;" char="&#x1F3DA;"/>
+  <!--DESERT-->
+  <symbol number="F045" entity="&#xF045;" char="&#x1F3DC;"/>
+  <!--FACTORY-->
+  <symbol number="F046" entity="&#xF046;" char="&#x1F3ED;"/>
+  <!--CLASSICAL BUILDING-->
+  <symbol number="F047" entity="&#xF047;" char="&#x1F3DB;"/>
+  <!--HOUSE BUILDING-->
+  <symbol number="F048" entity="&#xF048;" char="&#x1F3E0;"/>
+  <!--BEACH WITH UMBRELLA-->
+  <symbol number="F049" entity="&#xF049;" char="&#x1F3D6;"/>
+  <!--DESERT ISLAND-->
+  <symbol number="F04A" entity="&#xF04A;" char="&#x1F3DD;"/>
+  <!--MOTORWAY-->
+  <symbol number="F04B" entity="&#xF04B;" char="&#x1F6E3;"/>
+  <!--LEFT-POINTING MAGNIFYING GLASS-->
+  <symbol number="F04C" entity="&#xF04C;" char="&#x1F50D;"/>
+  <!--SNOW CAPPED MOUNTAIN-->
+  <symbol number="F04D" entity="&#xF04D;" char="&#x1F3D4;"/>
+  <!--EYE-->
+  <symbol number="F04E" entity="&#xF04E;" char="&#x1F441;"/>
+  <!--EAR-->
+  <symbol number="F04F" entity="&#xF04F;" char="&#x1F442;"/>
+  <!--NATIONAL PARK-->
+  <symbol number="F050" entity="&#xF050;" char="&#x1F3DE;"/>
+  <!--CAMPING-->
+  <symbol number="F051" entity="&#xF051;" char="&#x1F3D5;"/>
+  <!--RAILWAY TRACK-->
+  <symbol number="F052" entity="&#xF052;" char="&#x1F6E4;"/>
+  <!--STADIUM-->
+  <symbol number="F053" entity="&#xF053;" char="&#x1F3DF;"/>
+  <!--PASSENGER SHIP-->
+  <symbol number="F054" entity="&#xF054;" char="&#x1F6F3;"/>
+  <!--BULLHORN WITH SOUND WAVES-->
+  <symbol number="F055" entity="&#xF055;" char="&#x1F56C;"/>
+  <!--BULLHORN-->
+  <symbol number="F056" entity="&#xF056;" char="&#x1F56B;"/>
+  <!--RIGHT SPEAKER-->
+  <symbol number="F057" entity="&#xF057;" char="&#x1F568;"/>
+  <!--SPEAKER-->
+  <symbol number="F058" entity="&#xF058;" char="&#x1F508;"/>
+  <!--HEART WITH TIP ON THE LEFT-->
+  <symbol number="F059" entity="&#xF059;" char="&#x1F394;"/>
+  <!--BOUQUET OF FLOWERS-->
+  <symbol number="F05A" entity="&#xF05A;" char="&#x1F395;"/>
+  <!--LEFT THOUGHT BUBBLE-->
+  <symbol number="F05B" entity="&#xF05B;" char="&#x1F5EC;"/>
+  <!--VERY HEAVY REVERSE SOLIDUS-->
+  <symbol number="F05C" entity="&#xF05C;" char="&#x1F67D;"/>
+  <!--RIGHT THOUGHT BUBBLE-->
+  <symbol number="F05D" entity="&#xF05D;" char="&#x1F5ED;"/>
+  <!--TWO SPEECH BUBBLES-->
+  <symbol number="F05E" entity="&#xF05E;" char="&#x1F5EA;"/>
+  <!--THREE SPEECH BUBBLES-->
+  <symbol number="F05F" entity="&#xF05F;" char="&#x1F5EB;"/>
+  <!--FOUR CORNER ARROWS CIRCLING ANTICLOCKWISE-->
+  <symbol number="F060" entity="&#xF060;" char="&#x2B94;"/>
+  <!--HEAVY CHECK MARK-->
+  <symbol number="F061" entity="&#xF061;" char="&#x2714;"/>
+  <!--BICYCLE-->
+  <symbol number="F062" entity="&#xF062;" char="&#x1F6B2;"/>
+  <!--WHITE SQUARE-->
+  <symbol number="F063" entity="&#xF063;" char="&#x25A1;"/>
+  <!--SHIELD-->
+  <symbol number="F064" entity="&#xF064;" char="&#x1F6E1;"/>
+  <!--PACKAGE-->
+  <symbol number="F065" entity="&#xF065;" char="&#x1F4E6;"/>
+  <!--ONCOMING FIRE ENGINE-->
+  <symbol number="F066" entity="&#xF066;" char="&#x1F6F1;"/>
+  <!--BLACK SQUARE-->
+  <symbol number="F067" entity="&#xF067;" char="&#x25A0;"/>
+  <!--AMBULANCE-->
+  <symbol number="F068" entity="&#xF068;" char="&#x1F691;"/>
+  <!--CIRCLED INFORMATION SOURCE-->
+  <symbol number="F069" entity="&#xF069;" char="&#x1F6C8;"/>
+  <!--SMALL AIRPLANE-->
+  <symbol number="F06A" entity="&#xF06A;" char="&#x1F6E9;"/>
+  <!--SATELLITE-->
+  <symbol number="F06B" entity="&#xF06B;" char="&#x1F6F0;"/>
+  <!--REVERSE LIGHT FOUR POINTED PINWHEEL STAR-->
+  <symbol number="F06C" entity="&#xF06C;" char="&#x1F7C8;"/>
+  <!--MAN IN BUSINESS SUIT LEVITATING-->
+  <symbol number="F06D" entity="&#xF06D;" char="&#x1F574;"/>
+  <!--MEDIUM BLACK CIRCLE-->
+  <symbol number="F06E" entity="&#xF06E;" char="&#x26AB;"/>
+  <!--MOTOR BOAT-->
+  <symbol number="F06F" entity="&#xF06F;" char="&#x1F6E5;"/>
+  <!--ONCOMING POLICE CAR-->
+  <symbol number="F070" entity="&#xF070;" char="&#x1F694;"/>
+  <!--CLOCKWISE RIGHT AND LEFT SEMICIRCLE ARROWS-->
+  <symbol number="F071" entity="&#xF071;" char="&#x1F5D8;"/>
+  <!--CANCELLATION X-->
+  <symbol number="F072" entity="&#xF072;" char="&#x1F5D9;"/>
+  <!--BLACK QUESTION MARK ORNAMENT-->
+  <symbol number="F073" entity="&#xF073;" char="&#x2753;"/>
+  <!--DIESEL LOCOMOTIVE-->
+  <symbol number="F074" entity="&#xF074;" char="&#x1F6F2;"/>
+  <!--METRO-->
+  <symbol number="F075" entity="&#xF075;" char="&#x1F687;"/>
+  <!--ONCOMING BUS-->
+  <symbol number="F076" entity="&#xF076;" char="&#x1F68D;"/>
+  <!--FLAG IN HOLE-->
+  <symbol number="F077" entity="&#xF077;" char="&#x26F3;"/>
+  <!--PROHIBITED SIGN-->
+  <symbol number="F078" entity="&#xF078;" char="&#x1F6C7;"/>
+  <!--CIRCLED MINUS-->
+  <symbol number="F079" entity="&#xF079;" char="&#x2296;"/>
+  <!--NO SMOKING SYMBOL-->
+  <symbol number="F07A" entity="&#xF07A;" char="&#x1F6AD;"/>
+  <!--LEFT ANGER BUBBLE-->
+  <symbol number="F07B" entity="&#xF07B;" char="&#x1F5EE;"/>
+  <!--VERTICAL LINE-->
+  <symbol number="F07C" entity="&#xF07C;" char="&#x007C;"/>
+  <!--RIGHT ANGER BUBBLE-->
+  <symbol number="F07D" entity="&#xF07D;" char="&#x1F5EF;"/>
+  <!--LIGHTNING MOOD-->
+  <symbol number="F07E" entity="&#xF07E;" char="&#x1F5F2;"/>
+  <!--MENS SYMBOL-->
+  <symbol number="F080" entity="&#xF080;" char="&#x1F6B9;"/>
+  <!--WOMENS SYMBOL-->
+  <symbol number="F081" entity="&#xF081;" char="&#x1F6BA;"/>
+  <!--BOYS SYMBOL-->
+  <symbol number="F082" entity="&#xF082;" char="&#x1F6C9;"/>
+  <!--GIRLS SYMBOL-->
+  <symbol number="F083" entity="&#xF083;" char="&#x1F6CA;"/>
+  <!--BABY SYMBOL-->
+  <symbol number="F084" entity="&#xF084;" char="&#x1F6BC;"/>
+  <!--EXTRATERRESTRIAL ALIEN-->
+  <symbol number="F085" entity="&#xF085;" char="&#x1F47D;"/>
+  <!--WEIGHT LIFTER-->
+  <symbol number="F086" entity="&#xF086;" char="&#x1F3CB;"/>
+  <!--SKIER-->
+  <symbol number="F087" entity="&#xF087;" char="&#x26F7;"/>
+  <!--SNOWBOARDER-->
+  <symbol number="F088" entity="&#xF088;" char="&#x1F3C2;"/>
+  <!--GOLFER-->
+  <symbol number="F089" entity="&#xF089;" char="&#x1F3CC;"/>
+  <!--SWIMMER-->
+  <symbol number="F08A" entity="&#xF08A;" char="&#x1F3CA;"/>
+  <!--SURFER-->
+  <symbol number="F08B" entity="&#xF08B;" char="&#x1F3C4;"/>
+  <!--RACING MOTORCYCLE-->
+  <symbol number="F08C" entity="&#xF08C;" char="&#x1F3CD;"/>
+  <!--RACING CAR-->
+  <symbol number="F08D" entity="&#xF08D;" char="&#x1F3CE;"/>
+  <!--ONCOMING AUTOMOBILE-->
+  <symbol number="F08E" entity="&#xF08E;" char="&#x1F698;"/>
+  <!--STOCK CHART-->
+  <symbol number="F08F" entity="&#xF08F;" char="&#x1F5E0;"/>
+  <!--OIL DRUM-->
+  <symbol number="F090" entity="&#xF090;" char="&#x1F6E2;"/>
+  <!--MONEY BAG-->
+  <symbol number="F091" entity="&#xF091;" char="&#x1F4B0;"/>
+  <!--LABEL-->
+  <symbol number="F092" entity="&#xF092;" char="&#x1F3F7;"/>
+  <!--CREDIT CARD-->
+  <symbol number="F093" entity="&#xF093;" char="&#x1F4B3;"/>
+  <!--FAMILY-->
+  <symbol number="F094" entity="&#xF094;" char="&#x1F46A;"/>
+  <!--DAGGER KNIFE-->
+  <symbol number="F095" entity="&#xF095;" char="&#x1F5E1;"/>
+  <!--LIPS-->
+  <symbol number="F096" entity="&#xF096;" char="&#x1F5E2;"/>
+  <!--SPEAKING HEAD IN SILHOUETTE-->
+  <symbol number="F097" entity="&#xF097;" char="&#x1F5E3;"/>
+  <!--PINWHEEL STAR-->
+  <symbol number="F098" entity="&#xF098;" char="&#x272F;"/>
+  <!--ENVELOPE WITH LIGHTNING-->
+  <symbol number="F099" entity="&#xF099;" char="&#x1F584;"/>
+  <!--FLYING ENVELOPE-->
+  <symbol number="F09A" entity="&#xF09A;" char="&#x1F585;"/>
+  <!--STAMPED ENVELOPE-->
+  <symbol number="F09B" entity="&#xF09B;" char="&#x1F583;"/>
+  <!--PEN OVER STAMPED ENVELOPE-->
+  <symbol number="F09B" entity="&#xF09B;" char="&#x1F586;"/>
+  <!--DOCUMENT WITH TEXT-->
+  <symbol number="F09B" entity="&#xF09B;" char="&#x1F5B9;"/>
+  <!--DOCUMENT WITH TEXT AND PICTURE-->
+  <symbol number="F09E" entity="&#xF09E;" char="&#x1F5BA;"/>
+  <!--DOCUMENT WITH PICTURE-->
+  <symbol number="F09F" entity="&#xF09F;" char="&#x1F5BB;"/>
+  <!--SLEUTH OR SPY-->
+  <symbol number="F0A0" entity="&#xF0A0;" char="&#x1F575;"/>
+  <!--MANTELPIECE CLOCK-->
+  <symbol number="F0A1" entity="&#xF0A1;" char="&#x1F570;"/>
+  <!--FRAME WITH TILES-->
+  <symbol number="F0A2" entity="&#xF0A2;" char="&#x1F5BD;"/>
+  <!--FRAME WITH AN X-->
+  <symbol number="F0A3" entity="&#xF0A3;" char="&#x1F5BE;"/>
+  <!--CLIPBOARD-->
+  <symbol number="F0A4" entity="&#xF0A4;" char="&#x1F4CB;"/>
+  <!--SPIRAL NOTE PAD-->
+  <symbol number="F0A5" entity="&#xF0A5;" char="&#x1F5D2;"/>
+  <!--SPIRAL CALENDAR PAD-->
+  <symbol number="F0A6" entity="&#xF0A6;" char="&#x1F5D3;"/>
+  <!--OPEN BOOK-->
+  <symbol number="F0A7" entity="&#xF0A7;" char="&#x1F4D6;"/>
+  <!--BOOKS-->
+  <symbol number="F0A8" entity="&#xF0A8;" char="&#x1F4DA;"/>
+  <!--ROLLED-UP NEWSPAPER-->
+  <symbol number="F0A9" entity="&#xF0A9;" char="&#x1F5DE;"/>
+  <!--PAGE WITH CIRCLED TEXT-->
+  <symbol number="F0AA" entity="&#xF0AA;" char="&#x1F5DF;"/>
+  <!--CARD FILE BOX-->
+  <symbol number="F0AB" entity="&#xF0AB;" char="&#x1F5C3;"/>
+  <!--CARD INDEX DIVIDERS-->
+  <symbol number="F0AC" entity="&#xF0AC;" char="&#x1F5C2;"/>
+  <!--FRAME WITH PICTURE-->
+  <symbol number="F0AD" entity="&#xF0AD;" char="&#x1F5BC;"/>
+  <!--PERFORMING ARTS-->
+  <symbol number="F0AE" entity="&#xF0AE;" char="&#x1F3AD;"/>
+  <!--BEAMED ASCENDING MUSICAL NOTES-->
+  <symbol number="F0AF" entity="&#xF0AF;" char="&#x1F39C;"/>
+  <!--MUSICAL KEYBOARD WITH JACKS-->
+  <symbol number="F0B0" entity="&#xF0B0;" char="&#x1F398;"/>
+  <!--STUDIO MICROPHONE-->
+  <symbol number="F0B1" entity="&#xF0B1;" char="&#x1F399;"/>
+  <!--HEADPHONE-->
+  <symbol number="F0B2" entity="&#xF0B2;" char="&#x1F3A7;"/>
+  <!--OPTICAL DISC-->
+  <symbol number="F0B3" entity="&#xF0B3;" char="&#x1F4BF;"/>
+  <!--FILM FRAMES-->
+  <symbol number="F0B4" entity="&#xF0B4;" char="&#x1F39E;"/>
+  <!--CAMERA-->
+  <symbol number="F0B5" entity="&#xF0B5;" char="&#x1F4F7;"/>
+  <!--ADMISSION TICKETS-->
+  <symbol number="F0B6" entity="&#xF0B6;" char="&#x1F39F;"/>
+  <!--CLAPPER BOARD-->
+  <symbol number="F0B7" entity="&#xF0B7;" char="&#x1F3AC;"/>
+  <!--FILM PROJECTOR-->
+  <symbol number="F0B8" entity="&#xF0B8;" char="&#x1F4FD;"/>
+  <!--VIDEO CAMERA-->
+  <symbol number="F0B9" entity="&#xF0B9;" char="&#x1F4F9;"/>
+  <!--PORTABLE STEREO-->
+  <symbol number="F0BA" entity="&#xF0BA;" char="&#x1F4FE;"/>
+  <!--RADIO-->
+  <symbol number="F0BB" entity="&#xF0BB;" char="&#x1F4FB;"/>
+  <!--LEVEL SLIDER-->
+  <symbol number="F0BC" entity="&#xF0BC;" char="&#x1F39A;"/>
+  <!--CONTROL KNOBS-->
+  <symbol number="F0BD" entity="&#xF0BD;" char="&#x1F39B;"/>
+  <!--TELEVISION-->
+  <symbol number="F0BE" entity="&#xF0BE;" char="&#x1F4FA;"/>
+  <!--PERSONAL COMPUTER-->
+  <symbol number="F0BF" entity="&#xF0BF;" char="&#x1F4BB;"/>
+  <!--DESKTOP COMPUTER-->
+  <symbol number="F0C0" entity="&#xF0C0;" char="&#x1F5A5;"/>
+  <!--KEYBOARD AND MOUSE-->
+  <symbol number="F0C1" entity="&#xF0C1;" char="&#x1F5A6;"/>
+  <!--THREE NETWORKED COMPUTERS-->
+  <symbol number="F0C2" entity="&#xF0C2;" char="&#x1F5A7;"/>
+  <!--JOYSTICK-->
+  <symbol number="F0C3" entity="&#xF0C3;" char="&#x1F579;"/>
+  <!--VIDEO GAME-->
+  <symbol number="F0C4" entity="&#xF0C4;" char="&#x1F3AE;"/>
+  <!--LEFT HAND TELEPHONE RECEIVER-->
+  <symbol number="F0C5" entity="&#xF0C5;" char="&#x1F57B;"/>
+  <!--TELEPHONE RECEIVER WITH PAGE-->
+  <symbol number="F0C6" entity="&#xF0C6;" char="&#x1F57C;"/>
+  <!--PAGER-->
+  <symbol number="F0C7" entity="&#xF0C7;" char="&#x1F4DF;"/>
+  <!--CLAMSHELL MOBILE PHONE-->
+  <symbol number="F0C8" entity="&#xF0C8;" char="&#x1F581;"/>
+  <!--TELEPHONE ON TOP OF MODEM-->
+  <symbol number="F0C9" entity="&#xF0C9;" char="&#x1F580;"/>
+  <!--PRINTER-->
+  <symbol number="F0CA" entity="&#xF0CA;" char="&#x1F5A8;"/>
+  <!--POCKET CALCULATOR-->
+  <symbol number="F0CB" entity="&#xF0CB;" char="&#x1F5A9;"/>
+  <!--BLACK FOLDER-->
+  <symbol number="F0CB" entity="&#xF0CB;" char="&#x1F5BF;"/>
+  <!--BLACK HARD SHELL FLOPPY DISK-->
+  <symbol number="F0CD" entity="&#xF0CD;" char="&#x1F5AA;"/>
+  <!--COMPRESSION-->
+  <symbol number="F0CE" entity="&#xF0CE;" char="&#x1F5DC;"/>
+  <!--LOCK-->
+  <symbol number="F0CF" entity="&#xF0CF;" char="&#x1F512;"/>
+  <!--OPEN LOCK-->
+  <symbol number="F0D0" entity="&#xF0D0;" char="&#x1F513;"/>
+  <!--OLD KEY-->
+  <symbol number="F0D1" entity="&#xF0D1;" char="&#x1F5DD;"/>
+  <!--INBOX TRAY-->
+  <symbol number="F0D2" entity="&#xF0D2;" char="&#x1F4E5;"/>
+  <!--OUTBOX TRAY-->
+  <symbol number="F0D3" entity="&#xF0D3;" char="&#x1F4E4;"/>
+  <!--HOLE-->
+  <symbol number="F0D4" entity="&#xF0D4;" char="&#x1F573;"/>
+  <!--WHITE SUN-->
+  <symbol number="F0D5" entity="&#xF0D5;" char="&#x1F323;"/>
+  <!--WHITE SUN WITH SMALL CLOUD-->
+  <symbol number="F0D6" entity="&#xF0D6;" char="&#x1F324;"/>
+  <!--WHITE SUN BEHIND CLOUD-->
+  <symbol number="F0D7" entity="&#xF0D7;" char="&#x1F325;"/>
+  <!--WHITE SUN BEHIND CLOUD WITH RAIN-->
+  <symbol number="F0D8" entity="&#xF0D8;" char="&#x1F326;"/>
+  <!--CLOUD-->
+  <symbol number="F0D9" entity="&#xF0D9;" char="&#x2601;"/>
+  <!--CLOUD WITH RAIN-->
+  <symbol number="F0DA" entity="&#xF0DA;" char="&#x1F327;"/>
+  <!--CLOUD WITH SNOW-->
+  <symbol number="F0DB" entity="&#xF0DB;" char="&#x1F328;"/>
+  <!--CLOUD WITH LIGHTNING-->
+  <symbol number="F0DC" entity="&#xF0DC;" char="&#x1F329;"/>
+  <!--CLOUD WITH TORNADO-->
+  <symbol number="F0DD" entity="&#xF0DD;" char="&#x1F32A;"/>
+  <!--WIND BLOWING FACE-->
+  <symbol number="F0DE" entity="&#xF0DE;" char="&#x1F32C;"/>
+  <!--FOG-->
+  <symbol number="F0DF" entity="&#xF0DF;" char="&#x1F32B;"/>
+  <!--LAST QUARTER MOON WITH FACE-->
+  <symbol number="F0E0" entity="&#xF0E0;" char="&#x1F31C;"/>
+  <!--THERMOMETER-->
+  <symbol number="F0E1" entity="&#xF0E1;" char="&#x1F321;"/>
+  <!--COUCH AND LAMP-->
+  <symbol number="F0E2" entity="&#xF0E2;" char="&#x1F6CB;"/>
+  <!--BED-->
+  <symbol number="F0E3" entity="&#xF0E3;" char="&#x1F6CF;"/>
+  <!--FORK AND KNIFE WITH PLATE-->
+  <symbol number="F0E4" entity="&#xF0E4;" char="&#x1F37D;"/>
+  <!--COCKTAIL GLASS-->
+  <symbol number="F0E5" entity="&#xF0E5;" char="&#x1F378;"/>
+  <!--BELLHOP BELL-->
+  <symbol number="F0E6" entity="&#xF0E6;" char="&#x1F6CE;"/>
+  <!--SHOPPING BAGS-->
+  <symbol number="F0E7" entity="&#xF0E7;" char="&#x1F6CD;"/>
+  <!--CIRCLED LATIN CAPITAL LETTER P-->
+  <symbol number="F0E8" entity="&#xF0E8;" char="&#x24C5;"/>
+  <!--WHEELCHAIR SYMBOL-->
+  <symbol number="F0E9" entity="&#xF0E9;" char="&#x267F;"/>
+  <!--TRIANGLE WITH ROUNDED CORNERS-->
+  <symbol number="F0EA" entity="&#xF0EA;" char="&#x1F6C6;"/>
+  <!--BLACK PUSHPIN-->
+  <symbol number="F0EB" entity="&#xF0EB;" char="&#x1F588;"/>
+  <!--GRADUATION CAP-->
+  <symbol number="F0EC" entity="&#xF0EC;" char="&#x1F393;"/>
+  <!--THREE RAYS ABOVE-->
+  <symbol number="F0ED" entity="&#xF0ED;" char="&#x1F5E4;"/>
+  <!--THREE RAYS BELOW-->
+  <symbol number="F0EE" entity="&#xF0EE;" char="&#x1F5E5;"/>
+  <!--THREE RAYS LEFT-->
+  <symbol number="F0EF" entity="&#xF0EF;" char="&#x1F5E6;"/>
+  <!--THREE RAYS RIGHT-->
+  <symbol number="F0F0" entity="&#xF0F0;" char="&#x1F5E7;"/>
+  <!--NORTHEAST-POINTING AIRPLANE-->
+  <symbol number="F0F1" entity="&#xF0F1;" char="&#x1F6EA;"/>
+  <!--CHIPMUNK-->
+  <symbol number="F0F2" entity="&#xF0F2;" char="&#x1F43F;"/>
+  <!--BIRD-->
+  <symbol number="F0F3" entity="&#xF0F3;" char="&#x1F426;"/>
+  <!--FISH-->
+  <symbol number="F0F4" entity="&#xF0F4;" char="&#x1F41F;"/>
+  <!--DOG-->
+  <symbol number="F0F5" entity="&#xF0F5;" char="&#x1F415;"/>
+  <!--CAT-->
+  <symbol number="F0F6" entity="&#xF0F6;" char="&#x1F408;"/>
+  <!--LEFTWARDS ROCKET-->
+  <symbol number="F0F7" entity="&#xF0F7;" char="&#x1F66C;"/>
+  <!--RIGHTWARDS ROCKET-->
+  <symbol number="F0F8" entity="&#xF0F8;" char="&#x1F66E;"/>
+  <!--UPWARDS ROCKET-->
+  <symbol number="F0F9" entity="&#xF0F9;" char="&#x1F66D;"/>
+  <!--DOWNWARDS ROCKET-->
+  <symbol number="F0FA" entity="&#xF0FA;" char="&#x1F66F;"/>
+  <!--WORLD MAP-->
+  <symbol number="F0FB" entity="&#xF0FB;" char="&#x1F5FA;"/>
+  <!--EARTH GLOBE EUROPE-AFRICA-->
+  <symbol number="F0FC" entity="&#xF0FC;" char="&#x1F30D;"/>
+  <!--EARTH GLOBE ASIA-AUSTRALIA-->
+  <symbol number="F0FD" entity="&#xF0FD;" char="&#x1F30F;"/>
+  <!--EARTH GLOBE AMERICAS-->
+  <symbol number="F0FE" entity="&#xF0FE;" char="&#x1F30E;"/>
+  <!--DOVE OF PEACE-->
+  <symbol number="F0FF" entity="&#xF0FF;" char="&#x1F54A;"/>
+</symbols>

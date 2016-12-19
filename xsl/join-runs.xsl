@@ -539,9 +539,12 @@
       <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] | self::mml:mtext)">
         <xsl:choose>
           <xsl:when test="current-grouping-key() and string-length(string-join(current-group(), '')) gt 1">
-            <mml:mtext>
-              <xsl:apply-templates select="current-group()/node()" mode="#current"/>
-            </mml:mtext>
+            <xsl:variable name="prelim" as="element(mml:mtext)">
+              <mml:mtext>
+                <xsl:apply-templates select="current-group()/node()" mode="#current"/>
+              </mml:mtext>  
+            </xsl:variable>
+            <xsl:apply-templates select="$prelim" mode="#current"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:apply-templates select="current-group()" mode="#current"/>

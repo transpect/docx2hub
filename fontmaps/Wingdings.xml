@@ -1,33 +1,247 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <symbols>
-  <symbol number="F049" entity="&#xF049;" char="&#x270B;" font="Segoe UI Symbol"/><!-- raised hand -->
-  <symbol number="F04A" entity="&#xF04A;" char="&#x263a;" font="Segoe UI Symbol"/><!-- happy smiley -->
-  <symbol number="004A" entity="J" char="&#x263A;" font="Segoe UI Symbol"/><!-- happy smiley -->
-  <symbol number="F04B" entity="&#xF04B;" char="&#x1F610;" font="Segoe UI Symbol"/><!-- neutral smiley -->
-  <symbol number="F04C" entity="&#xF04C;" char="&#x2639;" font="Segoe UI Symbol"/><!-- sad smiley -->
-  <symbol number="004C" entity="L" char="&#x2639;" font="Segoe UI Symbol"/><!-- sad smiley -->
-  <symbol number="F061" entity="&#xF061;" char="&#x264B;"/><!-- CANCER -->
+  <!-- LOWER RIGHT PENCIL -->
+  <symbol number="F021" entity="&#xF021;" char="&#x270E;"/>
+  <!-- BLACK SCISSORS -->
+  <symbol number="F022" entity="&#xF022;" char="&#x2702;"/>
+  <!-- UPPER BLADE SCISSORS -->
+  <symbol number="F023" entity="&#xF023;" char="&#x2701;"/>
+  <!-- EYEGLASSES -->
+  <symbol number="F024" entity="&#xF024;" char="&#x1F453;"/>
+  <!-- BELL -->
+  <symbol number="F025" entity="&#xF025;" char="&#x1F514;"/>
+  <!-- OPEN BOOK -->
+  <symbol number="F026" entity="&#xF026;" char="&#x1F4D6;"/>
+  <!-- CANDLE -->
+  <symbol number="F027" entity="&#xF027;" char="&#x1F56F;"/>
+  <!-- BLACK TELEPHONE -->
+  <symbol number="F028" entity="&#xF028;" char="&#x260E;"/>
+  <!-- TELEPHONE SIGN -->
+  <symbol number="F029" entity="&#xF029;" char="&#x2706;"/>
+  <!-- ENVELOPE -->
+  <symbol number="F02A" entity="&#xF02A;" char="&#x2709;"/>
+  <!-- STAMPED ENVELOPE -->
+  <symbol number="F02B" entity="&#xF02B;" char="&#x1F583;"/>
+  <!-- CLOSED MAILBOX WITH LOWERED FLAG -->
+  <symbol number="F02C" entity="&#xF02C;" char="&#x1F4EA;"/>
+  <!-- CLOSED MAILBOX WITH RAISED FLAG -->
+  <symbol number="F02D" entity="&#xF02D;" char="&#x1F4EB;"/>
+  <!-- OPEN MAILBOX WITH RAISED FLAG -->
+  <symbol number="F02E" entity="&#xF02E;" char="&#x1F4EC;"/>
+  <!-- OPEN MAILBOX WITH LOWERED FLAG -->
+  <symbol number="F02F" entity="&#xF02F;" char="&#x1F4ED;"/>
+  <!-- FOLDER -->
+  <symbol number="F030" entity="&#xF030;" char="&#x1F5C0;"/>
+  <!-- OPEN FOLDER -->
+  <symbol number="F031" entity="&#xF031;" char="&#x1F5C1;"/>
+  <!-- NOTE -->
+  <symbol number="F032" entity="&#xF032;" char="&#x1F5C8;"/>
+  <!-- NOTE PAD -->
+  <symbol number="F034" entity="&#xF034;" char="&#x1F5CA;"/>
+  <!-- FILE CABINET -->
+  <symbol number="F035" entity="&#xF035;" char="&#x1F5C4;"/>
+  <!-- HOURGLASS -->
+  <symbol number="F036" entity="&#xF036;" char="&#x231B;"/>
+  <!-- WIRED KEYBOARD -->
+  <symbol number="F037" entity="&#xF037;" char="&#x1F5AE;"/>
+  <!-- TWO BUTTON MOUSE -->
+  <symbol number="F038" entity="&#xF038;" char="&#x1F5B0;"/>
+  <!-- TRACKBALL -->
+  <symbol number="F039" entity="&#xF039;" char="&#x1F5B2;"/>
+  <!-- OLD PERSONAL COMPUTER -->
+  <symbol number="F03A" entity="&#xF03A;" char="&#x1F5B3;"/>
+  <!-- HARD DISK -->
+  <symbol number="F03B" entity="&#xF03B;" char="&#x1F5B4;"/>
+  <!-- WHITE HARD SHELL FLOPPY DISK -->
+  <symbol number="F03C" entity="&#xF03C;" char="&#x1F5AB;"/>
+  <!-- SOFT SHELL FLOPPY DISK -->
+  <symbol number="F03D" entity="&#xF03D;" char="&#x1F5AC;"/>
+  <!-- TAPE DRIVE -->
+  <symbol number="F03E" entity="&#xF03E;" char="&#x2707;"/>
+  <!-- WRITING HAND -->
+  <symbol number="F03F" entity="&#xF03F;" char="&#x270D;"/>
+  <!-- LEFT WRITING HAND -->
+  <symbol number="F040" entity="&#xF040;" char="&#x1F58E;"/>
+  <!-- VICTORY HAND -->
+  <symbol number="F041" entity="&#xF041;" char="&#x270C;"/>
+  <!-- TURNED OK HAND SIGN -->
+  <symbol number="F042" entity="&#xF042;" char="&#x1F58F;"/>
+  <!-- THUMBS UP SIGN -->
+  <symbol number="F043" entity="&#xF043;" char="&#x1F44D;"/>
+  <!-- THUMBS DOWN SIGN -->
+  <symbol number="F044" entity="&#xF044;" char="&#x1F44E;"/>
+  <!-- SIDEWAYS WHITE LEFT POINTING INDEX -->
+  <symbol number="F045" entity="&#xF045;" char="&#x1F598;"/>
+  <!-- SIDEWAYS WHITE RIGHT POINTING INDEX -->
+  <symbol number="F046" entity="&#xF046;" char="&#x1F599;"/>
+  <!-- SIDEWAYS WHITE UP POINTING INDEX -->
+  <symbol number="F047" entity="&#xF047;" char="&#x1F59E;"/>
+  <!-- SIDEWAYS WHITE DOWN POINTING INDEX -->
+  <symbol number="F048" entity="&#xF048;" char="&#x1F59F;"/>
+  <!-- RAISED HAND WITH FINGERS SPLAYED -->
+  <symbol number="F049" entity="&#xF049;" char="&#x1F590;"/>
+  <!-- WHITE SMILING FACE -->
+  <symbol number="F04A" entity="&#xF04A;" char="&#x263A;"/>
+  <!-- NEUTRAL FACE -->
+  <symbol number="F04B" entity="&#xF04B;" char="&#x1F610;"/>
+  <!-- WHITE FROWNING FACE -->  
+  <symbol number="F04C" entity="&#xF04C;" char="&#x2639;"/>
+  <!-- BOMB -->
+  <symbol number="F04D" entity="&#xF04D;" char="&#x1F4A3;"/>
+  <!-- BLACK SKULL AND CROSSBONES -->
+  <symbol number="F04E" entity="&#xF04E;" char="&#x1F571;"/>
+  <!-- WAVING WHITE FLAG -->
+  <symbol number="F04F" entity="&#xF04F;" char="&#x1F3F3;"/>
+  <!-- WHITE PENNANT -->
+  <symbol number="F050" entity="&#xF050;" char="&#x1F3F1;"/>
+  <!-- AIRPLANE -->
+  <symbol number="F051" entity="&#xF051;" char="&#x2708;"/>
+  <!-- WHITE SUN WITH RAYS -->
+  <symbol number="F052" entity="&#xF052;" char="&#x263C;"/>
+  <!-- BLACK DROPLET -->
+  <symbol number="F053" entity="&#xF053;" char="&#x1F322;"/>
+  <!-- SNOWFLAKE -->
+  <symbol number="F054" entity="&#xF054;" char="&#x12744;"/>
+  <!-- LATIN CROSS -->
+  <symbol number="F055" entity="&#xF055;" char="&#x271D;"/>
+  <!-- SHADOWED WHITE LATIN CROSS -->
+  <symbol number="F056" entity="&#xF056;" char="&#x271E;"/>
+  <!-- CELTIC CROSS -->
+  <symbol number="F057" entity="&#xF057;" char="&#x1F548;"/>
+  <!-- MALTESE CROSS -->
+  <symbol number="F058" entity="&#xF058;" char="&#x2720;"/>
+  <!-- STAR OF DAVID -->
+  <symbol number="F059" entity="&#xF059;" char="&#x2721;"/>
+  <!-- STAR AND CRESCENT -->
+  <symbol number="F05A" entity="&#xF05A;" char="&#x262A;"/>
+  <!-- YIN YANG -->
+  <symbol number="F05B" entity="&#xF05B;" char="&#x262F;"/>
+  <!-- OM SYMBOL -->
+  <symbol number="F05C" entity="&#xF05C;" char="&#x1F549;"/>
+  <!-- WHEEL OF DHARMA -->
+  <symbol number="F05D" entity="&#xF05D;" char="&#x2638;"/>
+  <!-- ARIES -->
+  <symbol number="F05E" entity="&#xF05E;" char="&#x2648;"/>
+  <!-- TAURUS -->
+  <symbol number="F05F" entity="&#xF05F;" char="&#x2649;"/>
+  <!-- GEMINI -->
+  <symbol number="F060" entity="&#xF060;" char="&#x264A;"/>
+  <!-- CANCER -->
+  <symbol number="F061" entity="&#xF061;" char="&#x264B;"/>
+  <!-- LEO -->
+  <symbol number="F062" entity="&#xF062;" char="&#x264C;"/>
+  <!-- VIRGO -->
+  <symbol number="F063" entity="&#xF063;" char="&#x264D;"/>
+  <!-- LIBRA -->
+  <symbol number="F064" entity="&#xF064;" char="&#x264E;"/>
+  <!-- SCORPIUS -->
+  <symbol number="F065" entity="&#xF065;" char="&#x264F;"/>
+  <!-- SAGITTARIUS -->
+  <symbol number="F066" entity="&#xF066;" char="&#x2650;"/>
+  <!-- CAPRICORN -->
+  <symbol number="F067" entity="&#xF067;" char="&#x2651;"/>
+  <!-- AQUARIUS -->
+  <symbol number="F068" entity="&#xF068;" char="&#x2652;"/>
+  <!-- PISCES -->
+  <symbol number="F069" entity="&#xF069;" char="&#x2653;"/>
+  <!-- SCRIPT LIGATURE ET ORNAMENT -->
+  <symbol number="F06A" entity="&#xF06A;" char="&#x1F670;"/>
+  <!-- SWASH AMPERSAND ORNAMENZ -->
+  <symbol number="F06B" entity="&#xF06B;" char="&#x1F672;"/>
+  <!-- BLACK CIRCLE -->
+  <symbol number="F06C" entity="&#xF06C;" char="&#x25CF;"/>
+  <!-- SHADOWED WHITE CIRCLE -->
+  <symbol number="F06D" entity="&#xF06D;" char="&#x274D;"/>
+  <!-- BLACK SQUARE -->
+  <symbol number="F06E" entity="&#xF06E;" char="&#x25A0;"/>
+  <!-- WHITE SQUARE -->
+  <symbol number="F06F" entity="&#xF06F;" char="&#x25A1;"/>
+  <!-- HEAVY WHITE SQUARE -->
+  <symbol number="F070" entity="&#xF070;" char="&#x1F791;"/>
+  <!-- LOWER RIGHT SHADOWED WHITE SQUARE -->
+  <symbol number="F071" entity="&#xF071;" char="&#x2751;"/>
+  <!-- UPPER RIGHT SHADOWED WHITE SQUARE -->
+  <symbol number="F072" entity="&#xF072;" char="&#x2752;"/>
+  <!-- BLACK SMALL DIAMOND -->
+  <symbol number="F073" entity="&#xF073;" char="&#x2B29;"/>
+  <!-- BLACK DIAMOND SUIT -->
+  <symbol number="F074" entity="&#xF074;" char="&#x2666;"/>
+  <!-- BLACK DIAMOND -->
+  <symbol number="F075" entity="&#xF075;" char="&#x25C6;"/>
+  <!-- BLACK DIAMOND MINUS WHITE X -->
+  <symbol number="F076" entity="&#xF076;" char="&#x2756;"/>
+  <!-- BLACK SMALL DIAMOND -->
+  <symbol number="F077" entity="&#xF077;" char="&#x2B29;"/>
+  <!-- X IN A RECTANGLE BOX -->
+  <symbol number="F078" entity="&#xF078;" char="&#x2327;"/>
+  <!-- UP ARROWHEAD IN A RECTANGLE BOX -->
+  <symbol number="F079" entity="&#xF079;" char="&#x2BB9;"/>
+  <!-- PLACE OF INTEREST SIGN -->
+  <symbol number="F07A" entity="&#xF07A;" char="&#x2318;"/>
+  <!-- WHITE FLORETTE -->
+  <symbol number="F07B" entity="&#xF07B;" char="&#x2740;"/>
+  <!-- BLACK FLORETTE -->
+  <symbol number="F07C" entity="&#xF07C;" char="&#x273F;"/>
+  <!-- SANS-SERIF HEAVY DOUBLE TURNED COMMA QUOTATION MARK ORNAMENT -->
+  <symbol number="F07D" entity="&#xF07D;" char="&#x1F676;"/>
+  <!-- SANS-SERIF HEAVY DOUBLE COMMA QUOTATION MARK ORNAMENT -->
+  <symbol number="F07E" entity="&#xF07E;" char="&#x1F677;"/>
+  <!-- WHITE VERTICAL RECTANGLE -->
+  <symbol number="F07F" entity="&#xF07F;" char="&#x25AF;"/>
+  <!-- CIRCLED DIGIT ONE -->
+  <symbol number="F081" entity="&#9312;" char="&#x2460;"/>
+  <!-- CIRCLED DIGIT TWO -->
+  <symbol number="F082" entity="&#9313;" char="&#x2461;"/>
+  <!-- CIRCLED DIGIT THREE -->
+  <symbol number="F083" entity="&#9314;" char="&#x2462;"/>
+  <!-- CIRCLED DIGIT FOUR -->
+  <symbol number="F084" entity="&#9315;" char="&#x2463;"/>
+  <!-- CIRCLED DIGIT FIVE -->
+  <symbol number="F085" entity="&#9316;" char="&#x2464;"/>
+  <!-- CIRCLED DIGIT SIX -->
+  <symbol number="F086" entity="&#9317;" char="&#x2465;"/>
+  <!-- CIRCLED DIGIT SEVEN -->
+  <symbol number="F087" entity="&#9318;" char="&#x2466;"/>
+  <!-- CIRCLED DIGIT EIGHT -->
+  <symbol number="F088" entity="&#9319;" char="&#x2467;"/>
+  <!-- CIRCLED DIGIT NINE -->
+  <symbol number="F089" entity="&#9320;" char="&#x2468;"/>
+  <!-- CIRCLED DIGIT TEN -->
+  <symbol number="F08A" entity="&#9321;" char="&#x2469;"/>
+  <!-- NEGATIVE CIRCLED DIGIT ZERO -->
+  <symbol number="F08B" entity="&#xF08C;" char="&#x24FF;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT ONE -->
+  <symbol number="F08C" entity="&#xF08C;" char="&#x2776;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT TWO -->
+  <symbol number="F08D" entity="&#xF08D;" char="&#x2777;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT THREE -->
+  <symbol number="F08E" entity="&#xF08E;" char="&#x2778;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT FOUR -->
+  <symbol number="F08F" entity="&#xF08F;" char="&#x2779;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT FIVE -->
+  <symbol number="F090" entity="&#xF090;" char="&#x277a;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT SIX -->
+  <symbol number="F091" entity="&#xF091;" char="&#x277b;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT SEVEN -->
+  <symbol number="F092" entity="&#xF092;" char="&#x277c;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT EIGHT -->
+  <symbol number="F093" entity="&#xF093;" char="&#x277d;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT NINE -->
+  <symbol number="F094" entity="&#xF094;" char="&#x277e;"/>
+  <!-- DINGBAT NEGATIVE CIRCLED DIGIT TEN -->
+  <symbol number="F095" entity="&#xF095;" char="&#x277f;"/>
+  
+  
+  
   <symbol number="0061" entity="&#x0061;" char="&#x264B;"/><!-- CANCER -->
-  <symbol number="F06E" entity="&#xF06E;" char="&#x25a0;"/><!-- BLACK SQUARE -->
+  
   <symbol number="006E" entity="" char="&#x25a0;"/><!-- BLACK SQUARE -->
-  <symbol number="F06F" entity="" char="&#x25A1;"/><!-- WHITE SQUARE -->
+  
   <symbol number="006F" entity="o" char="&#x25A1;"/><!-- WHITE SQUARE -->
-  <symbol number="F070" entity="⬜" char="&#x2B1C;" font="Segoe UI Symbol"/><!-- WHITE LARGE SQUARE -->
-  <symbol number="F08B" entity="&#xF08C;" char="&#x24FF;"/><!-- NEGATIVE CIRCLED DIGIT ZERO -->
-  <symbol number="F08C" entity="&#xF08C;" char="&#x2776;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT ONE -->
-  <symbol number="F08D" entity="&#xF08D;" char="&#x2777;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT TWO -->
-  <symbol number="F08E" entity="&#xF08E;" char="&#x2778;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT THREE -->
-  <symbol number="F08F" entity="&#xF08F;" char="&#x2779;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FOUR -->
-  <symbol number="F090" entity="&#xF090;" char="&#x277a;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT FIVE -->
-  <symbol number="F091" entity="&#xF091;" char="&#x277b;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT SIX -->
-  <symbol number="F092" entity="&#xF092;" char="&#x277c;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT SEVEN -->
-  <symbol number="F093" entity="&#xF093;" char="&#x277d;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT EIGHT -->
-  <symbol number="F094" entity="&#xF094;" char="&#x277e;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT NINE -->
-  <symbol number="F095" entity="&#xF095;" char="&#x277f;"/><!-- DINGBAT NEGATIVE CIRCLED DIGIT TEN -->
+  
   <symbol number="F09E" entity="" char="&#xb7;"/><!-- MIDDLE DOT -->
   <symbol number="F09F" entity="" char="&#x2022;"/><!-- BULLET -->
   <symbol number="F0A1" entity="&#xF0A1;" char="&#x1f785;" font="Segoe UI Symbol"/><!-- MEDIUM BOLD WHITE CIRCLE -->
-  <symbol number="F0A6" entity="&#xF0A6;" char="&#x274D;" font="Segoe UI Symbol"/><!-- SHADOWED WHITE CIRCLE -->
   <symbol number="F0A7" entity="&#xF0A7;" char="&#x25aa;" font="Segoe UI Symbol"/><!-- BLACK SMALL SQUARE -->
   <symbol number="F0DF" entity="&#xF0DF;" char="&#x2190;"/><!-- LEFTWARDS ARROW -->
   <symbol number="F0E0" entity="&#xF0E0;" char="&#x2192;"/><!-- RIGHTWARDS ARROW -->
@@ -49,14 +263,4 @@
   <symbol number="F0E6" entity="&#xF0E6;" char="&#x2198;"/><!-- SOUTH EAST ARROW -->
   <symbol number="F0F0" entity="&#xF0F0;" char="&#x21E8;" /><!-- RIGHTWARDS WHITE ARROW -->
   <symbol number="F0FC" entity="&#252;" char="&#x2713;" font="Segoe UI Symbol"/><!-- CHECK MARK -->
-  <symbol number="F081" entity="&#9312;" char="&#x2460;"/><!-- CIRCLED DIGIT ONE -->
-  <symbol number="F082" entity="&#9313;" char="&#x2461;"/><!-- CIRCLED DIGIT TWO -->
-  <symbol number="F083" entity="&#9314;" char="&#x2462;"/><!-- CIRCLED DIGIT THREE -->
-  <symbol number="F084" entity="&#9315;" char="&#x2463;"/><!-- CIRCLED DIGIT FOUR -->
-  <symbol number="F085" entity="&#9316;" char="&#x2464;"/><!-- CIRCLED DIGIT FIVE -->
-  <symbol number="F086" entity="&#9317;" char="&#x2465;"/><!-- CIRCLED DIGIT SIX -->
-  <symbol number="F087" entity="&#9318;" char="&#x2466;"/><!-- CIRCLED DIGIT SEVEN -->
-  <symbol number="F088" entity="&#9319;" char="&#x2467;"/><!-- CIRCLED DIGIT EIGHT -->
-  <symbol number="F089" entity="&#9320;" char="&#x2468;"/><!-- CIRCLED DIGIT NINE -->
-  <symbol number="F08A" entity="&#9321;" char="&#x2469;"/><!-- CIRCLED DIGIT TEN -->
 </symbols>

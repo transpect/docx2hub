@@ -9,419 +9,627 @@
         * 
         * -->
   <!--SPACE-->
-  <symbol number="F020" entity="&#xF020;" char="&#x0020;"/>
+  <symbol number="F020" entity="&#xf020;" char="&#x20;"/>
+  <symbol number="0020" entity="&#xf020;" char="&#x20;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW-->
-  <symbol number="F021" entity="&#xF021;" char="&#x2B60;"/>
+  <symbol number="F021" entity="&#xf021;" char="&#x2b60;"/>
+  <symbol number="0021" entity="&#xf021;" char="&#x2b60;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW-->
-  <symbol number="F022" entity="&#xF022;" char="&#x2B62;"/>
+  <symbol number="F022" entity="&#xf022;" char="&#x2b62;"/>
+  <symbol number="0022" entity="&#xf022;" char="&#x2b62;"/>
   <!--UPWARDS TRIANGLE-HEADED ARROW-->
-  <symbol number="F023" entity="&#xF023;" char="&#x2B61;"/>
+  <symbol number="F023" entity="&#xf023;" char="&#x2b61;"/>
+  <symbol number="0023" entity="&#xf023;" char="&#x2b61;"/>
   <!--DOWNWARDS TRIANGLE-HEADED ARROW-->
-  <symbol number="F024" entity="&#xF024;" char="&#x2B63;"/>
+  <symbol number="F024" entity="&#xf024;" char="&#x2b63;"/>
+  <symbol number="0024" entity="&#xf024;" char="&#x2b63;"/>
   <!--NORTH WEST TRIANGLE-HEADED ARROW-->
-  <symbol number="F025" entity="&#xF025;" char="&#x2B66;"/>
+  <symbol number="F025" entity="&#xf025;" char="&#x2b66;"/>
+  <symbol number="0025" entity="&#xf025;" char="&#x2b66;"/>
   <!--NORTH EAST TRIANGLE-HEADED ARROW-->
-  <symbol number="F026" entity="&#xF026;" char="&#x2B67;"/>
+  <symbol number="F026" entity="&#xf026;" char="&#x2b67;"/>
+  <symbol number="0026" entity="&#xf026;" char="&#x2b67;"/>
   <!--SOUTH WEST TRIANGLE-HEADED ARROW-->
-  <symbol number="F027" entity="&#xF027;" char="&#x2B69;"/>
+  <symbol number="F027" entity="&#xf027;" char="&#x2b69;"/>
+  <symbol number="0027" entity="&#xf027;" char="&#x2b69;"/>
   <!--SOUTH EAST TRIANGLE-HEADED ARROW-->
-  <symbol number="F028" entity="&#xF028;" char="&#x2B68;"/>
+  <symbol number="F028" entity="&#xf028;" char="&#x2b68;"/>
+  <symbol number="0028" entity="&#xf028;" char="&#x2b68;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW TO BAR-->
-  <symbol number="F029" entity="&#xF029;" char="&#x2B70;"/>
+  <symbol number="F029" entity="&#xf029;" char="&#x2b70;"/>
+  <symbol number="0029" entity="&#xf029;" char="&#x2b70;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW TO BAR-->
-  <symbol number="F02A" entity="&#xF02A;" char="&#x2B72;"/>
+  <symbol number="F02A" entity="&#xf02a;" char="&#x2b72;"/>
+  <symbol number="002A" entity="&#xf02a;" char="&#x2b72;"/>
   <!--UPWARDS TRIANGLE-HEADED ARROW TO BAR-->
-  <symbol number="F02B" entity="&#xF02B;" char="&#x2B71;"/>
+  <symbol number="F02B" entity="&#xf02b;" char="&#x2b71;"/>
+  <symbol number="002B" entity="&#xf02b;" char="&#x2b71;"/>
   <!--DOWNWARDS TRIANGLE-HEADED ARROW TO BAR-->
-  <symbol number="F02C" entity="&#xF02C;" char="&#x2B73;"/>
+  <symbol number="F02C" entity="&#xf02c;" char="&#x2b73;"/>
+  <symbol number="002C" entity="&#xf02c;" char="&#x2b73;"/>
   <!--NORTH WEST TRIANGLE-HEADED ARROW TO BAR-->
-  <symbol number="F02D" entity="&#xF02D;" char="&#x2B76;"/>
+  <symbol number="F02D" entity="&#xf02d;" char="&#x2b76;"/>
+  <symbol number="002D" entity="&#xf02d;" char="&#x2b76;"/>
   <!--SOUTH EAST TRIANGLE-HEADED ARROW TO BAR-->
-  <symbol number="F02E" entity="&#xF02E;" char="&#x2B78;"/>
+  <symbol number="F02E" entity="&#xf02e;" char="&#x2b78;"/>
+  <symbol number="002E" entity="&#xf02e;" char="&#x2b78;"/>
   <!--UPWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE-->
-  <symbol number="F02F" entity="&#xF02F;" char="&#x2B7B;"/>
+  <symbol number="F02F" entity="&#xf02f;" char="&#x2b7b;"/>
+  <symbol number="002F" entity="&#xf02f;" char="&#x2b7b;"/>
   <!--DOWNWARDS TRIANGLE-HEADED ARROW WITH DOUBLE HORIZONTAL STROKE-->
-  <symbol number="F030" entity="&#xF030;" char="&#x2B7D;"/>
+  <symbol number="F030" entity="&#xf030;" char="&#x2b7d;"/>
+  <symbol number="0030" entity="&#xf030;" char="&#x2b7d;"/>
   <!--LEFT RIGHT TRIANGLE-HEADED ARROW-->
-  <symbol number="F031" entity="&#xF031;" char="&#x2B64;"/>
+  <symbol number="F031" entity="&#xf031;" char="&#x2b64;"/>
+  <symbol number="0031" entity="&#xf031;" char="&#x2b64;"/>
   <!--UP DOWN TRIANGLE-HEADED ARROW-->
-  <symbol number="F032" entity="&#xF032;" char="&#x2B65;"/>
+  <symbol number="F032" entity="&#xf032;" char="&#x2b65;"/>
+  <symbol number="0032" entity="&#xf032;" char="&#x2b65;"/>
   <!--LEFTWARDS TRIANGLE-HEADED DASHED ARROW-->
-  <symbol number="F033" entity="&#xF033;" char="&#x2B6A;"/>
+  <symbol number="F033" entity="&#xf033;" char="&#x2b6a;"/>
+  <symbol number="0033" entity="&#xf033;" char="&#x2b6a;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED DASHED ARROW-->
-  <symbol number="F034" entity="&#xF034;" char="&#x2B6C;"/>
+  <symbol number="F034" entity="&#xf034;" char="&#x2b6c;"/>
+  <symbol number="0034" entity="&#xf034;" char="&#x2b6c;"/>
   <!--UPWARDS TRIANGLE-HEADED DASHED ARROW-->
-  <symbol number="F035" entity="&#xF035;" char="&#x2B6B;"/>
+  <symbol number="F035" entity="&#xf035;" char="&#x2b6b;"/>
+  <symbol number="0035" entity="&#xf035;" char="&#x2b6b;"/>
   <!--DOWNWARDS TRIANGLE-HEADED DASHED ARROW-->
-  <symbol number="F036" entity="&#xF036;" char="&#x2B6D;"/>
+  <symbol number="F036" entity="&#xf036;" char="&#x2b6d;"/>
+  <symbol number="0036" entity="&#xf036;" char="&#x2b6d;"/>
   <!--DOWNWARDS TRIANGLE-HEADED ZIGZAG ARROW-->
-  <symbol number="F037" entity="&#xF037;" char="&#x2B4D;"/>
+  <symbol number="F037" entity="&#xf037;" char="&#x2b4d;"/>
+  <symbol number="0037" entity="&#xf037;" char="&#x2b4d;"/>
   <!--DOWNWARDS TRIANGLE-HEADED ARROW WITH LONG TIP LEFTWARDS-->
-  <symbol number="F038" entity="&#xF038;" char="&#x2BA0;"/>
+  <symbol number="F038" entity="&#xf038;" char="&#x2ba0;"/>
+  <symbol number="0038" entity="&#xf038;" char="&#x2ba0;"/>
   <!--DOWNWARDS TRIANGLE-HEADED ARROW WITH LONG TIP RIGHTWARDS-->
-  <symbol number="F039" entity="&#xF039;" char="&#x2BA1;"/>
+  <symbol number="F039" entity="&#xf039;" char="&#x2ba1;"/>
+  <symbol number="0039" entity="&#xf039;" char="&#x2ba1;"/>
   <!--UPWARDS TRIANGLE-HEADED ARROW WITH LONG TIP LEFTWARDS-->
-  <symbol number="F03A" entity="&#xF03A;" char="&#x2BA2;"/>
+  <symbol number="F03A" entity="&#xf03a;" char="&#x2ba2;"/>
+  <symbol number="003A" entity="&#xf03a;" char="&#x2ba2;"/>
   <!--UPWARDS TRIANGLE-HEADED ARROW WITH LONG TIP RIGHTWARDS-->
-  <symbol number="F03B" entity="&#xF03B;" char="&#x2BA3;"/>
+  <symbol number="F03B" entity="&#xf03b;" char="&#x2ba3;"/>
+  <symbol number="003B" entity="&#xf03b;" char="&#x2ba3;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP UPWARDS-->
-  <symbol number="F03C" entity="&#xF03C;" char="&#x2BA4;"/>
+  <symbol number="F03C" entity="&#xf03c;" char="&#x2ba4;"/>
+  <symbol number="003C" entity="&#xf03c;" char="&#x2ba4;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP UPWARDS-->
-  <symbol number="F03D" entity="&#xF03D;" char="&#x2BA5;"/>
+  <symbol number="F03D" entity="&#xf03d;" char="&#x2ba5;"/>
+  <symbol number="003D" entity="&#xf03d;" char="&#x2ba5;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP DOWNWARDS-->
-  <symbol number="F03E" entity="&#xF03E;" char="&#x2BA6;"/>
+  <symbol number="F03E" entity="&#xf03e;" char="&#x2ba6;"/>
+  <symbol number="003E" entity="&#xf03e;" char="&#x2ba6;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW WITH LONG TIP DOWNWARDS-->
-  <symbol number="F03F" entity="&#xF03F;" char="&#x2BA7;"/>
+  <symbol number="F03F" entity="&#xf03f;" char="&#x2ba7;"/>
+  <symbol number="003F" entity="&#xf03f;" char="&#x2ba7;"/>
   <!--RETURN LEFT-->
-  <symbol number="F040" entity="&#xF040;" char="&#x2B90;"/>
+  <symbol number="F040" entity="&#xf040;" char="&#x2b90;"/>
+  <symbol number="0040" entity="&#xf040;" char="&#x2b90;"/>
   <!--RETURN RIGHT-->
-  <symbol number="F041" entity="&#xF041;" char="&#x2B91;"/>
+  <symbol number="F041" entity="&#xf041;" char="&#x2b91;"/>
+  <symbol number="0041" entity="&#xf041;" char="&#x2b91;"/>
   <!--NEW LINE LEFT-->
-  <symbol number="F042" entity="&#xF042;" char="&#x2B92;"/>
+  <symbol number="F042" entity="&#xf042;" char="&#x2b92;"/>
+  <symbol number="0042" entity="&#xf042;" char="&#x2b92;"/>
   <!--NEW LINE RIGHT-->
-  <symbol number="F043" entity="&#xF043;" char="&#x2B93;"/>
+  <symbol number="F043" entity="&#xf043;" char="&#x2b93;"/>
+  <symbol number="0043" entity="&#xf043;" char="&#x2b93;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW OVER RIGHTWARDS TRIANGLE-HEADED ARROW-->
-  <symbol number="F044" entity="&#xF044;" char="&#x2B80;"/>
+  <symbol number="F044" entity="&#xf044;" char="&#x2b80;"/>
+  <symbol number="0044" entity="&#xf044;" char="&#x2b80;"/>
   <!--DOWNWARDS TRIANGLE-HEADED ARROW LEFTWARDS OF UPWARDS TRIANGLE-HEADED ARROW-->
-  <symbol number="F045" entity="&#xF045;" char="&#x2B83;"/>
+  <symbol number="F045" entity="&#xf045;" char="&#x2b83;"/>
+  <symbol number="0045" entity="&#xf045;" char="&#x2b83;"/>
   <!--HORIZONTAL TAB KEY-->
-  <symbol number="F046" entity="&#xF046;" char="&#x2B7E;"/>
+  <symbol number="F046" entity="&#xf046;" char="&#x2b7e;"/>
+  <symbol number="0046" entity="&#xf046;" char="&#x2b7e;"/>
   <!--VERTICAL TAB KEY-->
-  <symbol number="F047" entity="&#xF047;" char="&#x2B7F;"/>
+  <symbol number="F047" entity="&#xf047;" char="&#x2b7f;"/>
+  <symbol number="0047" entity="&#xf047;" char="&#x2b7f;"/>
   <!--LEFTWARDS TRIANGLE-HEADED PAIRED ARROWS-->
-  <symbol number="F048" entity="&#xF048;" char="&#x2B84;"/>
+  <symbol number="F048" entity="&#xf048;" char="&#x2b84;"/>
+  <symbol number="0048" entity="&#xf048;" char="&#x2b84;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED PAIRED ARROWS-->
-  <symbol number="F049" entity="&#xF049;" char="&#x2B86;"/>
+  <symbol number="F049" entity="&#xf049;" char="&#x2b86;"/>
+  <symbol number="0049" entity="&#xf049;" char="&#x2b86;"/>
   <!--UPWARDS TRIANGLE-HEADED PAIRED ARROWS-->
-  <symbol number="F04A" entity="&#xF04A;" char="&#x2B85;"/>
+  <symbol number="F04A" entity="&#xf04a;" char="&#x2b85;"/>
+  <symbol number="004A" entity="&#xf04a;" char="&#x2b85;"/>
   <!--DOWNWARDS TRIANGLE-HEADED PAIRED ARROWS-->
-  <symbol number="F04B" entity="&#xF04B;" char="&#x2B87;"/>
+  <symbol number="F04B" entity="&#xf04b;" char="&#x2b87;"/>
+  <symbol number="004B" entity="&#xf04b;" char="&#x2b87;"/>
   <!--ANTICLOCKWISE TRIANGLE-HEADED TOP U-SHAPED ARROW-->
-  <symbol number="F04C" entity="&#xF04C;" char="&#x2B8F;"/>
+  <symbol number="F04C" entity="&#xf04c;" char="&#x2b8f;"/>
+  <symbol number="004C" entity="&#xf04c;" char="&#x2b8f;"/>
   <!--ANTICLOCKWISE TRIANGLE-HEADED BOTTOM U-SHAPED ARROW-->
-  <symbol number="F04D" entity="&#xF04D;" char="&#x2B8D;"/>
+  <symbol number="F04D" entity="&#xf04d;" char="&#x2b8d;"/>
+  <symbol number="004D" entity="&#xf04d;" char="&#x2b8d;"/>
   <!--ANTICLOCKWISE TRIANGLE-HEADED LEFT U-SHAPED ARROW-->
-  <symbol number="F04E" entity="&#xF04E;" char="&#x2B8E;"/>
+  <symbol number="F04E" entity="&#xf04e;" char="&#x2b8e;"/>
+  <symbol number="004E" entity="&#xf04e;" char="&#x2b8e;"/>
   <!--ANTICLOCKWISE TRIANGLE-HEADED RIGHT U-SHAPED ARROW-->
-  <symbol number="F04F" entity="&#xF04F;" char="&#x2B8C;"/>
+  <symbol number="F04F" entity="&#xf04f;" char="&#x2b8c;"/>
+  <symbol number="004F" entity="&#xf04f;" char="&#x2b8c;"/>
   <!--CLOCKWISE TRIANGLE-HEADED OPEN CIRCLE ARROW-->
-  <symbol number="F050" entity="&#xF050;" char="&#x2B6E;"/>
+  <symbol number="F050" entity="&#xf050;" char="&#x2b6e;"/>
+  <symbol number="0050" entity="&#xf050;" char="&#x2b6e;"/>
   <!--ANTICLOCKWISE TRIANGLE-HEADED OPEN CIRCLE ARROW-->
-  <symbol number="F051" entity="&#xF051;" char="&#x2B6F;"/>
+  <symbol number="F051" entity="&#xf051;" char="&#x2b6f;"/>
+  <symbol number="0051" entity="&#xf051;" char="&#x2b6f;"/>
   <!--BROKEN CIRCLE WITH NORTHWEST ARROW-->
-  <symbol number="F052" entity="&#xF052;" char="&#x238B;"/>
+  <symbol number="F052" entity="&#xf052;" char="&#x238b;"/>
+  <symbol number="0052" entity="&#xf052;" char="&#x238b;"/>
   <!--UP ARROWHEAD BETWEEN TWO HORIZONTAL BARS-->
-  <symbol number="F053" entity="&#xF053;" char="&#x2324;"/>
+  <symbol number="F053" entity="&#xf053;" char="&#x2324;"/>
+  <symbol number="0053" entity="&#xf053;" char="&#x2324;"/>
   <!--UP ARROWHEAD-->
-  <symbol number="F054" entity="&#xF054;" char="&#x2303;"/>
+  <symbol number="F054" entity="&#xf054;" char="&#x2303;"/>
+  <symbol number="0054" entity="&#xf054;" char="&#x2303;"/>
   <!--OPTION KEY-->
-  <symbol number="F055" entity="&#xF055;" char="&#x2325;"/>
+  <symbol number="F055" entity="&#xf055;" char="&#x2325;"/>
+  <symbol number="0055" entity="&#xf055;" char="&#x2325;"/>
   <!--BOTTOM SQUARE BRACKET-->
-  <symbol number="F056" entity="&#xF056;" char="&#x2325;"/>
+  <symbol number="F056" entity="&#xf056;" char="&#x2325;"/>
+  <symbol number="0056" entity="&#xf056;" char="&#x2325;"/>
   <!---->
-  <symbol number="F057" entity="&#xF057;" char=""/>
+  <symbol number="F057" entity="&#xf057;" char=""/>
+  <symbol number="0057" entity="&#xf057;" char=""/>
   <!--UPWARDS WHITE ARROW FROM BAR-->
-  <symbol number="F058" entity="&#xF058;" char="&#x21EA;"/>
+  <symbol number="F058" entity="&#xf058;" char="&#x21ea;"/>
+  <symbol number="0058" entity="&#xf058;" char="&#x21ea;"/>
   <!--UPWARDS WHITE ARROW FROM BAR WITH HORIZONTAL BAR-->
-  <symbol number="F059" entity="&#xF059;" char="&#x2BB8;"/>
+  <symbol number="F059" entity="&#xf059;" char="&#x2bb8;"/>
+  <symbol number="0059" entity="&#xf059;" char="&#x2bb8;"/>
   <!--LEFTWARDS BOTTOM-SHADED WHITE ARROW-->
-  <symbol number="F05A" entity="&#xF05A;" char="&#x1F8A0;"/>
+  <symbol number="F05A" entity="&#xf05a;" char="&#x1f8a0;"/>
+  <symbol number="005A" entity="&#xf05a;" char="&#x1f8a0;"/>
   <!--RIGHTWARDS BOTTOM-SHADED WHITE ARROW-->
-  <symbol number="F05B" entity="&#xF05B;" char="&#x1F8A1;"/>
+  <symbol number="F05B" entity="&#xf05b;" char="&#x1f8a1;"/>
+  <symbol number="005B" entity="&#xf05b;" char="&#x1f8a1;"/>
   <!--LEFTWARDS TOP SHADED WHITE ARROW-->
-  <symbol number="F05C" entity="&#xF05C;" char="&#x1F8A2;"/>
+  <symbol number="F05C" entity="&#xf05c;" char="&#x1f8a2;"/>
+  <symbol number="005C" entity="&#xf05c;" char="&#x1f8a2;"/>
   <!--RIGHTWARDS TOP SHADED WHITE ARROW-->
-  <symbol number="F05D" entity="&#xF05D;" char="&#x1F8A3;"/>
+  <symbol number="F05D" entity="&#xf05d;" char="&#x1f8a3;"/>
+  <symbol number="005D" entity="&#xf05d;" char="&#x1f8a3;"/>
   <!--LEFTWARDS LEFT-SHADED WHITE ARROW-->
-  <symbol number="F05E" entity="&#xF05E;" char="&#x1F8A4;"/>
+  <symbol number="F05E" entity="&#xf05e;" char="&#x1f8a4;"/>
+  <symbol number="005E" entity="&#xf05e;" char="&#x1f8a4;"/>
   <!--RIGHTWARDS RIGHT-SHADED WHITE ARROW-->
-  <symbol number="F05F" entity="&#xF05F;" char="&#x1F8A5;"/>
+  <symbol number="F05F" entity="&#xf05f;" char="&#x1f8a5;"/>
+  <symbol number="005F" entity="&#xf05f;" char="&#x1f8a5;"/>
   <!--LEFTWARDS RIGHT-SHADED WHITE ARROW-->
-  <symbol number="F060" entity="&#xF060;" char="&#x1F8A6;"/>
+  <symbol number="F060" entity="&#xf060;" char="&#x1f8a6;"/>
+  <symbol number="0060" entity="&#xf060;" char="&#x1f8a6;"/>
   <!--RIGHTWARDS LEFT-SHADED WHITE ARROW-->
-  <symbol number="F061" entity="&#xF061;" char="&#x1F8A7;"/>
+  <symbol number="F061" entity="&#xf061;" char="&#x1f8a7;"/>
+  <symbol number="0061" entity="&#xf061;" char="&#x1f8a7;"/>
   <!--LEFTWARDS BACK-TILTED SHADOWED WHITE ARROW-->
-  <symbol number="F062" entity="&#xF062;" char="&#x1F8A8;"/>
+  <symbol number="F062" entity="&#xf062;" char="&#x1f8a8;"/>
+  <symbol number="0062" entity="&#xf062;" char="&#x1f8a8;"/>
   <!--RIGHTWARDS BACK-TILTED SHADOWED WHITE ARROW-->
-  <symbol number="F063" entity="&#xF063;" char="&#x1F8A9;"/>
+  <symbol number="F063" entity="&#xf063;" char="&#x1f8a9;"/>
+  <symbol number="0063" entity="&#xf063;" char="&#x1f8a9;"/>
   <!--LEFTWARDS FRONT-TILTED SHADOWED WHITE ARROW-->
-  <symbol number="F064" entity="&#xF064;" char="&#x1F8AA;"/>
+  <symbol number="F064" entity="&#xf064;" char="&#x1f8aa;"/>
+  <symbol number="0064" entity="&#xf064;" char="&#x1f8aa;"/>
   <!--RIGHTWARDS FRONT-TILTED SHADOWED WHITE ARROW-->
-  <symbol number="F065" entity="&#xF065;" char="&#x1F8AB;"/>
+  <symbol number="F065" entity="&#xf065;" char="&#x1f8ab;"/>
+  <symbol number="0065" entity="&#xf065;" char="&#x1f8ab;"/>
   <!--LEFTWARDS ARROW-->
-  <symbol number="F066" entity="&#xF066;" char="&#x2190;"/>
+  <symbol number="F066" entity="&#xf066;" char="&#x2190;"/>
+  <symbol number="0066" entity="&#xf066;" char="&#x2190;"/>
   <!--RIGHTWARDS ARROW-->
-  <symbol number="F067" entity="&#xF067;" char="&#x2192;"/>
+  <symbol number="F067" entity="&#xf067;" char="&#x2192;"/>
+  <symbol number="0067" entity="&#xf067;" char="&#x2192;"/>
   <!--UPWARDS ARROW-->
-  <symbol number="F068" entity="&#xF068;" char="&#x2191;"/>
+  <symbol number="F068" entity="&#xf068;" char="&#x2191;"/>
+  <symbol number="0068" entity="&#xf068;" char="&#x2191;"/>
   <!--DOWNWARDS ARROW-->
-  <symbol number="F069" entity="&#xF069;" char="&#x2193;"/>
+  <symbol number="F069" entity="&#xf069;" char="&#x2193;"/>
+  <symbol number="0069" entity="&#xf069;" char="&#x2193;"/>
   <!--NORTH WEST ARROW-->
-  <symbol number="F06A" entity="&#xF06A;" char="&#x2196;"/>
+  <symbol number="F06A" entity="&#xf06a;" char="&#x2196;"/>
+  <symbol number="006A" entity="&#xf06a;" char="&#x2196;"/>
   <!--NORTH EAST ARROW-->
-  <symbol number="F06B" entity="&#xF06B;" char="&#x2197;"/>
+  <symbol number="F06B" entity="&#xf06b;" char="&#x2197;"/>
+  <symbol number="006B" entity="&#xf06b;" char="&#x2197;"/>
   <!--SOUTH WEST ARROW-->
-  <symbol number="F06C" entity="&#xF06C;" char="&#x2199;"/>
+  <symbol number="F06C" entity="&#xf06c;" char="&#x2199;"/>
+  <symbol number="006C" entity="&#xf06c;" char="&#x2199;"/>
   <!--SOUTH EAST ARROW-->
-  <symbol number="F06D" entity="&#xF06D;" char="&#x2198;"/>
+  <symbol number="F06D" entity="&#xf06d;" char="&#x2198;"/>
+  <symbol number="006D" entity="&#xf06d;" char="&#x2198;"/>
   <!--LEFT RIGHT SANS-SERIF ARROW-->
-  <symbol number="F06E" entity="&#xF06E;" char="&#x1F858;"/>
+  <symbol number="F06E" entity="&#xf06e;" char="&#x1f858;"/>
+  <symbol number="006E" entity="&#xf06e;" char="&#x1f858;"/>
   <!--UP DOWN SANS-SERIF ARROW-->
-  <symbol number="F06F" entity="&#xF06F;" char="&#x1F859;"/>
+  <symbol number="F06F" entity="&#xf06f;" char="&#x1f859;"/>
+  <symbol number="006F" entity="&#xf06f;" char="&#x1f859;"/>
   <!--BLACK UP-POINTING TRIANGLE-->
-  <symbol number="F070" entity="&#xF070;" char="&#x25B2;"/>
+  <symbol number="F070" entity="&#xf070;" char="&#x25b2;"/>
+  <symbol number="0070" entity="&#xf070;" char="&#x25b2;"/>
   <!--BLACK DOWN-POINTING TRIANGLE-->
-  <symbol number="F071" entity="&#xF071;" char="&#x25BC;"/>
+  <symbol number="F071" entity="&#xf071;" char="&#x25bc;"/>
+  <symbol number="0071" entity="&#xf071;" char="&#x25bc;"/>
   <!--WHITE UP-POINTING TRIANGLE-->
-  <symbol number="F072" entity="&#xF072;" char="&#x25B3;"/>
+  <symbol number="F072" entity="&#xf072;" char="&#x25b3;"/>
+  <symbol number="0072" entity="&#xf072;" char="&#x25b3;"/>
   <!--WHITE DOWN-POINTING TRIANGLE-->
-  <symbol number="F073" entity="&#xF073;" char="&#x25BD;"/>
+  <symbol number="F073" entity="&#xf073;" char="&#x25bd;"/>
+  <symbol number="0073" entity="&#xf073;" char="&#x25bd;"/>
   <!--BLACK LEFT-POINTING POINTER-->
-  <symbol number="F074" entity="&#xF074;" char="&#x25C4;"/>
+  <symbol number="F074" entity="&#xf074;" char="&#x25c4;"/>
+  <symbol number="0074" entity="&#xf074;" char="&#x25c4;"/>
   <!--BLACK RIGHT-POINTING POINTER-->
-  <symbol number="F075" entity="&#xF075;" char="&#x25BA;"/>
+  <symbol number="F075" entity="&#xf075;" char="&#x25ba;"/>
+  <symbol number="0075" entity="&#xf075;" char="&#x25ba;"/>
   <!--WHITE LEFT-POINTING TRIANGLE-->
-  <symbol number="F076" entity="&#xF076;" char="&#x25C1;"/>
+  <symbol number="F076" entity="&#xf076;" char="&#x25c1;"/>
+  <symbol number="0076" entity="&#xf076;" char="&#x25c1;"/>
   <!--WHITE RIGHT-POINTING TRIANGLE-->
-  <symbol number="F077" entity="&#xF077;" char="&#x25B7;"/>
+  <symbol number="F077" entity="&#xf077;" char="&#x25b7;"/>
+  <symbol number="0077" entity="&#xf077;" char="&#x25b7;"/>
   <!--BLACK LOWER LEFT TRIANGLE-->
-  <symbol number="F078" entity="&#xF078;" char="&#x25E3;"/>
+  <symbol number="F078" entity="&#xf078;" char="&#x25e3;"/>
+  <symbol number="0078" entity="&#xf078;" char="&#x25e3;"/>
   <!--BLACK LOWER RIGHT TRIANGLE-->
-  <symbol number="F079" entity="&#xF079;" char="&#x25E2;"/>
+  <symbol number="F079" entity="&#xf079;" char="&#x25e2;"/>
+  <symbol number="0079" entity="&#xf079;" char="&#x25e2;"/>
   <!--BLACK UPPER LEFT TRIANGLE-->
-  <symbol number="F07A" entity="&#xF07A;" char="&#x25E4;"/>
+  <symbol number="F07A" entity="&#xf07a;" char="&#x25e4;"/>
+  <symbol number="007A" entity="&#xf07a;" char="&#x25e4;"/>
   <!--BLACK UPPER RIGHT TRIANGLE-->
-  <symbol number="F07B" entity="&#xF07B;" char="&#x25E5;"/>
+  <symbol number="F07B" entity="&#xf07b;" char="&#x25e5;"/>
+  <symbol number="007B" entity="&#xf07b;" char="&#x25e5;"/>
   <!--BLACK LEFT-POINTING ISOSCELES RIGHT TRIANGLE-->
-  <symbol number="F07C" entity="&#xF07C;" char="&#x1F780;"/>
+  <symbol number="F07C" entity="&#xf07c;" char="&#x1f780;"/>
+  <symbol number="007C" entity="&#xf07c;" char="&#x1f780;"/>
   <!--BLACK RIGHT-POINTING ISOSCELES RIGHT TRIANGLE-->
-  <symbol number="F07D" entity="&#xF07D;" char="&#x1F782;"/>
+  <symbol number="F07D" entity="&#xf07d;" char="&#x1f782;"/>
+  <symbol number="007D" entity="&#xf07d;" char="&#x1f782;"/>
   <!--BLACK UP-POINTING ISOSCELES RIGHT TRIANGLE-->
-  <symbol number="F07E" entity="&#xF07E;" char="&#x1F781;"/>
+  <symbol number="F07E" entity="&#xf07e;" char="&#x1f781;"/>
+  <symbol number="007E" entity="&#xf07e;" char="&#x1f781;"/>
   <!--BLACK DOWN-POINTING ISOSCELES RIGHT TRIANGLE-->
-  <symbol number="F080" entity="&#xF080;" char="&#x1F783;"/>
+  <symbol number="F080" entity="&#xf080;" char="&#x1f783;"/>
+  <symbol number="0080" entity="&#xf080;" char="&#x1f783;"/>
   <!--BLACK UP-POINTING TRIANGLE-->
-  <symbol number="F081" entity="&#xF081;" char="&#x25B2;"/>
+  <symbol number="F081" entity="&#xf081;" char="&#x25b2;"/>
+  <symbol number="0081" entity="&#xf081;" char="&#x25b2;"/>
   <!--BLACK DOWN-POINTING SMALL TRIANGLE-->
-  <symbol number="F082" entity="&#xF082;" char="&#x25BC;"/>
+  <symbol number="F082" entity="&#xf082;" char="&#x25bc;"/>
+  <symbol number="0082" entity="&#xf082;" char="&#x25bc;"/>
   <!--BLACK LEFT-POINTING TRIANGLE-->
-  <symbol number="F083" entity="&#xF083;" char="&#x25C0;"/>
+  <symbol number="F083" entity="&#xf083;" char="&#x25c0;"/>
+  <symbol number="0083" entity="&#xf083;" char="&#x25c0;"/>
   <!--BLACK RIGHT-POINTING TRIANGLE-->
-  <symbol number="F084" entity="&#xF084;" char="&#x25B6;"/>
+  <symbol number="F084" entity="&#xf084;" char="&#x25b6;"/>
+  <symbol number="0084" entity="&#xf084;" char="&#x25b6;"/>
   <!--BLACK LEFTWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F085" entity="&#xF085;" char="&#x2B9C;"/>
+  <symbol number="F085" entity="&#xf085;" char="&#x2b9c;"/>
+  <symbol number="0085" entity="&#xf085;" char="&#x2b9c;"/>
   <!--BLACK RIGHTWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F086" entity="&#xF086;" char="&#x2B9E;"/>
+  <symbol number="F086" entity="&#xf086;" char="&#x2b9e;"/>
+  <symbol number="0086" entity="&#xf086;" char="&#x2b9e;"/>
   <!--BLACK UPWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F087" entity="&#xF087;" char="&#x2B9D;"/>
+  <symbol number="F087" entity="&#xf087;" char="&#x2b9d;"/>
+  <symbol number="0087" entity="&#xf087;" char="&#x2b9d;"/>
   <!--BLACK DOWNWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F088" entity="&#xF088;" char="&#x2B9F;"/>
+  <symbol number="F088" entity="&#xf088;" char="&#x2b9f;"/>
+  <symbol number="0088" entity="&#xf088;" char="&#x2b9f;"/>
   <!--LEFTWARDS ARROW WITH SMALL EQUILATERAL ARROWHEAD-->
-  <symbol number="F089" entity="&#xF089;" char="&#x1F810;"/>
+  <symbol number="F089" entity="&#xf089;" char="&#x1f810;"/>
+  <symbol number="0089" entity="&#xf089;" char="&#x1f810;"/>
   <!--RIGHTWARDS ARROW WITH SMALL EQUILATERAL ARROWHEAD-->
-  <symbol number="F08A" entity="&#xF08A;" char="&#x1F812;"/>
+  <symbol number="F08A" entity="&#xf08a;" char="&#x1f812;"/>
+  <symbol number="008A" entity="&#xf08a;" char="&#x1f812;"/>
   <!--UPWARDS ARROW WITH SMALL EQUILATERAL ARROWHEAD-->
-  <symbol number="F08B" entity="&#xF08B;" char="&#x1F811;"/>
+  <symbol number="F08B" entity="&#xf08b;" char="&#x1f811;"/>
+  <symbol number="008B" entity="&#xf08b;" char="&#x1f811;"/>
   <!--DOWNWARDS ARROW WITH SMALL EQUILATERAL ARROWHEAD-->
-  <symbol number="F08C" entity="&#xF08C;" char="&#x1F813;"/>
+  <symbol number="F08C" entity="&#xf08c;" char="&#x1f813;"/>
+  <symbol number="008C" entity="&#xf08c;" char="&#x1f813;"/>
   <!--LEFTWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F08D" entity="&#xF08D;" char="&#x1F814;"/>
+  <symbol number="F08D" entity="&#xf08d;" char="&#x1f814;"/>
+  <symbol number="008D" entity="&#xf08d;" char="&#x1f814;"/>
   <!--RIGHTWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F08E" entity="&#xF08E;" char="&#x1F816;"/>
+  <symbol number="F08E" entity="&#xf08e;" char="&#x1f816;"/>
+  <symbol number="008E" entity="&#xf08e;" char="&#x1f816;"/>
   <!--UPWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F08F" entity="&#xF08F;" char="&#x1F815;"/>
+  <symbol number="F08F" entity="&#xf08f;" char="&#x1f815;"/>
+  <symbol number="008F" entity="&#xf08f;" char="&#x1f815;"/>
   <!--DOWNWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F090" entity="&#xF090;" char="&#x1F817;"/>
+  <symbol number="F090" entity="&#xf090;" char="&#x1f817;"/>
+  <symbol number="0090" entity="&#xf090;" char="&#x1f817;"/>
   <!--HEAVY LEFTWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F091" entity="&#xF091;" char="&#x1F818;"/>
+  <symbol number="F091" entity="&#xf091;" char="&#x1f818;"/>
+  <symbol number="0091" entity="&#xf091;" char="&#x1f818;"/>
   <!--HEAVY RIGHTWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F092" entity="&#xF092;" char="&#x1F81A;"/>
+  <symbol number="F092" entity="&#xf092;" char="&#x1f81a;"/>
+  <symbol number="0092" entity="&#xf092;" char="&#x1f81a;"/>
   <!--HEAVY UPWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F093" entity="&#xF093;" char="&#x1F819;"/>
+  <symbol number="F093" entity="&#xf093;" char="&#x1f819;"/>
+  <symbol number="0093" entity="&#xf093;" char="&#x1f819;"/>
   <!--HEAVY DOWNWARDS ARROW WITH EQUILATERAL ARROWHEAD-->
-  <symbol number="F094" entity="&#xF094;" char="&#x1F81B;"/>
+  <symbol number="F094" entity="&#xf094;" char="&#x1f81b;"/>
+  <symbol number="0094" entity="&#xf094;" char="&#x1f81b;"/>
   <!--HEAVY LEFTWARDS ARROW WITH LARGE EQUILATERAL ARROWHEAD-->
-  <symbol number="F095" entity="&#xF095;" char="&#x1F81C;"/>
+  <symbol number="F095" entity="&#xf095;" char="&#x1f81c;"/>
+  <symbol number="0095" entity="&#xf095;" char="&#x1f81c;"/>
   <!--HEAVY RIGHTWARDS ARROW WITH LARGE EQUILATERAL ARROWHEAD-->
-  <symbol number="F096" entity="&#xF096;" char="&#x1F81E;"/>
+  <symbol number="F096" entity="&#xf096;" char="&#x1f81e;"/>
+  <symbol number="0096" entity="&#xf096;" char="&#x1f81e;"/>
   <!--HEAVY UPWARDS ARROW WITH LARGE EQUILATERAL ARROWHEAD-->
-  <symbol number="F097" entity="&#xF097;" char="&#x1F81D;"/>
+  <symbol number="F097" entity="&#xf097;" char="&#x1f81d;"/>
+  <symbol number="0097" entity="&#xf097;" char="&#x1f81d;"/>
   <!--HEAVY DOWNWARDS ARROW WITH LARGE EQUILATERAL ARROWHEAD-->
-  <symbol number="F098" entity="&#xF098;" char="&#x1F81F;"/>
+  <symbol number="F098" entity="&#xf098;" char="&#x1f81f;"/>
+  <symbol number="0098" entity="&#xf098;" char="&#x1f81f;"/>
   <!--LEFTWARDS ARROW WITH SMALL TRIANGLE ARROWHEAD-->
-  <symbol number="F099" entity="&#xF099;" char="&#x1F800;"/>
+  <symbol number="F099" entity="&#xf099;" char="&#x1f800;"/>
+  <symbol number="0099" entity="&#xf099;" char="&#x1f800;"/>
   <!--RIGHTWARDS ARROW WITH SMALL TRIANGLE ARROWHEAD-->
-  <symbol number="F09A" entity="&#xF09A;" char="&#x1F802;"/>
+  <symbol number="F09A" entity="&#xf09a;" char="&#x1f802;"/>
+  <symbol number="009A" entity="&#xf09a;" char="&#x1f802;"/>
   <!--UPWARDS ARROW WITH SMALL TRIANGLE ARROWHEAD-->
-  <symbol number="F09B" entity="&#xF09B;" char="&#x1F801;"/>
+  <symbol number="F09B" entity="&#xf09b;" char="&#x1f801;"/>
+  <symbol number="009B" entity="&#xf09b;" char="&#x1f801;"/>
   <!--DOWNWARDS ARROW WITH SMALL TRIANGLE ARROWHEAD-->
-  <symbol number="F09C" entity="&#xF09C;" char="&#x1F803;"/>
+  <symbol number="F09C" entity="&#xf09c;" char="&#x1f803;"/>
+  <symbol number="009C" entity="&#xf09c;" char="&#x1f803;"/>
   <!--LEFTWARDS ARROW WITH MEDIUM TRIANGLE ARROWHEAD-->
-  <symbol number="F09D" entity="&#xF09D;" char="&#x1F804;"/>
+  <symbol number="F09D" entity="&#xf09d;" char="&#x1f804;"/>
+  <symbol number="009D" entity="&#xf09d;" char="&#x1f804;"/>
   <!--RIGHTWARDS ARROW WITH MEDIUM TRIANGLE ARROWHEAD-->
-  <symbol number="F09E" entity="&#xF09E;" char="&#x1F806;"/>
+  <symbol number="F09E" entity="&#xf09e;" char="&#x1f806;"/>
+  <symbol number="009E" entity="&#xf09e;" char="&#x1f806;"/>
   <!--UPWARDS ARROW WITH MEDIUM TRIANGLE ARROWHEAD-->
-  <symbol number="F09F" entity="&#xF09F;" char="&#x1F805;"/>
+  <symbol number="F09F" entity="&#xf09f;" char="&#x1f805;"/>
+  <symbol number="009F" entity="&#xf09f;" char="&#x1f805;"/>
   <!--DOWNWARDS ARROW WITH MEDIUM TRIANGLE ARROWHEAD-->
-  <symbol number="F0A0" entity="&#xF0A0;" char="&#x1F807;"/>
+  <symbol number="F0A0" entity="&#xf0a0;" char="&#x1f807;"/>
+  <symbol number="00A0" entity="&#xf0a0;" char="&#x1f807;"/>
   <!--LEFTWARDS ARROW WITH LARGE TRIANGLE ARROWHEAD-->
-  <symbol number="F0A1" entity="&#xF0A1;" char="&#x1F808;"/>
+  <symbol number="F0A1" entity="&#xf0a1;" char="&#x1f808;"/>
+  <symbol number="00A1" entity="&#xf0a1;" char="&#x1f808;"/>
   <!--RIGHTWARDS ARROW WITH LARGE TRIANGLE ARROWHEAD-->
-  <symbol number="F0A2" entity="&#xF0A2;" char="&#x1F80A;"/>
+  <symbol number="F0A2" entity="&#xf0a2;" char="&#x1f80a;"/>
+  <symbol number="00A2" entity="&#xf0a2;" char="&#x1f80a;"/>
   <!--UPWARDS ARROW WITH LARGE TRIANGLE ARROWHEAD-->
-  <symbol number="F0A3" entity="&#xF0A3;" char="&#x1F809;"/>
+  <symbol number="F0A3" entity="&#xf0a3;" char="&#x1f809;"/>
+  <symbol number="00A3" entity="&#xf0a3;" char="&#x1f809;"/>
   <!--DOWNWARDS ARROW WITH LARGE TRIANGLE ARROWHEAD-->
-  <symbol number="F0A4" entity="&#xF0A4;" char="&#x1F80B;"/>
+  <symbol number="F0A4" entity="&#xf0a4;" char="&#x1f80b;"/>
+  <symbol number="00A4" entity="&#xf0a4;" char="&#x1f80b;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW WITH NARROW SHAFT-->
-  <symbol number="F0A5" entity="&#xF0A5;" char="&#x1F820;"/>
+  <symbol number="F0A5" entity="&#xf0a5;" char="&#x1f820;"/>
+  <symbol number="00A5" entity="&#xf0a5;" char="&#x1f820;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW WITH NARROW SHAFT-->
-  <symbol number="F0A6" entity="&#xF0A6;" char="&#x1F822;"/>
+  <symbol number="F0A6" entity="&#xf0a6;" char="&#x1f822;"/>
+  <symbol number="00A6" entity="&#xf0a6;" char="&#x1f822;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW WITH MEDIUM SHAFT-->
-  <symbol number="F0A7" entity="&#xF0A7;" char="&#x1F824;"/>
+  <symbol number="F0A7" entity="&#xf0a7;" char="&#x1f824;"/>
+  <symbol number="00A7" entity="&#xf0a7;" char="&#x1f824;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW WITH MEDIUM SHAFT-->
-  <symbol number="F0A8" entity="&#xF0A8;" char="&#x1F826;"/>
+  <symbol number="F0A8" entity="&#xf0a8;" char="&#x1f826;"/>
+  <symbol number="00A8" entity="&#xf0a8;" char="&#x1f826;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW WITH BOLD SHAFT-->
-  <symbol number="F0A9" entity="&#xF0A9;" char="&#x1F828;"/>
+  <symbol number="F0A9" entity="&#xf0a9;" char="&#x1f828;"/>
+  <symbol number="00A9" entity="&#xf0a9;" char="&#x1f828;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW WITH BOLD SHAFT-->
-  <symbol number="F0AA" entity="&#xF0AA;" char="&#x1F82A;"/>
+  <symbol number="F0AA" entity="&#xf0aa;" char="&#x1f82a;"/>
+  <symbol number="00AA" entity="&#xf0aa;" char="&#x1f82a;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW WITH HEAVY SHAFT-->
-  <symbol number="F0AB" entity="&#xF0AB;" char="&#x1F82C;"/>
+  <symbol number="F0AB" entity="&#xf0ab;" char="&#x1f82c;"/>
+  <symbol number="00AB" entity="&#xf0ab;" char="&#x1f82c;"/>
   <!--HEAVY ARROW SHAFT WIDTH ONE-->
-  <symbol number="F0AC" entity="&#xF0AC;" char="&#x1F89C;"/>
+  <symbol number="F0AC" entity="&#xf0ac;" char="&#x1f89c;"/>
+  <symbol number="00AC" entity="&#xf0ac;" char="&#x1f89c;"/>
   <!--HEAVY ARROW SHAFT WIDTH TWO THIRDS-->
-  <symbol number="F0AD" entity="&#xF0AD;" char="&#x1F89D;"/>
+  <symbol number="F0AD" entity="&#xf0ad;" char="&#x1f89d;"/>
+  <symbol number="00AD" entity="&#xf0ad;" char="&#x1f89d;"/>
   <!--HEAVY ARROW SHAFT WIDTH ONE HALF-->
-  <symbol number="F0AE" entity="&#xF0AE;" char="&#x1F89E;"/>
+  <symbol number="F0AE" entity="&#xf0ae;" char="&#x1f89e;"/>
+  <symbol number="00AE" entity="&#xf0ae;" char="&#x1f89e;"/>
   <!--HEAVY ARROW SHAFT WIDTH ONE THIRD-->
-  <symbol number="F0AF" entity="&#xF0AF;" char="&#x1F89F;"/>
+  <symbol number="F0AF" entity="&#xf0af;" char="&#x1f89f;"/>
+  <symbol number="00AF" entity="&#xf0af;" char="&#x1f89f;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW WITH HEAVY SHAFT-->
-  <symbol number="F0B0" entity="&#xF0B0;" char="&#x1F82E;"/>
+  <symbol number="F0B0" entity="&#xf0b0;" char="&#x1f82e;"/>
+  <symbol number="00B0" entity="&#xf0b0;" char="&#x1f82e;"/>
   <!--LEFTWARDS TRIANGLE-HEADED ARROW WITH VERY HEAVY SHAFT-->
-  <symbol number="F0B1" entity="&#xF0B1;" char="&#x1F830;"/>
+  <symbol number="F0B1" entity="&#xf0b1;" char="&#x1f830;"/>
+  <symbol number="00B1" entity="&#xf0b1;" char="&#x1f830;"/>
   <!--RIGHTWARDS TRIANGLE-HEADED ARROW WITH VERY HEAVY SHAFT-->
-  <symbol number="F0B2" entity="&#xF0B2;" char="&#x1F832;"/>
+  <symbol number="F0B2" entity="&#xf0b2;" char="&#x1f832;"/>
+  <symbol number="00B2" entity="&#xf0b2;" char="&#x1f832;"/>
   <!--LEFTWARDS FINGER-POST ARROW-->
-  <symbol number="F0B3" entity="&#xF0B3;" char="&#x1F834;"/>
+  <symbol number="F0B3" entity="&#xf0b3;" char="&#x1f834;"/>
+  <symbol number="00B3" entity="&#xf0b3;" char="&#x1f834;"/>
   <!--RIGHTWARDS FINGER-POST ARROW-->
-  <symbol number="F0B4" entity="&#xF0B4;" char="&#x1F836;"/>
+  <symbol number="F0B4" entity="&#xf0b4;" char="&#x1f836;"/>
+  <symbol number="00B4" entity="&#xf0b4;" char="&#x1f836;"/>
   <!--LEFTWARDS SQUARED ARROW-->
-  <symbol number="F0B5" entity="&#xF0B5;" char="&#x1F838;"/>
+  <symbol number="F0B5" entity="&#xf0b5;" char="&#x1f838;"/>
+  <symbol number="00B5" entity="&#xf0b5;" char="&#x1f838;"/>
   <!--RIGHTWARDS SQUARED ARROW-->
-  <symbol number="F0B6" entity="&#xF0B6;" char="&#x1F83A;"/>
+  <symbol number="F0B6" entity="&#xf0b6;" char="&#x1f83a;"/>
+  <symbol number="00B6" entity="&#xf0b6;" char="&#x1f83a;"/>
   <!--UPWARDS SQUARED ARROW-->
-  <symbol number="F0B7" entity="&#xF0B7;" char="&#x1F839;"/>
+  <symbol number="F0B7" entity="&#xf0b7;" char="&#x1f839;"/>
+  <symbol number="00B7" entity="&#xf0b7;" char="&#x1f839;"/>
   <!--DOWNWARDS SQUARED ARROW-->
-  <symbol number="F0B8" entity="&#xF0B8;" char="&#x1F83B;"/>
+  <symbol number="F0B8" entity="&#xf0b8;" char="&#x1f83b;"/>
+  <symbol number="00B8" entity="&#xf0b8;" char="&#x1f83b;"/>
   <!--LEFTWARDS ARROW WITH NOTCHED TAIL-->
-  <symbol number="F0B9" entity="&#xF0B9;" char="&#x1F898;"/>
+  <symbol number="F0B9" entity="&#xf0b9;" char="&#x1f898;"/>
+  <symbol number="00B9" entity="&#xf0b9;" char="&#x1f898;"/>
   <!--RIGHTWARDS ARROW WITH NOTCHED TAIL-->
-  <symbol number="F0BA" entity="&#xF0BA;" char="&#x1F89A;"/>
+  <symbol number="F0BA" entity="&#xf0ba;" char="&#x1f89a;"/>
+  <symbol number="00BA" entity="&#xf0ba;" char="&#x1f89a;"/>
   <!--UPWARDS ARROW WITH NOTCHED TAIL-->
-  <symbol number="F0BB" entity="&#xF0BB;" char="&#x1F899;"/>
+  <symbol number="F0BB" entity="&#xf0bb;" char="&#x1f899;"/>
+  <symbol number="00BB" entity="&#xf0bb;" char="&#x1f899;"/>
   <!--DOWNWARDS ARROW WITH NOTCHED TAIL-->
-  <symbol number="F0BC" entity="&#xF0BC;" char="&#x1F89B;"/>
+  <symbol number="F0BC" entity="&#xf0bc;" char="&#x1f89b;"/>
+  <symbol number="00BC" entity="&#xf0bc;" char="&#x1f89b;"/>
   <!--LEFTWARDS COMPRESSED ARROW-->
-  <symbol number="F0BD" entity="&#xF0BD;" char="&#x1F83C;"/>
+  <symbol number="F0BD" entity="&#xf0bd;" char="&#x1f83c;"/>
+  <symbol number="00BD" entity="&#xf0bd;" char="&#x1f83c;"/>
   <!--RIGHTWARDS COMPRESSED ARROW-->
-  <symbol number="F0BE" entity="&#xF0BE;" char="&#x1F83E;"/>
+  <symbol number="F0BE" entity="&#xf0be;" char="&#x1f83e;"/>
+  <symbol number="00BE" entity="&#xf0be;" char="&#x1f83e;"/>
   <!--UPWARDS COMPRESSED ARROW-->
-  <symbol number="F0BF" entity="&#xF0BF;" char="&#x1F83D;"/>
+  <symbol number="F0BF" entity="&#xf0bf;" char="&#x1f83d;"/>
+  <symbol number="00BF" entity="&#xf0bf;" char="&#x1f83d;"/>
   <!--DOWNWARDS COMPRESSED ARROW-->
-  <symbol number="F0C0" entity="&#xF0C0;" char="&#x1F83F;"/>
+  <symbol number="F0C0" entity="&#xf0c0;" char="&#x1f83f;"/>
+  <symbol number="00C0" entity="&#xf0c0;" char="&#x1f83f;"/>
   <!--LEFTWARDS HEAVY COMPRESSED ARROW-->
-  <symbol number="F0C1" entity="&#xF0C1;" char="&#x1F840;"/>
+  <symbol number="F0C1" entity="&#xf0c1;" char="&#x1f840;"/>
+  <symbol number="00C1" entity="&#xf0c1;" char="&#x1f840;"/>
   <!--RIGHTWARDS HEAVY COMPRESSED ARROW-->
-  <symbol number="F0C2" entity="&#xF0C2;" char="&#x1F842;"/>
+  <symbol number="F0C2" entity="&#xf0c2;" char="&#x1f842;"/>
+  <symbol number="00C2" entity="&#xf0c2;" char="&#x1f842;"/>
   <!--UPWARDS HEAVY COMPRESSED ARROW-->
-  <symbol number="F0C3" entity="&#xF0C3;" char="&#x1F841;"/>
+  <symbol number="F0C3" entity="&#xf0c3;" char="&#x1f841;"/>
+  <symbol number="00C3" entity="&#xf0c3;" char="&#x1f841;"/>
   <!--DOWNWARDS HEAVY COMPRESSED ARROW-->
-  <symbol number="F0C4" entity="&#xF0C4;" char="&#x1F843;"/>
+  <symbol number="F0C4" entity="&#xf0c4;" char="&#x1f843;"/>
+  <symbol number="00C4" entity="&#xf0c4;" char="&#x1f843;"/>
   <!--LEFTWARDS HEAVY ARROW-->
-  <symbol number="F0C5" entity="&#xF0C5;" char="&#x1F844;"/>
+  <symbol number="F0C5" entity="&#xf0c5;" char="&#x1f844;"/>
+  <symbol number="00C5" entity="&#xf0c5;" char="&#x1f844;"/>
   <!--RIGHTWARDS HEAVY ARROW-->
-  <symbol number="F0C6" entity="&#xF0C6;" char="&#x1F846;"/>
+  <symbol number="F0C6" entity="&#xf0c6;" char="&#x1f846;"/>
+  <symbol number="00C6" entity="&#xf0c6;" char="&#x1f846;"/>
   <!--UPWARDS HEAVY ARROW-->
-  <symbol number="F0C7" entity="&#xF0C7;" char="&#x1F845;"/>
+  <symbol number="F0C7" entity="&#xf0c7;" char="&#x1f845;"/>
+  <symbol number="00C7" entity="&#xf0c7;" char="&#x1f845;"/>
   <!--DOWNWARDS HEAVY ARROW-->
-  <symbol number="F0C8" entity="&#xF0C8;" char="&#x1F847;"/>
+  <symbol number="F0C8" entity="&#xf0c8;" char="&#x1f847;"/>
+  <symbol number="00C8" entity="&#xf0c8;" char="&#x1f847;"/>
   <!--BLACK CURVED DOWNWARDS AND LEFTWARDS ARROW-->
-  <symbol number="F0C9" entity="&#xF0C9;" char="&#x2BA8;"/>
+  <symbol number="F0C9" entity="&#xf0c9;" char="&#x2ba8;"/>
+  <symbol number="00C9" entity="&#xf0c9;" char="&#x2ba8;"/>
   <!--BLACK CURVED DOWNWARDS AND RIGHTWARDS ARROW-->
-  <symbol number="F0CA" entity="&#xF0CA;" char="&#x2BA9;"/>
+  <symbol number="F0CA" entity="&#xf0ca;" char="&#x2ba9;"/>
+  <symbol number="00CA" entity="&#xf0ca;" char="&#x2ba9;"/>
   <!--BLACK CURVED UPWARDS AND LEFTWARDS ARROW-->
-  <symbol number="F0CB" entity="&#xF0CB;" char="&#x2BAA;"/>
+  <symbol number="F0CB" entity="&#xf0cb;" char="&#x2baa;"/>
+  <symbol number="00CB" entity="&#xf0cb;" char="&#x2baa;"/>
   <!--BLACK CURVED UPWARDS AND RIGHTWARDS ARROW-->
-  <symbol number="F0CC" entity="&#xF0CC;" char="&#x2BAB;"/>
+  <symbol number="F0CC" entity="&#xf0cc;" char="&#x2bab;"/>
+  <symbol number="00CC" entity="&#xf0cc;" char="&#x2bab;"/>
   <!--BLACK CURVED LEFTWARDS AND UPWARDS ARROW-->
-  <symbol number="F0CD" entity="&#xF0CD;" char="&#x2BAC;"/>
+  <symbol number="F0CD" entity="&#xf0cd;" char="&#x2bac;"/>
+  <symbol number="00CD" entity="&#xf0cd;" char="&#x2bac;"/>
   <!--BLACK CURVED RIGHTWARDS AND UPWARDS ARROW-->
-  <symbol number="F0CE" entity="&#xF0CE;" char="&#x2BAD;"/>
+  <symbol number="F0CE" entity="&#xf0ce;" char="&#x2bad;"/>
+  <symbol number="00CE" entity="&#xf0ce;" char="&#x2bad;"/>
   <!--BLACK CURVED LEFTWARDS AND DOWNWARDS ARROW-->
-  <symbol number="F0CF" entity="&#xF0CF;" char="&#x2BAE;"/>
+  <symbol number="F0CF" entity="&#xf0cf;" char="&#x2bae;"/>
+  <symbol number="00CF" entity="&#xf0cf;" char="&#x2bae;"/>
   <!--BLACK CURVED RIGHTWARDS AND DOWNWARDS ARROW-->
-  <symbol number="F0D0" entity="&#xF0D0;" char="&#x2BAF;"/>
+  <symbol number="F0D0" entity="&#xf0d0;" char="&#x2baf;"/>
+  <symbol number="00D0" entity="&#xf0d0;" char="&#x2baf;"/>
   <!--WIDE-HEADED LEFTWARDS LIGHT BARB ARROW-->
-  <symbol number="F0D1" entity="&#xF0D1;" char="&#x1F860;"/>
+  <symbol number="F0D1" entity="&#xf0d1;" char="&#x1f860;"/>
+  <symbol number="00D1" entity="&#xf0d1;" char="&#x1f860;"/>
   <!--WIDE-HEADED RIGHTWARDS LIGHT BARB ARROW-->
-  <symbol number="F0D2" entity="&#xF0D2;" char="&#x1F862;"/>
+  <symbol number="F0D2" entity="&#xf0d2;" char="&#x1f862;"/>
+  <symbol number="00D2" entity="&#xf0d2;" char="&#x1f862;"/>
   <!--WIDE-HEADED UPWARDS LIGHT BARB ARROW-->
-  <symbol number="F0D3" entity="&#xF0D3;" char="&#x1F861;"/>
+  <symbol number="F0D3" entity="&#xf0d3;" char="&#x1f861;"/>
+  <symbol number="00D3" entity="&#xf0d3;" char="&#x1f861;"/>
   <!--WIDE-HEADED DOWNWARDS LIGHT BARB ARROW-->
-  <symbol number="F0D4" entity="&#xF0D4;" char="&#x1F863;"/>
+  <symbol number="F0D4" entity="&#xf0d4;" char="&#x1f863;"/>
+  <symbol number="00D4" entity="&#xf0d4;" char="&#x1f863;"/>
   <!--WIDE-HEADED NORTH WEST LIGHT BARB ARROW-->
-  <symbol number="F0D5" entity="&#xF0D5;" char="&#x1F864;"/>
+  <symbol number="F0D5" entity="&#xf0d5;" char="&#x1f864;"/>
+  <symbol number="00D5" entity="&#xf0d5;" char="&#x1f864;"/>
   <!--WIDE-HEADED NORTH EAST LIGHT BARB ARROW-->
-  <symbol number="F0D6" entity="&#xF0D6;" char="&#x1F865;"/>
+  <symbol number="F0D6" entity="&#xf0d6;" char="&#x1f865;"/>
+  <symbol number="00D6" entity="&#xf0d6;" char="&#x1f865;"/>
   <!--WIDE-HEADED SOUTH WEST LIGHT BARB ARROW-->
-  <symbol number="F0D7" entity="&#xF0D7;" char="&#x1F867;"/>
+  <symbol number="F0D7" entity="&#xf0d7;" char="&#x1f867;"/>
+  <symbol number="00D7" entity="&#xf0d7;" char="&#x1f867;"/>
   <!--WIDE-HEADED SOUTH EAST LIGHT BARB ARROW-->
-  <symbol number="F0D8" entity="&#xF0D8;" char="&#x1F866;"/>
+  <symbol number="F0D8" entity="&#xf0d8;" char="&#x1f866;"/>
+  <symbol number="00D8" entity="&#xf0d8;" char="&#x1f866;"/>
   <!--WIDE-HEADED LEFTWARDS MEDIUM BARB ARROW-->
-  <symbol number="F0D9" entity="&#xF0D9;" char="&#x1F870;"/>
+  <symbol number="F0D9" entity="&#xf0d9;" char="&#x1f870;"/>
+  <symbol number="00D9" entity="&#xf0d9;" char="&#x1f870;"/>
   <!--WIDE-HEADED RIGHTWARDS MEDIUM BARB ARROW-->
-  <symbol number="F0DA" entity="&#xF0DA;" char="&#x1F872;"/>
+  <symbol number="F0DA" entity="&#xf0da;" char="&#x1f872;"/>
+  <symbol number="00DA" entity="&#xf0da;" char="&#x1f872;"/>
   <!--WIDE-HEADED UPWARDS MEDIUM BARB ARROW-->
-  <symbol number="F0DB" entity="&#xF0DB;" char="&#x1F871;"/>
+  <symbol number="F0DB" entity="&#xf0db;" char="&#x1f871;"/>
+  <symbol number="00DB" entity="&#xf0db;" char="&#x1f871;"/>
   <!--WIDE-HEADED DOWNWARDS MEDIUM BARB ARROW-->
-  <symbol number="F0DC" entity="&#xF0DC;" char="&#x1F873;"/>
+  <symbol number="F0DC" entity="&#xf0dc;" char="&#x1f873;"/>
+  <symbol number="00DC" entity="&#xf0dc;" char="&#x1f873;"/>
   <!--WIDE-HEADED NORTH WEST MEDIUM BARB ARROW-->
-  <symbol number="F0DD" entity="&#xF0DD;" char="&#x1F874;"/>
+  <symbol number="F0DD" entity="&#xf0dd;" char="&#x1f874;"/>
+  <symbol number="00DD" entity="&#xf0dd;" char="&#x1f874;"/>
   <!--WIDE-HEADED NORTH EAST MEDIUM BARB ARROW-->
-  <symbol number="F0DE" entity="&#xF0DE;" char="&#x1F875;"/>
+  <symbol number="F0DE" entity="&#xf0de;" char="&#x1f875;"/>
+  <symbol number="00DE" entity="&#xf0de;" char="&#x1f875;"/>
   <!--WIDE-HEADED SOUTH WEST MEDIUM BARB ARROW-->
-  <symbol number="F0DF" entity="&#xF0DF;" char="&#x1F877;"/>
+  <symbol number="F0DF" entity="&#xf0df;" char="&#x1f877;"/>
+  <symbol number="00DF" entity="&#xf0df;" char="&#x1f877;"/>
   <!--WIDE-HEADED SOUTH EAST MEDIUM BARB ARROW-->
-  <symbol number="F0E0" entity="&#xF0E0;" char="&#x1F876;"/>
+  <symbol number="F0E0" entity="&#xf0e0;" char="&#x1f876;"/>
+  <symbol number="00E0" entity="&#xf0e0;" char="&#x1f876;"/>
   <!--WIDE-HEADED LEFTWARDS VERY HEAVY BARB ARROW-->
-  <symbol number="F0E1" entity="&#xF0E1;" char="&#x1F880;"/>
+  <symbol number="F0E1" entity="&#xf0e1;" char="&#x1f880;"/>
+  <symbol number="00E1" entity="&#xf0e1;" char="&#x1f880;"/>
   <!--WIDE-HEADED RIGHTWARDS VERY HEAVY BARB ARROW-->
-  <symbol number="F0E2" entity="&#xF0E2;" char="&#x1F882;"/>
+  <symbol number="F0E2" entity="&#xf0e2;" char="&#x1f882;"/>
+  <symbol number="00E2" entity="&#xf0e2;" char="&#x1f882;"/>
   <!--WIDE-HEADED UPWARDS VERY HEAVY BARB ARROW-->
-  <symbol number="F0E3" entity="&#xF0E3;" char="&#x1F881;"/>
+  <symbol number="F0E3" entity="&#xf0e3;" char="&#x1f881;"/>
+  <symbol number="00E3" entity="&#xf0e3;" char="&#x1f881;"/>
   <!--WIDE-HEADED DOWNWARDS VERY HEAVY BARB ARROW-->
-  <symbol number="F0E4" entity="&#xF0E4;" char="&#x1F883;"/>
+  <symbol number="F0E4" entity="&#xf0e4;" char="&#x1f883;"/>
+  <symbol number="00E4" entity="&#xf0e4;" char="&#x1f883;"/>
   <!--WIDE-HEADED NORTH WEST VERY HEAVY BARB ARROW-->
-  <symbol number="F0E5" entity="&#xF0E5;" char="&#x1F884;"/>
+  <symbol number="F0E5" entity="&#xf0e5;" char="&#x1f884;"/>
+  <symbol number="00E5" entity="&#xf0e5;" char="&#x1f884;"/>
   <!--WIDE-HEADED NORTH EAST VERY HEAVY BARB ARROW-->
-  <symbol number="F0E6" entity="&#xF0E6;" char="&#x1F885;"/>
+  <symbol number="F0E6" entity="&#xf0e6;" char="&#x1f885;"/>
+  <symbol number="00E6" entity="&#xf0e6;" char="&#x1f885;"/>
   <!--WIDE-HEADED SOUTH WEST VERY HEAVY BARB ARROW-->
-  <symbol number="F0E7" entity="&#xF0E7;" char="&#x1F887;"/>
+  <symbol number="F0E7" entity="&#xf0e7;" char="&#x1f887;"/>
+  <symbol number="00E7" entity="&#xf0e7;" char="&#x1f887;"/>
   <!--WIDE-HEADED SOUTH EAST VERY HEAVY BARB ARROW-->
-  <symbol number="F0E8" entity="&#xF0E8;" char="&#x1F886;"/>
+  <symbol number="F0E8" entity="&#xf0e8;" char="&#x1f886;"/>
+  <symbol number="00E8" entity="&#xf0e8;" char="&#x1f886;"/>
   <!--LEFTWARDS TRIANGLE ARROWHEAD-->
-  <symbol number="F0E9" entity="&#xF0E9;" char="&#x1F890;"/>
+  <symbol number="F0E9" entity="&#xf0e9;" char="&#x1f890;"/>
+  <symbol number="00E9" entity="&#xf0e9;" char="&#x1f890;"/>
   <!--RIGHTWARDS TRIANGLE ARROWHEAD-->
-  <symbol number="F0EA" entity="&#xF0EA;" char="&#x1F892;"/>
+  <symbol number="F0EA" entity="&#xf0ea;" char="&#x1f892;"/>
+  <symbol number="00EA" entity="&#xf0ea;" char="&#x1f892;"/>
   <!--UPWARDS TRIANGLE ARROWHEAD-->
-  <symbol number="F0EB" entity="&#xF0EB;" char="&#x1F891;"/>
+  <symbol number="F0EB" entity="&#xf0eb;" char="&#x1f891;"/>
+  <symbol number="00EB" entity="&#xf0eb;" char="&#x1f891;"/>
   <!--DOWNWARDS TRIANGLE ARROWHEAD-->
-  <symbol number="F0EC" entity="&#xF0EC;" char="&#x1F893;"/>
+  <symbol number="F0EC" entity="&#xf0ec;" char="&#x1f893;"/>
+  <symbol number="00EC" entity="&#xf0ec;" char="&#x1f893;"/>
   <!--LEFTWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD-->
-  <symbol number="F0ED" entity="&#xF0ED;" char="&#x1F894;"/>
+  <symbol number="F0ED" entity="&#xf0ed;" char="&#x1f894;"/>
+  <symbol number="00ED" entity="&#xf0ed;" char="&#x1f894;"/>
   <!--RIGHTWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD-->
-  <symbol number="F0EE" entity="&#xF0EE;" char="&#x1F896;"/>
+  <symbol number="F0EE" entity="&#xf0ee;" char="&#x1f896;"/>
+  <symbol number="00EE" entity="&#xf0ee;" char="&#x1f896;"/>
   <!--UPWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD-->
-  <symbol number="F0EF" entity="&#xF0EF;" char="&#x1F895;"/>
+  <symbol number="F0EF" entity="&#xf0ef;" char="&#x1f895;"/>
+  <symbol number="00EF" entity="&#xf0ef;" char="&#x1f895;"/>
   <!--DOWNWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD-->
-  <symbol number="F0F0" entity="&#xF0F0;" char="&#x1F897;"/>
+  <symbol number="F0F0" entity="&#xf0f0;" char="&#x1f897;"/>
+  <symbol number="00F0" entity="&#xf0f0;" char="&#x1f897;"/>
 </symbols>

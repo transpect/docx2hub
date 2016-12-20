@@ -132,8 +132,8 @@
   <symbol number="F048" entity="&#xf048;" char="&#x261f;" font="Segoe UI Symbol"/>
   <symbol number="0048" entity="&#xf048;" char="&#x261f;" font="Segoe UI Symbol"/>
   <!--RAISED HAND WITH FINGERS SPLAYED-->
-  <symbol number="F049" entity="&#xf049;" char="&#x1f590;" msoffice-char="&#x270b;" font="Segoe UI Symbol"/>
-  <symbol number="0049" entity="&#xf049;" char="&#x1f590;" msoffice-char="&#x270b;" font="Segoe UI Symbol"/>
+  <symbol number="F049" entity="&#xf049;" char="&#x1f590;" char-msoffice="&#x270b;" font="Segoe UI Symbol"/>
+  <symbol number="0049" entity="&#xf049;" char="&#x1f590;" char-msoffice="&#x270b;" font="Segoe UI Symbol"/>
   <!--WHITE SMILING FACE-->
   <symbol number="F04A" entity="&#xf04a;" char="&#x263a;" font="Segoe UI Symbol"/>
   <symbol number="004A" entity="&#xf04a;" char="&#x263a;" font="Segoe UI Symbol"/>
@@ -582,53 +582,53 @@
   <symbol number="F0DE" entity="&#xf0de;" char="&#x2b8b;" font="Segoe UI Symbol"/>
   <symbol number="00DE" entity="&#xf0de;" char="&#x2b8b;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED LEFTWARDS BARB ARROW-->
-  <symbol number="F0DF" entity="&#xf0df;" char="&#x1f868;" msoffice-char="&#x2190;" font="Segoe UI Symbol"/>
-  <symbol number="00DF" entity="&#xf0df;" char="&#x1f868;" msoffice-char="&#x2190;" font="Segoe UI Symbol"/>
+  <symbol number="F0DF" entity="&#xf0df;" char="&#x1f868;" char-msoffice="&#x2190;" font="Segoe UI Symbol"/>
+  <symbol number="00DF" entity="&#xf0df;" char="&#x1f868;" char-msoffice="&#x2190;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED RIGHTWARDS BARB ARROW-->
-  <symbol number="F0E0" entity="&#xf0e0;" char="&#x1f86a;" msoffice-char="&#x2192;" font="Segoe UI Symbol"/>
-  <symbol number="00E0" entity="&#xf0e0;" char="&#x1f86a;" msoffice-char="&#x2192;" font="Segoe UI Symbol"/>
+  <symbol number="F0E0" entity="&#xf0e0;" char="&#x1f86a;" char-msoffice="&#x2192;" font="Segoe UI Symbol"/>
+  <symbol number="00E0" entity="&#xf0e0;" char="&#x1f86a;" char-msoffice="&#x2192;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED UPWARDS BARB ARROW-->
-  <symbol number="F0E1" entity="&#xf0e1;" char="&#x1f869;" msoffice-char="&#x2191;" font="Segoe UI Symbol"/>
-  <symbol number="00E1" entity="&#xf0e1;" char="&#x1f869;" msoffice-char="&#x2191;" font="Segoe UI Symbol"/>
+  <symbol number="F0E1" entity="&#xf0e1;" char="&#x1f869;" char-msoffice="&#x2191;" font="Segoe UI Symbol"/>
+  <symbol number="00E1" entity="&#xf0e1;" char="&#x1f869;" char-msoffice="&#x2191;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED DOWNWARDS BARB ARROW-->
-  <symbol number="F0E2" entity="&#xf0e2;" char="&#x1f86b;" msoffice-char="&#x2193;" font="Segoe UI Symbol"/>
-  <symbol number="00E2" entity="&#xf0e2;" char="&#x1f86b;" msoffice-char="&#x2193;" font="Segoe UI Symbol"/>
+  <symbol number="F0E2" entity="&#xf0e2;" char="&#x1f86b;" char-msoffice="&#x2193;" font="Segoe UI Symbol"/>
+  <symbol number="00E2" entity="&#xf0e2;" char="&#x1f86b;" char-msoffice="&#x2193;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED NORTH WEST BARB ARROW-->
-  <symbol number="F0E3" entity="&#xf0e3;" char="&#x1f86c;" msoffice-char="&#x2196;" font="Segoe UI Symbol"/>
-  <symbol number="00E3" entity="&#xf0e3;" char="&#x1f86c;" msoffice-char="&#x2196;" font="Segoe UI Symbol"/>
+  <symbol number="F0E3" entity="&#xf0e3;" char="&#x1f86c;" char-msoffice="&#x2196;" font="Segoe UI Symbol"/>
+  <symbol number="00E3" entity="&#xf0e3;" char="&#x1f86c;" char-msoffice="&#x2196;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED NORTH EAST BARB ARROW-->
-  <symbol number="F0E4" entity="&#xf0e4;" char="&#x1f86d;" msoffice-char="&#x2197;" font="Segoe UI Symbol"/>
-  <symbol number="00E4" entity="&#xf0e4;" char="&#x1f86d;" msoffice-char="&#x2197;" font="Segoe UI Symbol"/>
+  <symbol number="F0E4" entity="&#xf0e4;" char="&#x1f86d;" char-msoffice="&#x2197;" font="Segoe UI Symbol"/>
+  <symbol number="00E4" entity="&#xf0e4;" char="&#x1f86d;" char-msoffice="&#x2197;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED SOUTH WEST BARB ARROW-->
-  <symbol number="F0E5" entity="&#xf0e5;" char="&#x1f86f;" msoffice-char="&#x2199;" font="Segoe UI Symbol"/>
-  <symbol number="00E5" entity="&#xf0e5;" char="&#x1f86f;" msoffice-char="&#x2199;" font="Segoe UI Symbol"/>
+  <symbol number="F0E5" entity="&#xf0e5;" char="&#x1f86f;" char-msoffice="&#x2199;" font="Segoe UI Symbol"/>
+  <symbol number="00E5" entity="&#xf0e5;" char="&#x1f86f;" char-msoffice="&#x2199;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED SOUTH EAST BARB ARROW-->
-  <symbol number="F0E6" entity="&#xf0e6;" char="&#x1f86e;" msoffice-char="&#x2198;" font="Segoe UI Symbol"/>
-  <symbol number="00E6" entity="&#xf0e6;" char="&#x1f86e;" msoffice-char="&#x2198;" font="Segoe UI Symbol"/>
+  <symbol number="F0E6" entity="&#xf0e6;" char="&#x1f86e;" char-msoffice="&#x2198;" font="Segoe UI Symbol"/>
+  <symbol number="00E6" entity="&#xf0e6;" char="&#x1f86e;" char-msoffice="&#x2198;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED LEFTWARDS HEAVY BARB ARROW-->
-  <symbol number="F0E7" entity="&#xf0e7;" char="&#x1f878;" msoffice-char="&#x2b05;" font="Segoe UI Symbol"/>
-  <symbol number="00E7" entity="&#xf0e7;" char="&#x1f878;" msoffice-char="&#x2b05;" font="Segoe UI Symbol"/>
+  <symbol number="F0E7" entity="&#xf0e7;" char="&#x1f878;" char-msoffice="&#x2b05;" font="Segoe UI Symbol"/>
+  <symbol number="00E7" entity="&#xf0e7;" char="&#x1f878;" char-msoffice="&#x2b05;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED RIGHTWARDS HEAVY BARB ARROW-->
-  <symbol number="F0E8" entity="&#xf0e8;" char="&#x1f87a;" msoffice-char="&#x2b95;" font="Segoe UI Symbol"/>
-  <symbol number="00E8" entity="&#xf0e8;" char="&#x1f87a;" msoffice-char="&#x2b95;" font="Segoe UI Symbol"/>
+  <symbol number="F0E8" entity="&#xf0e8;" char="&#x1f87a;" char-msoffice="&#x2b95;" font="Segoe UI Symbol"/>
+  <symbol number="00E8" entity="&#xf0e8;" char="&#x1f87a;" char-msoffice="&#x2b95;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED UPWARDS HEAVY BARB ARROW-->
-  <symbol number="F0E9" entity="&#xf0e9;" char="&#x1f879;" msoffice-char="&#x2b06;" font="Segoe UI Symbol"/>
-  <symbol number="00E9" entity="&#xf0e9;" char="&#x1f879;" msoffice-char="&#x2b06;" font="Segoe UI Symbol"/>
+  <symbol number="F0E9" entity="&#xf0e9;" char="&#x1f879;" char-msoffice="&#x2b06;" font="Segoe UI Symbol"/>
+  <symbol number="00E9" entity="&#xf0e9;" char="&#x1f879;" char-msoffice="&#x2b06;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED DOWNWARDS HEAVY BARB ARROW-->
-  <symbol number="F0EA" entity="&#xf0ea;" char="&#x1f87b;" msoffice-char="&#x2b07;" font="Segoe UI Symbol"/>
-  <symbol number="00EA" entity="&#xf0ea;" char="&#x1f87b;" msoffice-char="&#x2b07;" font="Segoe UI Symbol"/>
+  <symbol number="F0EA" entity="&#xf0ea;" char="&#x1f87b;" char-msoffice="&#x2b07;" font="Segoe UI Symbol"/>
+  <symbol number="00EA" entity="&#xf0ea;" char="&#x1f87b;" char-msoffice="&#x2b07;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED NORTH WEST HEAVY BARB ARROW-->
-  <symbol number="F0EB" entity="&#xf0eb;" char="&#x1f87c;" msoffice-char="&#x2b09;" font="Segoe UI Symbol"/>
-  <symbol number="00EB" entity="&#xf0eb;" char="&#x1f87c;" msoffice-char="&#x2b09;" font="Segoe UI Symbol"/>
+  <symbol number="F0EB" entity="&#xf0eb;" char="&#x1f87c;" char-msoffice="&#x2b09;" font="Segoe UI Symbol"/>
+  <symbol number="00EB" entity="&#xf0eb;" char="&#x1f87c;" char-msoffice="&#x2b09;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED NORTH EAST HEAVY BARB ARROW-->
-  <symbol number="F0EC" entity="&#xf0ec;" char="&#x1f87d;" msoffice-char="&#x2b08;" font="Segoe UI Symbol"/>
-  <symbol number="00EC" entity="&#xf0ec;" char="&#x1f87d;" msoffice-char="&#x2b08;" font="Segoe UI Symbol"/>
+  <symbol number="F0EC" entity="&#xf0ec;" char="&#x1f87d;" char-msoffice="&#x2b08;" font="Segoe UI Symbol"/>
+  <symbol number="00EC" entity="&#xf0ec;" char="&#x1f87d;" char-msoffice="&#x2b08;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED SOUTH WEST HEAVY BARB ARROW-->
-  <symbol number="F0ED" entity="&#xf0ed;" char="&#x1f87f;" msoffice-char="&#x2b0b;" font="Segoe UI Symbol"/>
-  <symbol number="00ED" entity="&#xf0ed;" char="&#x1f87f;" msoffice-char="&#x2b0b;" font="Segoe UI Symbol"/>
+  <symbol number="F0ED" entity="&#xf0ed;" char="&#x1f87f;" char-msoffice="&#x2b0b;" font="Segoe UI Symbol"/>
+  <symbol number="00ED" entity="&#xf0ed;" char="&#x1f87f;" char-msoffice="&#x2b0b;" font="Segoe UI Symbol"/>
   <!--WIDE-HEADED SOUTH EAST HEAVY BARB ARROW-->
-  <symbol number="F0EE" entity="&#xf0ee;" char="&#x1f87e;" msoffice-char="&#x2b0a;" font="Segoe UI Symbol"/>
-  <symbol number="00EE" entity="&#xf0ee;" char="&#x1f87e;" msoffice-char="&#x2b0a;" font="Segoe UI Symbol"/>
+  <symbol number="F0EE" entity="&#xf0ee;" char="&#x1f87e;" char-msoffice="&#x2b0a;" font="Segoe UI Symbol"/>
+  <symbol number="00EE" entity="&#xf0ee;" char="&#x1f87e;" char-msoffice="&#x2b0a;" font="Segoe UI Symbol"/>
   <!--LEFTWARDS WHITE ARROW-->
   <symbol number="F0EF" entity="&#xf0ef;" char="&#x21e6;" font="Segoe UI Symbol"/>
   <symbol number="00EF" entity="&#xf0ef;" char="&#x21e6;" font="Segoe UI Symbol"/>

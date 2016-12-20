@@ -8,6 +8,9 @@
         * http://www.alanwood.net/demos/wingdings-2.html
         * 
         * -->
+  <!--SPACE-->
+  <symbol number="F020" entity="&#xf020;" char="&#x20;"/>
+  <symbol number="0020" entity="&#xf020;" char="&#x20;"/>
   <!--LOWER LEFT BALLPOINT PEN-->
   <symbol number="F021" entity="&#xf021;" char="&#x1f58a;"/>
   <symbol number="0021" entity="&#xf021;" char="&#x1f58a;"/>

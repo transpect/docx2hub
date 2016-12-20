@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="US-ASCII"?>
 <symbols>
   <!--  *
         * Thanks to Alan Wood for providing a comprehensive list with 
@@ -9,450 +9,674 @@
         * 
         * -->
   <!--SPACE-->
-  <symbol number="F020" entity="&#xF020;" char="&#x0020;"/>
+  <symbol number="F020" entity="&#xf020;" char="&#x20;"/>
+  <symbol number="0020" entity="&#xf020;" char="&#x20;"/>
   <!--LOWER LEFT PENCIL-->
-  <symbol number="F021" entity="&#xF021;" char="&#x1F589;"/>
+  <symbol number="F021" entity="&#xf021;" char="&#x1f589;"/>
+  <symbol number="0021" entity="&#xf021;" char="&#x1f589;"/>
   <!--BLACK SCISSORS-->
-  <symbol number="F022" entity="&#xF022;" char="&#x2702;"/>
+  <symbol number="F022" entity="&#xf022;" char="&#x2702;"/>
+  <symbol number="0022" entity="&#xf022;" char="&#x2702;"/>
   <!--UPPER BLADE SCISSORS-->
-  <symbol number="F023" entity="&#xF023;" char="&#x2701;"/>
+  <symbol number="F023" entity="&#xf023;" char="&#x2701;"/>
+  <symbol number="0023" entity="&#xf023;" char="&#x2701;"/>
   <!--EYEGLASSES-->
-  <symbol number="F024" entity="&#xF024;" char="&#x1F453;"/>
+  <symbol number="F024" entity="&#xf024;" char="&#x1f453;"/>
+  <symbol number="0024" entity="&#xf024;" char="&#x1f453;"/>
   <!--RINGING BELL-->
-  <symbol number="F025" entity="&#xF025;" char="&#x1F56D;"/>
+  <symbol number="F025" entity="&#xf025;" char="&#x1f56d;"/>
+  <symbol number="0025" entity="&#xf025;" char="&#x1f56d;"/>
   <!--BOOK-->
-  <symbol number="F026" entity="&#xF026;" char="&#x1F56E;"/>
+  <symbol number="F026" entity="&#xf026;" char="&#x1f56e;"/>
+  <symbol number="0026" entity="&#xf026;" char="&#x1f56e;"/>
   <!--CANDLE-->
-  <symbol number="F027" entity="&#xF027;" char="&#x1F56F;"/>
+  <symbol number="F027" entity="&#xf027;" char="&#x1f56f;"/>
+  <symbol number="0027" entity="&#xf027;" char="&#x1f56f;"/>
   <!--BLACK TOUCHTONE TELEPHONE-->
-  <symbol number="F028" entity="&#xF028;" char="&#x1F57F;"/>
+  <symbol number="F028" entity="&#xf028;" char="&#x1f57f;"/>
+  <symbol number="0028" entity="&#xf028;" char="&#x1f57f;"/>
   <!--TELEPHONE LOCATION SIGN-->
-  <symbol number="F029" entity="&#xF029;" char="&#x2706;"/>
+  <symbol number="F029" entity="&#xf029;" char="&#x2706;"/>
+  <symbol number="0029" entity="&#xf029;" char="&#x2706;"/>
   <!--BACK OF ENVELOPE-->
-  <symbol number="F02A" entity="&#xF02A;" char="&#x1F582;"/>
+  <symbol number="F02A" entity="&#xf02a;" char="&#x1f582;"/>
+  <symbol number="002A" entity="&#xf02a;" char="&#x1f582;"/>
   <!--STAMPED ENVELOPE-->
-  <symbol number="F02B" entity="&#xF02B;" char="&#x1F583;"/>
+  <symbol number="F02B" entity="&#xf02b;" char="&#x1f583;"/>
+  <symbol number="002B" entity="&#xf02b;" char="&#x1f583;"/>
   <!--CLOSED MAILBOX WITH LOWERED FLAG-->
-  <symbol number="F02C" entity="&#xF02C;" char="&#x1F4EA;"/>
+  <symbol number="F02C" entity="&#xf02c;" char="&#x1f4ea;"/>
+  <symbol number="002C" entity="&#xf02c;" char="&#x1f4ea;"/>
   <!--CLOSED MAILBOX WITH RAISED FLAG-->
-  <symbol number="F02D" entity="&#xF02D;" char="&#x1F4EB;"/>
+  <symbol number="F02D" entity="&#xf02d;" char="&#x1f4eb;"/>
+  <symbol number="002D" entity="&#xf02d;" char="&#x1f4eb;"/>
   <!--OPEN MAILBOX WITH RAISED FLAG-->
-  <symbol number="F02E" entity="&#xF02E;" char="&#x1F4EC;"/>
+  <symbol number="F02E" entity="&#xf02e;" char="&#x1f4ec;"/>
+  <symbol number="002E" entity="&#xf02e;" char="&#x1f4ec;"/>
   <!--OPEN MAILBOX WITH LOWERED FLAG-->
-  <symbol number="F02F" entity="&#xF02F;" char="&#x1F4ED;"/>
+  <symbol number="F02F" entity="&#xf02f;" char="&#x1f4ed;"/>
+  <symbol number="002F" entity="&#xf02f;" char="&#x1f4ed;"/>
   <!--FILE FOLDER-->
-  <symbol number="F030" entity="&#xF030;" char="&#x1F4C1;"/>
+  <symbol number="F030" entity="&#xf030;" char="&#x1f4c1;"/>
+  <symbol number="0030" entity="&#xf030;" char="&#x1f4c1;"/>
   <!--OPEN FILE FOLDER-->
-  <symbol number="F031" entity="&#xF031;" char="&#x1F4C2;"/>
+  <symbol number="F031" entity="&#xf031;" char="&#x1f4c2;"/>
+  <symbol number="0031" entity="&#xf031;" char="&#x1f4c2;"/>
   <!--PAGE FACING UP-->
-  <symbol number="F032" entity="&#xF032;" char="&#x1F4C4;"/>
+  <symbol number="F032" entity="&#xf032;" char="&#x1f4c4;"/>
+  <symbol number="0032" entity="&#xf032;" char="&#x1f4c4;"/>
   <!--PAGE-->
-  <symbol number="F033" entity="&#xF033;" char="&#x1F5CF;"/>
+  <symbol number="F033" entity="&#xf033;" char="&#x1f5cf;"/>
+  <symbol number="0033" entity="&#xf033;" char="&#x1f5cf;"/>
   <!--PAGES-->
-  <symbol number="F034" entity="&#xF034;" char="&#x1F5D0;"/>
+  <symbol number="F034" entity="&#xf034;" char="&#x1f5d0;"/>
+  <symbol number="0034" entity="&#xf034;" char="&#x1f5d0;"/>
   <!--FILE CABINET-->
-  <symbol number="F035" entity="&#xF035;" char="&#x1F5C4;"/>
+  <symbol number="F035" entity="&#xf035;" char="&#x1f5c4;"/>
+  <symbol number="0035" entity="&#xf035;" char="&#x1f5c4;"/>
   <!--HOURGLASS-->
-  <symbol number="F036" entity="&#xF036;" char="&#x231B;"/>
+  <symbol number="F036" entity="&#xf036;" char="&#x231b;"/>
+  <symbol number="0036" entity="&#xf036;" char="&#x231b;"/>
   <!--WIRED KEYBOARD-->
-  <symbol number="F037" entity="&#xF037;" char="&#x1F5AE;"/>
+  <symbol number="F037" entity="&#xf037;" char="&#x1f5ae;"/>
+  <symbol number="0037" entity="&#xf037;" char="&#x1f5ae;"/>
   <!--TWO BUTTON MOUSE-->
-  <symbol number="F038" entity="&#xF038;" char="&#x1F5B0;"/>
+  <symbol number="F038" entity="&#xf038;" char="&#x1f5b0;"/>
+  <symbol number="0038" entity="&#xf038;" char="&#x1f5b0;"/>
   <!--TRACKBALL-->
-  <symbol number="F039" entity="&#xF039;" char="&#x1F5B2;"/>
+  <symbol number="F039" entity="&#xf039;" char="&#x1f5b2;"/>
+  <symbol number="0039" entity="&#xf039;" char="&#x1f5b2;"/>
   <!--OLD PERSONAL COMPUTER-->
-  <symbol number="F03A" entity="&#xF03A;" char="&#x1F5B3;"/>
+  <symbol number="F03A" entity="&#xf03a;" char="&#x1f5b3;"/>
+  <symbol number="003A" entity="&#xf03a;" char="&#x1f5b3;"/>
   <!--HARD DISK-->
-  <symbol number="F03B" entity="&#xF03B;" char="&#x1F5B4;"/>
+  <symbol number="F03B" entity="&#xf03b;" char="&#x1f5b4;"/>
+  <symbol number="003B" entity="&#xf03b;" char="&#x1f5b4;"/>
   <!--WHITE HARD SHELL FLOPPY DISK-->
-  <symbol number="F03C" entity="&#xF03C;" char="&#x1F5AB;"/>
+  <symbol number="F03C" entity="&#xf03c;" char="&#x1f5ab;"/>
+  <symbol number="003C" entity="&#xf03c;" char="&#x1f5ab;"/>
   <!--SOFT SHELL FLOPPY DISK-->
-  <symbol number="F03D" entity="&#xF03D;" char="&#x1F5AC;"/>
+  <symbol number="F03D" entity="&#xf03d;" char="&#x1f5ac;"/>
+  <symbol number="003D" entity="&#xf03d;" char="&#x1f5ac;"/>
   <!--TAPE DRIVE-->
-  <symbol number="F03E" entity="&#xF03E;" char="&#x2707;"/>
+  <symbol number="F03E" entity="&#xf03e;" char="&#x2707;"/>
+  <symbol number="003E" entity="&#xf03e;" char="&#x2707;"/>
   <!--WRITING HAND-->
-  <symbol number="F03F" entity="&#xF03F;" char="&#x270D;"/>
+  <symbol number="F03F" entity="&#xf03f;" char="&#x270d;"/>
+  <symbol number="003F" entity="&#xf03f;" char="&#x270d;"/>
   <!--LEFT WRITING HAND-->
-  <symbol number="F040" entity="&#xF040;" char="&#x1F58E;"/>
+  <symbol number="F040" entity="&#xf040;" char="&#x1f58e;"/>
+  <symbol number="0040" entity="&#xf040;" char="&#x1f58e;"/>
   <!--VICTORY HAND-->
-  <symbol number="F041" entity="&#xF041;" char="&#x270C;"/>
+  <symbol number="F041" entity="&#xf041;" char="&#x270c;"/>
+  <symbol number="0041" entity="&#xf041;" char="&#x270c;"/>
   <!--OK HAND SIGN-->
-  <symbol number="F042" entity="&#xF042;" char="&#x1F44C;"/>
+  <symbol number="F042" entity="&#xf042;" char="&#x1f44c;"/>
+  <symbol number="0042" entity="&#xf042;" char="&#x1f44c;"/>
   <!--THUMBS UP SIGN-->
-  <symbol number="F043" entity="&#xF043;" char="&#x1F44D;"/>
+  <symbol number="F043" entity="&#xf043;" char="&#x1f44d;"/>
+  <symbol number="0043" entity="&#xf043;" char="&#x1f44d;"/>
   <!--THUMBS DOWN SIGN-->
-  <symbol number="F044" entity="&#xF044;" char="&#x1F44E;"/>
+  <symbol number="F044" entity="&#xf044;" char="&#x1f44e;"/>
+  <symbol number="0044" entity="&#xf044;" char="&#x1f44e;"/>
   <!--WHITE LEFT POINTING INDEX-->
-  <symbol number="F045" entity="&#xF045;" char="&#x261C;"/>
+  <symbol number="F045" entity="&#xf045;" char="&#x261c;"/>
+  <symbol number="0045" entity="&#xf045;" char="&#x261c;"/>
   <!--WHITE RIGHT POINTING INDEX-->
-  <symbol number="F046" entity="&#xF046;" char="&#x261E;"/>
+  <symbol number="F046" entity="&#xf046;" char="&#x261e;"/>
+  <symbol number="0046" entity="&#xf046;" char="&#x261e;"/>
   <!--WHITE UP POINTING INDEX-->
-  <symbol number="F047" entity="&#xF047;" char="&#x261D;"/>
+  <symbol number="F047" entity="&#xf047;" char="&#x261d;"/>
+  <symbol number="0047" entity="&#xf047;" char="&#x261d;"/>
   <!--WHITE DOWN POINTING INDEX-->
-  <symbol number="F048" entity="&#xF048;" char="&#x261F;"/>
+  <symbol number="F048" entity="&#xf048;" char="&#x261f;"/>
+  <symbol number="0048" entity="&#xf048;" char="&#x261f;"/>
   <!--RAISED HAND WITH FINGERS SPLAYED-->
-  <symbol number="F049" entity="&#xF049;" char="&#x1F590;"/>
+  <symbol number="F049" entity="&#xf049;" char="&#x1f590;"/>
+  <symbol number="0049" entity="&#xf049;" char="&#x1f590;"/>
   <!--WHITE SMILING FACE-->
-  <symbol number="F04A" entity="&#xF04A;" char="&#x263A;"/>
+  <symbol number="F04A" entity="&#xf04a;" char="&#x263a;"/>
+  <symbol number="004A" entity="&#xf04a;" char="&#x263a;"/>
   <!--NEUTRAL FACE-->
-  <symbol number="F04B" entity="&#xF04B;" char="&#x1F610;"/>
+  <symbol number="F04B" entity="&#xf04b;" char="&#x1f610;"/>
+  <symbol number="004B" entity="&#xf04b;" char="&#x1f610;"/>
   <!--WHITE FROWNING FACE-->
-  <symbol number="F04C" entity="&#xF04C;" char="&#x2639;"/>
+  <symbol number="F04C" entity="&#xf04c;" char="&#x2639;"/>
+  <symbol number="004C" entity="&#xf04c;" char="&#x2639;"/>
   <!--BOMB-->
-  <symbol number="F04D" entity="&#xF04D;" char="&#x1F4A3;"/>
+  <symbol number="F04D" entity="&#xf04d;" char="&#x1f4a3;"/>
+  <symbol number="004D" entity="&#xf04d;" char="&#x1f4a3;"/>
   <!--SKULL AND CROSSBONES-->
-  <symbol number="F04E" entity="&#xF04E;" char="&#x2620;"/>
+  <symbol number="F04E" entity="&#xf04e;" char="&#x2620;"/>
+  <symbol number="004E" entity="&#xf04e;" char="&#x2620;"/>
   <!--WAVING WHITE FLAG-->
-  <symbol number="F04F" entity="&#xF04F;" char="&#x1F3F3;"/>
+  <symbol number="F04F" entity="&#xf04f;" char="&#x1f3f3;"/>
+  <symbol number="004F" entity="&#xf04f;" char="&#x1f3f3;"/>
   <!--WHITE PENNANT-->
-  <symbol number="F050" entity="&#xF050;" char="&#x1F3F1;"/>
+  <symbol number="F050" entity="&#xf050;" char="&#x1f3f1;"/>
+  <symbol number="0050" entity="&#xf050;" char="&#x1f3f1;"/>
   <!--AIRPLANE-->
-  <symbol number="F051" entity="&#xF051;" char="&#x2708;"/>
+  <symbol number="F051" entity="&#xf051;" char="&#x2708;"/>
+  <symbol number="0051" entity="&#xf051;" char="&#x2708;"/>
   <!--WHITE SUN WITH RAYS-->
-  <symbol number="F052" entity="&#xF052;" char="&#x263C;"/>
+  <symbol number="F052" entity="&#xf052;" char="&#x263c;"/>
+  <symbol number="0052" entity="&#xf052;" char="&#x263c;"/>
   <!--DROPLET-->
-  <symbol number="F053" entity="&#xF053;" char="&#x1F4A7;"/>
+  <symbol number="F053" entity="&#xf053;" char="&#x1f4a7;"/>
+  <symbol number="0053" entity="&#xf053;" char="&#x1f4a7;"/>
   <!--SNOWFLAKE-->
-  <symbol number="F054" entity="&#xF054;" char="&#x2744;"/>
+  <symbol number="F054" entity="&#xf054;" char="&#x2744;"/>
+  <symbol number="0054" entity="&#xf054;" char="&#x2744;"/>
   <!--WHITE LATIN CROSS-->
-  <symbol number="F055" entity="&#xF055;" char="&#x1F546;"/>
+  <symbol number="F055" entity="&#xf055;" char="&#x1f546;"/>
+  <symbol number="0055" entity="&#xf055;" char="&#x1f546;"/>
   <!--SHADOWED WHITE LATIN CROSS-->
-  <symbol number="F056" entity="&#xF056;" char="&#x271E;"/>
+  <symbol number="F056" entity="&#xf056;" char="&#x271e;"/>
+  <symbol number="0056" entity="&#xf056;" char="&#x271e;"/>
   <!--CELTIC CROSS-->
-  <symbol number="F057" entity="&#xF057;" char="&#x1F548;"/>
+  <symbol number="F057" entity="&#xf057;" char="&#x1f548;"/>
+  <symbol number="0057" entity="&#xf057;" char="&#x1f548;"/>
   <!--MALTESE CROSS-->
-  <symbol number="F058" entity="&#xF058;" char="&#x2720;"/>
+  <symbol number="F058" entity="&#xf058;" char="&#x2720;"/>
+  <symbol number="0058" entity="&#xf058;" char="&#x2720;"/>
   <!--STAR OF DAVID-->
-  <symbol number="F059" entity="&#xF059;" char="&#x2721;"/>
+  <symbol number="F059" entity="&#xf059;" char="&#x2721;"/>
+  <symbol number="0059" entity="&#xf059;" char="&#x2721;"/>
   <!--STAR AND CRESCENT-->
-  <symbol number="F05A" entity="&#xF05A;" char="&#x262A;"/>
+  <symbol number="F05A" entity="&#xf05a;" char="&#x262a;"/>
+  <symbol number="005A" entity="&#xf05a;" char="&#x262a;"/>
   <!--YIN YANG-->
-  <symbol number="F05B" entity="&#xF05B;" char="&#x262F;"/>
+  <symbol number="F05B" entity="&#xf05b;" char="&#x262f;"/>
+  <symbol number="005B" entity="&#xf05b;" char="&#x262f;"/>
   <!--DEVANAGARI OM-->
-  <symbol number="F05C" entity="&#xF05C;" char="&#x0950;"/>
+  <symbol number="F05C" entity="&#xf05c;" char="&#x950;"/>
+  <symbol number="005C" entity="&#xf05c;" char="&#x950;"/>
   <!--WHEEL OF DHARMA-->
-  <symbol number="F05D" entity="&#xF05D;" char="&#x2638;"/>
+  <symbol number="F05D" entity="&#xf05d;" char="&#x2638;"/>
+  <symbol number="005D" entity="&#xf05d;" char="&#x2638;"/>
   <!--ARIES-->
-  <symbol number="F05E" entity="&#xF05E;" char="&#x2648;"/>
+  <symbol number="F05E" entity="&#xf05e;" char="&#x2648;"/>
+  <symbol number="005E" entity="&#xf05e;" char="&#x2648;"/>
   <!--TAURUS-->
-  <symbol number="F05F" entity="&#xF05F;" char="&#x2649;"/>
+  <symbol number="F05F" entity="&#xf05f;" char="&#x2649;"/>
+  <symbol number="005F" entity="&#xf05f;" char="&#x2649;"/>
   <!--GEMINI-->
-  <symbol number="F060" entity="&#xF060;" char="&#x264A;"/>
+  <symbol number="F060" entity="&#xf060;" char="&#x264a;"/>
+  <symbol number="0060" entity="&#xf060;" char="&#x264a;"/>
   <!--CANCER-->
-  <symbol number="F061" entity="&#xF061;" char="&#x264B;"/>
+  <symbol number="0061" entity="a" char="&#x264b;"/>
+  <symbol number="F061" entity="&#xf061;" char="&#x264b;"/>
   <!--LEO-->
-  <symbol number="F062" entity="&#xF062;" char="&#x264C;"/>
+  <symbol number="F062" entity="&#xf062;" char="&#x264c;"/>
+  <symbol number="0062" entity="&#xf062;" char="&#x264c;"/>
   <!--VIRGO-->
-  <symbol number="F063" entity="&#xF063;" char="&#x264D;"/>
+  <symbol number="F063" entity="&#xf063;" char="&#x264d;"/>
+  <symbol number="0063" entity="&#xf063;" char="&#x264d;"/>
   <!--LIBRA-->
-  <symbol number="F064" entity="&#xF064;" char="&#x264E;"/>
+  <symbol number="F064" entity="&#xf064;" char="&#x264e;"/>
+  <symbol number="0064" entity="&#xf064;" char="&#x264e;"/>
   <!--SCORPIO-->
-  <symbol number="F065" entity="&#xF065;" char="&#x264F;"/>
+  <symbol number="F065" entity="&#xf065;" char="&#x264f;"/>
+  <symbol number="0065" entity="&#xf065;" char="&#x264f;"/>
   <!--SAGITTARIUS-->
-  <symbol number="F066" entity="&#xF066;" char="&#x2650;"/>
+  <symbol number="F066" entity="&#xf066;" char="&#x2650;"/>
+  <symbol number="0066" entity="&#xf066;" char="&#x2650;"/>
   <!--CAPRICORN-->
-  <symbol number="F067" entity="&#xF067;" char="&#x2651;"/>
+  <symbol number="F067" entity="&#xf067;" char="&#x2651;"/>
+  <symbol number="0067" entity="&#xf067;" char="&#x2651;"/>
   <!--AQUARIUS-->
-  <symbol number="F068" entity="&#xF068;" char="&#x2652;"/>
+  <symbol number="F068" entity="&#xf068;" char="&#x2652;"/>
+  <symbol number="0068" entity="&#xf068;" char="&#x2652;"/>
   <!--PISCES-->
-  <symbol number="F069" entity="&#xF069;" char="&#x2653;"/>
+  <symbol number="F069" entity="&#xf069;" char="&#x2653;"/>
+  <symbol number="0069" entity="&#xf069;" char="&#x2653;"/>
   <!--SCRIPT LIGATURE ET ORNAMENT-->
-  <symbol number="F06A" entity="&#xF06A;" char="&#x1F670;"/>
+  <symbol number="F06A" entity="&#xf06a;" char="&#x1f670;"/>
+  <symbol number="006A" entity="&#xf06a;" char="&#x1f670;"/>
   <!--SWASH AMPERSAND ORNAMENT-->
-  <symbol number="F06B" entity="&#xF06B;" char="&#x1F675;"/>
+  <symbol number="F06B" entity="&#xf06b;" char="&#x1f675;"/>
+  <symbol number="006B" entity="&#xf06b;" char="&#x1f675;"/>
   <!--BLACK CIRCLE-->
-  <symbol number="F06C" entity="&#xF06C;" char="&#x25CF;"/>
+  <symbol number="F06C" entity="&#xf06c;" char="&#x25cf;"/>
+  <symbol number="006C" entity="&#xf06c;" char="&#x25cf;"/>
   <!--LOWER RIGHT SHADOWED WHITE CIRCLE-->
-  <symbol number="F06D" entity="&#xF06D;" char="&#x1F53E;"/>
+  <symbol number="F06D" entity="&#xf06d;" char="&#x1f53e;"/>
+  <symbol number="006D" entity="&#xf06d;" char="&#x1f53e;"/>
   <!--BLACK SQUARE-->
-  <symbol number="F06E" entity="&#xF06E;" char="&#x25A0;"/>
+  <symbol number="006E" entity="&#xf06e;" char="&#x25a0;"/>
+  <symbol number="F06E" entity="&#xf06e;" char="&#x25a0;"/>
   <!--WHITE SQUARE-->
-  <symbol number="F06F" entity="&#xF06F;" char="&#x25A1;"/>
+  <symbol number="006F" entity="o" char="&#x25a1;"/>
+  <symbol number="F06F" entity="&#xf06f;" char="&#x25a1;"/>
   <!--BOLD WHITE SQUARE-->
-  <symbol number="F070" entity="&#xF070;" char="&#x1F790;"/>
+  <symbol number="F070" entity="&#xf070;" char="&#x1f790;"/>
+  <symbol number="0070" entity="&#xf070;" char="&#x1f790;"/>
   <!--LOWER RIGHT SHADOWED WHITE SQUARE-->
-  <symbol number="F071" entity="&#xF071;" char="&#x2751;"/>
+  <symbol number="F071" entity="&#xf071;" char="&#x2751;"/>
+  <symbol number="0071" entity="&#xf071;" char="&#x2751;"/>
   <!--UPPER RIGHT SHADOWED WHITE SQUARE-->
-  <symbol number="F072" entity="&#xF072;" char="&#x2752;"/>
+  <symbol number="F072" entity="&#xf072;" char="&#x2752;"/>
+  <symbol number="0072" entity="&#xf072;" char="&#x2752;"/>
   <!--BLACK MEDIUM LOZENGE-->
-  <symbol number="F073" entity="&#xF073;" char="&#x2B27;"/>
+  <symbol number="F073" entity="&#xf073;" char="&#x2b27;"/>
+  <symbol number="0073" entity="&#xf073;" char="&#x2b27;"/>
   <!--BLACK LOZENGE-->
-  <symbol number="F074" entity="&#xF074;" char="&#x29EB;"/>
+  <symbol number="F074" entity="&#xf074;" char="&#x29eb;"/>
+  <symbol number="0074" entity="&#xf074;" char="&#x29eb;"/>
   <!--BLACK DIAMOND-->
-  <symbol number="F075" entity="&#xF075;" char="&#x25C6;"/>
+  <symbol number="F075" entity="&#xf075;" char="&#x25c6;"/>
+  <symbol number="0075" entity="&#xf075;" char="&#x25c6;"/>
   <!--BLACK DIAMOND MINUS WHITE X-->
-  <symbol number="F076" entity="&#xF076;" char="&#x2756;"/>
+  <symbol number="F076" entity="&#xf076;" char="&#x2756;"/>
+  <symbol number="0076" entity="&#xf076;" char="&#x2756;"/>
   <!--BLACK MEDIUM DIAMOND-->
-  <symbol number="F077" entity="&#xF077;" char="&#x2B25;"/>
+  <symbol number="F077" entity="&#xf077;" char="&#x2b25;"/>
+  <symbol number="0077" entity="&#xf077;" char="&#x2b25;"/>
   <!--X IN A RECTANGLE BOX-->
-  <symbol number="F078" entity="&#xF078;" char="&#x2327;"/>
+  <symbol number="F078" entity="&#xf078;" char="&#x2327;"/>
+  <symbol number="0078" entity="&#xf078;" char="&#x2327;"/>
   <!--UP ARROWHEAD IN A RECTANGLE BOX-->
-  <symbol number="F079" entity="&#xF079;" char="&#x2BB9;"/>
+  <symbol number="F079" entity="&#xf079;" char="&#x2bb9;"/>
+  <symbol number="0079" entity="&#xf079;" char="&#x2bb9;"/>
   <!--PLACE OF INTEREST SIGN-->
-  <symbol number="F07A" entity="&#xF07A;" char="&#x2318;"/>
+  <symbol number="F07A" entity="&#xf07a;" char="&#x2318;"/>
+  <symbol number="007A" entity="&#xf07a;" char="&#x2318;"/>
   <!--ROSETTE-->
-  <symbol number="F07B" entity="&#xF07B;" char="&#x1F3F5;"/>
+  <symbol number="F07B" entity="&#xf07b;" char="&#x1f3f5;"/>
+  <symbol number="007B" entity="&#xf07b;" char="&#x1f3f5;"/>
   <!--BLACK ROSETTE-->
-  <symbol number="F07C" entity="&#xF07C;" char="&#x1F3F6;"/>
+  <symbol number="F07C" entity="&#xf07c;" char="&#x1f3f6;"/>
+  <symbol number="007C" entity="&#xf07c;" char="&#x1f3f6;"/>
   <!--SANS-SERIF HEAVY DOUBLE TURNED COMMA QUOTATION MARK ORNAMENT-->
-  <symbol number="F07D" entity="&#xF07D;" char="&#x1F676;"/>
+  <symbol number="F07D" entity="&#xf07d;" char="&#x1f676;"/>
+  <symbol number="007D" entity="&#xf07d;" char="&#x1f676;"/>
   <!--SANS-SERIF HEAVY DOUBLE COMMA QUOTATION MARK ORNAMENT-->
-  <symbol number="F07E" entity="&#xF07E;" char="&#x1F677;"/>
+  <symbol number="F07E" entity="&#xf07e;" char="&#x1f677;"/>
+  <symbol number="007E" entity="&#xf07e;" char="&#x1f677;"/>
   <!---->
-  <symbol number="F07F" entity="&#xF07F;" char=""/>
+  <symbol number="F07F" entity="&#xf07f;" char=""/>
+  <symbol number="007F" entity="&#xf07f;" char=""/>
   <!--CIRCLED DIGIT ZERO-->
-  <symbol number="F080" entity="&#xF080;" char="&#x24EA;"/>
+  <symbol number="F080" entity="&#xf080;" char="&#x24ea;"/>
+  <symbol number="0080" entity="&#xf080;" char="&#x24ea;"/>
   <!--CIRCLED DIGIT ONE-->
-  <symbol number="F081" entity="&#xF081;" char="&#x2460;"/>
+  <symbol number="F081" entity="&#xf081;" char="&#x2460;"/>
+  <symbol number="0081" entity="&#xf081;" char="&#x2460;"/>
   <!--CIRCLED DIGIT TWO-->
-  <symbol number="F082" entity="&#xF082;" char="&#x2461;"/>
+  <symbol number="F082" entity="&#xf082;" char="&#x2461;"/>
+  <symbol number="0082" entity="&#xf082;" char="&#x2461;"/>
   <!--CIRCLED DIGIT THREE-->
-  <symbol number="F083" entity="&#xF083;" char="&#x2462;"/>
+  <symbol number="F083" entity="&#xf083;" char="&#x2462;"/>
+  <symbol number="0083" entity="&#xf083;" char="&#x2462;"/>
   <!--CIRCLED DIGIT FOUR-->
-  <symbol number="F084" entity="&#xF084;" char="&#x2463;"/>
+  <symbol number="F084" entity="&#xf084;" char="&#x2463;"/>
+  <symbol number="0084" entity="&#xf084;" char="&#x2463;"/>
   <!--CIRCLED DIGIT FIVE-->
-  <symbol number="F085" entity="&#xF085;" char="&#x2464;"/>
+  <symbol number="F085" entity="&#xf085;" char="&#x2464;"/>
+  <symbol number="0085" entity="&#xf085;" char="&#x2464;"/>
   <!--CIRCLED DIGIT SIX-->
-  <symbol number="F086" entity="&#xF086;" char="&#x2465;"/>
+  <symbol number="F086" entity="&#xf086;" char="&#x2465;"/>
+  <symbol number="0086" entity="&#xf086;" char="&#x2465;"/>
   <!--CIRCLED DIGIT SEVEN-->
-  <symbol number="F087" entity="&#xF087;" char="&#x2466;"/>
+  <symbol number="F087" entity="&#xf087;" char="&#x2466;"/>
+  <symbol number="0087" entity="&#xf087;" char="&#x2466;"/>
   <!--CIRCLED DIGIT EIGHT-->
-  <symbol number="F088" entity="&#xF088;" char="&#x2467;"/>
+  <symbol number="F088" entity="&#xf088;" char="&#x2467;"/>
+  <symbol number="0088" entity="&#xf088;" char="&#x2467;"/>
   <!--CIRCLED DIGIT NINE-->
-  <symbol number="F089" entity="&#xF089;" char="&#x2468;"/>
+  <symbol number="F089" entity="&#xf089;" char="&#x2468;"/>
+  <symbol number="0089" entity="&#xf089;" char="&#x2468;"/>
   <!--CIRCLED NUMBER TEN-->
-  <symbol number="F08A" entity="&#xF08A;" char="&#x2469;"/>
+  <symbol number="F08A" entity="&#xf08a;" char="&#x2469;"/>
+  <symbol number="008A" entity="&#xf08a;" char="&#x2469;"/>
   <!--NEGATIVE CIRCLED DIGIT ZERO-->
-  <symbol number="F08B" entity="&#xF08B;" char="&#x24FF;"/>
+  <symbol number="F08B" entity="&#xf08b;" char="&#x24ff;"/>
+  <symbol number="008B" entity="&#xf08b;" char="&#x24ff;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT ONE-->
-  <symbol number="F08C" entity="&#xF08C;" char="&#x2776;"/>
+  <symbol number="F08C" entity="&#xf08c;" char="&#x2776;"/>
+  <symbol number="008C" entity="&#xf08c;" char="&#x2776;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT TWO-->
-  <symbol number="F08D" entity="&#xF08D;" char="&#x2777;"/>
+  <symbol number="F08D" entity="&#xf08d;" char="&#x2777;"/>
+  <symbol number="008D" entity="&#xf08d;" char="&#x2777;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT THREE-->
-  <symbol number="F08E" entity="&#xF08E;" char="&#x2778;"/>
+  <symbol number="F08E" entity="&#xf08e;" char="&#x2778;"/>
+  <symbol number="008E" entity="&#xf08e;" char="&#x2778;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT FOUR-->
-  <symbol number="F08F" entity="&#xF08F;" char="&#x2779;"/>
+  <symbol number="F08F" entity="&#xf08f;" char="&#x2779;"/>
+  <symbol number="008F" entity="&#xf08f;" char="&#x2779;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT FIVE-->
-  <symbol number="F090" entity="&#xF090;" char="&#x277A;"/>
+  <symbol number="F090" entity="&#xf090;" char="&#x277a;"/>
+  <symbol number="0090" entity="&#xf090;" char="&#x277a;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT SIX-->
-  <symbol number="F091" entity="&#xF091;" char="&#x277B;"/>
+  <symbol number="F091" entity="&#xf091;" char="&#x277b;"/>
+  <symbol number="0091" entity="&#xf091;" char="&#x277b;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT SEVEN-->
-  <symbol number="F092" entity="&#xF092;" char="&#x277C;"/>
+  <symbol number="F092" entity="&#xf092;" char="&#x277c;"/>
+  <symbol number="0092" entity="&#xf092;" char="&#x277c;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT EIGHT-->
-  <symbol number="F093" entity="&#xF093;" char="&#x277D;"/>
+  <symbol number="F093" entity="&#xf093;" char="&#x277d;"/>
+  <symbol number="0093" entity="&#xf093;" char="&#x277d;"/>
   <!--DINGBAT NEGATIVE CIRCLED DIGIT NINE-->
-  <symbol number="F094" entity="&#xF094;" char="&#x277E;"/>
+  <symbol number="F094" entity="&#xf094;" char="&#x277e;"/>
+  <symbol number="0094" entity="&#xf094;" char="&#x277e;"/>
   <!--DINGBAT NEGATIVE CIRCLED NUMBER TEN-->
-  <symbol number="F095" entity="&#xF095;" char="&#x277F;"/>
+  <symbol number="F095" entity="&#xf095;" char="&#x277f;"/>
+  <symbol number="0095" entity="&#xf095;" char="&#x277f;"/>
   <!--NORTH EAST POINTING BUD-->
-  <symbol number="F096" entity="&#xF096;" char="&#x1F662;"/>
+  <symbol number="F096" entity="&#xf096;" char="&#x1f662;"/>
+  <symbol number="0096" entity="&#xf096;" char="&#x1f662;"/>
   <!--NORTH WEST POINTING BUD-->
-  <symbol number="F097" entity="&#xF097;" char="&#x1F660;"/>
+  <symbol number="F097" entity="&#xf097;" char="&#x1f660;"/>
+  <symbol number="0097" entity="&#xf097;" char="&#x1f660;"/>
   <!--SOUTH WEST POINTING BUD-->
-  <symbol number="F098" entity="&#xF098;" char="&#x1F661;"/>
+  <symbol number="F098" entity="&#xf098;" char="&#x1f661;"/>
+  <symbol number="0098" entity="&#xf098;" char="&#x1f661;"/>
   <!--SOUTH EAST POINTING BUD-->
-  <symbol number="F099" entity="&#xF099;" char="&#x1F663;"/>
+  <symbol number="F099" entity="&#xf099;" char="&#x1f663;"/>
+  <symbol number="0099" entity="&#xf099;" char="&#x1f663;"/>
   <!--HEAVY NORTH EAST POINTING VINE LEAF-->
-  <symbol number="F09A" entity="&#xF09A;" char="&#x1F65E;"/>
+  <symbol number="F09A" entity="&#xf09a;" char="&#x1f65e;"/>
+  <symbol number="009A" entity="&#xf09a;" char="&#x1f65e;"/>
   <!--HEAVY NORTH WEST POINTING VINE LEAF-->
-  <symbol number="F09B" entity="&#xF09B;" char="&#x1F65C;"/>
+  <symbol number="F09B" entity="&#xf09b;" char="&#x1f65c;"/>
+  <symbol number="009B" entity="&#xf09b;" char="&#x1f65c;"/>
   <!--HEAVY SOUTH WEST POINTING VINE LEAF-->
-  <symbol number="F09B" entity="&#xF09B;" char="&#x1F65D;"/>
+  <symbol number="F09B" entity="&#xf09b;" char="&#x1f65d;"/>
+  <symbol number="009B" entity="&#xf09b;" char="&#x1f65d;"/>
   <!--HEAVY SOUTH EAST POINTING VINE LEAF-->
-  <symbol number="F09B" entity="&#xF09B;" char="&#x1F65F;"/>
+  <symbol number="F09B" entity="&#xf09b;" char="&#x1f65f;"/>
+  <symbol number="009B" entity="&#xf09b;" char="&#x1f65f;"/>
   <!--MIDDLE DOT-->
-  <symbol number="F09E" entity="&#xF09E;" char="&#x00B7;"/>
+  <symbol number="F09E" entity="&#xf09e;" char="&#xb7;"/>
+  <symbol number="009E" entity="&#xf09e;" char="&#xb7;"/>
   <!--BULLET-->
-  <symbol number="F09F" entity="&#xF09F;" char="&#x2022;"/>
+  <symbol number="F09F" entity="&#xf09f;" char="&#x2022;"/>
+  <symbol number="009F" entity="&#xf09f;" char="&#x2022;"/>
   <!--BLACK SMALL SQUARE-->
-  <symbol number="F0A0" entity="&#xF0A0;" char="&#x25AA;"/>
+  <symbol number="F0A0" entity="&#xf0a0;" char="&#x25aa;"/>
+  <symbol number="00A0" entity="&#xf0a0;" char="&#x25aa;"/>
   <!--MEDIUM WHITE CIRCLE-->
-  <symbol number="F0A1" entity="&#xF0A1;" char="&#x26AA;"/>
+  <symbol number="F0A1" entity="&#xf0a1;" char="&#x26aa;"/>
+  <symbol number="00A1" entity="&#xf0a1;" char="&#x26aa;"/>
   <!--HEAVY LARGE CIRCLE-->
-  <symbol number="F0A2" entity="&#xF0A2;" char="&#x1F786;"/>
+  <symbol number="F0A2" entity="&#xf0a2;" char="&#x1f786;"/>
+  <symbol number="00A2" entity="&#xf0a2;" char="&#x1f786;"/>
   <!--VERY HEAVY WHITE CIRCLE-->
-  <symbol number="F0A3" entity="&#xF0A3;" char="&#x1F788;"/>
+  <symbol number="F0A3" entity="&#xf0a3;" char="&#x1f788;"/>
+  <symbol number="00A3" entity="&#xf0a3;" char="&#x1f788;"/>
   <!--FISHEYE-->
-  <symbol number="F0A4" entity="&#xF0A4;" char="&#x25C9;"/>
+  <symbol number="F0A4" entity="&#xf0a4;" char="&#x25c9;"/>
+  <symbol number="00A4" entity="&#xf0a4;" char="&#x25c9;"/>
   <!--BULLSEYE-->
-  <symbol number="F0A5" entity="&#xF0A5;" char="&#x25CE;"/>
+  <symbol number="F0A5" entity="&#xf0a5;" char="&#x25ce;"/>
+  <symbol number="00A5" entity="&#xf0a5;" char="&#x25ce;"/>
   <!--UPPER RIGHT SHADOWED WHITE CIRCLE-->
-  <symbol number="F0A6" entity="&#xF0A6;" char="&#x1F53F;"/>
+  <symbol number="F0A6" entity="&#xf0a6;" char="&#x1f53f;"/>
+  <symbol number="00A6" entity="&#xf0a6;" char="&#x1f53f;"/>
   <!--BLACK SMALL SQUARE-->
-  <symbol number="F0A7" entity="&#xF0A7;" char="&#x25AA;"/>
+  <symbol number="F0A7" entity="&#xf0a7;" char="&#x25aa;"/>
+  <symbol number="00A7" entity="&#xf0a7;" char="&#x25aa;"/>
   <!--WHITE MEDIUM SQUARE-->
-  <symbol number="F0A8" entity="&#xF0A8;" char="&#x25FB;"/>
+  <symbol number="F0A8" entity="&#xf0a8;" char="&#x25fb;"/>
+  <symbol number="00A8" entity="&#xf0a8;" char="&#x25fb;"/>
   <!--THREE POINTED BLACK STAR-->
-  <symbol number="F0A9" entity="&#xF0A9;" char="&#x1F7C2;"/>
+  <symbol number="F0A9" entity="&#xf0a9;" char="&#x1f7c2;"/>
+  <symbol number="00A9" entity="&#xf0a9;" char="&#x1f7c2;"/>
   <!--BLACK FOUR POINTED STAR-->
-  <symbol number="F0AA" entity="&#xF0AA;" char="&#x2726;"/>
+  <symbol number="F0AA" entity="&#xf0aa;" char="&#x2726;"/>
+  <symbol number="00AA" entity="&#xf0aa;" char="&#x2726;"/>
   <!--BLACK STAR-->
-  <symbol number="F0AB" entity="&#xF0AB;" char="&#x2605;"/>
+  <symbol number="F0AB" entity="&#xf0ab;" char="&#x2605;"/>
+  <symbol number="00AB" entity="&#xf0ab;" char="&#x2605;"/>
   <!--SIX POINTED BLACK STAR-->
-  <symbol number="F0AC" entity="&#xF0AC;" char="&#x2736;"/>
+  <symbol number="F0AC" entity="&#xf0ac;" char="&#x2736;"/>
+  <symbol number="00AC" entity="&#xf0ac;" char="&#x2736;"/>
   <!--EIGHT POINTED BLACK STAR-->
-  <symbol number="F0AD" entity="&#xF0AD;" char="&#x2734;"/>
+  <symbol number="F0AD" entity="&#xf0ad;" char="&#x2734;"/>
+  <symbol number="00AD" entity="&#xf0ad;" char="&#x2734;"/>
   <!--TWELVE POINTED BLACK STAR-->
-  <symbol number="F0AE" entity="&#xF0AE;" char="&#x2739;"/>
+  <symbol number="F0AE" entity="&#xf0ae;" char="&#x2739;"/>
+  <symbol number="00AE" entity="&#xf0ae;" char="&#x2739;"/>
   <!--EIGHT POINTED PINWHEEL STAR-->
-  <symbol number="F0AF" entity="&#xF0AF;" char="&#x2735;"/>
+  <symbol number="F0AF" entity="&#xf0af;" char="&#x2735;"/>
+  <symbol number="00AF" entity="&#xf0af;" char="&#x2735;"/>
   <!--SQUARE POSITION INDICATOR-->
-  <symbol number="F0B0" entity="&#xF0B0;" char="&#x2BD0;"/>
+  <symbol number="F0B0" entity="&#xf0b0;" char="&#x2bd0;"/>
+  <symbol number="00B0" entity="&#xf0b0;" char="&#x2bd0;"/>
   <!--POSITION INDICATOR-->
-  <symbol number="F0B1" entity="&#xF0B1;" char="&#x2316;"/>
+  <symbol number="F0B1" entity="&#xf0b1;" char="&#x2316;"/>
+  <symbol number="00B1" entity="&#xf0b1;" char="&#x2316;"/>
   <!--WHITE CONCAVE-SIDED DIAMOND-->
-  <symbol number="F0B2" entity="&#xF0B2;" char="&#x27E1;"/>
+  <symbol number="F0B2" entity="&#xf0b2;" char="&#x27e1;"/>
+  <symbol number="00B2" entity="&#xf0b2;" char="&#x27e1;"/>
   <!--SQUARE LOZENGE-->
-  <symbol number="F0B3" entity="&#xF0B3;" char="&#x2311;"/>
+  <symbol number="F0B3" entity="&#xf0b3;" char="&#x2311;"/>
+  <symbol number="00B3" entity="&#xf0b3;" char="&#x2311;"/>
   <!--UNCERTAINTY SIGN-->
-  <symbol number="F0B4" entity="&#xF0B4;" char="&#x2BD1;"/>
+  <symbol number="F0B4" entity="&#xf0b4;" char="&#x2bd1;"/>
+  <symbol number="00B4" entity="&#xf0b4;" char="&#x2bd1;"/>
   <!--CIRCLED WHITE STAR-->
-  <symbol number="F0B5" entity="&#xF0B5;" char="&#x272A;"/>
+  <symbol number="F0B5" entity="&#xf0b5;" char="&#x272a;"/>
+  <symbol number="00B5" entity="&#xf0b5;" char="&#x272a;"/>
   <!--SHADOWED WHITE STAR-->
-  <symbol number="F0B6" entity="&#xF0B6;" char="&#x2730;"/>
+  <symbol number="F0B6" entity="&#xf0b6;" char="&#x2730;"/>
+  <symbol number="00B6" entity="&#xf0b6;" char="&#x2730;"/>
   <!--CLOCK FACE ONE OCLOCK-->
-  <symbol number="F0B7" entity="&#xF0B7;" char="&#x1F550;"/>
+  <symbol number="F0B7" entity="&#xf0b7;" char="&#x1f550;"/>
+  <symbol number="00B7" entity="&#xf0b7;" char="&#x1f550;"/>
   <!--CLOCK FACE TWO OCLOCK-->
-  <symbol number="F0B8" entity="&#xF0B8;" char="&#x1F551;"/>
+  <symbol number="F0B8" entity="&#xf0b8;" char="&#x1f551;"/>
+  <symbol number="00B8" entity="&#xf0b8;" char="&#x1f551;"/>
   <!--CLOCK FACE THREE OCLOCK-->
-  <symbol number="F0B9" entity="&#xF0B9;" char="&#x1F552;"/>
+  <symbol number="F0B9" entity="&#xf0b9;" char="&#x1f552;"/>
+  <symbol number="00B9" entity="&#xf0b9;" char="&#x1f552;"/>
   <!--CLOCK FACE FOUR OCLOCK-->
-  <symbol number="F0BA" entity="&#xF0BA;" char="&#x1F553;"/>
+  <symbol number="F0BA" entity="&#xf0ba;" char="&#x1f553;"/>
+  <symbol number="00BA" entity="&#xf0ba;" char="&#x1f553;"/>
   <!--CLOCK FACE FIVE OCLOCK-->
-  <symbol number="F0BB" entity="&#xF0BB;" char="&#x1F554;"/>
+  <symbol number="F0BB" entity="&#xf0bb;" char="&#x1f554;"/>
+  <symbol number="00BB" entity="&#xf0bb;" char="&#x1f554;"/>
   <!--CLOCK FACE SIX OCLOCK-->
-  <symbol number="F0BC" entity="&#xF0BC;" char="&#x1F555;"/>
+  <symbol number="F0BC" entity="&#xf0bc;" char="&#x1f555;"/>
+  <symbol number="00BC" entity="&#xf0bc;" char="&#x1f555;"/>
   <!--CLOCK FACE SEVEN OCLOCK-->
-  <symbol number="F0BD" entity="&#xF0BD;" char="&#x1F556;"/>
+  <symbol number="F0BD" entity="&#xf0bd;" char="&#x1f556;"/>
+  <symbol number="00BD" entity="&#xf0bd;" char="&#x1f556;"/>
   <!--CLOCK FACE EIGHT OCLOCK-->
-  <symbol number="F0BE" entity="&#xF0BE;" char="&#x1F557;"/>
+  <symbol number="F0BE" entity="&#xf0be;" char="&#x1f557;"/>
+  <symbol number="00BE" entity="&#xf0be;" char="&#x1f557;"/>
   <!--CLOCK FACE NINE OCLOCK-->
-  <symbol number="F0BF" entity="&#xF0BF;" char="&#x1F558;"/>
+  <symbol number="F0BF" entity="&#xf0bf;" char="&#x1f558;"/>
+  <symbol number="00BF" entity="&#xf0bf;" char="&#x1f558;"/>
   <!--CLOCK FACE TEN OCLOCK-->
-  <symbol number="F0C0" entity="&#xF0C0;" char="&#x1F559;"/>
+  <symbol number="F0C0" entity="&#xf0c0;" char="&#x1f559;"/>
+  <symbol number="00C0" entity="&#xf0c0;" char="&#x1f559;"/>
   <!--CLOCK FACE ELEVEN OCLOCK-->
-  <symbol number="F0C1" entity="&#xF0C1;" char="&#x1F55A;"/>
+  <symbol number="F0C1" entity="&#xf0c1;" char="&#x1f55a;"/>
+  <symbol number="00C1" entity="&#xf0c1;" char="&#x1f55a;"/>
   <!--CLOCK FACE TWELVE OCLOCK-->
-  <symbol number="F0C2" entity="&#xF0C2;" char="&#x1F55B;"/>
+  <symbol number="F0C2" entity="&#xf0c2;" char="&#x1f55b;"/>
+  <symbol number="00C2" entity="&#xf0c2;" char="&#x1f55b;"/>
   <!--RIBBON ARROW DOWN LEFT-->
-  <symbol number="F0C3" entity="&#xF0C3;" char="&#x2BB0;"/>
+  <symbol number="F0C3" entity="&#xf0c3;" char="&#x2bb0;"/>
+  <symbol number="00C3" entity="&#xf0c3;" char="&#x2bb0;"/>
   <!--RIBBON ARROW DOWN RIGHT-->
-  <symbol number="F0C4" entity="&#xF0C4;" char="&#x2BB1;"/>
+  <symbol number="F0C4" entity="&#xf0c4;" char="&#x2bb1;"/>
+  <symbol number="00C4" entity="&#xf0c4;" char="&#x2bb1;"/>
   <!--RIBBON ARROW UP LEFT-->
-  <symbol number="F0C5" entity="&#xF0C5;" char="&#x2BB2;"/>
+  <symbol number="F0C5" entity="&#xf0c5;" char="&#x2bb2;"/>
+  <symbol number="00C5" entity="&#xf0c5;" char="&#x2bb2;"/>
   <!--RIBBON ARROW UP RIGHT-->
-  <symbol number="F0C6" entity="&#xF0C6;" char="&#x2BB3;"/>
+  <symbol number="F0C6" entity="&#xf0c6;" char="&#x2bb3;"/>
+  <symbol number="00C6" entity="&#xf0c6;" char="&#x2bb3;"/>
   <!--RIBBON ARROW LEFT UP-->
-  <symbol number="F0C7" entity="&#xF0C7;" char="&#x2BB4;"/>
+  <symbol number="F0C7" entity="&#xf0c7;" char="&#x2bb4;"/>
+  <symbol number="00C7" entity="&#xf0c7;" char="&#x2bb4;"/>
   <!--RIBBON ARROW RIGHT UP-->
-  <symbol number="F0C8" entity="&#xF0C8;" char="&#x2BB5;"/>
+  <symbol number="F0C8" entity="&#xf0c8;" char="&#x2bb5;"/>
+  <symbol number="00C8" entity="&#xf0c8;" char="&#x2bb5;"/>
   <!--RIBBON ARROW LEFT DOWN-->
-  <symbol number="F0C9" entity="&#xF0C9;" char="&#x2BB6;"/>
+  <symbol number="F0C9" entity="&#xf0c9;" char="&#x2bb6;"/>
+  <symbol number="00C9" entity="&#xf0c9;" char="&#x2bb6;"/>
   <!--RIBBON ARROW RIGHT DOWN-->
-  <symbol number="F0CA" entity="&#xF0CA;" char="&#x2BB7;"/>
+  <symbol number="F0CA" entity="&#xf0ca;" char="&#x2bb7;"/>
+  <symbol number="00CA" entity="&#xf0ca;" char="&#x2bb7;"/>
   <!--SOLID QUILT SQUARE ORNAMENT-->
-  <symbol number="F0CB" entity="&#xF0CB;" char="&#x1F66A;"/>
+  <symbol number="F0CB" entity="&#xf0cb;" char="&#x1f66a;"/>
+  <symbol number="00CB" entity="&#xf0cb;" char="&#x1f66a;"/>
   <!--SOLID QUILT SQUARE ORNAMENT IN BLACK SQUARE-->
-  <symbol number="F0CB" entity="&#xF0CB;" char="&#x1F66B;"/>
+  <symbol number="F0CB" entity="&#xf0cb;" char="&#x1f66b;"/>
+  <symbol number="00CB" entity="&#xf0cb;" char="&#x1f66b;"/>
   <!--TURNED SOUTH WEST POINTING LEAF-->
-  <symbol number="F0CD" entity="&#xF0CD;" char="&#x1F655;"/>
+  <symbol number="F0CD" entity="&#xf0cd;" char="&#x1f655;"/>
+  <symbol number="00CD" entity="&#xf0cd;" char="&#x1f655;"/>
   <!--TURNED NORTH WEST POINTING LEAF-->
-  <symbol number="F0CE" entity="&#xF0CE;" char="&#x1F654;"/>
+  <symbol number="F0CE" entity="&#xf0ce;" char="&#x1f654;"/>
+  <symbol number="00CE" entity="&#xf0ce;" char="&#x1f654;"/>
   <!--TURNED SOUTH EAST POINTING LEAF-->
-  <symbol number="F0CF" entity="&#xF0CF;" char="&#x1F657;"/>
+  <symbol number="F0CF" entity="&#xf0cf;" char="&#x1f657;"/>
+  <symbol number="00CF" entity="&#xf0cf;" char="&#x1f657;"/>
   <!--TURNED NORTH EAST POINTING LEAF-->
-  <symbol number="F0D0" entity="&#xF0D0;" char="&#x1F656;"/>
+  <symbol number="F0D0" entity="&#xf0d0;" char="&#x1f656;"/>
+  <symbol number="00D0" entity="&#xf0d0;" char="&#x1f656;"/>
   <!--NORTH WEST POINTING LEAF-->
-  <symbol number="F0D1" entity="&#xF0D1;" char="&#x1F650;"/>
+  <symbol number="F0D1" entity="&#xf0d1;" char="&#x1f650;"/>
+  <symbol number="00D1" entity="&#xf0d1;" char="&#x1f650;"/>
   <!--SOUTH WEST POINTING LEAF-->
-  <symbol number="F0D2" entity="&#xF0D2;" char="&#x1F651;"/>
+  <symbol number="F0D2" entity="&#xf0d2;" char="&#x1f651;"/>
+  <symbol number="00D2" entity="&#xf0d2;" char="&#x1f651;"/>
   <!--NORTH EAST POINTING LEAF-->
-  <symbol number="F0D3" entity="&#xF0D3;" char="&#x1F652;"/>
+  <symbol number="F0D3" entity="&#xf0d3;" char="&#x1f652;"/>
+  <symbol number="00D3" entity="&#xf0d3;" char="&#x1f652;"/>
   <!--SOUTH EAST POINTING LEAF-->
-  <symbol number="F0D4" entity="&#xF0D4;" char="&#x1F653;"/>
+  <symbol number="F0D4" entity="&#xf0d4;" char="&#x1f653;"/>
+  <symbol number="00D4" entity="&#xf0d4;" char="&#x1f653;"/>
   <!--ERASE TO THE LEFT-->
-  <symbol number="F0D5" entity="&#xF0D5;" char="&#x232B;"/>
+  <symbol number="F0D5" entity="&#xf0d5;" char="&#x232b;"/>
+  <symbol number="00D5" entity="&#xf0d5;" char="&#x232b;"/>
   <!--ERASE TO THE RIGHT-->
-  <symbol number="F0D6" entity="&#xF0D6;" char="&#x2326;"/>
+  <symbol number="F0D6" entity="&#xf0d6;" char="&#x2326;"/>
+  <symbol number="00D6" entity="&#xf0d6;" char="&#x2326;"/>
   <!--THREE-D TOP-LIGHTED LEFTWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F0D7" entity="&#xF0D7;" char="&#x2B98;"/>
+  <symbol number="F0D7" entity="&#xf0d7;" char="&#x2b98;"/>
+  <symbol number="00D7" entity="&#xf0d7;" char="&#x2b98;"/>
   <!--THREE-D TOP-LIGHTED RIGHTWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F0D8" entity="&#xF0D8;" char="&#x2B9A;"/>
+  <symbol number="F0D8" entity="&#xf0d8;" char="&#x2b9a;"/>
+  <symbol number="00D8" entity="&#xf0d8;" char="&#x2b9a;"/>
   <!--THREE-D RIGHT-LIGHTED UPWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F0D9" entity="&#xF0D9;" char="&#x2B99;"/>
+  <symbol number="F0D9" entity="&#xf0d9;" char="&#x2b99;"/>
+  <symbol number="00D9" entity="&#xf0d9;" char="&#x2b99;"/>
   <!--THREE-D LEFT-LIGHTED DOWNWARDS EQUILATERAL ARROWHEAD-->
-  <symbol number="F0DA" entity="&#xF0DA;" char="&#x2B9B;"/>
+  <symbol number="F0DA" entity="&#xf0da;" char="&#x2b9b;"/>
+  <symbol number="00DA" entity="&#xf0da;" char="&#x2b9b;"/>
   <!--LEFTWARDS BLACK CIRCLED WHITE ARROW-->
-  <symbol number="F0DB" entity="&#xF0DB;" char="&#x2B88;"/>
+  <symbol number="F0DB" entity="&#xf0db;" char="&#x2b88;"/>
+  <symbol number="00DB" entity="&#xf0db;" char="&#x2b88;"/>
   <!--RIGHTWARDS BLACK CIRCLED WHITE ARROW-->
-  <symbol number="F0DC" entity="&#xF0DC;" char="&#x2B8A;"/>
+  <symbol number="F0DC" entity="&#xf0dc;" char="&#x2b8a;"/>
+  <symbol number="00DC" entity="&#xf0dc;" char="&#x2b8a;"/>
   <!--UPWARDS BLACK CIRCLED WHITE ARROW-->
-  <symbol number="F0DD" entity="&#xF0DD;" char="&#x2B89;"/>
+  <symbol number="F0DD" entity="&#xf0dd;" char="&#x2b89;"/>
+  <symbol number="00DD" entity="&#xf0dd;" char="&#x2b89;"/>
   <!--DOWNWARDS BLACK CIRCLED WHITE ARROW-->
-  <symbol number="F0DE" entity="&#xF0DE;" char="&#x2B8B;"/>
+  <symbol number="F0DE" entity="&#xf0de;" char="&#x2b8b;"/>
+  <symbol number="00DE" entity="&#xf0de;" char="&#x2b8b;"/>
   <!--WIDE-HEADED LEFTWARDS BARB ARROW-->
-  <symbol number="F0DF" entity="&#xF0DF;" char="&#x1F868;"/>
+  <symbol number="F0DF" entity="&#xf0df;" char="&#x1f868;"/>
+  <symbol number="00DF" entity="&#xf0df;" char="&#x1f868;"/>
   <!--WIDE-HEADED RIGHTWARDS BARB ARROW-->
-  <symbol number="F0E0" entity="&#xF0E0;" char="&#x1F86A;"/>
+  <symbol number="F0E0" entity="&#xf0e0;" char="&#x1f86a;"/>
+  <symbol number="00E0" entity="&#xf0e0;" char="&#x1f86a;"/>
   <!--WIDE-HEADED UPWARDS BARB ARROW-->
-  <symbol number="F0E1" entity="&#xF0E1;" char="&#x1F869;"/>
+  <symbol number="F0E1" entity="&#xf0e1;" char="&#x1f869;"/>
+  <symbol number="00E1" entity="&#xf0e1;" char="&#x1f869;"/>
   <!--WIDE-HEADED DOWNWARDS BARB ARROW-->
-  <symbol number="F0E2" entity="&#xF0E2;" char="&#x1F86B;"/>
+  <symbol number="F0E2" entity="&#xf0e2;" char="&#x1f86b;"/>
+  <symbol number="00E2" entity="&#xf0e2;" char="&#x1f86b;"/>
   <!--WIDE-HEADED NORTH WEST BARB ARROW-->
-  <symbol number="F0E3" entity="&#xF0E3;" char="&#x1F86C;"/>
+  <symbol number="F0E3" entity="&#xf0e3;" char="&#x1f86c;"/>
+  <symbol number="00E3" entity="&#xf0e3;" char="&#x1f86c;"/>
   <!--WIDE-HEADED NORTH EAST BARB ARROW-->
-  <symbol number="F0E4" entity="&#xF0E4;" char="&#x1F86D;"/>
+  <symbol number="F0E4" entity="&#xf0e4;" char="&#x1f86d;"/>
+  <symbol number="00E4" entity="&#xf0e4;" char="&#x1f86d;"/>
   <!--WIDE-HEADED SOUTH WEST BARB ARROW-->
-  <symbol number="F0E5" entity="&#xF0E5;" char="&#x1F86F;"/>
+  <symbol number="F0E5" entity="&#xf0e5;" char="&#x1f86f;"/>
+  <symbol number="00E5" entity="&#xf0e5;" char="&#x1f86f;"/>
   <!--WIDE-HEADED SOUTH EAST BARB ARROW-->
-  <symbol number="F0E6" entity="&#xF0E6;" char="&#x1F86E;"/>
+  <symbol number="F0E6" entity="&#xf0e6;" char="&#x1f86e;"/>
+  <symbol number="00E6" entity="&#xf0e6;" char="&#x1f86e;"/>
   <!--WIDE-HEADED LEFTWARDS HEAVY BARB ARROW-->
-  <symbol number="F0E7" entity="&#xF0E7;" char="&#x1F878;"/>
+  <symbol number="F0E7" entity="&#xf0e7;" char="&#x1f878;"/>
+  <symbol number="00E7" entity="&#xf0e7;" char="&#x1f878;"/>
   <!--WIDE-HEADED RIGHTWARDS HEAVY BARB ARROW-->
-  <symbol number="F0E8" entity="&#xF0E8;" char="&#x1F87A;"/>
+  <symbol number="F0E8" entity="&#xf0e8;" char="&#x1f87a;"/>
+  <symbol number="00E8" entity="&#xf0e8;" char="&#x1f87a;"/>
   <!--WIDE-HEADED UPWARDS HEAVY BARB ARROW-->
-  <symbol number="F0E9" entity="&#xF0E9;" char="&#x1F879;"/>
+  <symbol number="F0E9" entity="&#xf0e9;" char="&#x1f879;"/>
+  <symbol number="00E9" entity="&#xf0e9;" char="&#x1f879;"/>
   <!--WIDE-HEADED DOWNWARDS HEAVY BARB ARROW-->
-  <symbol number="F0EA" entity="&#xF0EA;" char="&#x1F87B;"/>
+  <symbol number="F0EA" entity="&#xf0ea;" char="&#x1f87b;"/>
+  <symbol number="00EA" entity="&#xf0ea;" char="&#x1f87b;"/>
   <!--WIDE-HEADED NORTH WEST HEAVY BARB ARROW-->
-  <symbol number="F0EB" entity="&#xF0EB;" char="&#x1F87C;"/>
+  <symbol number="F0EB" entity="&#xf0eb;" char="&#x1f87c;"/>
+  <symbol number="00EB" entity="&#xf0eb;" char="&#x1f87c;"/>
   <!--WIDE-HEADED NORTH EAST HEAVY BARB ARROW-->
-  <symbol number="F0EC" entity="&#xF0EC;" char="&#x1F87D;"/>
+  <symbol number="F0EC" entity="&#xf0ec;" char="&#x1f87d;"/>
+  <symbol number="00EC" entity="&#xf0ec;" char="&#x1f87d;"/>
   <!--WIDE-HEADED SOUTH WEST HEAVY BARB ARROW-->
-  <symbol number="F0ED" entity="&#xF0ED;" char="&#x1F87F;"/>
+  <symbol number="F0ED" entity="&#xf0ed;" char="&#x1f87f;"/>
+  <symbol number="00ED" entity="&#xf0ed;" char="&#x1f87f;"/>
   <!--WIDE-HEADED SOUTH EAST HEAVY BARB ARROW-->
-  <symbol number="F0EE" entity="&#xF0EE;" char="&#x1F87E;"/>
+  <symbol number="F0EE" entity="&#xf0ee;" char="&#x1f87e;"/>
+  <symbol number="00EE" entity="&#xf0ee;" char="&#x1f87e;"/>
   <!--LEFTWARDS WHITE ARROW-->
-  <symbol number="F0EF" entity="&#xF0EF;" char="&#x21E6;"/>
+  <symbol number="F0EF" entity="&#xf0ef;" char="&#x21e6;"/>
+  <symbol number="00EF" entity="&#xf0ef;" char="&#x21e6;"/>
   <!--RIGHTWARDS WHITE ARROW-->
-  <symbol number="F0F0" entity="&#xF0F0;" char="&#x21E8;"/>
+  <symbol number="F0F0" entity="&#xf0f0;" char="&#x21e8;"/>
+  <symbol number="00F0" entity="&#xf0f0;" char="&#x21e8;"/>
+  <symbol number="00E0" entity="&#xe0;" char="&#x2192;"/>
+  <symbol number="00E0" entity="&#xe0;" char="&#x2192;"/>
   <!--UPWARDS WHITE ARROW-->
-  <symbol number="F0F1" entity="&#xF0F1;" char="&#x21E7;"/>
+  <symbol number="F0F1" entity="&#xf0f1;" char="&#x21e7;"/>
+  <symbol number="00F1" entity="&#xf0f1;" char="&#x21e7;"/>
   <!--DOWNWARDS WHITE ARROW-->
-  <symbol number="F0F2" entity="&#xF0F2;" char="&#x21E9;"/>
+  <symbol number="F0F2" entity="&#xf0f2;" char="&#x21e9;"/>
+  <symbol number="00F2" entity="&#xf0f2;" char="&#x21e9;"/>
   <!--LEFT RIGHT WHITE ARROW-->
-  <symbol number="F0F3" entity="&#xF0F3;" char="&#x2B04;"/>
+  <symbol number="F0F3" entity="&#xf0f3;" char="&#x2b04;"/>
+  <symbol number="00F3" entity="&#xf0f3;" char="&#x2b04;"/>
   <!--UP DOWN WHITE ARROW-->
-  <symbol number="F0F4" entity="&#xF0F4;" char="&#x21F3;"/>
+  <symbol number="F0F4" entity="&#xf0f4;" char="&#x21f3;"/>
+  <symbol number="00F4" entity="&#xf0f4;" char="&#x21f3;"/>
   <!--NORTH EAST WHITE ARROW-->
-  <symbol number="F0F5" entity="&#xF0F5;" char="&#x2B00;"/>
+  <symbol number="F0F5" entity="&#xf0f5;" char="&#x2b00;"/>
+  <symbol number="00F5" entity="&#xf0f5;" char="&#x2b00;"/>
   <!--NORTH WEST WHITE ARROW-->
-  <symbol number="F0F6" entity="&#xF0F6;" char="&#x2B01;"/>
+  <symbol number="F0F6" entity="&#xf0f6;" char="&#x2b01;"/>
+  <symbol number="00F6" entity="&#xf0f6;" char="&#x2b01;"/>
   <!--SOUTH WEST WHITE ARROW-->
-  <symbol number="F0F7" entity="&#xF0F7;" char="&#x2B03;"/>
+  <symbol number="F0F7" entity="&#xf0f7;" char="&#x2b03;"/>
+  <symbol number="00F7" entity="&#xf0f7;" char="&#x2b03;"/>
   <!--SOUTH EAST WHITE ARROW-->
-  <symbol number="F0F8" entity="&#xF0F8;" char="&#x2B02;"/>
+  <symbol number="F0F8" entity="&#xf0f8;" char="&#x2b02;"/>
+  <symbol number="00F8" entity="&#xf0f8;" char="&#x2b02;"/>
   <!--WHITE ARROW SHAFT WIDTH ONE-->
-  <symbol number="F0F9" entity="&#xF0F9;" char="&#x1F8AC;"/>
+  <symbol number="F0F9" entity="&#xf0f9;" char="&#x1f8ac;"/>
+  <symbol number="00F9" entity="&#xf0f9;" char="&#x1f8ac;"/>
   <!--WHITE ARROW SHAFT WIDTH TWO THIRDS-->
-  <symbol number="F0FA" entity="&#xF0FA;" char="&#x1F8AD;"/>
+  <symbol number="F0FA" entity="&#xf0fa;" char="&#x1f8ad;"/>
+  <symbol number="00FA" entity="&#xf0fa;" char="&#x1f8ad;"/>
   <!--BALLOT BOLD SCRIPT X-->
-  <symbol number="F0FB" entity="&#xF0FB;" char="&#x1F5F6;"/>
+  <symbol number="F0FB" entity="&#xf0fb;" char="&#x1f5f6;"/>
+  <symbol number="00FB" entity="&#xf0fb;" char="&#x1f5f6;"/>
   <!--HEAVY CHECK MARK-->
-  <symbol number="F0FC" entity="&#xF0FC;" char="&#x2714;"/>
+  <symbol number="F0FC" entity="&#xf0fc;" char="&#x2714;"/>
+  <symbol number="00FC" entity="&#xf0fc;" char="&#x2714;"/>
   <!--BALLOT BOX WITH BOLD SCRIPT X-->
-  <symbol number="F0FD" entity="&#xF0FD;" char="&#x1F5F7;"/>
+  <symbol number="F0FD" entity="&#xf0fd;" char="&#x1f5f7;"/>
+  <symbol number="00FD" entity="&#xf0fd;" char="&#x1f5f7;"/>
   <!--BALLOT BOX WITH BOLD CHECK-->
-  <symbol number="F0FE" entity="&#xF0FE;" char="&#x1F5F9;"/>
-  
+  <symbol number="F0FE" entity="&#xf0fe;" char="&#x1f5f9;"/>
+  <symbol number="00FE" entity="&#xf0fe;" char="&#x1f5f9;"/>
 </symbols>

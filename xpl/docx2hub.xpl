@@ -114,6 +114,14 @@
     <p:documentation>Whether to remove mc:AlternateContent/mc:Choice at an early conversion stage (after insert-xpath 
       though).</p:documentation>
   </p:option>
+  <p:option name="charmap-policy" select="'unicode'">
+    <p:documentation>Pass a policy for mapping characters from non-unicode fonts: 
+      'unicode' maps characters strictly to their unicode equivalents. Please be aware that 
+      preinstalled fonts may not be able to display uncommon characters correctly.
+      'msoffice' tries to map each character in a way that it can be displayed with typical MS Office fonts, 
+      even if the appearance of the character doesn't match exactly those of its source. 
+    </p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   

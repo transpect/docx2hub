@@ -37,6 +37,9 @@
   <xsl:param name="hub-version" select="'1.0'" as="xs:string"/>
   <xsl:param name="discard-alternate-choices" select="'yes'" as="xs:string"/>
   <xsl:param name="convert-footer" select="false()" as="xs:boolean"/>
+  <xsl:param name="charmap-policy" select="'unicode'" as="xs:string">
+    <!-- Values: unicode or xs:string. For xs:string, mapping attribute in the fashion @char-{xs:string} must exist in the symbols file -->
+  </xsl:param>
   
   <xsl:variable name="docx2hub:discard-alternate-choices" as="xs:boolean"
     select="$discard-alternate-choices = ('yes', 'true', '1')"/>

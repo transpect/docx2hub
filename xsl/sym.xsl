@@ -85,8 +85,8 @@
             <xsl:otherwise>
               <text mapped="true">
                 <xsl:value-of select="if (self::w:sym) 
-                                      then $font_map/symbols/symbol[@number = $number]/@char 
-                                      else $font_map/symbols/symbol[@entity = $number]/@char"/>
+                                      then $font_map/symbols/symbol[@number = $number]/(@*[local-name() = (concat('char-', $charmap-policy))], @char)[1]
+                                      else $font_map/symbols/symbol[@entity = $number]/(@*[local-name() = (concat('char-', $charmap-policy))], @char)[1]"/>
               </text>
             </xsl:otherwise>
           </xsl:choose>

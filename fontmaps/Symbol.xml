@@ -267,8 +267,8 @@
   <symbol number="F075" entity="&#xf075;" char="&#x3c5;"/>
   <symbol number="0075" entity="&#x0075;" char="&#x3c5;"/>
   <!--GREEK SMALL LETTER PHI-->
-  <symbol number="F066" entity="&#xf066;" char="&#x3c6;"/>
-  <symbol number="0066" entity="&#x0066;" char="&#x3c6;"/>
+  <symbol number="F066" entity="&#xf066;" char="&#x3d5;"/>
+  <symbol number="0066" entity="&#x0066;" char="&#x3d5;"/>
   <!--GREEK SMALL LETTER CHI-->
   <symbol number="F063" entity="&#xf063;" char="&#x3c7;"/>
   <symbol number="0063" entity="&#x0063;" char="&#x3c7;"/>
@@ -282,8 +282,8 @@
   <symbol number="F04A" entity="&#xf04a;" char="&#x3d1;"/>
   <symbol number="004A" entity="&#x004A;" char="&#x3d1;"/>
   <!--GREEK PHI SYMBOL-->
-  <symbol number="F06A" entity="&#xf06a;" char="&#x3d5;"/>
-  <symbol number="006A" entity="&#x006A;" char="&#x3d5;"/>
+  <symbol number="F06A" entity="&#xf06a;" char="&#x3c6;"/>
+  <symbol number="006A" entity="&#x006A;" char="&#x3c6;"/>
   <!--GREEK PI SYMBOL-->
   <symbol number="F076" entity="&#xf076;" char="&#x3d6;"/>
   <symbol number="0076" entity="&#x0076;" char="&#x3d6;"/>

@@ -201,8 +201,8 @@
   <symbol number="F057" entity="&#xf057;" char="&#x3a9;"/>
   <symbol number="0057" entity="&#x0057;" char="&#x3a9;"/>
   <!--RADICAL EXTENDER, NO UNICODE EQUIVALENT-->
-  <symbol number="F060" entity="&#xf060;" char=""/>
-  <symbol number="0060" entity="&#x0060;" char=""/>
+  <!--<symbol number="F060" entity="&#xf060;" char=""/>
+  <symbol number="0060" entity="&#x0060;" char=""/>-->
   <!--GREEK SMALL LETTER ALPHA-->
   <symbol number="F061" entity="&#xf061;" char="&#x3b1;"/>
   <symbol number="0061" entity="&#x0061;" char="&#x3b1;"/>

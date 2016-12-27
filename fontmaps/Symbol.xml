@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="US-ASCII"?><symbols>
   <!--SPACE-->
-  <symbol number="F020" entity="&#xf020;" char="&#x2020;"/>
-  <symbol number="0020" entity="&#x0020;" char="&#x2020;"/>
+  <symbol number="F020" entity="&#xf020;" char="&#x20;"/>
+  <symbol number="0020" entity="&#x0020;" char="&#x20;"/>
   <!--EXCLAMATION MARK-->
   <symbol number="F021" entity="&#xf021;" char="&#x21;"/>
   <symbol number="0021" entity="&#x0021;" char="&#x21;"/>

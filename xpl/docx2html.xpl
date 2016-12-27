@@ -52,7 +52,7 @@
   
   <p:import href="docx2hub.xpl"/>
   
-  <docx2hub:convert name="docx2hub">
+  <docx2hub:convert name="docx2hub" charmap-policy="msoffice">
     <p:with-option name="docx" select="$docx"/>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>

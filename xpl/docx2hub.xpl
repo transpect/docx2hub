@@ -330,6 +330,7 @@
     <p:with-param name="unwrap-tooltip-links" select="$unwrap-tooltip-links"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="field-vars" select="$field-vars"/>
+    <p:with-param name="charmap-policy" select="$charmap-policy"/>
   </tr:xslt-mode>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:join-runs" name="join-runs">

@@ -2037,7 +2037,7 @@
     <xsl:param name="text-nodes" as="node()*"/><!-- already a result of transforming *:/text() and w:sym in mode="wml-to-dbk" -->
     <xsl:param name="context" as="element(*)?"/>
     <xsl:choose>
-      <xsl:when test="every $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym | $c/self::*:rPr)">
+      <xsl:when test="some $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym)">
         <xsl:for-each select="$text-nodes">
           <xsl:choose>
             <!-- letex comment and PI for an unmapped w:sym -->
@@ -2092,7 +2092,7 @@
     <xsl:param name="text-nodes" as="node()*"/><!-- already a result of transforming *:/text() and w:sym in mode="wml-to-dbk" -->
     <xsl:param name="context" as="element(*)?"/>
     <xsl:choose>
-      <xsl:when test="every $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym | $c/self::*:rPr)">
+      <xsl:when test="some $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym)">
         <xsl:for-each select="$text-nodes">
     			<xsl:choose>
     				<!-- letex comment and PI for an unmapped w:sym -->

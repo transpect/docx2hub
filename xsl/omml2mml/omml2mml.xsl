@@ -2033,55 +2033,100 @@
   </xsl:template>
   
   
-  <xsl:template name="m:preliminary-mtext">
+  <xsl:template name="m:preliminary-mtext1">
     <xsl:param name="text-nodes" as="node()*"/><!-- already a result of transforming *:/text() and w:sym in mode="wml-to-dbk" -->
     <xsl:param name="context" as="element(*)?"/>
-    <xsl:for-each select="$text-nodes">
-      <xsl:choose>
-        <!-- letex comment and PI for an unmapped w:sym -->
-        <xsl:when test="self::processing-instruction() or self::comment()">
-          <xsl:sequence select="."/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:variable name="space-stripped" as="xs:string" select="replace(., '(^[\s\p{Zs}]+|[\s\p{Zs}]+$)', '')"/>
+    <xsl:choose>
+      <xsl:when test="every $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym | $c/self::*:rPr)">
+        <xsl:for-each select="$text-nodes">
           <xsl:choose>
-            <xsl:when test="$space-stripped = $upright-mi-names">
-              <xsl:variable name="space-at-start" as="xs:string" 
-                select="replace(.[matches(., '^([\s\p{Zs}]+).+')], '^([\s\p{Zs}]+).+', '$1')"/>
-              <xsl:variable name="space-at-end" as="xs:string" 
-                select="replace(.[matches(., '^.+([\s\p{Zs}]+)$')], '^.+([\s\p{Zs}]+)$', '$1')"/>
-              <xsl:if test="$space-at-start">
-                <mml:mtext>
-                  <xsl:value-of select="$space-at-start"/>
-                </mml:mtext>
-              </xsl:if>
-              <mml:mi><!-- no mathvariant="normal": multichar mi should be rendered upright by default anyway -->
-                <xsl:for-each select="$context">
-                  <xsl:call-template name="checkDirectFormatting"/>
-                </xsl:for-each>
-                <xsl:value-of select="$space-stripped"/>
-              </mml:mi>
-              <xsl:if test="$space-at-end">
-                <mml:mtext>
-                  <xsl:value-of select="$space-at-end"/>
-                </mml:mtext>
-              </xsl:if>
+            <!-- letex comment and PI for an unmapped w:sym -->
+            <xsl:when test="self::processing-instruction() or self::comment()">
+              <xsl:sequence select="."/>
             </xsl:when>
             <xsl:otherwise>
-              <mml:mtext>
-                <xsl:for-each select="$context">
-                  <xsl:call-template name="checkDirectFormatting"/>
-                </xsl:for-each>
-                <xsl:value-of select="."/>
-              </mml:mtext>
+              <xsl:variable name="space-stripped" as="xs:string" select="replace(., '(^[\s\p{Zs}]+|[\s\p{Zs}]+$)', '')"/>
+              <xsl:choose>
+                <xsl:when test="$space-stripped = $upright-mi-names">
+                  <xsl:variable name="space-at-start" as="xs:string" 
+                    select="replace(.[matches(., '^([\s\p{Zs}]+).+')], '^([\s\p{Zs}]+).+', '$1')"/>
+                  <xsl:variable name="space-at-end" as="xs:string" 
+                    select="replace(.[matches(., '^.+([\s\p{Zs}]+)$')], '^.+([\s\p{Zs}]+)$', '$1')"/>
+                  <xsl:if test="$space-at-start">
+                    <mml:mtext>
+                      <xsl:value-of select="$space-at-start"/>
+                    </mml:mtext>
+                  </xsl:if>
+                  <mml:mi><!-- no mathvariant="normal": multichar mi should be rendered upright by default anyway -->
+                    <xsl:for-each select="$context">
+                      <xsl:call-template name="checkDirectFormatting"/>
+                    </xsl:for-each>
+                    <xsl:value-of select="$space-stripped"/>
+                  </mml:mi>
+                  <xsl:if test="$space-at-end">
+                    <mml:mtext>
+                      <xsl:value-of select="$space-at-end"/>
+                    </mml:mtext>
+                  </xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+                  <mml:mtext>
+                    <xsl:for-each select="$context">
+                      <xsl:call-template name="checkDirectFormatting"/>
+                    </xsl:for-each>
+                    <xsl:value-of select="."/>
+                  </mml:mtext>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:otherwise>
-          </xsl:choose>
-        </xsl:otherwise>
-      </xsl:choose> 
-    </xsl:for-each>
+          </xsl:choose> 
+        </xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="$context/* except $context/*:rPr" mode="#current"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template name="m:preliminary-mtext2">
+    <xsl:param name="text-nodes" as="node()*"/><!-- already a result of transforming *:/text() and w:sym in mode="wml-to-dbk" -->
+    <xsl:param name="context" as="element(*)?"/>
+    <xsl:choose>
+      <xsl:when test="every $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym | $c/self::*:rPr)">
+        <xsl:for-each select="$text-nodes">
+    			<xsl:choose>
+    				<!-- letex comment and PI for an unmapped w:sym -->
+    				<xsl:when test="self::processing-instruction() or self::comment()">
+    					<xsl:sequence select="."/>
+    				</xsl:when>
+    				<xsl:otherwise>
+    					<xsl:call-template name="ParseMt">
+    						<xsl:with-param name="context" select="$context"/>
+    						<xsl:with-param name="sToParse" select="."/>
+    						<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+    						<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
+    						<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
+    																							 then $context/m:rPr[last()]/m:nor/@m:val 
+    																							 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
+    																										then 'on' 
+    																										else 'off'"/>
+    					</xsl:call-template>
+    				</xsl:otherwise>
+    			</xsl:choose>
+    		</xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="$context/* except $context/*:rPr" mode="#current"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="m:r" mode="omml2mml">
+    <!-- Typical content: m:t or w:sym. 
+         In rare cases (for ex., when an OMML formula contained a MathType object that was converted 
+         to OMML), m:r may contain the whole wealth of OMML, such as m:sSub. This seems to be legit
+         in docx.
+    -->
     <xsl:variable name="sLowerCaseNor"
       select="translate(child::m:rPr[last()]/m:nor/@m:val, $alpha-uppercase,                                                                           $alpha-lowercase)"/>
     <xsl:variable name="sLowerCaseLit"
@@ -2099,41 +2144,37 @@
         <xsl:otherwise>1</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-
     <xsl:variable name="fSub">
       <xsl:choose>
         <xsl:when test="number(w:rPr/w:position/@w:val) lt 0">1</xsl:when>
         <xsl:otherwise>0</xsl:otherwise>
 			</xsl:choose>
     </xsl:variable>
-    <xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym)[1]/.."/>
+    
+    <xsl:variable name="context" as="element(m:r)" select="."/>
+    <xsl:variable name="text-nodes" as="node()*">
+      <xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
+    </xsl:variable>    
     <xsl:choose>
 			<xsl:when test="$fSub=1">
 				<mml:msub>
 					<mml:mrow/>
 					<mml:mrow>
-            <xsl:variable name="text-nodes" as="node()*">
-              <xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
-            </xsl:variable>
 						<xsl:choose>
 							<xsl:when test="$fNor=1">
 								<xsl:choose>
 									<xsl:when test="$fLit=1">
 										<mml:maction actiontype="lit">
-										  <xsl:call-template name="m:preliminary-mtext">
+										  <xsl:call-template name="m:preliminary-mtext1">
 										    <xsl:with-param name="context" select="$context"/>
-										    <xsl:with-param name="text-nodes">
-										      <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>  
-										    </xsl:with-param>
+										    <xsl:with-param name="text-nodes" select="$text-nodes"/>
 										  </xsl:call-template>
 										</mml:maction>
 									</xsl:when>
 									<xsl:otherwise>
-                    <xsl:call-template name="m:preliminary-mtext">
+                    <xsl:call-template name="m:preliminary-mtext1">
                       <xsl:with-param name="context" select="$context"/>
-                      <xsl:with-param name="text-nodes">
-                        <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
-                      </xsl:with-param>
+                      <xsl:with-param name="text-nodes" select="$text-nodes"/>
                     </xsl:call-template>
 									</xsl:otherwise>
 								</xsl:choose>
@@ -2143,51 +2184,17 @@
 									<xsl:when test="not($context)"></xsl:when>
 									<xsl:when test="$fLit=1">
 										<mml:maction actiontype="lit">
-											<xsl:for-each select="$text-nodes">
-												<xsl:choose>
-													<!-- letex comment and PI for an unmapped w:sym -->
-													<xsl:when test="self::processing-instruction() or self::comment()">
-														<xsl:sequence select="."/>
-													</xsl:when>
-													<xsl:otherwise>
-														<xsl:call-template name="ParseMt">
-															<xsl:with-param name="context" select="$context"/>
-															<xsl:with-param name="sToParse" select="."/>
-															<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
-															<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
-															<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
-																																 then $context/m:rPr[last()]/m:nor/@m:val 
-																																 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
-																																			then 'on' 
-																																			else 'off'"/>
-														</xsl:call-template>
-													</xsl:otherwise>
-												</xsl:choose>
-											</xsl:for-each>
+										  <xsl:call-template name="m:preliminary-mtext2">
+                        <xsl:with-param name="context" select="$context"/>
+                        <xsl:with-param name="text-nodes" select="$text-nodes"/>
+										  </xsl:call-template>
 										</mml:maction>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:for-each select="$text-nodes">
-											<xsl:choose>
-												<!-- letex comment and PI for an unmapped w:sym -->
-												<xsl:when test="self::processing-instruction() or self::comment()">
-													<xsl:sequence select="."/>
-												</xsl:when>
-												<xsl:otherwise>
-													<xsl:call-template name="ParseMt">
-														<xsl:with-param name="context" select="$context"/>
-														<xsl:with-param name="sToParse" select="."/>
-														<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
-														<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
-														<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
-																															 then $context/m:rPr[last()]/m:nor/@m:val 
-																															 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
-																																		then 'on' 
-																																		else 'off'"/>
-													</xsl:call-template>
-												</xsl:otherwise>
-											</xsl:choose>
-										</xsl:for-each>
+                    <xsl:call-template name="m:preliminary-mtext2">
+                      <xsl:with-param name="context" select="$context"/>
+                      <xsl:with-param name="text-nodes" select="$text-nodes"/>
+                    </xsl:call-template>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:otherwise>
@@ -2201,78 +2208,37 @@
 						<xsl:choose>
 							<xsl:when test="$fLit=1">
 								<mml:maction actiontype="lit">
-                  <xsl:call-template name="m:preliminary-mtext">
+                  <xsl:call-template name="m:preliminary-mtext1">
                     <xsl:with-param name="context" select="$context"/>
-                    <xsl:with-param name="text-nodes">
-                      <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
-                    </xsl:with-param>
+                    <xsl:with-param name="text-nodes" select="$text-nodes"/>
                   </xsl:call-template>
 								</mml:maction>
 							</xsl:when>
 							<xsl:otherwise>
-                <xsl:call-template name="m:preliminary-mtext">
+                <xsl:call-template name="m:preliminary-mtext1">
                   <xsl:with-param name="context" select="$context"/>
-                  <xsl:with-param name="text-nodes">
-                    <xsl:apply-templates select=".//*:t/text() | w:sym" mode="wml-to-dbk"/>
-                  </xsl:with-param>
+                  <xsl:with-param name="text-nodes" select="$text-nodes"/>
                 </xsl:call-template>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:variable name="text-nodes" as="node()*">
-							<xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
-						</xsl:variable>
 						<xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym)[1]/.."/>
 						<xsl:choose>
 							<xsl:when test="not($context)"></xsl:when>
 							<xsl:when test="$fLit=1">
 								<mml:maction actiontype="lit">
-									<xsl:for-each select="$text-nodes">
-										<xsl:choose>
-											<!-- letex comment and PI for an unmapped w:sym -->
-											<xsl:when test="self::processing-instruction() or self::comment()">
-												<xsl:sequence select="."/>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:call-template name="ParseMt">
-													<xsl:with-param name="context" select="$context"/>
-													<xsl:with-param name="sToParse" select="."/>
-													<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
-													<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
-													<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
-																														 then $context/m:rPr[last()]/m:nor/@m:val 
-																														 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
-																																	then 'on' 
-																																	else 'off'"/>
-												</xsl:call-template>
-											</xsl:otherwise>
-										</xsl:choose>
-									</xsl:for-each>
+                  <xsl:call-template name="m:preliminary-mtext2">
+                    <xsl:with-param name="context" select="$context"/>
+                    <xsl:with-param name="text-nodes" select="$text-nodes"/>
+                  </xsl:call-template>
 								</mml:maction>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:for-each select="$text-nodes">
-									<xsl:choose>
-										<!-- letex comment and PI for an unmapped w:sym -->
-										<xsl:when test="self::processing-instruction() or self::comment()">
-											<xsl:sequence select="."/>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:call-template name="ParseMt">
-												<xsl:with-param name="context" select="$context"/>
-												<xsl:with-param name="sToParse" select="."/>
-												<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
-												<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
-												<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
-																													 then $context/m:rPr[last()]/m:nor/@m:val 
-																													 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
-																																then 'on' 
-																																else 'off'"/>
-											</xsl:call-template>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:for-each>
+                <xsl:call-template name="m:preliminary-mtext2">
+                  <xsl:with-param name="context" select="$context"/>
+                  <xsl:with-param name="text-nodes" select="$text-nodes"/>
+                </xsl:call-template>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:otherwise>
@@ -2699,7 +2665,7 @@
       <xsl:variable name="space-stripped" as="xs:string" select="replace($sToParse, '(^[\s\p{Zs}]+|[\s\p{Zs}]+$)', '')"/>
       <xsl:choose>
         <xsl:when test="$space-stripped = $upright-mi-names and m:is-normal-font($nor, $scr, $sty)">
-          <xsl:call-template name="m:preliminary-mtext">
+          <xsl:call-template name="m:preliminary-mtext1">
             <xsl:with-param name="context" select="$context"/>
             <xsl:with-param name="text-nodes">
               <xsl:value-of select="$sToParse"/>

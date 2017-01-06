@@ -848,9 +848,6 @@
       <xsl:when test="matches($val, '[0-9A-F]{6}')">
         <xsl:sequence select="concat('#', $val)" />
       </xsl:when>
-      <xsl:when test="$val = ('black', 'blue', 'red', 'white', 'yellow')">
-        <xsl:sequence select="$val" />
-      </xsl:when>
       <xsl:when test="$val eq 'cyan'">
         <xsl:sequence select="'#00FFFF'" />
       </xsl:when>
@@ -883,6 +880,21 @@
       </xsl:when>
       <xsl:when test="$val eq 'magenta'">
         <xsl:sequence select="'#FF00FF'" />
+      </xsl:when>
+      <xsl:when test="$val eq 'yellow'">
+        <xsl:sequence select="'#FFFF00'" />
+      </xsl:when>
+      <xsl:when test="$val eq 'blue'">
+        <xsl:sequence select="'#0000FF'" />
+      </xsl:when>
+      <xsl:when test="$val eq 'red'">
+        <xsl:sequence select="'#FF0000'" />
+      </xsl:when>
+      <xsl:when test="$val eq 'black'">
+        <xsl:sequence select="'#000000'" />
+      </xsl:when>
+      <xsl:when test="$val eq 'white'">
+        <xsl:sequence select="'#FFFFFF'" />
       </xsl:when>
       <xsl:otherwise><!-- shouldn't happen -->
         <xsl:sequence select="''" />

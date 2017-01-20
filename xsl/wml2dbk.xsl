@@ -989,6 +989,7 @@
         <tr:field-function name="BIBLIOGRAPHY" element="div" role="hub:bibliography"/>
         <tr:field-function name="INDEX" element="div" role="hub:index"/>
         <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
+        <tr:field-function name="GOTOBUTTON" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="PAGE"/>
         <tr:field-function name="PAGEREF" element="link" attrib="linkend" role="page" value="1"/>
         <tr:field-function name="RD"/>

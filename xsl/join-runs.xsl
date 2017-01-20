@@ -418,6 +418,13 @@
       </xsl:for-each-group>
     </xsl:copy>
   </xsl:template>
+  
+  <!--  If w:instrText is contained within a run which is not part of a complex field's field codes (i.e. before the separator character), then it and its contents should be treated as regular text.-->
+  <xsl:template match="w:instrText[preceding::w:fldChar[1][@w:fldCharType=('separate','end')] or not(preceding::w:fldChar)]" mode="docx2hub:remove-redundant-run-atts">
+    <w:t>
+      <xsl:apply-templates mode="#current"/>
+    </w:t>
+  </xsl:template>
 
   <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1">
     <xsl:variable name="prelim" as="document-node(element(*))">

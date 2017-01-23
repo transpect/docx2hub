@@ -420,7 +420,10 @@
   </xsl:template>
   
   <!--  If w:instrText is contained within a run which is not part of a complex field's field codes (i.e. before the separator character), then it and its contents should be treated as regular text.-->
-  <xsl:template match="w:instrText[preceding::w:fldChar[1][@w:fldCharType=('separate','end')] or not(preceding::w:fldChar)]" mode="docx2hub:remove-redundant-run-atts">
+  
+  <xsl:template match="w:instrText[(preceding::w:fldChar[1][@w:fldCharType=('separate','end')] 
+                                    or not(preceding::w:fldChar))
+                                   and count(preceding::w:fldChar) lt 2]" mode="docx2hub:remove-redundant-run-atts">
     <w:t>
       <xsl:apply-templates mode="#current"/>
     </w:t>

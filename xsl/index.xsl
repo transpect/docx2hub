@@ -166,7 +166,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="text()[matches(., '^\s*[xX][eE]\s+$')]" mode="index-processing"/>
+  <xsl:template match="text()[matches(., '^\s*[xX][eE]\s*$')]" mode="index-processing"/>
 
   <xsl:template match="text()[matches(.,'^\s*&quot;[^\s]+')]" mode="index-processing" priority="+1">
     <xsl:choose>

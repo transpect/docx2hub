@@ -2149,15 +2149,21 @@
         <xsl:when test="number(w:rPr/w:position/@w:val) lt 0">1</xsl:when>
         <xsl:otherwise>0</xsl:otherwise>
 			</xsl:choose>
-    </xsl:variable>
-    
+      </xsl:variable>
+		<xsl:variable name="fSup">
+			<xsl:choose>
+				<xsl:when test="number(w:rPr/w:position/@w:val) gt 0">1</xsl:when>
+				<xsl:otherwise>0</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		
     <xsl:variable name="context" as="element(m:r)" select="."/>
     <xsl:variable name="text-nodes" as="node()*">
       <xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
     </xsl:variable>    
     <xsl:choose>
-			<xsl:when test="$fSub=1">
-				<mml:msub>
+			<xsl:when test="$fSub=1 or $fSup=1">
+				<xsl:element name="{if ($fSub=1) then 'mml:msub' else 'mml:msup'}">
 					<mml:mrow/>
 					<mml:mrow>
 						<xsl:choose>
@@ -2200,7 +2206,7 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</mml:mrow>
-				</mml:msub>
+				</xsl:element>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>

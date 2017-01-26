@@ -129,7 +129,7 @@
         </xsl:if>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_041', 'WRN', 'wml-to-dbk', 
+        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_041', 'WRN', 'wml-to-dbk', 
                                                concat('Unexpected index (XE) field function content in ''', @fldArgs, ''''))"/>
       </xsl:otherwise>
     </xsl:choose>

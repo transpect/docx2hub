@@ -104,7 +104,7 @@
             <xsl:otherwise>
               <text>
                 <xsl:value-of select="$number"/>
-                <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_601', 'WRN', 'wml-to-dbk', 
                                         concat('Could not map char ', string-to-codepoints($number), ' in font ', $font, ' (message c)'))"/>
               </text>
             </xsl:otherwise>
@@ -119,7 +119,7 @@
       </xsl:when>
       <xsl:otherwise>
         <xsl:if test="not($text//processing-instruction(tr))">
-          <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+          <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_601', 'WRN', 'wml-to-dbk', 
                                   concat('Could not map char ', (string-to-codepoints($text), $number)[1], ' in font ', $font, ' (message d)'))"/>  
         </xsl:if>
         <xsl:for-each select="$text">
@@ -149,7 +149,7 @@
       <xsl:otherwise>
         <phrase xmlns="http://docbook.org/ns/docbook" role="hub:ooxml-symbol" css:font-family="{$font}" annotations="{$number}"
           srcpath="{(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]}">
-          <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+          <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_601', 'WRN', 'wml-to-dbk', 
                                   concat('Could not map char ', $number, ' in font ', $font, ' (message e)'))"/>
         </phrase>
       </xsl:otherwise>
@@ -168,7 +168,7 @@
             <xsl:variable name="number" select="if (matches($sym, '^[0-9]+$')) then tr:dec-to-hex(xs:integer($sym)) else 'NaN'"/>
             <xsl:choose>
               <xsl:when test="$number = 'NaN'">
-                <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_601', 'WRN', 'wml-to-dbk', 
                         concat('Could not map char ', string-to-codepoints($sym), ' in font ', $font, ' (message b)'))"/>
                 <xsl:call-template name="create-replacement">
                   <xsl:with-param name="font" select="$font"/>
@@ -181,7 +181,7 @@
             </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_601', 'WRN', 'wml-to-dbk', 
                     concat('Could not map char ', string-to-codepoints($sym), ' in font ', $font, ' (message a)'))"/>
             <xsl:call-template name="create-replacement">
               <xsl:with-param name="font" select="$font"/>
@@ -191,7 +191,7 @@
         </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_602', 'WRN', 'wml-to-dbk', string-join($tokens, ' '))"/>
+        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_602', 'WRN', 'wml-to-dbk', string-join($tokens, ' '))"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

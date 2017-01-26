@@ -259,7 +259,7 @@
                                 [not(docx2hub:corresponding-begin-fldChar(.) &gt;&gt; $last-in-para)]
                 /.."/>
     <xsl:for-each select="$ends-after-para[not(name() = ('w:r', 'm:r'))]">
-      <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_096', 'WRN', 'wml-to-dbk', 
+      <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_096', 'WRN', 'wml-to-dbk', 
                                              concat('Unexpected field function context ''', name(), ''' with content ''', string(.), ''''))"/>
     </xsl:for-each>
     <xsl:variable name="props" as="element(*)*" select="w:numPr, w:pPr"/>
@@ -941,7 +941,7 @@
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_040', 'WRN', 'wml-to-dbk', 
+            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', 'W2D_040', 'WRN', 'wml-to-dbk', 
                                                    concat('Unrecognized field function in ''', name(), ' ', @fldArgs, ''''))"/>
             <xsl:apply-templates mode="#current"/>
           </xsl:otherwise>

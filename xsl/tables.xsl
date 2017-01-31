@@ -514,4 +514,27 @@
   </xsl:template>
 
 
+  <!-- handle w:bidiVisual: mirror columns -->
+  <xsl:template match="w:tbl[w:tblPr[@docx2hub:generated-bidiVisual]]/w:tblGrid" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:for-each select="w:gridCol">
+        <xsl:sort select="position()" order="descending"/>
+        <xsl:apply-templates select="." mode="#current"/>
+      </xsl:for-each>
+      <xsl:apply-templates select="* except w:gridCol" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- handle w:bidiVisual: mirror columns -->
+  <xsl:template match="w:tbl[w:tblPr[@docx2hub:generated-bidiVisual]]/w:tr" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:for-each select="*">
+        <xsl:sort select="position()" order="descending"/>
+        <xsl:apply-templates select="." mode="#current"/>
+      </xsl:for-each>
+    </xsl:copy>
+  </xsl:template>
+
 </xsl:stylesheet>

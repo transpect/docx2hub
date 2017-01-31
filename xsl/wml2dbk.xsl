@@ -940,6 +940,72 @@
             </xsl:call-template>
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
+          <xsl:when test="name() = 'LISTNUM'">
+            <xsl:variable name="stdStyle" select="('DezimalStandard','NummerStandard','GliederungStandard','OutlineDefault','LegalDefault','NumberDefault')"/>
+            <xsl:variable name="style" select="replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','')"/>
+            <xsl:variable name="level" select="tokenize(tokenize(@fldArgs,'[\s&#160;]*\\l[\s&#160;]*')[2],'[\s&#160;]+')[matches(.,'^[0-9]*$')][1]"/>
+            <xsl:variable name="current-level" select="//w:numbering/w:abstractNum[w:name/@w:val=$style]/w:lvl[number(@w:ilvl) + 1=
+                                                                                                               number(if (exists($level)) 
+                                                                                                                      then $level 
+                                                                                                                      else '1')]"/>
+            <xsl:variable name="number" select="if (.[tokenize(tokenize(@fldArgs,'[\s&#160;]*\\l[\s&#160;]*')[2],'[\s&#160;]+')[matches(.,'^[0-9]*$')][1] = $level]
+                                                     [count(tokenize(@fldArgs,'\\s'))=2]) 
+                                                then . 
+                                                else preceding::LISTNUM[if ($style = $stdStyle) 
+                                                                        then replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $stdStyle 
+                                                                        else replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $style]
+                                                                       [tokenize(tokenize(@fldArgs,'[\s&#160;]*\\l[\s&#160;]*')[2],
+                                                                                 '[\s&#160;]+')[matches(.,'^[0-9]*$')][1] = $level]
+                                                                       [count(tokenize(@fldArgs,'\\s'))=2]
+                                                                       [1]"/>
+            <xsl:variable name="num-value" select="(if (exists($number)) 
+                                                    then count(preceding::LISTNUM[if ($style = $stdStyle) 
+                                                                                  then replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $stdStyle 
+                                                                                  else replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $style]
+                                                                                 [tokenize(tokenize(@fldArgs, '[\s&#160;]*\\l[\s&#160;]*')[2],
+                                                                                           '[\s&#160;]')[matches(.,'^[0-9]*$')][1] = $level]
+                                                                                 [. &gt;&gt; $number]) + 
+                                                         number(tokenize($number/@fldArgs,'\\s')[2]) + 
+                                                         (if (generate-id(.) eq generate-id($number)) then 0 else 1) 
+                                                    else count(preceding::LISTNUM[if ($style = $stdStyle) 
+                                                                                  then replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $stdStyle 
+                                                                                  else replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $style]
+                                                                                 [tokenize(tokenize(@fldArgs,'[\s&#160;]*\\l[\s&#160;]*')[2],
+                                                                                           '[\s&#160;]')[matches(.,'^[0-9]*$')][1] = $level]) + 1) +
+                                                   (if (($style = $stdStyle) and 
+                                                        ($level = '1') and 
+                                                        ((exists(preceding::LISTNUM[replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $stdStyle]
+                                                                                   [tokenize(tokenize(@fldArgs, '[\s&#160;]*\\l[\s&#160;]*')[2],
+                                                                                             '[\s&#160;]')[matches(.,'^[0-9]*$')][1] gt $level]) and
+                                                          not(exists(preceding::LISTNUM[replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $stdStyle]
+                                                                                       [tokenize(tokenize(@fldArgs, '[\s&#160;]*\\l[\s&#160;]*')[2],
+                                                                                                 '[\s&#160;]')[matches(.,'^[0-9]*$')][1] = $level]))) or
+                                                         (not(exists($number)) and
+                                                          preceding::LISTNUM[replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = $stdStyle]
+                                                                            [tokenize(tokenize(@fldArgs, '[\s&#160;]*\\l[\s&#160;]*')[2],
+                                                                                      '[\s&#160;]')[matches(.,'^[0-9]*$')][1] = $level]
+                                                                            [last()]
+                                                                            [exists(preceding::LISTNUM[replace(tokenize(@fldArgs,'[\s&#160;]*\\')[1],'&quot;','') = 
+                                                                                                       $stdStyle]
+                                                                                                      [tokenize(tokenize(@fldArgs, '[\s&#160;]*\\l[\s&#160;]*')[2],
+                                                                                                                '[\s&#160;]')[matches(.,'^[0-9]*$')][1] gt $level])]))) 
+                                                    then 1 
+                                                    else 0)"/>
+            <xsl:variable name="lvltext" select="if (exists($current-level/w:lvlText)) 
+                                                 then $current-level/w:lvlText/@w:val
+                                                 else if ($style = $stdStyle)
+                                                      then tr:get-listnum-lvltext($level,$style)
+                                                      else '%1'" as="xs:string"/>
+            <xsl:variable name="numfmt" select="if (exists($current-level/w:numFmt)) 
+                                                then tr:get-numbering-format($current-level/w:numFmt/@w:val,'decimal')
+                                                else if ($style = $stdStyle)
+                                                     then tr:get-listnum-numfmt($level,$style)
+                                                     else '1'"/>
+            <xsl:variable name="act-value">
+              <xsl:number format="{$numfmt}" value="$num-value"/>
+            </xsl:variable>
+            <xsl:value-of select="replace($lvltext, '%1', xs:string($act-value))"/>
+          </xsl:when>
           <xsl:otherwise>
             <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_040', 'WRN', 'wml-to-dbk', 
                                                    concat('Unrecognized field function in ''', name(), ' ', @fldArgs, ''''))"/>
@@ -982,6 +1048,115 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+
+  <xsl:function name="tr:get-listnum-numfmt" as="xs:string">
+    <xsl:param name="level"/>
+    <xsl:param name="style"/>
+    
+    <xsl:choose>
+      <xsl:when test="$style = ('LegalDefault','DezimalStandard')">
+        <xsl:value-of select="'1'"/>
+      </xsl:when>
+      <xsl:when test="$style = ('OutlineDefault','GliederungStandard')">
+        <xsl:choose>
+          <xsl:when test="$level = '2'">
+            <xsl:value-of select="'A'"/>
+          </xsl:when>
+          <xsl:when test="$level = ('3','5')">
+            <xsl:value-of select="'1'"/>
+          </xsl:when>
+          <xsl:when test="$level = ('4','6','8')">
+            <xsl:value-of select="'a'"/>
+          </xsl:when>
+          <xsl:when test="$level = ('7','9')">
+            <xsl:value-of select="'i'"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="'I'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="$level = ('2','5','8')">
+            <xsl:value-of select="'a'"/>
+          </xsl:when>
+          <xsl:when test="$level = ('3','6','9')">
+            <xsl:value-of select="'i'"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="'1'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:function>
+  
+  <xsl:function name="tr:get-listnum-lvltext" as="xs:string">
+    <xsl:param name="level"/>
+    <xsl:param name="style"/>
+    
+    <xsl:choose>
+      <xsl:when test="$style = ('LegalDefault','DezimalStandard')">
+        <xsl:choose>
+          <xsl:when test="$level = '2'">
+            <xsl:value-of select="'1.%1.'"/>
+          </xsl:when>
+          <xsl:when test="$level = '3'">
+            <xsl:value-of select="'1.1.%1.'"/>
+          </xsl:when>
+          <xsl:when test="$level = '4'">
+            <xsl:value-of select="'1.1.1.%1.'"/>
+          </xsl:when>
+          <xsl:when test="$level = '5'">
+            <xsl:value-of select="'1.1.1.1.%1.'"/>
+          </xsl:when>
+          <xsl:when test="$level = '6'">
+            <xsl:value-of select="'1.1.1.1.1.%1.'"/>
+          </xsl:when>
+          <xsl:when test="$level = '7'">
+            <xsl:value-of select="'1.1.1.1.1.1.%1.'"/>
+          </xsl:when>
+          <xsl:when test="$level = '8'">
+            <xsl:value-of select="'1.1.1.1.1.1.1.%1.'"/>
+          </xsl:when>
+          <xsl:when test="$level = '9'">
+            <xsl:value-of select="'1.1.1.1.1.1.1.1.%1.'"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="'%1.'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="$style = ('OutlineDefault','GliederungStandard')">
+        <xsl:choose>
+          <xsl:when test="$level = '4'">
+            <xsl:value-of select="'%1)'"/>
+          </xsl:when>
+          <xsl:when test="$level = ('5','6','7','8','9')">
+            <xsl:value-of select="'(%1)'"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="'%1.'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="$level = ('4','5','6')">
+            <xsl:value-of select="'(%1)'"/>
+          </xsl:when>
+          <xsl:when test="$level = ('7','8','9')">
+            <xsl:value-of select="'%1.'"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="'%1)'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
 
   <xsl:variable name="tr:field-functions" as="document-node(element(tr:field-functions))">
     <xsl:document>

@@ -281,27 +281,11 @@
   </xsl:template>
 
   <xsl:template match="v:path" mode="vml">
-    <xsl:call-template name="signal-error">
-      <xsl:with-param name="error-code" select="'W2D_501'"/>
-      <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-      <xsl:with-param name="hash">
-        <value key="xpath"><xsl:value-of select="@srcpath"/></value>
-        <value key="level">WRN</value>
-        <value key="comment"/>
-      </xsl:with-param>
-    </xsl:call-template>
+    <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_501', 'WRN', 'vml', 'Conversion of line drawings not implemented (v:path)')"/>
   </xsl:template>
 
   <xsl:template match="v:oval" mode="vml">
-    <xsl:call-template name="signal-error">
-      <xsl:with-param name="error-code" select="'W2D_501'"/>
-      <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
-      <xsl:with-param name="hash">
-        <value key="xpath"><xsl:value-of select="@srcpath"/></value>
-        <value key="level">WRN</value>
-        <value key="comment"/>
-      </xsl:with-param>
-    </xsl:call-template>
+    <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_501', 'WRN', 'vml', 'Conversion of line drawings not implemented (v:oval)')"/>
   </xsl:template>
 
   <xsl:template match="v:stroke" mode="vml">

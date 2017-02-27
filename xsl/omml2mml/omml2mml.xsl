@@ -1360,7 +1360,7 @@
   <xsl:template match="m:m" mode="omml2mml">
     <mml:mtable>
       <xsl:call-template name="CreateMathMLMatrixAttr">
-        <xsl:with-param name="mcJc" select="m:mPr[last()]/m:mcs/m:mc/m:mcPr[last()]/m:mcJc/@m:val"/>
+        <xsl:with-param name="mcJc" select="(m:mPr[last()]/m:mcs/m:mc/m:mcPr[last()]/m:mcJc/@m:val, 'center')[1]"/>
       </xsl:call-template>
       <xsl:for-each select="m:mr">
         <mml:mtr>

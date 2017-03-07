@@ -11,6 +11,7 @@
   <xsl:import href="omml2mml.xsl"/>
   
   <xsl:param name="fail-on-error" select="'no'"/>
+  <xsl:param name="charmap-policy" select="'unicode'"/>
   
   <xsl:variable name="symbol-font-map" as="document-node(element(symbols))"
     select="document('../../fontmaps/Symbol.xml')"/>

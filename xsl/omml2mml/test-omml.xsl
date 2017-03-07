@@ -3,6 +3,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:docx2hub="http://transpect.io/docx2hub"
   exclude-result-prefixes="xs"
   version="2.0">
   
@@ -33,5 +34,25 @@
   <xsl:template match="w:sym" mode="omml2mml" priority="120">
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
+  
+  <xsl:function name="docx2hub:based-on-chain" as="document-node()">
+    <xsl:param name="initial" as="element(w:style)*"/>
+    <xsl:variable name="next" as="element(w:style)?" 
+      select="if (exists($initial)) 
+      then key('docx2hub:style', $initial[last()]/w:basedOn/@w:val, root($initial[last()]))
+      else ()"/>
+    <xsl:choose>
+      <xsl:when test="exists($next)">
+        <xsl:document>
+          <xsl:sequence select="docx2hub:based-on-chain(($initial, $next))/*"/>  
+        </xsl:document>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:document>
+          <xsl:sequence select="$initial"/>  
+        </xsl:document>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
   
 </xsl:stylesheet>

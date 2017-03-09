@@ -216,14 +216,15 @@ it, but not when an ilvl=2 heading precedes it.
               select="for $a in docx2hub:level-counter($last-same-signature, $ilvl)[name() = $counter-name][. castable as xs:integer] 
                         return xs:integer($a)"/>
             <xsl:choose>
-              <!--<xsl:when test="$context/@docx2hub:num-start-override"><!-\- what about @docx2hub:num-restart-val? -\->
-                <xsl:attribute name="{$counter-name}" select="$context/@docx2hub:num-start-override"/>
-              </xsl:when>-->
               <xsl:when test="exists($by-lookup)">
                 <xsl:attribute name="{$counter-name}" select="$by-lookup + 1"/>    
               </xsl:when>
             </xsl:choose>
             <xsl:attribute name="docx2hub:num-debug-ilvl{$ilvl}-variant" select="'d'"/>
+          </xsl:when>
+          <xsl:when test="$context/@docx2hub:num-start-override">
+            <!-- what about @docx2hub:num-restart-val? -->
+            <xsl:attribute name="{$counter-name}" select="$context/@docx2hub:num-start-override"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:attribute name="{$counter-name}" 

@@ -46,7 +46,8 @@
                 'numbering-by-id', 
                 @w:val,
                 $root
-              )/w:lvlOverride[@w:ilvl = $ilvl]"/>
+              )/w:lvlOverride[@w:ilvl = $ilvl][last()]"/><!-- why can there be more than one? Are they guaranteed to have
+                the same value? -->
     <xsl:variable name="lvl" as="element(w:lvl)?" 
       select="($abstractNum/w:lvl[@w:ilvl = $ilvl], $lvlOverride/w:lvl[@w:ilvl = $ilvl])[1]"/>
     <xsl:apply-templates select="$lvl" mode="#current">
@@ -398,9 +399,9 @@ it, but not when an ilvl=2 heading precedes it.
         <xsl:variable name="style" as="element(w:numPr)?" 
           select="key('docx2hub:style-by-role', $context/@role, root($context))/w:numPr"/>
         <xsl:sequence select="if ($numPr)
-                              then key('numbering-by-id', $numPr/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $numPr/w:ilvl/@w:val]
+                              then key('numbering-by-id', $numPr/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $numPr/w:ilvl/@w:val][last()]
                               else if ($style)
-                                   then key('numbering-by-id', $style/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $style/w:ilvl/@w:val]
+                                   then key('numbering-by-id', $style/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $style/w:ilvl/@w:val][last()]
                                    else ()"/>
       </xsl:otherwise>
     </xsl:choose>

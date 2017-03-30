@@ -11,6 +11,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:css="http://www.w3.org/1996/css"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns="http://docbook.org/ns/docbook"
@@ -1270,10 +1271,29 @@
   </xsl:template>
 
   <xsl:template match="m:oMath" mode="wml-to-dbk">
-    <inlineequation>
+    <inlineequation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
       <xsl:apply-templates select="." mode="omml2mml"/>
     </inlineequation>
+  </xsl:template>
+
+  <xsl:template match="w:object[mml:math]" mode="wml-to-dbk">
+    <xsl:variable name="inline" select="string-length(
+                                                      normalize-space(
+                                                                      string-join((preceding-sibling::text(), 
+                                                                                   following-sibling::text(), 
+                                                                                   parent::w:r/preceding-sibling::text(),
+                                                                                   parent::w:r/following-sibling::text(),
+                                                                                   parent::w:r/preceding-sibling::*//text(),
+                                                                                   parent::w:r/following-sibling::*//text()
+                                                                                   ),
+                                                                      ''))) gt 0" as="xs:boolean"/>
+    <xsl:element name="{if($inline) 
+                        then 'inlineequation' 
+                        else 'equation'}">
+      <xsl:attribute name="role" select="'mathtype'"/>
+      <xsl:apply-templates select="mml:math"/>  
+    </xsl:element>    
   </xsl:template>
 
  <xsl:template match="w:sym" mode="omml2mml" priority="120">

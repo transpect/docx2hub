@@ -268,6 +268,8 @@
     
     <tr:mathtype2mml name="mathtype2mml">
       <p:with-option name="href" select="$equation-href"/>
+      <p:with-option name="debug" select="$debug"/>
+      <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     </tr:mathtype2mml>
     
   </p:viewport>

@@ -11,6 +11,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:css="http://www.w3.org/1996/css"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns="http://docbook.org/ns/docbook"
@@ -1270,10 +1271,23 @@
   </xsl:template>
 
   <xsl:template match="m:oMath" mode="wml-to-dbk">
-    <inlineequation>
+    <inlineequation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
       <xsl:apply-templates select="." mode="omml2mml"/>
     </inlineequation>
+  </xsl:template>
+  
+  <xsl:template match="w:object[mml:math]" mode="wml-to-dbk">
+    <inlineequation role="mtef">
+      <xsl:apply-templates select="mml:math" mode="mathml"/>>
+    </inlineequation>
+  </xsl:template>
+  
+  <!-- identity template to preserve mathml text nodes -->
+  <xsl:template match="mml:*" mode="mathml">
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
   </xsl:template>
 
  <xsl:template match="w:sym" mode="omml2mml" priority="120">

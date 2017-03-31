@@ -6,6 +6,9 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
   xmlns:tr="http://transpect.io"
   version="1.0" 
   name="docx-single-tree"
@@ -29,10 +32,10 @@
     <p:documentation>Schematron that will validate the entire Word container document (after mode apply-changemarkup).
     The tr:rule-family for this Schematron is 'docx2hub_single-tree_changes-accepted'</p:documentation>
   </p:input>
+  
   <p:output port="result" primary="true">
     <p:pipe port="result" step="add-xml-base-attr"/>
   </p:output>
-  <p:serialization port="result" omit-xml-declaration="false"/>
   <p:output port="params">
     <p:pipe port="result" step="params"/>
   </p:output>
@@ -46,6 +49,8 @@
     <p:pipe port="report" step="apply-changemarkup"/>
   </p:output>
 
+  <p:serialization port="result" omit-xml-declaration="false"/>
+  
   <p:option name="docx" required="true">
     <p:documentation>OS name (preferably with full path, may not resolve if only a relative path is given), file:, http:, or
       https: URL. The file will be fetched first if it is an HTTP URL.</p:documentation>
@@ -74,14 +79,14 @@
       <p>Apply all change markup on the compound word document.</p>
     </p:documentation>
   </p:option>
+  
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
-  
+  <p:import href="http://transpect.io/calabash-extensions/mathtype-extension/xpl/mathtype2mml-declaration.xpl"/>
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
   <p:import href="http://transpect.io/xproc-util/file-uri/xpl/file-uri.xpl"/>
   <p:import href="http://transpect.io/xproc-util/xslt-mode/xpl/xslt-mode.xpl"/>
-  
 
   <p:variable name="basename" select="replace($docx, '^(.+?)([^/\\]+)\.do[ct][mx]$', '$2')"/>
 
@@ -251,12 +256,36 @@
     </p:with-param>
   </tr:xslt-mode>
 
+      
+  <p:viewport match="/w:root/w:document/w:body/w:p//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
+    <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
+    <p:variable name="equation-href" select="concat(/w:root/@xml:base,
+                                                    'word/',
+                                                    /w:root/w:docRels/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
+                                          )">
+      <p:pipe port="result" step="insert-xpath"/>
+    </p:variable>
+    
+    <tr:mathtype2mml name="mathtype2mml">
+      <p:with-option name="href" select="$equation-href"/>
+    </tr:mathtype2mml>
+    
+  </p:viewport>
+      
+  <tr:store-debug>
+    <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02-mathtype-converted')"/>
+    <p:with-option name="active" select="$debug"/>
+    <p:with-option name="base-uri" select="$debug-dir-uri"/>
+  </tr:store-debug>
+      
+
   <p:choose name="apply-changemarkup">
     <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
       <p:output port="result" primary="true"/>
       <p:output port="report" sequence="true">
         <p:pipe port="report" step="apply-changemarkup-xslt"/>
       </p:output>
+      
       <tr:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup" name="apply-changemarkup-xslt">
         <p:input port="parameters">
           <p:pipe step="params" port="result"/>
@@ -273,6 +302,7 @@
         <p:with-option name="fail-on-error" select="$fail-on-error"/>
         <p:with-param name="fail-on-error" select="$fail-on-error"/>
       </tr:xslt-mode>
+      
     </p:when>
     <p:otherwise>
       <p:output port="result" primary="true"/>

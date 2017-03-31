@@ -1278,22 +1278,9 @@
   </xsl:template>
 
   <xsl:template match="w:object[mml:math]" mode="wml-to-dbk">
-    <xsl:variable name="inline" select="string-length(
-                                                      normalize-space(
-                                                                      string-join((preceding-sibling::text(), 
-                                                                                   following-sibling::text(), 
-                                                                                   parent::w:r/preceding-sibling::text(),
-                                                                                   parent::w:r/following-sibling::text(),
-                                                                                   parent::w:r/preceding-sibling::*//text(),
-                                                                                   parent::w:r/following-sibling::*//text()
-                                                                                   ),
-                                                                      ''))) gt 0" as="xs:boolean"/>
-    <xsl:element name="{if($inline) 
-                        then 'inlineequation' 
-                        else 'equation'}">
-      <xsl:attribute name="role" select="'mathtype'"/>
-      <xsl:apply-templates select="mml:math"/>  
-    </xsl:element>    
+    <inlineequation role="mtef">
+      <xsl:apply-templates select="mml:math" mode="#current"/>  
+    </inlineequation>
   </xsl:template>
 
  <xsl:template match="w:sym" mode="omml2mml" priority="120">

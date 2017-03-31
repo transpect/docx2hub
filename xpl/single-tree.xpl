@@ -269,7 +269,7 @@
     <tr:mathtype2mml name="mathtype2mml">
       <p:with-option name="href" select="$equation-href"/>
       <p:with-option name="debug" select="$debug"/>
-      <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+      <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
     </tr:mathtype2mml>
     
   </p:viewport>
@@ -279,8 +279,7 @@
     <p:with-option name="active" select="$debug"/>
     <p:with-option name="base-uri" select="$debug-dir-uri"/>
   </tr:store-debug>
-      
-
+  
   <p:choose name="apply-changemarkup">
     <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
       <p:output port="result" primary="true"/>

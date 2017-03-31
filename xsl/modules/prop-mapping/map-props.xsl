@@ -1276,13 +1276,21 @@
     </xsl:copy>
   </xsl:template>
   
-<xsl:template match="w:tbl/w:tr[every $i 
+  <xsl:template match="w:tbl/w:tr[every $i 
                                   in w:tc 
                                   satisfies (not(exists($i/@css:border-bottom-style)) and 
                                              not(exists($i/@css:border-bottom-width)) and 
                                              $i/w:tcPr[w:vMerge[not(exists(@w:val)) or (@w:val  ne 'restart')]] and 
                                              $i/w:p[not(child::node()[not(self::w:pPr)])])]" 
                 mode="docx2hub:remove-redundant-run-atts">
+  </xsl:template>
+  
+  <!-- preserve mml text nodes -->
+  
+  <xsl:template match="mml:*" mode="docx2hub:add-props" exclude-result-prefixes="#all">
+    <xsl:copy inherit-namespaces="no" exclude-result-prefixes="#all">
+      <xsl:apply-templates select="@*|node()" mode="#current"/>  
+    </xsl:copy>
   </xsl:template>
   
 </xsl:stylesheet>

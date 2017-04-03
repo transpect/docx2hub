@@ -1279,7 +1279,7 @@
   
   <xsl:template match="w:object[mml:math]" mode="wml-to-dbk">
     <inlineequation role="mtef">
-      <xsl:apply-templates select="mml:math" mode="mathml"/>>
+      <xsl:apply-templates select="mml:math" mode="mathml"/>
     </inlineequation>
   </xsl:template>
   

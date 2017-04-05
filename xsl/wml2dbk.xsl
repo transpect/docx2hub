@@ -803,7 +803,7 @@
     It can be seen in Word that it is just plain superscript without any additional shift. -->
   <xsl:template match="@css:top[not(ancestor::css:rule)][. = '0pt']" mode="wml-to-dbk" priority="1"/>
   
-  <xsl:template match="@css:position[. = 'relative']" mode="wml-to-dbk" priority="1">
+  <xsl:template match="@css:position[. = 'relative']" mode="wml-to-dbk" priority="1.5">
     <!-- only keep this if the corresponding offset is also kept -->
     <xsl:variable name="top" as="attribute(css:top)?">
       <xsl:apply-templates select="../@css:top" mode="#current"/>

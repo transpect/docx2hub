@@ -35,7 +35,8 @@
                        |
                        w:t[string-length(.)=1 and ../w:rPr/w:rFonts/@w:ascii=$docx2hub:symbol-font-names]
                        |
-                       w:t[string-length(.)=1 and ../self::w:r/@role and 
+                       w:t[string-length(.)=1 and ../self::w:r[@role and 
+                       (@css:font-family=$docx2hub:symbol-font-names or not(@css:font-family))] and 
                        //css:rule[@layout-type eq 'inline'][@css:font-family=$docx2hub:symbol-font-names]/@name = ../self::w:r/@role]
                        |
                        w:lvlText[../w:rPr/w:rFonts/@w:ascii=$docx2hub:symbol-font-names]/@w:val

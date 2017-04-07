@@ -257,7 +257,7 @@
   </tr:xslt-mode>
 
       
-  <p:viewport match="/w:root/w:document/w:body/w:p//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
+  <p:viewport match="/w:root/w:document/w:body/*[local-name() = ('p', 'tbl')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
     <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
     <p:variable name="equation-href" select="concat(/w:root/@xml:base,
                                                     'word/',

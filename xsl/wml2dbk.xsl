@@ -1283,6 +1283,9 @@
     </inlineequation>
   </xsl:template>
   
+  <!-- inlineequation? remove block display setting! -->
+  <xsl:template match="w:object/mml:math/@display[. eq 'block']" mode="mathml"/>
+  
   <!-- identity template to preserve mathml text nodes -->
   <xsl:template match="mml:*" mode="mathml">
     <xsl:copy copy-namespaces="no">

@@ -418,16 +418,6 @@
       </xsl:for-each-group>
     </xsl:copy>
   </xsl:template>
-  
-  <!--  If w:instrText is contained within a run which is not part of a complex field's field codes (i.e. before the separator character), then it and its contents should be treated as regular text.-->
-  
-  <xsl:template match="w:instrText[(preceding::w:fldChar[1][@w:fldCharType=('separate','end')] 
-                                    or not(preceding::w:fldChar))
-                                   and count(preceding::w:fldChar) lt 2]" mode="docx2hub:remove-redundant-run-atts">
-    <w:t>
-      <xsl:apply-templates mode="#current"/>
-    </w:t>
-  </xsl:template>
 
   <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1">
     <xsl:variable name="prelim" as="document-node(element(*))">
@@ -568,6 +558,17 @@
     <xsl:call-template name="mtext-or-mspace">
       <xsl:with-param name="string" as="xs:string" select="."/>
     </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:variable name="opening-parenthesis" select="('[', '{', '(')" as="xs:string*"/>
+  <xsl:variable name="closing-parenthesis" select="(']', '}', ')')" as="xs:string*"/>
+  
+  <xsl:template match="mml:mrow[count(*) = 3]
+                              [*[1]/self::mml:mo = $opening-parenthesis]
+                              [*[3]/self::mml:mo = $closing-parenthesis]" mode="docx2hub:join-runs" priority="1">
+    <mfenced open="{*[1]}" close="{*[3]}">
+      <xsl:apply-templates select="if(*[2]/self::mml:mrow) then *[2]/node() else *[2]" mode="#current"/>
+    </mfenced>
   </xsl:template>
   
 </xsl:stylesheet>

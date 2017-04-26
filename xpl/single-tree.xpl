@@ -78,8 +78,13 @@
     <p:documentation xmlns="http://www.w3.org/1999/xhtml">
       <p>Apply all change markup on the compound word document.</p>
     </p:documentation>
+  </p:option>  
+  <p:option name="mathtype2mml" required="false" select="'yes'">
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Activates use of mathtype2mml extension.</p>
+    </p:documentation>
   </p:option>
-  
+
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -257,29 +262,36 @@
   </tr:xslt-mode>
 
       
-  <p:viewport match="/w:root/w:document/w:body/*[local-name() = ('p', 'tbl')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
-    <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
-    <p:variable name="equation-href" select="concat(/w:root/@xml:base,
-                                                    'word/',
-                                                    /w:root/w:docRels/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
-                                          )">
-      <p:pipe port="result" step="insert-xpath"/>
-    </p:variable>
-    
-    <tr:mathtype2mml name="mathtype2mml">
-      <p:with-option name="href" select="$equation-href"/>
-      <p:with-option name="debug" select="$debug"/>
-      <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
-    </tr:mathtype2mml>
-    
-  </p:viewport>
+  <p:choose name="convert-mathtype2mml">
+    <p:when test="$mathtype2mml eq 'yes'">
+      <p:viewport match="/w:root/w:document/w:body/*[local-name() = ('p', 'tbl')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
+        <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
+        <p:variable name="equation-href" select="concat(/w:root/@xml:base,
+                                                        'word/',
+                                                        /w:root/w:docRels/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
+                                               )">
+          <p:pipe port="result" step="insert-xpath"/>
+        </p:variable>
+         
+        <tr:mathtype2mml name="mathtype2mml">
+          <p:with-option name="href" select="$equation-href"/>
+          <p:with-option name="debug" select="$debug"/>
+          <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
+        </tr:mathtype2mml>
+         
+      </p:viewport>
+           
+      <tr:store-debug>
+        <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02-mathtype-converted')"/>
+        <p:with-option name="active" select="$debug"/>
+        <p:with-option name="base-uri" select="$debug-dir-uri"/>
+      </tr:store-debug>
+    </p:when>
+    <p:otherwise>
+      <p:identity/>
+    </p:otherwise>
+  </p:choose>
       
-  <tr:store-debug>
-    <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02-mathtype-converted')"/>
-    <p:with-option name="active" select="$debug"/>
-    <p:with-option name="base-uri" select="$debug-dir-uri"/>
-  </tr:store-debug>
-  
   <p:choose name="apply-changemarkup">
     <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
       <p:output port="result" primary="true"/>

@@ -122,6 +122,11 @@
       even if the appearance of the character doesn't match exactly those of its source. 
     </p:documentation>
   </p:option>
+  <p:option name="mathtype2mml" required="false" select="'yes'">
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Activates use of mathtype2mml extension.</p>
+    </p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
@@ -160,6 +165,7 @@
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="srcpaths" select="$srcpaths"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
+    <p:with-option name="mathtype2mml" select="$mathtype2mml"/>
     <p:input port="insert-xpath-schematron">
       <p:pipe step="docx2hub" port="insert-xpath-schematron"/>
     </p:input>

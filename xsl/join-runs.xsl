@@ -530,7 +530,31 @@
     </xsl:if>
   </xsl:template>
   
+  <!-- determine whether inline or display equation -->
   
+  <xsl:template match="dbk:inlineequation[@role eq 'mtef']" mode="docx2hub:join-runs">
+    <xsl:variable name="para" select="ancestor::dbk:para" as="element(dbk:para)"/>
+    <xsl:variable name="display-equation" select="count($para//dbk:inlineequation) eq 1
+      and string-length(normalize-space(string-join(($para/text(), $para//*[namespace-uri() ne 'http://www.w3.org/1998/Math/MathML']/text())
+      , '')
+      
+      )) eq 0" as="xs:boolean"/>
+    <xsl:message select="$display-equation"></xsl:message>
+    <xsl:choose>
+      <xsl:when test="$display-equation">
+        <equation>
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </equation>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </xsl:copy>        
+      </xsl:otherwise>
+    </xsl:choose>
+    
+    
+  </xsl:template>
   
 <!-- group more than one mml:mi[@mathvariant='normal'] element to mtext -->
   <xsl:template match="mml:*[mml:mi]" mode="docx2hub:join-runs">

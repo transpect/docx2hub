@@ -539,7 +539,6 @@
       , '')
       
       )) eq 0" as="xs:boolean"/>
-    <xsl:message select="$display-equation"></xsl:message>
     <xsl:choose>
       <xsl:when test="$display-equation">
         <equation>

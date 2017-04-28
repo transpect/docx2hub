@@ -272,12 +272,19 @@
                                                )">
           <p:pipe port="result" step="insert-xpath"/>
         </p:variable>
-         
-        <tr:mathtype2mml name="mathtype2mml">
-          <p:with-option name="href" select="$equation-href"/>
-          <p:with-option name="debug" select="$debug"/>
-          <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
-        </tr:mathtype2mml>
+        
+        <p:try name="mathtype2mml-wrapper">
+          <p:group>
+            <tr:mathtype2mml name="mathtype2mml">
+              <p:with-option name="href" select="$equation-href"/>
+              <p:with-option name="debug" select="$debug"/>
+              <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
+            </tr:mathtype2mml>
+          </p:group>
+          <p:catch>
+            <p:identity/>
+          </p:catch>
+        </p:try>
          
       </p:viewport>
            

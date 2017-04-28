@@ -589,9 +589,9 @@
   <xsl:template match="mml:mrow[count(*) = 3]
                               [*[1]/self::mml:mo = $opening-parenthesis]
                               [*[3]/self::mml:mo = $closing-parenthesis]" mode="docx2hub:join-runs" priority="1">
-    <mfenced open="{*[1]}" close="{*[3]}">
+    <mml:mfenced open="{*[1]}" close="{*[3]}">
       <xsl:apply-templates select="if(*[2]/self::mml:mrow) then *[2]/node() else *[2]" mode="#current"/>
-    </mfenced>
+    </mml:mfenced>
   </xsl:template>
   
 </xsl:stylesheet>

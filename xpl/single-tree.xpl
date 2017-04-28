@@ -261,10 +261,44 @@
     </p:with-param>
   </tr:xslt-mode>
 
+  <p:choose name="apply-changemarkup">
+    <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
+      <p:output port="result" primary="true"/>
+      <p:output port="report" sequence="true">
+        <p:pipe port="report" step="apply-changemarkup-xslt"/>
+      </p:output>
       
+      <tr:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup" name="apply-changemarkup-xslt">
+        <p:input port="parameters">
+          <p:pipe step="params" port="result"/>
+        </p:input>
+        <p:input port="stylesheet">
+          <p:pipe step="docx-single-tree" port="xslt"/>
+        </p:input>
+        <p:input port="models">
+          <p:empty/>
+        </p:input>
+        <p:with-option name="prefix" select="concat('docx2hub/', $basename, '/02a-apply-changemarkup')"/>
+        <p:with-option name="debug" select="$debug"/>
+        <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+        <p:with-option name="fail-on-error" select="$fail-on-error"/>
+        <p:with-param name="fail-on-error" select="$fail-on-error"/>
+      </tr:xslt-mode>
+      
+    </p:when>
+    <p:otherwise>
+      <p:output port="result" primary="true"/>
+      <p:output port="report" sequence="true">
+        <p:empty/>
+      </p:output>
+      <p:identity/>
+    </p:otherwise>
+  </p:choose>
+  
   <p:choose name="convert-mathtype2mml">
     <p:when test="$mathtype2mml eq 'yes'">
-      <p:viewport match="/w:root/w:document/w:body/*[local-name() = ('p', 'tbl')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
+      <p:viewport match="/w:root/w:document/w:body/*[local-name() = ('p', 'tbl')]
+                           //w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
         <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
         <p:variable name="equation-href" select="concat(/w:root/@xml:base,
                                                         'word/',
@@ -289,7 +323,7 @@
       </p:viewport>
            
       <tr:store-debug>
-        <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02-mathtype-converted')"/>
+        <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02b-mathtype-converted')"/>
         <p:with-option name="active" select="$debug"/>
         <p:with-option name="base-uri" select="$debug-dir-uri"/>
       </tr:store-debug>
@@ -298,45 +332,15 @@
       <p:identity/>
     </p:otherwise>
   </p:choose>
-      
-  <p:choose name="apply-changemarkup">
-    <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
-      <p:output port="result" primary="true"/>
-      <p:output port="report" sequence="true">
-        <p:pipe port="report" step="apply-changemarkup-xslt"/>
-      </p:output>
-      
-      <tr:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup" name="apply-changemarkup-xslt">
-        <p:input port="parameters">
-          <p:pipe step="params" port="result"/>
-        </p:input>
-        <p:input port="stylesheet">
-          <p:pipe step="docx-single-tree" port="xslt"/>
-        </p:input>
-        <p:input port="models">
-          <p:empty/>
-        </p:input>
-        <p:with-option name="prefix" select="concat('docx2hub/', $basename, '/02')"/>
-        <p:with-option name="debug" select="$debug"/>
-        <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
-        <p:with-option name="fail-on-error" select="$fail-on-error"/>
-        <p:with-param name="fail-on-error" select="$fail-on-error"/>
-      </tr:xslt-mode>
-      
-    </p:when>
-    <p:otherwise>
-      <p:output port="result" primary="true"/>
-      <p:output port="report" sequence="true">
-        <p:empty/>
-      </p:output>
-      <p:identity/>
-    </p:otherwise>
-  </p:choose>
 
   <p:add-attribute attribute-name="xml:base" match="/*" name="add-xml-base-attr">
     <p:with-option name="attribute-value" select="/c:files/@xml:base">
       <p:pipe port="result" step="unzip"/>
     </p:with-option>
+  </p:add-attribute>
+  
+  <p:add-attribute attribute-name="mathtype2mml" match="/*" name="add-mathtype2mml-attr">
+    <p:with-option name="attribute-value" select="$mathtype2mml"/>
   </p:add-attribute>
   
   <p:validate-with-schematron assert-valid="false" name="single-tree0">

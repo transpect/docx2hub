@@ -71,6 +71,9 @@
               <xsl:value-of select="/w:root/w:containerProps/extendedProps:Properties/extendedProps:Application"/>
             </keyword>
           </xsl:if>
+          <xsl:if test="$mathtype2mml eq 'yes'">
+            <keyword role="mathtype2mml">true</keyword>
+          </xsl:if>
         </keywordset>
         <xsl:if test="exists(../../w:containerProps/(extendedProps:Properties|cp:coreProperties))">
           <keywordset role="docProps">

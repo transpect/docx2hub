@@ -33,11 +33,12 @@
   <xsl:param name="extract-dir-uri" select="''" as="xs:string"/><!-- tmp unzip dir URI -->
   <xsl:param name="local-href" select="''" as="xs:string"/><!-- docx file URI -->
   <xsl:variable name="debug-dir" select="concat(replace($base-dir, '^(.+/)(.+?/)$', '$1'), 'debug')"/>
-  <!-- Links that probably have been inserted by Word without user consent: -->
+  <!-- Links that probably have been inserted by Word without user content: -->
   <xsl:param name="unwrap-tooltip-links" select="'no'" as="xs:string?"/>
   <xsl:param name="hub-version" select="'1.0'" as="xs:string"/>
   <xsl:param name="discard-alternate-choices" select="'yes'" as="xs:string"/>
   <xsl:param name="convert-footer" select="false()" as="xs:boolean"/>
+  <xsl:param name="mathtype2mml" select="'no'" as="xs:string?"/>
   <xsl:param name="charmap-policy" select="'unicode'" as="xs:string">
     <!-- Values: unicode or xs:string. For xs:string, mapping attribute in the fashion @char-{xs:string} must exist in the symbols file -->
   </xsl:param>

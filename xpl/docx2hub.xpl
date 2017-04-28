@@ -196,6 +196,7 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="field-vars" select="$field-vars"/>
     <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
+    <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
   </tr:xslt-mode>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:props2atts" name="props2atts">

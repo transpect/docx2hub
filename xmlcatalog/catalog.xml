@@ -2,5 +2,7 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
 
     <rewriteURI uriStartString="http://transpect.io/docx2hub/" rewritePrefix="../"/>
+  
+    <rewriteURI uriStartString="http://transpect.io/fontmaps/" rewritePrefix="../fontmaps/"/>
     
 </catalog>

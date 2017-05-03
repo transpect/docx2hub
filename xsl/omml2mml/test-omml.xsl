@@ -15,7 +15,7 @@
   <xsl:param name="charmap-policy" select="'unicode'"/>
   
   <xsl:variable name="symbol-font-map" as="document-node(element(symbols))"
-    select="document('../../fontmaps/Symbol.xml')"/>
+    select="document('http://transpect.io/fontmaps/Symbol.xml')"/>
   
   <xsl:template match="m:oMathPara">
     <equation role="omml">

@@ -47,7 +47,7 @@
     select="$discard-alternate-choices = ('yes', 'true', '1')"/>
   
   <xsl:variable name="symbol-font-map" as="document-node(element(symbols))"
-                select="document('../fontmaps/Symbol.xml')"/>
+                select="document('http://transpect.io/fontmaps/Symbol.xml')"/>
 
   <xsl:key name="style-by-id" match="w:style" use="@w:styleId" />
   <xsl:key name="numbering-by-id" match="w:num" use="@w:numId" />

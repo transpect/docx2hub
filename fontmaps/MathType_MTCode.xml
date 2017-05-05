@@ -282,28 +282,39 @@
         * EF00 - EFFF: Non-marking Characters
         * -->
   <!-- ALIGNMENT MARK, no unicode representation -->
-  <symbol number="EF00" entity="&#xef00;" char=""/>
+  <!--<symbol number="EF00" entity="&#xef00;" char=""/>-->
   <!-- ZERO WIDTH SPACE -->
+  <symbol number="EB01" entity="&#xeb01;" char="&#x200b;"/>
   <symbol number="EF01" entity="&#xef01;" char="&#x200b;"/>
   <!-- THIN SPACE -->
+  <symbol number="EB02" entity="&#xeb02;" char="&#x2009;"/>
   <symbol number="EF02" entity="&#xef02;" char="&#x2009;"/>
   <!-- MEDIUM SPACE         => FOUR-PER-EM SPACE -->
+  <symbol number="EB03" entity="&#xeb03;" char="&#x2005;"/>
   <symbol number="EF03" entity="&#xef03;" char="&#x2005;"/>
   <!-- THICK SPACE (1/3 EM) => THREE-PER-EM SPACE -->
+  <symbol number="EB04" entity="&#xeb04;" char="&#x2004;"/>
   <symbol number="EF04" entity="&#xef04;" char="&#x2004;"/>
   <!-- EM SPACE -->
+  <symbol number="EB05" entity="&#xeb05;" char="&#x2003;"/>
   <symbol number="EF05" entity="&#xef05;" char="&#x2003;"/>
   <!-- 2-EM SPACE -->
+  <symbol number="EB06" entity="&#xeb06;" char="&#x2003;&#x2003;"/>
   <symbol number="EF06" entity="&#xef06;" char="&#x2003;&#x2003;"/>
   <!-- INNER SPACE -->
+  <symbol number="EB07" entity="&#xeb07;" char="&#x2009;"/>
   <symbol number="EF07" entity="&#xef07;" char="&#x2009;"/>
   <!-- 1-POINT SPACE -->
+  <symbol number="EB08" entity="&#xeb08;" char="&#x2002;"/>
   <symbol number="EF08" entity="&#xef08;" char="&#x2002;"/>
   <!-- CLOCKWISE CONTOUR INTEGRAL (ARROW ON LEFT) -->
+  <symbol number="EF80" entity="&#xeb80;" char="&#x2232;"/>
   <symbol number="EF80" entity="&#xef80;" char="&#x2232;"/>
   <!-- INTEGRAL WITH SQUARE -->
+  <symbol number="EF81" entity="&#xeb81;" char="&#x2A16;"/>
   <symbol number="EF81" entity="&#xef81;" char="&#x2A16;"/>
   <!-- INTEGRAL WITH SLASH -->
+  <symbol number="EF82" entity="&#xeb82;" char="&#x2A0F;"/>
   <symbol number="EF82" entity="&#xef82;" char="&#x2A0F;"/>
   <!-- REVERSED INTEGRAL -->
   <!--<symbol number="EF83" entity="&#xef83;" char="(REVERSED INTEGRAL)"/>-->

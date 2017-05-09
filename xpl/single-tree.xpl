@@ -11,26 +11,18 @@
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
   xmlns:tr="http://transpect.io"
   version="1.0" 
-  name="docx-single-tree"
+  name="single-tree"
   type="docx2hub:single-tree">
 
   <p:input port="source" primary="true">
     <p:documentation>This is to prevent any other default readable port to be connected with the xslt port.</p:documentation>
     <p:empty/>
   </p:input>
+  <p:input port="schematron" primary="false">
+    <p:document href="../sch/single-tree.sch.xml"/>
+  </p:input>
   <p:input port="xslt" primary="false">
     <p:document href="../xsl/main.xsl"/>
-  </p:input>
-  <p:input port="insert-xpath-schematron">
-    <p:document href="../sch/insert-xpath.sch.xml"/>
-    <p:documentation>Schematron that will validate the entire Word container document (before mode apply-changemarkup).
-    The tr:rule-family for this Schematron is 'docx2hub_single-tree'. We have kept the port and Schematron file names
-    (insert-xpath) for compatibility reasons.</p:documentation>
-  </p:input>
-  <p:input port="single-tree-schematron">
-    <p:document href="../sch/single-tree.sch.xml"/>
-    <p:documentation>Schematron that will validate the entire Word container document (after mode apply-changemarkup).
-    The tr:rule-family for this Schematron is 'docx2hub_single-tree_changes-accepted'</p:documentation>
   </p:input>
   
   <p:output port="result" primary="true">
@@ -43,10 +35,7 @@
     <p:pipe port="result" step="zip-manifest"/>
   </p:output>
   <p:output port="report" sequence="true">
-    <p:pipe port="result" step="check-insert-xpath"/>
-    <p:pipe port="result" step="check-single-tree"/>
-    <p:pipe port="report" step="insert-xpath"/>
-    <p:pipe port="report" step="apply-changemarkup"/>
+    <p:pipe port="result" step="check"/>
   </p:output>
 
   <p:serialization port="result" omit-xml-declaration="false"/>
@@ -79,11 +68,6 @@
       <p>Apply all change markup on the compound word document.</p>
     </p:documentation>
   </p:option>  
-  <p:option name="mathtype2mml" required="false" select="'yes'">
-    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
-      <p>Activates use of mathtype2mml extension.</p>
-    </p:documentation>
-  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
@@ -242,7 +226,7 @@
       <p:pipe step="params" port="result"/>
     </p:input>
     <p:input port="stylesheet">
-      <p:pipe step="docx-single-tree" port="xslt"/>
+      <p:pipe step="single-tree" port="xslt"/>
     </p:input>
     <p:input port="models">
       <p:empty/>
@@ -265,44 +249,10 @@
       <p:pipe port="result" step="unzip"/>
     </p:with-option>
   </p:add-attribute>
-
-  <p:choose name="apply-changemarkup">
-    <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
-      <p:output port="result" primary="true"/>
-      <p:output port="report" sequence="true">
-        <p:pipe port="report" step="apply-changemarkup-xslt"/>
-      </p:output>
-      
-      <tr:xslt-mode msg="yes" mode="docx2hub:apply-changemarkup" name="apply-changemarkup-xslt">
-        <p:input port="parameters">
-          <p:pipe step="params" port="result"/>
-        </p:input>
-        <p:input port="stylesheet">
-          <p:pipe step="docx-single-tree" port="xslt"/>
-        </p:input>
-        <p:input port="models">
-          <p:empty/>
-        </p:input>
-        <p:with-option name="prefix" select="concat('docx2hub/', $basename, '/02a-apply-changemarkup')"/>
-        <p:with-option name="debug" select="$debug"/>
-        <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
-        <p:with-option name="fail-on-error" select="$fail-on-error"/>
-        <p:with-param name="fail-on-error" select="$fail-on-error"/>
-      </tr:xslt-mode>
-      
-    </p:when>
-    <p:otherwise>
-      <p:output port="result" primary="true"/>
-      <p:output port="report" sequence="true">
-        <p:empty/>
-      </p:output>
-      <p:identity/>
-    </p:otherwise>
-  </p:choose>
   
-  <p:validate-with-schematron assert-valid="false" name="single-tree0">
+  <p:validate-with-schematron assert-valid="false" name="val-sch">
     <p:input port="schema">
-      <p:pipe port="single-tree-schematron" step="docx-single-tree"/>
+      <p:pipe port="schematron" step="single-tree"/>
     </p:input>
     <p:input port="parameters"><p:empty/></p:input>
     <p:with-param name="allow-foreign" select="'true'"/>
@@ -310,38 +260,10 @@
 
   <p:sink/>
 
-  <p:add-attribute name="check-single-tree" match="/*" 
-    attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree_changes-accepted">
+  <p:add-attribute name="check" match="/*" attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree">
     <p:input port="source">
-      <p:pipe port="report" step="single-tree0"/>
+      <p:pipe port="report" step="val-sch"/>
     </p:input>
-  </p:add-attribute>
-  
-  <p:sink/>
-  
-  <p:validate-with-schematron assert-valid="false" name="insert-xpath0">
-    <p:input port="source">
-      <p:pipe port="result" step="insert-xpath"/>
-    </p:input>
-    <p:input port="schema">
-      <p:pipe port="insert-xpath-schematron" step="docx-single-tree"/>
-    </p:input>
-    <p:input port="parameters"><p:empty/></p:input>
-    <p:with-param name="allow-foreign" select="'true'"/>
-  </p:validate-with-schematron>
-  
-  <p:sink/>
-  
-  <p:add-attribute match="/*" 
-    attribute-name="tr:step-name" attribute-value="docx2hub">
-    <p:input port="source">
-      <p:pipe port="report" step="insert-xpath0"/>
-    </p:input>
-  </p:add-attribute>
-
-  <p:add-attribute name="check-insert-xpath" match="/*" 
-    attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree">
-    <p:documentation>Please note that tr:rule-family="docx2hub_single-tree" is checked by insert-xpath-schematron</p:documentation>
   </p:add-attribute>
   
   <p:sink/>

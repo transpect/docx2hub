@@ -33,13 +33,17 @@
     <p:documentation>This is to prevent a default readable port connecting to this step’s xslt port.</p:documentation>
     <p:empty/>
   </p:input>
-  <p:input port="insert-xpath-schematron">
-    <p:document href="../sch/insert-xpath.sch.xml"/>
-    <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
-  </p:input>
   <p:input port="single-tree-schematron">
     <p:document href="../sch/single-tree.sch.xml"/>
-    <p:documentation>Schematron that will validate the entire Word container document (after mode apply-changemarkup).</p:documentation>
+    <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
+  </p:input>
+  <p:input port="change-markup-schematron">
+    <p:document href="../sch/changemarkup.sch.xml"/>
+    <p:documentation>Schematron that will validate the entire document after applying change markup.</p:documentation>
+  </p:input>
+  <p:input port="mathtype2mml-schematron">
+    <p:document href="../sch/mathtype2mml.sch.xml"/>
+    <p:documentation>Schematron that will validate the entire document after replacing MathType OLE-Objects by MathML.</p:documentation>
   </p:input>
   <p:input port="field-functions-schematron">
     <p:document href="../sch/field-functions.sch.xml"/>
@@ -57,6 +61,7 @@
   </p:output>
   <p:output port="report" sequence="true">
     <p:pipe port="report" step="single-tree"/>
+    <p:pipe port="report" step="mathtype2mml"/>
     <p:pipe port="report" step="add-props"/>
     <p:pipe port="report" step="props2atts"/>
     <p:pipe port="report" step="remove-redundant-run-atts"/>
@@ -72,7 +77,7 @@
     <p:pipe port="result" step="decorate-field-functions-schematron"/>
   </p:output>
   <p:output port="zip-manifest">
-    <p:pipe port="zip-manifest" step="single-tree"/>
+    <p:pipe port="modified-zip-manifest" step="mathtype2mml"/>
   </p:output>
 
 
@@ -127,17 +132,22 @@
       <p>Activates use of mathtype2mml extension.</p>
     </p:documentation>
   </p:option>
+  <p:option name="apply-changemarkup" required="false" select="'yes'">
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Apply all change markup on the compound word document.</p>
+    </p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
-  
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
-  
   <p:import href="http://transpect.io/xproc-util/file-uri/xpl/file-uri.xpl"/>
   <p:import href="http://transpect.io/xproc-util/xml-model/xpl/prepend-hub-xml-model.xpl"/>
   <p:import href="http://transpect.io/xproc-util/xslt-mode/xpl/xslt-mode.xpl"/>
   <p:import href="http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl" 
     use-when="doc-available('http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl')"/>
   <p:import href="single-tree.xpl"/>
+  <p:import href="mathtype2mml.xpl"/>
+  <p:import href="apply-changemarkup.xpl"/>
   <p:import href="http://transpect.io/htmlreports/xpl/errorPI2svrl.xpl"/>
 
   <p:group use-when="doc-available('http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl')">
@@ -165,17 +175,42 @@
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="srcpaths" select="$srcpaths"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
-    <p:with-option name="mathtype2mml" select="$mathtype2mml"/>
-    <p:input port="insert-xpath-schematron">
-      <p:pipe step="docx2hub" port="insert-xpath-schematron"/>
-    </p:input>
-    <p:input port="single-tree-schematron">
+    <p:input port="schematron">
       <p:pipe step="docx2hub" port="single-tree-schematron"/>
     </p:input>
     <p:input port="xslt">
       <p:pipe step="docx2hub" port="xslt"/>
     </p:input>
   </docx2hub:single-tree>
+  
+  <docx2hub:apply-changemarkup name="change-markup">
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+    <p:with-option name="active" select="$apply-changemarkup"/>
+    <p:with-option name="fail-on-error" select="$fail-on-error"/>
+    <p:input port="params">
+      <p:pipe step="single-tree" port="params"/>
+    </p:input>
+    <p:input port="schematron">
+      <p:pipe step="docx2hub" port="change-markup-schematron"/>
+    </p:input>
+  </docx2hub:apply-changemarkup>
+  
+  <docx2hub:mathtype2mml name="mathtype2mml">
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+    <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
+    <p:with-option name="active" select="$mathtype2mml"/>
+    <p:input port="params">
+      <p:pipe step="single-tree" port="params"/>
+    </p:input>
+    <p:input port="schematron">
+      <p:pipe step="docx2hub" port="mathtype2mml-schematron"/>
+    </p:input>
+    <p:input port="zip-manifest">
+      <p:pipe step="single-tree" port="zip-manifest"/>
+    </p:input>
+  </docx2hub:mathtype2mml>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:add-props" name="add-props">
     <p:input port="parameters">
@@ -197,6 +232,7 @@
     <p:with-param name="field-vars" select="$field-vars"/>
     <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
     <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
+    <p:with-param name="apply-changemarkup" select="$apply-changemarkup"/>
   </tr:xslt-mode>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:props2atts" name="props2atts">

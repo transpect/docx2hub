@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:dbk="http://docbook.org/ns/docbook"
+  queryBinding="xslt2">
+  
+  <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
+  <ns prefix="a" uri="http://schemas.openxmlformats.org/drawingml/2006/main"/>
+  <ns prefix="pic" uri="http://schemas.openxmlformats.org/drawingml/2006/picture"/>
+  <ns prefix="m" uri="http://schemas.openxmlformats.org/officeDocument/2006/math"/>
+  <ns prefix="o" uri="urn:schemas-microsoft-com:office:office"/>
+
+  <let name="base-dir" value="//w:root/@extract-dir-uri"/>
+  
+  <pattern id="MTEF2">
+    <rule context="w:object/o:OLEObject">
+      <report id="MathType_v2_formula" role="warning" test="@Type eq 'Embed' and @ProgID eq 'Equation.2'">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(ancestor::*[local-name() = ('p', 'tbl')]/@srcpath, '^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        MathType-Formeln mit der Formatversion 2 können aktuell noch nicht nach MathML gewandelt werden. Bitte durch eine neuere Version ersetzen (Vorgehen: Formel anwählen/anklicken und im sich dann öffnenden Word-Formeleditor einfach nochmal speichern).
+      </report>
+    </rule>
+  </pattern>
+  
+</schema>

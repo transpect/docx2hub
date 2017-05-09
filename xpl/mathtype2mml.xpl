@@ -28,13 +28,14 @@
   </p:input>
 
   <p:output port="result" primary="true">
-    <p:documentation>The same basic structure as the single tree, but with equation OLE objects replaced with MathML</p:documentation>
+    <p:documentation>The same basic structure as the primary source of the current step, but with equation OLE objects replaced with MathML</p:documentation>
+    <p:pipe port="result" step="convert-mathtype2mml"/>
   </p:output>
   <p:output port="modified-zip-manifest">
-    <p:pipe port="result" step="zip-manifest"/>
+    <p:pipe port="result" step="modify-single-tree-zip-manifest"/>
   </p:output>
   <p:output port="report" sequence="true">
-    <p:pipe port="report" step="check"/>
+    <p:pipe port="result" step="check"/>
   </p:output>
 
   <p:serialization port="result" omit-xml-declaration="false"/>
@@ -52,9 +53,9 @@
   <p:import href="http://transpect.io/calabash-extensions/mathtype-extension/xpl/mathtype2mml-declaration.xpl"/>
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
 
-
   <p:choose name="convert-mathtype2mml">
     <p:when test="$active eq 'yes'">
+      <p:output port="result" primary="true"/>
       <p:variable name="basename" select="/c:param-set/c:param[@name = 'basename']">
         <p:pipe port="params" step="mathtype2mml"/>
       </p:variable>
@@ -65,12 +66,12 @@
                                                         'word/',
                                                         /w:root/w:docRels/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
                                                )">
-          <p:pipe port="result" step="insert-xpath"/>
+          <p:pipe port="source" step="mathtype2mml"/>
         </p:variable>
         
         <p:try name="mathtype2mml-wrapper">
           <p:group>
-            <tr:mathtype2mml name="mathtype2mml">
+            <tr:mathtype2mml>
               <p:with-option name="href" select="$equation-href"/>
               <p:with-option name="debug" select="$debug"/>
               <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
@@ -90,13 +91,47 @@
       </tr:store-debug>
     </p:when>
     <p:otherwise>
+      <p:output port="result" primary="true"/>
+      <p:identity/>
+    </p:otherwise>
+  </p:choose>
+  
+  <p:validate-with-schematron assert-valid="false" name="val-sch">
+    <p:input port="schema">
+      <p:pipe port="schematron" step="mathtype2mml"/>
+    </p:input>
+    <p:input port="parameters"><p:empty/></p:input>
+    <p:with-param name="allow-foreign" select="'true'"/>
+  </p:validate-with-schematron>
+
+  <p:sink/>
+
+  <p:add-attribute name="check" match="/*" 
+    attribute-name="tr:rule-family" attribute-value="docx2hub">
+    <p:input port="source">
+      <p:pipe port="report" step="val-sch"/>
+    </p:input>
+  </p:add-attribute>
+  
+  <p:sink/>
+  
+  <p:identity name="single-tree-zip-manifest">
+    <p:input port="source">
+      <p:pipe port="zip-manifest" step="mathtype2mml"/>
+    </p:input>
+  </p:identity>
+  
+  <p:choose name="modify-single-tree-zip-manifest">
+    <p:when test="$active eq 'yes'">
+      <p:output port="result" primary="true"/>
+      <p:delete match="c:entry[contains(@name, 'word/embeddings/oleObject')]"/>
+    </p:when>
+    <p:otherwise>
+      <p:output port="result" primary="true"/>
       <p:identity/>
     </p:otherwise>
   </p:choose>
 
-  <p:add-attribute attribute-name="mathtype2mml" match="/*" name="add-mathtype2mml-attr">
-    <p:with-option name="attribute-value" select="$mathtype2mml"/>
-  </p:add-attribute>
-  
+  <p:sink/>
 
 </p:declare-step>

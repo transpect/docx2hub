@@ -43,13 +43,4 @@
     </rule>
   </pattern>
   
-  <pattern id="MTEF2">
-    <rule context="w:object/o:OLEObject[@Type eq 'Embed' and @ProgID eq 'Equation.2']">
-      <report id="MathType_v2_formula" role="warning" test="/*/@mathtype2mml[. eq 'yes']">
-        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(ancestor::*[local-name() = ('p', 'tbl')]/@srcpath, '^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        MathType-Formeln mit der Formatversion 2 können aktuell noch nicht nach MathML gewandelt werden. Bitte durch eine neuere Version ersetzen (Vorgehen: Formel anwählen/anklicken und im sich dann öffnenden Word-Formeleditor einfach nochmal speichern).
-      </report>
-    </rule>
-  </pattern>
-  
 </schema>

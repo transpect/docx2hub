@@ -37,7 +37,7 @@
     <p:document href="../sch/single-tree.sch.xml"/>
     <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
   </p:input>
-  <p:input port="change-markup-schematron">
+  <p:input port="changemarkup-schematron">
     <p:document href="../sch/changemarkup.sch.xml"/>
     <p:documentation>Schematron that will validate the entire document after applying change markup.</p:documentation>
   </p:input>
@@ -61,6 +61,7 @@
   </p:output>
   <p:output port="report" sequence="true">
     <p:pipe port="report" step="single-tree"/>
+    <p:pipe port="report" step="apply-changemarkup"/>
     <p:pipe port="report" step="mathtype2mml"/>
     <p:pipe port="report" step="add-props"/>
     <p:pipe port="report" step="props2atts"/>
@@ -183,7 +184,7 @@
     </p:input>
   </docx2hub:single-tree>
   
-  <docx2hub:apply-changemarkup name="change-markup">
+  <docx2hub:apply-changemarkup name="apply-changemarkup">
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     <p:with-option name="active" select="$apply-changemarkup"/>
@@ -192,7 +193,7 @@
       <p:pipe step="single-tree" port="params"/>
     </p:input>
     <p:input port="schematron">
-      <p:pipe step="docx2hub" port="change-markup-schematron"/>
+      <p:pipe step="docx2hub" port="changemarkup-schematron"/>
     </p:input>
   </docx2hub:apply-changemarkup>
   

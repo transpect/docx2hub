@@ -88,7 +88,6 @@
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
-  <p:import href="http://transpect.io/calabash-extensions/mathtype-extension/xpl/mathtype2mml-declaration.xpl"/>
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
   <p:import href="http://transpect.io/xproc-util/file-uri/xpl/file-uri.xpl"/>
   <p:import href="http://transpect.io/xproc-util/xslt-mode/xpl/xslt-mode.xpl"/>
@@ -261,6 +260,12 @@
     </p:with-param>
   </tr:xslt-mode>
 
+  <p:add-attribute attribute-name="xml:base" match="/*" name="add-xml-base-attr">
+    <p:with-option name="attribute-value" select="/c:files/@xml:base">
+      <p:pipe port="result" step="unzip"/>
+    </p:with-option>
+  </p:add-attribute>
+
   <p:choose name="apply-changemarkup">
     <p:when test="exists(//w:del | //w:moveFrom | //w:ins) and $apply-changemarkup = 'yes'">
       <p:output port="result" primary="true"/>
@@ -294,54 +299,6 @@
       <p:identity/>
     </p:otherwise>
   </p:choose>
-  
-  <p:choose name="convert-mathtype2mml">
-    <p:when test="$mathtype2mml eq 'yes'">
-      <p:viewport match="/w:root/w:document/w:body/*[local-name() = ('p', 'tbl')]
-                           //w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
-        <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
-        <p:variable name="equation-href" select="concat(/w:root/@xml:base,
-                                                        'word/',
-                                                        /w:root/w:docRels/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
-                                               )">
-          <p:pipe port="result" step="insert-xpath"/>
-        </p:variable>
-        
-        <p:try name="mathtype2mml-wrapper">
-          <p:group>
-            <tr:mathtype2mml name="mathtype2mml">
-              <p:with-option name="href" select="$equation-href"/>
-              <p:with-option name="debug" select="$debug"/>
-              <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
-            </tr:mathtype2mml>
-          </p:group>
-          <p:catch>
-            <p:identity/>
-          </p:catch>
-        </p:try>
-         
-      </p:viewport>
-           
-      <tr:store-debug>
-        <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02b-mathtype-converted')"/>
-        <p:with-option name="active" select="$debug"/>
-        <p:with-option name="base-uri" select="$debug-dir-uri"/>
-      </tr:store-debug>
-    </p:when>
-    <p:otherwise>
-      <p:identity/>
-    </p:otherwise>
-  </p:choose>
-
-  <p:add-attribute attribute-name="xml:base" match="/*" name="add-xml-base-attr">
-    <p:with-option name="attribute-value" select="/c:files/@xml:base">
-      <p:pipe port="result" step="unzip"/>
-    </p:with-option>
-  </p:add-attribute>
-  
-  <p:add-attribute attribute-name="mathtype2mml" match="/*" name="add-mathtype2mml-attr">
-    <p:with-option name="attribute-value" select="$mathtype2mml"/>
-  </p:add-attribute>
   
   <p:validate-with-schematron assert-valid="false" name="single-tree0">
     <p:input port="schema">

@@ -59,8 +59,8 @@
       <p:variable name="basename" select="/c:param-set/c:param[@name = 'basename']">
         <p:pipe port="params" step="mathtype2mml"/>
       </p:variable>
-      <p:viewport match="/w:root/w:document/w:body/*[local-name() = ('p', 'tbl')]
-                           //w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" name="mathtype2mml-viewport">
+      <p:viewport match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"
+                  name="mathtype2mml-viewport">
         <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
         <p:variable name="equation-href" select="concat(/w:root/@xml:base,
                                                         'word/',
@@ -86,6 +86,7 @@
            
       <tr:store-debug>
         <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02b-mathtype-converted')"/>
+        
         <p:with-option name="active" select="$debug"/>
         <p:with-option name="base-uri" select="$debug-dir-uri"/>
       </tr:store-debug>

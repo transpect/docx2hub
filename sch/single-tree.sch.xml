@@ -10,6 +10,8 @@
   <ns prefix="m" uri="http://schemas.openxmlformats.org/officeDocument/2006/math"/>
   <ns prefix="o" uri="urn:schemas-microsoft-com:office:office"/>
 
+  <title>docx</title>
+
   <let name="base-dir" value="//w:root/@extract-dir-uri"/>
   
   <pattern id="table">

@@ -6,6 +6,8 @@
   
   <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
 
+  <title>docx</title>
+
   <let name="base-dir" value="//w:root/@extract-dir-uri"/>
   
   <pattern id="change_tracking">

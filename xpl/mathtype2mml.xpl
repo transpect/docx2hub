@@ -107,12 +107,18 @@
 
   <p:sink/>
 
-  <p:add-attribute name="check" match="/*" 
-    attribute-name="tr:rule-family" attribute-value="docx2hub">
+  <p:add-attribute name="check0" match="/*" 
+    attribute-name="tr:rule-family" attribute-value="docx2hub_mathtype2mml">
     <p:input port="source">
       <p:pipe port="report" step="val-sch"/>
     </p:input>
   </p:add-attribute>
+  
+  <p:insert name="check" match="/*" position="first-child">
+    <p:input port="insertion" select="/*/*:title">
+      <p:pipe port="schematron" step="mathtype2mml"/>
+    </p:input>
+  </p:insert>
   
   <p:sink/>
   

@@ -2,10 +2,12 @@
 <schema xmlns="http://purl.oclc.org/dsdl/schematron" 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:dbk="http://docbook.org/ns/docbook"
-  queryBinding="xslt2">
+  queryBinding="xslt2" xml:lang="en">
   
   <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
   <ns prefix="dbk" uri="http://docbook.org/ns/docbook" />
+
+  <title>docx</title>
 
   <let name="base-dir" value="/*/dbk:info/dbk:keywordset[@role eq 'hub']/dbk:keyword[@role eq 'source-dir-uri']"/>
   

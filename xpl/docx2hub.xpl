@@ -330,10 +330,16 @@
     </p:input>
   </p:add-attribute>
   
-  <p:add-attribute name="check-field-functions" match="/*" 
+  <p:add-attribute name="check-field-functions1" match="/*" 
     attribute-name="tr:rule-family" attribute-value="docx2hub_field-functions">
     <p:documentation>Will also check other things such as change markup.</p:documentation>
   </p:add-attribute>
+  
+  <p:insert name="check-field-functions" match="/*" position="first-child">
+    <p:input port="insertion" select="/*/*:title">
+      <p:pipe port="field-functions-schematron" step="docx2hub"/>
+    </p:input>
+  </p:insert>
   
   <p:sink/>
   
@@ -344,9 +350,15 @@
     </p:input>
   </p:add-attribute>
   
-  <p:add-attribute name="decorate-field-functions-schematron" match="/*" 
+  <p:add-attribute name="decorate-field-functions-schematron0" match="/*" 
     attribute-name="tr:rule-family" attribute-value="docx2hub">
   </p:add-attribute>
+  
+  <p:insert name="decorate-field-functions-schematron" match="/*" position="first-child">
+    <p:input port="insertion" select="/*/*:title">
+      <p:pipe port="field-functions-schematron" step="docx2hub"/>
+    </p:input>
+  </p:insert>
   
   <p:sink/>
 
@@ -441,12 +453,18 @@
 
   <p:sink/>
 
-  <p:add-attribute name="check-result" match="/*" 
+  <p:add-attribute name="check-result1" match="/*" 
     attribute-name="tr:rule-family" attribute-value="docx2hub_result">
     <p:input port="source">
       <p:pipe port="report" step="check-result0"/>
     </p:input>
   </p:add-attribute>
+  
+  <p:insert name="check-result" match="/*" position="first-child">
+    <p:input port="insertion" select="/*/*:title">
+      <p:pipe port="result-schematron" step="docx2hub"/>
+    </p:input>
+  </p:insert>
   
   <p:sink/>
   

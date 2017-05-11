@@ -45,6 +45,9 @@
   <p:output port="zip-manifest">
     <p:pipe port="modified-zip-manifest" step="mathtype2mml"/>
   </p:output>
+  <p:output port="params">
+    <p:pipe port="params" step="single-tree"/>
+  </p:output>
   
   <!-- Options: See documentation in docx2hub.xpl-->
   <p:option name="docx" required="true"/>

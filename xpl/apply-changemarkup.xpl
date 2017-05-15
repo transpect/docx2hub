@@ -49,12 +49,14 @@
 
   <p:choose name="convert-apply-changemarkup">
     <p:when test="$active = 'yes' and exists(//w:del | //w:moveFrom | //w:ins)">
-      <p:output port="result" primary="true"/>
+      <p:output port="result" primary="true">
+        <p:pipe port="result" step="apply-changemarkup-xslt"/>
+      </p:output>
       <p:output port="report" sequence="true">
         <p:pipe port="result" step="check"/>
       </p:output>
       
-      <p:variable name="basename" select="/c:param-set/c:param[@name = 'basename']">
+      <p:variable name="basename" select="/c:param-set/c:param[@name = 'basename']/@value">
         <p:pipe step="apply-changemarkup" port="params"/>
       </p:variable>
       

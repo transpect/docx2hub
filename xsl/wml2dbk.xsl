@@ -1315,7 +1315,12 @@
   </xsl:template>
   
   <xsl:template match="w:sdt" mode="wml-to-dbk">
-    <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
+    <xsl:element name="blockquote">
+      <xsl:if test="w:sdtPr/w:alias/@w:val">
+        <xsl:attribute name="role" select="w:sdtPr/w:alias/@w:val"/>
+      </xsl:if>
+      <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
   <!-- The following template removes indentation if the document.xml was processed 

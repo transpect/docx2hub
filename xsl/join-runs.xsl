@@ -555,8 +555,8 @@
     
   </xsl:template>
   
-<!-- group more than one mml:mi[@mathvariant='normal'] element to mtext -->
-  <xsl:template match="mml:*[mml:mi]" mode="docx2hub:join-runs">
+<!-- group more than one mml:mi[@mathvariant='normal'] element to mtext; exclude mathtype2mml processed mathml -->
+  <xsl:template match="mml:*[not(ancestor::*[ends-with(name(), 'equation')]/@role eq 'mtef')][mml:mi]" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] | self::mml:mtext)">

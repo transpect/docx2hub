@@ -53,9 +53,17 @@
           <xsl:value-of select="ancestor::v:shape[1]/@docx2hub:generated-alt"/>
         </alt>
       </xsl:if>
-      <xsl:call-template name="create-imageobject">
-        <xsl:with-param name="image-id" select="(@r:href, @r:id)[1]"/>
-      </xsl:call-template>
+      <xsl:variable name="image-id" select="(@r:href, @r:id)[1]" as="xs:string?"/>
+      <xsl:choose>
+        <xsl:when test="normalize-space($image-id) = ''">
+          <xsl:message select="'! Empty image-id found:', ."/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="create-imageobject">
+            <xsl:with-param name="image-id" select="$image-id"/>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:element>
   </xsl:template>
 

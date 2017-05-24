@@ -127,17 +127,14 @@
                   <xsl:apply-templates select="@*, node()"/>
                 </xsl:copy>
               </xsl:template>
-              <xsl:variable name="doc-eqs" as="element(o:OLEObject)*"
-                select="/w:root/w:document//o:OLEObject[starts-with(@ProgID, 'Equation.')][@Type = 'Embed']"/>
-              <xsl:variable name="footnote-eqs" as="element(o:OLEObject)*"
-                select="/w:root/w:footnotes//o:OLEObject[starts-with(@ProgID, 'Equation.')][@Type = 'Embed']"/>
-              <xsl:variable name="endnote-eqs" as="element(o:OLEObject)*"
-                select="/w:root/w:endnotes//o:OLEObject[starts-with(@ProgID, 'Equation.')][@Type = 'Embed']"/>
+              <xsl:variable name="doc-objs" as="element(o:OLEObject)*" select="/w:root/w:document//o:OLEObject"/>
+              <xsl:variable name="footnote-objs" as="element(o:OLEObject)*" select="/w:root/w:footnotes//o:OLEObject"/>
+              <xsl:variable name="endnote-objs" as="element(o:OLEObject)*" select="/w:root/w:endnotes//o:OLEObject"/>
               <xsl:template match="w:docRels/rel:Relationships/rel:Relationship
                         [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
                 <xsl:copy>
                   <xsl:apply-templates select="@*"/>
-                  <xsl:if test="not(@Id = $doc-eqs/@r:id)">
+                  <xsl:if test="not(@Id = $doc-objs/@r:id)">
                     <xsl:attribute name="remove" select="'yes'"/>
                   </xsl:if>
                   <xsl:apply-templates/>
@@ -147,7 +144,7 @@
                         [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
                 <xsl:copy>
                   <xsl:apply-templates select="@*"/>
-                  <xsl:if test="not(@Id = $footnote-eqs/@r:id)">
+                  <xsl:if test="not(@Id = $footnote-objs/@r:id)">
                     <xsl:attribute name="remove" select="'yes'"/>
                   </xsl:if>
                   <xsl:apply-templates/>
@@ -157,7 +154,7 @@
                         [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
                 <xsl:copy>
                   <xsl:apply-templates select="@*"/>
-                  <xsl:if test="not(@Id = $endnote-eqs/@r:id)">
+                  <xsl:if test="not(@Id = $endnote-objs/@r:id)">
                     <xsl:attribute name="remove" select="'yes'"/>
                   </xsl:if>
                   <xsl:apply-templates/>

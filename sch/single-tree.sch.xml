@@ -30,7 +30,7 @@
     <pattern id="crop">
       <rule context="a:graphic">
       <report id="cropped_image" role="warning" test="a:graphicData/pic:pic/pic:blipFill/a:srcRect[@r or @b]">
-        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(ancestor::w:p/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
        Dieses Bild wurde zugeschnitten
       </report>
     </rule>

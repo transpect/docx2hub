@@ -16,6 +16,10 @@
   
   <xsl:variable name="symbol-font-map" as="document-node(element(symbols))"
     select="document('http://transpect.io/fontmaps/Symbol.xml')"/>
+
+  <xsl:key name="symbol-by-number" match="symbol" use="upper-case(replace(@number, '^0*(.+?)$', '$1'))" />
+  <xsl:key name="symbol-by-entity" match="symbol" use="@entity" />
+  <xsl:key name="style-by-id" match="w:style" use="@w:styleId" />  
   
   <xsl:template match="m:oMathPara">
     <equation role="omml">

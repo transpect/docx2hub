@@ -18,7 +18,7 @@
     <rule context="w:object/o:OLEObject">
       <report id="MathType_v2_formula" role="warning" test="@Type eq 'Embed' and @ProgID eq 'Equation.2'" 
         diagnostics="MathType_v2_formula_de">
-        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(ancestor::*[local-name() = ('p', 'tbl')][1]/@srcpath, '^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        <span class="srcpath"><xsl:value-of select="@srcpath"/></span>
         <span class="category">docx (MathType→MathML)</span>
         MathType version 2 equations are currently not supported. Please replace it with a more recent version.
         (In order to update it, re-open the equation in Word Equation Editor or MathType and then close the equation editor window again.)  
@@ -26,11 +26,28 @@
     </rule>
   </pattern>
   
+  <!--<pattern id="MTEF">
+    <rule context="w:object/o:OLEObject">
+      <report id="MathType_formula" role="error" 
+        test="@Type eq 'Embed' and starts-with(@ProgID, 'Equation.') and not(@ProgID eq 'Equation.2')" 
+        diagnostics="MathType_formula_de">
+        <span class="srcpath"><xsl:value-of select="@srcpath"/></span>
+        <span class="category">docx (MathType→MathML)</span>
+        A MathType or EquationEditor 3 equation has not been converted. This issue probably needs to be investigated 
+        by a developer.
+      </report>
+    </rule>
+  </pattern>-->
+  
   <diagnostics>
     <diagnostic xml:lang="de" id="MathType_v2_formula_de">
       MathType-Formeln mit der Formatversion 2 können aktuell noch nicht nach MathML gewandelt werden. 
       Bitte durch eine neuere Version ersetzen 
       (Vorgehen: Formel anwählen/anklicken und im sich dann öffnenden Word-Formeleditor einfach nochmal speichern).
+    </diagnostic>
+    <diagnostic xml:lang="de" id="MathType_formula_de">
+      Eine MathType- (oder EquationEditor-3-) Formel konnte nicht konvertiert werden. Dieses Problem muss wahrscheinlich
+      von einem Entwickler untersucht werden.
     </diagnostic>
   </diagnostics>
   

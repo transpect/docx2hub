@@ -32,10 +32,10 @@
     <p:pipe port="result" step="convert-mathtype2mml"/>
   </p:output>
   <p:output port="modified-zip-manifest">
-    <p:pipe port="result" step="modify-single-tree-zip-manifest"/>
+    <p:pipe port="zip-manifest" step="convert-mathtype2mml"/>
   </p:output>
   <p:output port="report" sequence="true">
-    <p:pipe port="result" step="check"/>
+    <p:pipe port="report" step="convert-mathtype2mml"/>
   </p:output>
 
   <p:serialization port="result" omit-xml-declaration="false"/>
@@ -56,9 +56,15 @@
   <p:choose name="convert-mathtype2mml">
     <p:when test="$active eq 'yes'">
       <p:output port="result" primary="true"/>
-      <p:variable name="basename" select="/c:param-set/c:param[@name = 'basename']">
-        <p:pipe port="params" step="mathtype2mml"/>
-      </p:variable>
+      <p:output port="zip-manifest">
+        <p:pipe port="result" step="remove-converted-objects-from-zip-manifest"/>
+      </p:output>
+      <p:output port="report" sequence="true">
+        <p:pipe port="result" step="check"/>
+        <p:pipe port="result" step="extract-errors"/>
+      </p:output>
+      <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
+      
       <p:viewport match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"
                   name="mathtype2mml-viewport">
         <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
@@ -71,74 +77,219 @@
         
         <p:try name="mathtype2mml-wrapper">
           <p:group>
-            <tr:mathtype2mml>
+            <tr:mathtype2mml name="convert">
               <p:with-option name="href" select="$equation-href"/>
               <p:with-option name="debug" select="$debug"/>
               <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
             </tr:mathtype2mml>
+            <p:choose>
+              <p:when test="/c:errors">
+                <p:set-attributes match="/*" name="set-atts">
+                  <p:input port="source" select="/c:errors/c:error">
+                    <p:pipe port="result" step="convert"/>
+                  </p:input>
+                  <p:input port="attributes">
+                    <p:pipe port="result" step="convert"/>
+                  </p:input>
+                </p:set-attributes>
+                <p:add-attribute name="add-srcpath" attribute-name="srcpath" match="/*">
+                  <p:with-option name="attribute-value" select="/*/@srcpath">
+                    <p:pipe port="current" step="mathtype2mml-viewport"/>
+                  </p:with-option>
+                </p:add-attribute>
+                <p:add-attribute name="add-role" attribute-name="role" attribute-value="error" match="/*"/>
+                <p:sink/>
+                <p:identity>
+                  <p:input port="source">
+                    <p:pipe port="current" step="mathtype2mml-viewport"/>
+                    <p:pipe port="result" step="add-role"/>
+                  </p:input>
+                </p:identity>                  
+              </p:when>
+              <p:otherwise>
+                <p:identity/>
+              </p:otherwise>
+            </p:choose>
           </p:group>
           <p:catch>
             <p:identity/>
           </p:catch>
         </p:try>
-         
-      </p:viewport>
-           
-      <tr:store-debug>
-        <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02b-mathtype-converted')"/>
         
+      </p:viewport>
+
+      <p:xslt name="remove-unused-rels">
+        <p:input port="stylesheet">
+          <p:inline>
+            <xsl:stylesheet version="2.0">
+              <xsl:template match="node() | @*">
+                <xsl:copy>
+                  <xsl:apply-templates select="@*, node()"/>
+                </xsl:copy>
+              </xsl:template>
+              <xsl:variable name="doc-eqs" as="element(o:OLEObject)*"
+                select="/w:root/w:document//o:OLEObject[starts-with(@ProgID, 'Equation.')][@Type = 'Embed']"/>
+              <xsl:variable name="footnote-eqs" as="element(o:OLEObject)*"
+                select="/w:root/w:footnotes//o:OLEObject[starts-with(@ProgID, 'Equation.')][@Type = 'Embed']"/>
+              <xsl:variable name="endnote-eqs" as="element(o:OLEObject)*"
+                select="/w:root/w:endnotes//o:OLEObject[starts-with(@ProgID, 'Equation.')][@Type = 'Embed']"/>
+              <xsl:template match="w:docRels/rel:Relationships/rel:Relationship
+                        [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
+                <xsl:copy>
+                  <xsl:apply-templates select="@*"/>
+                  <xsl:if test="not(@Id = $doc-eqs/@r:id)">
+                    <xsl:attribute name="remove" select="'yes'"/>
+                  </xsl:if>
+                  <xsl:apply-templates/>
+                </xsl:copy>
+              </xsl:template>
+              <xsl:template match="w:footnoteRels/rel:Relationships/rel:Relationship
+                        [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
+                <xsl:copy>
+                  <xsl:apply-templates select="@*"/>
+                  <xsl:if test="not(@Id = $footnote-eqs/@r:id)">
+                    <xsl:attribute name="remove" select="'yes'"/>
+                  </xsl:if>
+                  <xsl:apply-templates/>
+                </xsl:copy>
+              </xsl:template>
+              <xsl:template match="w:endnoteRels/rel:Relationships/rel:Relationship
+                        [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
+                <xsl:copy>
+                  <xsl:apply-templates select="@*"/>
+                  <xsl:if test="not(@Id = $endnote-eqs/@r:id)">
+                    <xsl:attribute name="remove" select="'yes'"/>
+                  </xsl:if>
+                  <xsl:apply-templates/>
+                </xsl:copy>
+              </xsl:template>
+            </xsl:stylesheet>
+          </p:inline>
+        </p:input>
+        <p:input port="parameters">
+          <p:empty/>
+        </p:input>
+      </p:xslt>
+
+      <tr:store-debug name="store-viewport">
+        <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02b-mathtype-converted')"/>
         <p:with-option name="active" select="$debug"/>
         <p:with-option name="base-uri" select="$debug-dir-uri"/>
       </tr:store-debug>
+      
+      <p:validate-with-schematron assert-valid="false" name="val-sch">
+        <p:input port="schema">
+          <p:pipe port="schematron" step="mathtype2mml"/>
+        </p:input>
+        <p:input port="parameters">
+          <p:empty/>
+        </p:input>
+        <p:with-param name="allow-foreign" select="'true'"/>
+      </p:validate-with-schematron>
+
+      <p:sink/>
+    
+      <p:add-attribute name="check0" match="/*" 
+        attribute-name="tr:rule-family" attribute-value="docx2hub_mathtype2mml">
+        <p:input port="source">
+          <p:pipe port="report" step="val-sch"/>
+        </p:input>
+      </p:add-attribute>
+      
+      <p:insert name="check" match="/*" position="first-child">
+        <p:input port="insertion" select="/*/*:title">
+          <p:pipe port="schematron" step="mathtype2mml"/>
+        </p:input>
+      </p:insert>
+      
+      <p:sink/>
+      
+      <p:identity>
+        <p:input port="source">
+          <p:pipe port="result" step="store-viewport"/>
+        </p:input>
+      </p:identity>
+      
+      <p:choose name="extract-errors">
+        <p:when test="exists(//c:error)">
+          <p:output port="result" primary="true" sequence="true"/>
+          <p:wrap-sequence wrapper="c:errors">
+            <p:input port="source" select="//c:error"></p:input>
+          </p:wrap-sequence>
+          <p:add-attribute match="/*" attribute-name="tr:rule-family" attribute-value="docx2hub_mathtype2mml"/>
+        </p:when>
+        <p:otherwise>
+          <p:output port="result" primary="true" sequence="true"/>
+          <p:identity>
+            <p:input port="source">
+              <p:inline>
+                <c:ok tr:rule-family="docx2hub_mathtype2mml"/>
+              </p:inline>
+            </p:input>
+          </p:identity>
+        </p:otherwise>
+      </p:choose>
+      
+      <p:sink/>
+      
+      <p:xslt name="remove-converted-objects-from-zip-manifest">
+        <p:input port="source">
+          <p:pipe port="zip-manifest" step="mathtype2mml"/>
+          <p:pipe port="result" step="remove-unused-rels"/>
+        </p:input>
+        <p:input port="parameters"><p:empty/></p:input>
+        <p:input port="stylesheet">
+          <p:inline>
+            <xsl:stylesheet version="2.0">
+              <xsl:template match="node() | @*">
+                <xsl:copy>
+                  <xsl:apply-templates select="@*, node()"/>
+                </xsl:copy>
+              </xsl:template>
+              <xsl:variable name="removed-rels" as="element(rel:Relationship)*"
+                select="collection()[2]//rel:Relationship[@remove = 'yes']"/>
+              <xsl:template match="c:entry">
+                <xsl:choose>
+                  <xsl:when test="some $t in $removed-rels/@Target satisfies (ends-with(@name, $t))"/>
+                  <xsl:otherwise>
+                    <xsl:next-match/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:template>
+            </xsl:stylesheet>
+          </p:inline>
+        </p:input>
+      </p:xslt>
+      
+      <tr:store-debug name="store-zip-manifest">
+        <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02c-modified-zip-manifest')"/>
+        <p:with-option name="active" select="$debug"/>
+        <p:with-option name="base-uri" select="$debug-dir-uri"/>
+      </tr:store-debug>
+      
+      <p:sink/>
+
+      <p:delete match="rel:Relationship[@remove = 'yes'] | c:error" name="remove-rels">
+        <p:input port="source">
+          <p:pipe port="result" step="store-viewport"/>  
+        </p:input>
+      </p:delete>
+
     </p:when>
     <p:otherwise>
       <p:output port="result" primary="true"/>
+      <p:output port="report" sequence="true">
+        <p:inline>
+          <c:ok tr:rule-family="docx2hub_mathtype2mml"/>
+        </p:inline>
+      </p:output>
+      <p:output port="zip-manifest">
+        <p:pipe port="zip-manifest" step="mathtype2mml"/>
+      </p:output>
       <p:identity/>
     </p:otherwise>
   </p:choose>
   
-  <p:validate-with-schematron assert-valid="false" name="val-sch">
-    <p:input port="schema">
-      <p:pipe port="schematron" step="mathtype2mml"/>
-    </p:input>
-    <p:input port="parameters"><p:empty/></p:input>
-    <p:with-param name="allow-foreign" select="'true'"/>
-  </p:validate-with-schematron>
-
-  <p:sink/>
-
-  <p:add-attribute name="check0" match="/*" 
-    attribute-name="tr:rule-family" attribute-value="docx2hub_mathtype2mml">
-    <p:input port="source">
-      <p:pipe port="report" step="val-sch"/>
-    </p:input>
-  </p:add-attribute>
-  
-  <p:insert name="check" match="/*" position="first-child">
-    <p:input port="insertion" select="/*/*:title">
-      <p:pipe port="schematron" step="mathtype2mml"/>
-    </p:input>
-  </p:insert>
-  
-  <p:sink/>
-  
-  <p:identity name="single-tree-zip-manifest">
-    <p:input port="source">
-      <p:pipe port="zip-manifest" step="mathtype2mml"/>
-    </p:input>
-  </p:identity>
-  
-  <p:choose name="modify-single-tree-zip-manifest">
-    <p:when test="$active eq 'yes'">
-      <p:output port="result" primary="true"/>
-      <p:delete match="c:entry[contains(@name, 'word/embeddings/oleObject')]"/>
-    </p:when>
-    <p:otherwise>
-      <p:output port="result" primary="true"/>
-      <p:identity/>
-    </p:otherwise>
-  </p:choose>
-
   <p:sink/>
 
 </p:declare-step>

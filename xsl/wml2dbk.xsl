@@ -1314,13 +1314,15 @@
     <!-- Attribute von smartTag vorerst ignoriert. -->
   </xsl:template>
   
-  <xsl:template match="w:sdt" mode="wml-to-dbk">
+  <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]" mode="wml-to-dbk">
     <xsl:element name="blockquote">
-      <xsl:if test="w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation">
-        <xsl:attribute name="role" select="if (w:sdtPr/w:citation) then 'hub:citation' else w:sdtPr/w:alias/@w:val"/>
-      </xsl:if>
+      <xsl:attribute name="role" select="if (w:sdtPr/w:citation) then 'hub:citation' else w:sdtPr/w:alias/@w:val"/>
       <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="w:sdt" mode="wml-to-dbk" priority="-1">
+    <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
   </xsl:template>
   
   <!-- The following template removes indentation if the document.xml was processed 

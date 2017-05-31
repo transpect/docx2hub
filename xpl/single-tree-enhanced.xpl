@@ -35,6 +35,12 @@
     <p:document href="../sch/mathtype2mml.sch.xml"/>
     <p:documentation>Schematron that will validate the entire document after replacing MathType OLE-Objects by MathML.</p:documentation>
   </p:input>
+  <p:input port="custom-font-maps" primary="false" sequence="true">
+    <p:documentation>
+      See additional-font-maps in mathtype-extension
+    </p:documentation>
+    <p:empty/>
+  </p:input>
   
   <p:output port="result" primary="true"/>
   <p:output port="report" sequence="true">
@@ -116,6 +122,9 @@
     </p:input>
     <p:input port="zip-manifest">
       <p:pipe step="single-tree" port="zip-manifest"/>
+    </p:input>
+    <p:input port="additional-font-maps">
+      <p:pipe port="custom-font-maps" step="mathtype2mml"/>
     </p:input>
   </docx2hub:mathtype2mml>
 

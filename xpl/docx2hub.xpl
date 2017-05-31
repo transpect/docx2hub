@@ -54,6 +54,12 @@
     <p:documentation>Schematron that will validate the flat Hub. It will chiefly report error messages that were 
       embedded during conversion.</p:documentation>
   </p:input>
+  <p:input port="custom-font-maps" primary="false" sequence="true">
+    <p:documentation>
+      See additional-font-maps in mathtype-extension
+    </p:documentation>
+    <p:empty/>
+  </p:input>
   <p:output port="result" primary="true"/>
   <p:serialization port="result" omit-xml-declaration="false"/>
   <p:output port="insert-xpath">
@@ -202,6 +208,9 @@
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
     <p:with-option name="active" select="$mathtype2mml"/>
+    <p:input port="custom-font-maps">
+      <p:pipe port="custom-font-maps" step="docx2hub"/>
+    </p:input>
     <p:input port="params">
       <p:pipe step="single-tree" port="params"/>
     </p:input>

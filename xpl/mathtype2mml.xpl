@@ -26,6 +26,17 @@
   <p:input port="schematron">
     <p:document href="../sch/mathtype2mml.sch.xml"/>
   </p:input>
+  <p:input port="custom-font-maps" primary="false" sequence="true">
+    <p:documentation>
+      A sequence of &lt;symbols&gt;, containing mapped characters.
+      Each &lt;symbols&gt; is required to contain the name of its font-family as an attribute @name.
+      Example, the value of @char is the unicode character that will be in the mml output:
+      <symbols name="Times New Roman">
+        <symbol number="002F" entity="&#x002f;" char="&#x002f;"/>
+      </symbols>
+    </p:documentation>
+    <p:empty/>
+  </p:input>
 
   <p:output port="result" primary="true">
     <p:documentation>The same basic structure as the primary source of the current step, but with equation OLE objects replaced with MathML</p:documentation>
@@ -78,6 +89,14 @@
         <p:try name="mathtype2mml-wrapper">
           <p:group>
             <tr:mathtype2mml name="convert">
+              <p:input port="additional-font-maps">
+                <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
+                <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
+                <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
+                <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
+                <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
+                <p:pipe port="custom-font-maps" step="mathtype2mml"/>
+              </p:input>
               <p:with-option name="href" select="$equation-href"/>
               <p:with-option name="debug" select="$debug"/>
               <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>

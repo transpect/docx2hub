@@ -63,12 +63,10 @@
   <p:output port="result" primary="true"/>
   <p:serialization port="result" omit-xml-declaration="false"/>
   <p:output port="insert-xpath">
-    <p:pipe step="single-tree" port="result"/>
+    <p:pipe step="single-tree-enhanced" port="result"/>
   </p:output>
   <p:output port="report" sequence="true">
-    <p:pipe port="report" step="single-tree"/>
-    <p:pipe port="report" step="apply-changemarkup"/>
-    <p:pipe port="report" step="mathtype2mml"/>
+    <p:pipe port="report" step="single-tree-enhanced"/>
     <p:pipe port="report" step="add-props"/>
     <p:pipe port="report" step="props2atts"/>
     <p:pipe port="report" step="remove-redundant-run-atts"/>
@@ -84,7 +82,7 @@
     <p:pipe port="result" step="decorate-field-functions-schematron"/>
   </p:output>
   <p:output port="zip-manifest">
-    <p:pipe port="modified-zip-manifest" step="mathtype2mml"/>
+    <p:pipe port="zip-manifest" step="single-tree-enhanced"/>
   </p:output>
 
 
@@ -152,7 +150,7 @@
   <p:import href="http://transpect.io/xproc-util/xslt-mode/xpl/xslt-mode.xpl"/>
   <p:import href="http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl" 
     use-when="doc-available('http://transpect.io/xproc-util/simple-progress-msg/xpl/simple-progress-msg.xpl')"/>
-  <p:import href="single-tree.xpl"/>
+  <p:import href="single-tree-enhanced.xpl"/>
   <p:import href="mathtype2mml.xpl"/>
   <p:import href="apply-changemarkup.xpl"/>
   <p:import href="http://transpect.io/htmlreports/xpl/errorPI2svrl.xpl"/>
@@ -171,60 +169,35 @@
     </tr:simple-progress-msg>
   </p:group>
 
-  <docx2hub:single-tree name="single-tree">
+  <docx2hub:single-tree-enhanced name="single-tree-enhanced">
     <p:with-option name="docx" select="$docx"/>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
-    <p:with-option name="hub-version" select="$hub-version"/>
+    <p:with-option name="status-dir-uri" select="$status-dir-uri"/>
+    <p:with-option name="srcpaths" select="$srcpaths"/>
     <p:with-option name="unwrap-tooltip-links" select="$unwrap-tooltip-links"/>
     <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
+    <p:with-option name="hub-version" select="$hub-version"/>
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-option name="field-vars" select="$field-vars"/>
-    <p:with-option name="srcpaths" select="$srcpaths"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
-    <p:input port="schematron">
+    <p:input port="single-tree-schematron">
       <p:pipe step="docx2hub" port="single-tree-schematron"/>
+    </p:input>
+    <p:input port="change-markup-schematron">
+      <p:pipe step="docx2hub" port="changemarkup-schematron"/>
+    </p:input>
+    <p:input port="mathtype2mml-schematron">
+      <p:pipe step="docx2hub" port="mathtype2mml-schematron"/>
     </p:input>
     <p:input port="xslt">
       <p:pipe step="docx2hub" port="xslt"/>
     </p:input>
-  </docx2hub:single-tree>
+  </docx2hub:single-tree-enhanced>
   
-  <docx2hub:apply-changemarkup name="apply-changemarkup">
-    <p:with-option name="debug" select="$debug"/>
-    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
-    <p:with-option name="active" select="$apply-changemarkup"/>
-    <p:with-option name="fail-on-error" select="$fail-on-error"/>
-    <p:input port="params">
-      <p:pipe step="single-tree" port="params"/>
-    </p:input>
-    <p:input port="schematron">
-      <p:pipe step="docx2hub" port="changemarkup-schematron"/>
-    </p:input>
-  </docx2hub:apply-changemarkup>
-  
-  <docx2hub:mathtype2mml name="mathtype2mml">
-    <p:with-option name="debug" select="$debug"/>
-    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
-    <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
-    <p:with-option name="active" select="$mathtype2mml"/>
-    <p:input port="custom-font-maps">
-      <p:pipe port="custom-font-maps" step="docx2hub"/>
-    </p:input>
-    <p:input port="params">
-      <p:pipe step="single-tree" port="params"/>
-    </p:input>
-    <p:input port="schematron">
-      <p:pipe step="docx2hub" port="mathtype2mml-schematron"/>
-    </p:input>
-    <p:input port="zip-manifest">
-      <p:pipe step="single-tree" port="zip-manifest"/>
-    </p:input>
-  </docx2hub:mathtype2mml>
-
   <tr:xslt-mode msg="yes" mode="docx2hub:add-props" name="add-props">
     <p:input port="parameters">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
     <p:input port="stylesheet">
       <p:pipe step="docx2hub" port="xslt"/>
@@ -233,21 +206,19 @@
       <p:empty/>
     </p:input>
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/03')">
-      <p:pipe port="params" step="single-tree"/> 
+      <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="field-vars" select="$field-vars"/>
-    <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
     <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
-    <p:with-param name="apply-changemarkup" select="$apply-changemarkup"/>
   </tr:xslt-mode>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:props2atts" name="props2atts">
     <p:input port="parameters">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
     <p:input port="stylesheet">
       <p:pipe step="docx2hub" port="xslt"/>
@@ -256,7 +227,7 @@
       <p:empty/>
     </p:input>
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/05')">
-      <p:pipe port="params" step="single-tree"/> 
+      <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
@@ -266,7 +237,7 @@
 
   <tr:xslt-mode msg="yes" mode="docx2hub:remove-redundant-run-atts" name="remove-redundant-run-atts">
     <p:input port="parameters">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
     <p:input port="stylesheet">
       <p:pipe step="docx2hub" port="xslt"/>
@@ -275,7 +246,7 @@
       <p:empty/>
     </p:input>
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/07')">
-      <p:pipe port="params" step="single-tree"/> 
+      <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
@@ -285,7 +256,7 @@
 
   <tr:xslt-mode msg="yes" mode="docx2hub:join-instrText-runs" name="join-instrText-runs">
     <p:input port="parameters">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
     <p:input port="stylesheet">
       <p:pipe step="docx2hub" port="xslt"/>
@@ -294,7 +265,7 @@
       <p:empty/>
     </p:input>
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/08')">
-      <p:pipe port="params" step="single-tree"/> 
+      <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
@@ -305,7 +276,7 @@
 
   <tr:xslt-mode msg="yes" mode="docx2hub:field-functions" name="field-functions">
     <p:input port="parameters">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
     <p:input port="stylesheet">
       <p:pipe step="docx2hub" port="xslt"/>
@@ -314,7 +285,7 @@
       <p:empty/>
     </p:input>
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/14')">
-      <p:pipe port="params" step="single-tree"/> 
+      <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
@@ -376,7 +347,7 @@
       <p:pipe port="result" step="field-functions"/>
     </p:input>
     <p:input port="parameters">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
     <p:input port="stylesheet">
       <p:pipe step="docx2hub" port="xslt"/>
@@ -385,7 +356,7 @@
       <p:empty/>
     </p:input>
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/20')">
-      <p:pipe port="params" step="single-tree"/> 
+      <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
@@ -400,7 +371,7 @@
 
   <tr:xslt-mode msg="yes" mode="docx2hub:join-runs" name="join-runs">
     <p:input port="parameters">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
     <p:input port="stylesheet">
       <p:pipe step="docx2hub" port="xslt"/>
@@ -409,7 +380,7 @@
       <p:empty/>
     </p:input>
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/24')">
-      <p:pipe port="params" step="single-tree"/> 
+      <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
@@ -421,7 +392,7 @@
   <p:add-attribute match="/*" attribute-name="xml:base" name="rebase">
     <p:with-option name="attribute-value" 
       select="replace(/c:param-set/c:param[@name='local-href']/@value, '\.do[ct][xm]$', '.hub.xml')">
-      <p:pipe step="single-tree" port="params"/>
+      <p:pipe step="single-tree-enhanced" port="params"/>
     </p:with-option>
   </p:add-attribute>
 

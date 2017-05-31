@@ -67,9 +67,6 @@
   <p:option name="fail-on-error" select="'no'"/>
   <p:option name="field-vars" select="'no'"/>
   <p:option name="extract-dir" select="''"/>
-  <p:option name="create-svg" required="false" select="'no'"/>
-  <p:option name="discard-alternate-choices" select="'yes'"/>
-  <p:option name="charmap-policy" select="'unicode'"/>
   <p:option name="mathtype2mml" required="false" select="'yes'"/>
   <p:option name="apply-changemarkup" required="false" select="'yes'"/>
 
@@ -123,8 +120,8 @@
     <p:input port="zip-manifest">
       <p:pipe step="single-tree" port="zip-manifest"/>
     </p:input>
-    <p:input port="additional-font-maps">
-      <p:pipe port="custom-font-maps" step="mathtype2mml"/>
+    <p:input port="custom-font-maps">
+      <p:pipe port="custom-font-maps" step="single-tree-enhanced"/>
     </p:input>
   </docx2hub:mathtype2mml>
 

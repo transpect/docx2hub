@@ -265,15 +265,51 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:variable name="dbk:scope-establishing-elements" as="xs:string*"
+    select="('annotation', 
+             'entry', 
+             'blockquote', 
+             'figure', 
+             'footnote',
+             'indexterm',
+             'listitem',
+             'sidebar',
+             'table')"/>
+
   <xsl:function name="dbk:same-scope" as="xs:boolean">
+    <!-- 
+      There are situations when you don’t want to select the
+      text nodes of an embedded footnote when selecting the text
+      nodes of a paragraph.
+      A footnote, for example, constitutes a so called “scope.”
+      Other scope-establishing elements are table cells that
+      may contain paragraphs, or figures/tables whose captions 
+      may contain paragraphs. But also indexterms, elements that 
+      do not contain paragraphs, may establish a new scope. 
+      This concept allows you to select only the main narrative 
+      text of a given paragraph (or phrase, …), excluding any 
+      content of embedded notes, figures, list items, or index 
+      terms.
+      Example:
+<para><emphasis>Outer</emphasis> para text<footnote><para>Footnote text</para></footnote>.</para>
+      Typical invocation (context: outer para):
+      .//text()[ens:same-scope(., current())]
+      Result: The three text nodes with string content
+      'Outer', ' para text', and '.'
+      -->
     <xsl:param name="node" as="node()" />
     <xsl:param name="ancestor-elt" as="element(*)*" />
-    <xsl:sequence select="not($node/ancestor::*[self::entry 
-                                                or self::footnote
-                                                or self::annotation
-                                                or self::figure
-                                                or self::listitem]
-                                               [some $a in ancestor::* satisfies (some $b in $ancestor-elt satisfies ($a is $b))])" />
+    <xsl:sequence 
+      select="not(
+                $node/ancestor::*[
+                  local-name() = $dbk:scope-establishing-elements]
+                  [
+                    some $a in ancestor::* 
+                    satisfies (
+                      some $b in $ancestor-elt 
+                      satisfies ($a is $b))
+                  ]
+                )" />
   </xsl:function>
   
   <xsl:function name="dbk:before-text-in-para" as="xs:boolean">
@@ -533,26 +569,22 @@
   <!-- determine whether inline or display equation -->
   
   <xsl:template match="dbk:inlineequation[@role eq 'mtef']" mode="docx2hub:join-runs">
-    <xsl:variable name="para" select="ancestor::dbk:para" as="element(dbk:para)"/>
-    <xsl:variable name="display-equation" select="count($para//dbk:inlineequation) eq 1
-      and string-length(normalize-space(string-join(($para/text(), $para//*[namespace-uri() ne 'http://www.w3.org/1998/Math/MathML']/text())
-      , '')
-      
-      )) eq 0" as="xs:boolean"/>
-    <xsl:choose>
-      <xsl:when test="$display-equation">
-        <equation>
-          <xsl:apply-templates select="@*, node()" mode="#current"/>
-        </equation>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:copy>
-          <xsl:apply-templates select="@*, node()" mode="#current"/>
-        </xsl:copy>        
-      </xsl:otherwise>
-    </xsl:choose>
-    
-    
+    <xsl:variable name="para" select="ancestor::dbk:para[1]" as="element(dbk:para)"/>
+    <xsl:variable name="is-display-equation" 
+      select="count($para//dbk:inlineequation[dbk:same-scope(., $para)]) eq 1
+              and 
+              not(
+                normalize-space(
+                  string-join(
+                    $para//text()[dbk:same-scope(., $para)]
+                                 [namespace-uri() ne 'http://www.w3.org/1998/Math/MathML'],
+                    ''
+                  )
+                )
+              )" as="xs:boolean"/>
+    <xsl:element name="{if ($is-display-equation) then 'equation' else name()}">
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:element>
   </xsl:template>
   
 <!-- group more than one mml:mi[@mathvariant='normal'] element to mtext; exclude mathtype2mml processed mathml -->

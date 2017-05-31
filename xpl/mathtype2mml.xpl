@@ -27,13 +27,13 @@
     <p:document href="../sch/mathtype2mml.sch.xml"/>
   </p:input>
   <p:input port="custom-font-maps" primary="false" sequence="true">
-    <p:documentation>
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
       A sequence of &lt;symbols&gt;, containing mapped characters.
       Each &lt;symbols&gt; is required to contain the name of its font-family as an attribute @name.
       Example, the value of @char is the unicode character that will be in the mml output:
-      <symbols name="Times New Roman">
-        <symbol number="002F" entity="&#x002f;" char="&#x002f;"/>
-      </symbols>
+      &lt;symbols name="Times New Roman">
+        &lt;symbol number="002F" entity="&#x002f;" char="&#x002f;"/>
+      &lt;/symbols>
     </p:documentation>
     <p:empty/>
   </p:input>
@@ -79,9 +79,15 @@
       <p:viewport match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"
                   name="mathtype2mml-viewport">
         <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
-        <p:variable name="equation-href" select="concat(/w:root/@xml:base,
-                                                        'word/',
-                                                        /w:root/w:docRels/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
+        <p:variable name="rels-elt" select="if (contains(base-uri(/*), '/word/document'))
+                                            then 'w:docRels'
+                                            else if (contains(base-uri(/*), '/word/footnotes'))
+                                              then 'w:footnoteRels'
+                                              else if (contains(base-uri(/*), '/word/endnotes'))
+                                                then 'w:endnoteRels'
+                                                else ''"/>
+        <p:variable name="equation-href" select="concat(/w:root/@xml:base, 'word/',
+                                                        /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
                                                )">
           <p:pipe port="source" step="mathtype2mml"/>
         </p:variable>

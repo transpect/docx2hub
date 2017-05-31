@@ -55,9 +55,9 @@
       embedded during conversion.</p:documentation>
   </p:input>
   <p:input port="custom-font-maps" primary="false" sequence="true">
-    <p:documentation>
-      See additional-font-maps in mathtype-extension
-    </p:documentation>
+    <p:documentation>See same port in mathtype2mml.xpl.
+    If you need to match a specific docx font name that is not identical with the base name of the base URI’s file name part,
+    you can do so by including an attribute /symbols/docx-name.</p:documentation>
     <p:empty/>
   </p:input>
   <p:output port="result" primary="true"/>
@@ -345,6 +345,7 @@
   <tr:xslt-mode msg="yes" mode="wml-to-dbk" name="wml-to-dbk">
     <p:input port="source">
       <p:pipe port="result" step="field-functions"/>
+      <p:pipe port="custom-font-maps" step="docx2hub"/>
     </p:input>
     <p:input port="parameters">
       <p:pipe step="single-tree-enhanced" port="params"/>

@@ -28,12 +28,14 @@
   </p:input>
   <p:input port="custom-font-maps" primary="false" sequence="true">
     <p:documentation xmlns="http://www.w3.org/1999/xhtml">
-      A sequence of &lt;symbols&gt;, containing mapped characters.
-      Each &lt;symbols&gt; is required to contain the name of its font-family as an attribute @name.
-      Example, the value of @char is the unicode character that will be in the mml output:
-      &lt;symbols name="Times New Roman">
-        &lt;symbol number="002F" entity="&#x002f;" char="&#x002f;"/>
-      &lt;/symbols>
+      <p>A sequence of &lt;symbols&gt; documents, containing mapped characters as found in the regular docs2hub fontmaps.</p>
+      <p>Each &lt;symbols&gt; is required to contain the name of its font-family as an attribute @name.</p>
+      <p>Example, the value of @char is the unicode character that will be in the mml output:</p>
+      <pre>&lt;symbols name="Times New Roman">
+  &lt;symbol number="002F" entity="&#x002f;" char="&#x002f;"/>
+&lt;/symbols></pre>
+      <p>If the base name of the base URI’s file name part is not identical with the font name as encoded in MTEF, 
+      you need to give the converter a hint by adding an attribute <code>/symbols/@mathtype-name</code>.</p>
     </p:documentation>
     <p:empty/>
   </p:input>

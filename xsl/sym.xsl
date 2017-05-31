@@ -20,8 +20,18 @@
   version="2.0" 
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x docx2hub exsl saxon fn tr mml">
 
+  <xsl:variable name="custom-font-maps" as="document-node(element(symbols))*" select="collection()[symbols]"/>
+
+  <xsl:function name="docx2hub:font-map-name" as="xs:string">
+    <xsl:param name="font-map-doc" as="document-node(element(symbols))"/>
+    <xsl:sequence select="($font-map-doc/symbols/@docx-name, replace($font-map-doc/*/base-uri(), '^.+/([^/.]+)\.xml', '$1'))[1]"/>
+  </xsl:function>
+
+  <xsl:variable name="custom-font-names" as="xs:string*"
+    select="for $cfm in $custom-font-maps return docx2hub:font-map-name($cfm)"/>
+
   <xsl:variable name="docx2hub:symbol-font-names" as="xs:string+" 
-    select="('Math1', 'Symbol', 'Wingdings', 'Wingdings 2', 'Wingdings 3', 'Webdings')"/>
+    select="('Math1', 'Symbol', 'Wingdings', 'Wingdings 2', 'Wingdings 3', 'Webdings', $custom-font-names)"/>
 
   <xsl:variable name="docx2hub:symbol-replacement-rfonts" as="element(w:rFonts)">
     <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math"/>
@@ -136,8 +146,15 @@
   <xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?">
     <xsl:param name="font-name" as="xs:string?"/>
     <xsl:if test="$font-name">
-      <xsl:variable name="font-map-name" select="concat('http://transpect.io/fontmaps/', replace($font-name, ' ', '_'), '.xml')" as="xs:string" />
-      <xsl:sequence select="if (doc-available($font-map-name)) then document($font-map-name) else ()"/>
+      <xsl:choose>
+        <xsl:when test="$font-name = $custom-font-names">
+          <xsl:sequence select="$custom-font-maps[docx2hub:font-map-name(.) = $font-name]"/>  
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="font-map-name" select="concat('http://transpect.io/fontmaps/', replace($font-name, ' ', '_'), '.xml')" as="xs:string" />
+          <xsl:sequence select="if (doc-available($font-map-name)) then document($font-map-name) else ()"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
   </xsl:function>
   

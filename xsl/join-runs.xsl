@@ -577,7 +577,7 @@
                 normalize-space(
                   string-join(
                     $para//text()[dbk:same-scope(., $para)]
-                                 [namespace-uri() ne 'http://www.w3.org/1998/Math/MathML'],
+                                 [namespace-uri(..) ne 'http://www.w3.org/1998/Math/MathML'],
                     ''
                   )
                 )

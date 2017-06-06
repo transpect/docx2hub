@@ -181,6 +181,7 @@
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
+    <p:with-option name="mathtype2mml" select="$mathtype2mml"/>
     <p:input port="single-tree-schematron">
       <p:pipe step="docx2hub" port="single-tree-schematron"/>
     </p:input>

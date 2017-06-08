@@ -60,5 +60,7 @@
   <!-- MATHEMATICAL DOUBLE-STRUCK CAPITAL Y -->
   <symbol number="0059" entity="&#xea59;" char="&#x1d550;"/>
   <!-- MATHEMATICAL DOUBLE-STRUCK CAPITAL Z -->
-  <symbol number="005a" entity="&#xea5a;" char="&#x2124;"/>
+  <symbol number="005A" entity="&#xea5a;" char="&#x2124;"/>
+  <!-- MATHEMATICAL DOUBLE-STRUCK SMALL K -->
+  <symbol number="006B" entity="&#xea6b;" char="&#x1d55c;"/>
 </symbols>

@@ -194,6 +194,9 @@
     <p:input port="xslt">
       <p:pipe step="docx2hub" port="xslt"/>
     </p:input>
+    <p:input port="custom-font-maps">
+      <p:pipe port="custom-font-maps" step="docx2hub"/>
+    </p:input>
   </docx2hub:single-tree-enhanced>
   
   <tr:xslt-mode msg="yes" mode="docx2hub:add-props" name="add-props">

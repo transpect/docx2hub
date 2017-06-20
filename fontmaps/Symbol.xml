@@ -287,6 +287,9 @@
   <!--GREEK PI SYMBOL-->
   <symbol number="F076" entity="&#xf076;" char="&#x3d6;"/>
   <symbol number="0076" entity="&#x0076;" char="&#x3d6;"/>
+  <!-- WHITE SQUARE -->
+  <symbol number="F0A0" entity="&#xf0a0;" char="&#x25a1;"/>
+  <symbol number="00A0" entity="&#x00a0;" char="&#x25a1;"/>
   <!--GREEK UPSILON WITH HOOK SYMBOL-->
   <symbol number="F0A1" entity="&#xf0a1;" char="&#x3d2;"/>
   <symbol number="00A1" entity="&#x00A1;" char="&#x3d2;"/>

@@ -151,7 +151,15 @@
           <xsl:sequence select="$custom-font-maps[docx2hub:font-map-name(.) = $font-name]"/>  
         </xsl:when>
         <xsl:otherwise>
-          <xsl:variable name="font-map-name" select="concat('http://transpect.io/fontmaps/', replace($font-name, ' ', '_'), '.xml')" as="xs:string" />
+          <xsl:variable name="font-map-name" 
+            select="tr:resolve-uri-by-catalog(
+                      concat(
+                        'http://transpect.io/fontmaps/', 
+                        replace($font-name, ' ', '_'),
+                        '.xml'
+                      ),
+                      $catalog
+                    )" as="xs:string" />
           <xsl:sequence select="if (doc-available($font-map-name)) then document($font-map-name) else ()"/>
         </xsl:otherwise>
       </xsl:choose>

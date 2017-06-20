@@ -18,7 +18,8 @@
   xmlns:tr="http://transpect.io"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
-  exclude-result-prefixes="xs dbk saxon tr mml docx2hub"
+  xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog"
+  exclude-result-prefixes="xs dbk saxon tr mml docx2hub cat"
   version="2.0">
 
   <!-- ================================================================================ -->
@@ -29,6 +30,10 @@
   <xsl:import href="insert-xpath.xsl"/>
   <xsl:import href="modules/prop-mapping/map-props.xsl"/>
   <xsl:import href="join-runs.xsl"/>
+  
+  <xsl:import href="http://transpect.io/xslt-util/xslt-based-catalog-resolver/xsl/resolve-uri-by-catalog.xsl"/>
+  <xsl:param name="cat:missing-next-catalogs-warning" as="xs:string" select="'no'"/>
+  <xsl:variable name="catalog" as="document-node(element(cat:catalog))?" select="collection()[cat:catalog]"/>
 
   <!-- ================================================================================ -->
   <!-- OUTPUT FORMAT -->

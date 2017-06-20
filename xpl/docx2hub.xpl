@@ -350,6 +350,7 @@
     <p:input port="source">
       <p:pipe port="result" step="field-functions"/>
       <p:pipe port="custom-font-maps" step="docx2hub"/>
+      <p:document href="http://this.transpect.io/xmlcatalog/catalog.xml"/>
     </p:input>
     <p:input port="parameters">
       <p:pipe step="single-tree-enhanced" port="params"/>

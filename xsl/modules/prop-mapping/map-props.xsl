@@ -399,11 +399,11 @@
                        | w:rPr[not(ancestor::m:oMath)]/* 
                        | w:pBdr/* 
                        | w:pPr/* 
-                       | w:tblPr/*
+                       | w:tblPr/*[not(self::w:jc)]
                        | w:tcBorders/* 
                        | w:tblBorders/*
                        | w:tcPr/*
-                       | w:trPr/*[local-name() ne 'tblHeader']
+                       | w:trPr/*[not(local-name() = ('tblHeader','jc'))]
                        | w:rubyPr/*
                        | w:tblPrEx/*
                        | w:tblCellMar/*
@@ -429,6 +429,13 @@
       </xsl:if>
     </xsl:variable>
     <xsl:sequence select="$raw-output" />
+  </xsl:template>
+  
+  <xsl:template match="w:tblPr/w:jc" mode="docx2hub:add-props">
+    <xsl:variable name="prop" select="key('docx2hub:prop', docx2hub:propkey(.), $docx2hub:propmap)" />
+    <docx2hub:attribute name="align">
+      <xsl:value-of select="($prop//val[@match = current()/@w:val]/@target-value)[1]"/>
+    </docx2hub:attribute>
   </xsl:template>
 
   <xsl:template match="@w:rsid

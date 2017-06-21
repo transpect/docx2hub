@@ -74,7 +74,7 @@
         <prop name="w:ind/@w:hanging" type="docx-length-attr-negated" target-name="css:text-indent" />
         <prop name="w:jc">
           <val match="left" target-name="css:text-align" target-value="left" />
-          <val match="start" target-name="css:text-align" target-value="right" />
+          <val match="start" target-name="css:text-align" target-value="left" />
           <val match="right" target-name="css:text-align" target-value="right" />
           <val match="end" target-name="css:text-align" target-value="right" />
           <val match="both" target-name="css:text-align" target-value="justify" />

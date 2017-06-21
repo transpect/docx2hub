@@ -375,7 +375,13 @@
     <p:with-param name="charmap-policy" select="$charmap-policy"/>
   </tr:xslt-mode>
 
+  <p:sink/>
+
   <tr:xslt-mode msg="yes" mode="docx2hub:join-runs" name="join-runs">
+    <p:input port="source">
+      <p:pipe port="result" step="wml-to-dbk"/>
+      <p:document href="http://this.transpect.io/xmlcatalog/catalog.xml"/>
+    </p:input>
     <p:input port="parameters">
       <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>

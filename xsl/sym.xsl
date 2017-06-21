@@ -151,6 +151,10 @@
           <xsl:sequence select="$custom-font-maps[docx2hub:font-map-name(.) = $font-name]"/>  
         </xsl:when>
         <xsl:otherwise>
+          <xsl:if test="empty($catalog)">
+            <xsl:message terminate="yes"
+              select="'docx2hub:font-map() in sym.xsl needs a catalog in order to resolve even the most common font maps'"/>
+          </xsl:if>
           <xsl:variable name="font-map-name" 
             select="tr:resolve-uri-by-catalog(
                       concat(

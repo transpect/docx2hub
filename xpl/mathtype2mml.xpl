@@ -103,6 +103,7 @@
                 <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
+                <p:document href="http://transpect.io/fontmaps/Euclid_Extra.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Euclid_Fraktur.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Euclid_Math_One.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>

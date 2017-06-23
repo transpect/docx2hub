@@ -432,9 +432,16 @@
   </xsl:template>
   
   <xsl:template match="w:tblPr/w:jc" mode="docx2hub:add-props">
-    <xsl:variable name="prop" select="key('docx2hub:prop', docx2hub:propkey(.), $docx2hub:propmap)" />
-    <docx2hub:attribute name="align">
-      <xsl:value-of select="($prop//val[@match = current()/@w:val]/@target-value)[1]"/>
+    <xsl:variable name="tbl-ind" as="node()*">
+      <xsl:if test="exists(parent::w:tblPr/w:tblInd)">
+        <xsl:apply-templates select="parent::w:tblPr/w:tblInd" mode="#current"/>
+      </xsl:if>
+    </xsl:variable>
+    <docx2hub:attribute name="css:margin-left">
+      <xsl:value-of select="if (exists($tbl-ind) and not($tbl-ind//text()='')) then $tbl-ind//text() else if (@w:val=('left','start')) then '0pt' else 'auto'"/>
+    </docx2hub:attribute>
+    <docx2hub:attribute name="css:margin-right">
+      <xsl:value-of select="if (@w:val=('right','end')) then '0pt' else 'auto'"/>
     </docx2hub:attribute>
   </xsl:template>
 

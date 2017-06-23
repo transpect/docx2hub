@@ -32,7 +32,6 @@
                                    @srcpath, 
                                    @css:orientation" mode="#current"/>
       <tgroup>
-        <xsl:apply-templates select="w:tblPr/@align" mode="#current"/>
         <xsl:attribute name="cols" select="(
                                              count(w:tblGrid/w:gridCol),
                                              max(for $row in w:tr return count($row/w:tc)) (: fallback if w:tblGrid is missing :) 

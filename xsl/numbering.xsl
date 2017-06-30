@@ -316,6 +316,12 @@ it, but not when an ilvl=2 heading precedes it.
     <xsl:sequence select="docx2hub:abstractNum-for-numPr($numPr)//w:lvl[@w:ilvl = $numPr/w:ilvl/@w:val]"/>
   </xsl:function>
   
+  <xsl:function name="docx2hub:lvl-for-numPr-and-ilvl" as="element(w:lvl)?">
+    <xsl:param name="numPr" as="element(w:numPr)?"/>
+    <xsl:param name="ilvl" as="xs:string?"/>
+    <xsl:sequence select="docx2hub:abstractNum-for-numPr($numPr)//w:lvl[@w:ilvl = $ilvl]"/>
+  </xsl:function>
+  
   <xsl:function name="docx2hub:abstractNum-for-numPr" as="element(w:abstractNum)?">
     <xsl:param name="numPr" as="element(w:numPr)?"/>
     <xsl:sequence select="if (count(root($numPr)/*) = 1)
@@ -345,7 +351,10 @@ it, but not when an ilvl=2 heading precedes it.
                                            then $context/w:numPr 
                                            else ()"/>
         <xsl:variable name="numPr-from-pstyle" select="key('docx2hub:style-by-role', @role, root($context))[last()]/w:numPr" as="element(w:numPr)?"/>
-        <xsl:variable name="lvl-for-numPr" as="element(w:lvl)?" select="docx2hub:lvl-for-numPr($numPr)"/>
+        <!-- docx2hub:lvl-for-numPr-and-ilvl() is an attempt at making use of the new attributes in order
+        to fix https://redmine.le-tex.de/issues/4224 -->
+        <xsl:variable name="lvl-for-numPr" as="element(w:lvl)?" 
+          select="(docx2hub:lvl-for-numPr-and-ilvl($numPr, $context/@docx2hub:num-ilvl), docx2hub:lvl-for-numPr($numPr))[1]"/>
         <xsl:variable name="abstractNum-for-numPr-from-pstyle" as="element(w:abstractNum)?" select="docx2hub:abstractNum-for-numPr($numPr-from-pstyle)"/>
         <xsl:variable name="lvl-for-numPr-from-pstyle" as="element(w:lvl)?" select="docx2hub:lvl-for-numPr($numPr-from-pstyle)"/>
         <xsl:sequence select="if ($numPr)

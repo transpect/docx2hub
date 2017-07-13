@@ -89,7 +89,7 @@
                                               then 'w:endnoteRels'
                                             else if (contains(base-uri(/*), '/word/comments'))
                                               then 'w:commentRels'
-                                                else ()"/>
+                                            else ''"/>
         <p:variable name="equation-href" select="concat(/w:root/@xml:base, 'word/',
                                                         /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
                                                )">
@@ -167,7 +167,7 @@
                                         then /w:root/w:endnotes//o:OLEObject
                                       else if(ancestor::w:commentRels)
                                         then /w:root/w:comments//o:OLEObject
-                                      else ''"
+                                      else ()"
                               as="element(o:OLEObject)*"/>
                 <xsl:copy>
                   <xsl:apply-templates select="@*"/>

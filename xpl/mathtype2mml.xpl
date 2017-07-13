@@ -89,7 +89,7 @@
                                               then 'w:endnoteRels'
                                             else if (contains(base-uri(/*), '/word/comments'))
                                               then 'w:commentRels'
-                                                else ''"/>
+                                                else ()"/>
         <p:variable name="equation-href" select="concat(/w:root/@xml:base, 'word/',
                                                         /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
                                                )">

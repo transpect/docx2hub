@@ -78,15 +78,17 @@
       </p:output>
       <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
       
-      <p:viewport match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"
+      <p:viewport match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"
                   name="mathtype2mml-viewport">
         <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
         <p:variable name="rels-elt" select="if (contains(base-uri(/*), '/word/document'))
-                                            then 'w:docRels'
+                                              then 'w:docRels'
                                             else if (contains(base-uri(/*), '/word/footnotes'))
                                               then 'w:footnoteRels'
-                                              else if (contains(base-uri(/*), '/word/endnotes'))
-                                                then 'w:endnoteRels'
+                                            else if (contains(base-uri(/*), '/word/endnotes'))
+                                              then 'w:endnoteRels'
+                                            else if (contains(base-uri(/*), '/word/comments'))
+                                              then 'w:commentRels'
                                                 else ''"/>
         <p:variable name="equation-href" select="concat(/w:root/@xml:base, 'word/',
                                                         /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
@@ -153,44 +155,35 @@
         <p:input port="stylesheet">
           <p:inline>
             <xsl:stylesheet version="2.0">
+              
+              <xsl:template match="*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]/rel:Relationships/rel:Relationship
+                [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
+                <xsl:variable name="objects" 
+                              select="if(ancestor::w:docRels) 
+                                        then /w:root/w:document//o:OLEObject
+                                      else if(ancestor::w:footnoteRels)
+                                        then /w:root/w:footnotes//o:OLEObject
+                                      else if(ancestor::w:endnoteRels)
+                                        then /w:root/w:endnotes//o:OLEObject
+                                      else if(ancestor::w:commentRels)
+                                        then /w:root/w:comments//o:OLEObject
+                                      else ''"
+                              as="element(o:OLEObject)*"/>
+                <xsl:copy>
+                  <xsl:apply-templates select="@*"/>
+                  <xsl:if test="not(@Id = $objects/@r:id)">
+                    <xsl:attribute name="remove" select="'yes'"/>
+                  </xsl:if>
+                  <xsl:apply-templates/>
+                </xsl:copy>
+              </xsl:template>
+              
               <xsl:template match="node() | @*">
                 <xsl:copy>
                   <xsl:apply-templates select="@*, node()"/>
                 </xsl:copy>
               </xsl:template>
-              <xsl:variable name="doc-objs" as="element(o:OLEObject)*" select="/w:root/w:document//o:OLEObject"/>
-              <xsl:variable name="footnote-objs" as="element(o:OLEObject)*" select="/w:root/w:footnotes//o:OLEObject"/>
-              <xsl:variable name="endnote-objs" as="element(o:OLEObject)*" select="/w:root/w:endnotes//o:OLEObject"/>
-              <xsl:template match="w:docRels/rel:Relationships/rel:Relationship
-                        [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
-                <xsl:copy>
-                  <xsl:apply-templates select="@*"/>
-                  <xsl:if test="not(@Id = $doc-objs/@r:id)">
-                    <xsl:attribute name="remove" select="'yes'"/>
-                  </xsl:if>
-                  <xsl:apply-templates/>
-                </xsl:copy>
-              </xsl:template>
-              <xsl:template match="w:footnoteRels/rel:Relationships/rel:Relationship
-                        [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
-                <xsl:copy>
-                  <xsl:apply-templates select="@*"/>
-                  <xsl:if test="not(@Id = $footnote-objs/@r:id)">
-                    <xsl:attribute name="remove" select="'yes'"/>
-                  </xsl:if>
-                  <xsl:apply-templates/>
-                </xsl:copy>
-              </xsl:template>
-              <xsl:template match="w:endnoteRels/rel:Relationships/rel:Relationship
-                        [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
-                <xsl:copy>
-                  <xsl:apply-templates select="@*"/>
-                  <xsl:if test="not(@Id = $endnote-objs/@r:id)">
-                    <xsl:attribute name="remove" select="'yes'"/>
-                  </xsl:if>
-                  <xsl:apply-templates/>
-                </xsl:copy>
-              </xsl:template>
+              
             </xsl:stylesheet>
           </p:inline>
         </p:input>

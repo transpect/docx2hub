@@ -48,7 +48,7 @@
        prematurely until we found out that it is better to group when
        there's docbook markup. So we implemented the special case of
        dbk:anchors (corresponds to w:bookmarkStart/End) only for dbk:anchor. 
-       dbk:anchors between identically formatted phrases will be merged into
+       dbk:anchors between identically formatted phrases will be merged
        with the phrases' content into a consolidated phrase. -->
   <xsl:template match="*[w:r or dbk:phrase or dbk:superscript or dbk:subscript]" mode="docx2hub:join-runs" priority="3">
     <!-- move sidebars to para level --><xsl:variable name="context" select="."/>
@@ -187,7 +187,9 @@
 
   <xsl:template match="*[exists(following-sibling::*[1]/@docx2hub:removable | preceding-sibling::*[1]/@docx2hub:removable)]" 
     mode="docx2hub:join-runs" priority="-0.4">
-    <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>
+    <xsl:if test="self::dbk:para">
+      <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>  
+    </xsl:if>
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:call-template name="docx2hub_pagebreak-elements-to-attributes"/>
@@ -224,6 +226,8 @@
         mode="docx2hub:join-runs-br-attr"/>  
     </xsl:variable>
     <xsl:sequence select="$page-break-atts[name() = 'css:page-break-after']"/>
+    <!-- There may be anchors (from w:bookmarkStart and w:bookmarkEnd) in removable paragraphs -->
+    <xsl:apply-templates select="$following//dbk:anchor" mode="#current"/>
   </xsl:template>
   
   <xsl:template name="docx2hub:preceding_pagebreak-elements-to-attributes">
@@ -234,6 +238,8 @@
         mode="docx2hub:join-runs-br-attr"/>  
     </xsl:variable>
     <xsl:sequence select="$page-break-atts[name() = 'css:page-break-before']"/>
+    <!-- There may be anchors (from w:bookmarkStart and w:bookmarkEnd) in removable paragraphs -->
+    <xsl:apply-templates select="$preceding//dbk:anchor" mode="#current"/>
   </xsl:template>
 
   <xsl:function name="tr:signature" as="xs:string?">

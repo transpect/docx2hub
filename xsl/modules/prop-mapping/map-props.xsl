@@ -403,7 +403,7 @@
     <xsl:sequence select="exists($para[not(.//w:r)]/w:pPr/w:sectPr)
                           or
                           exists($para[w:r/w:br[@w:type = 'page']]
-                                      [every $r in wr satisfies exists($r/w:br[@w:type = 'page'])])"/>
+                                      [every $c in w:r/* satisfies $c/self::w:br[@w:type = 'page']])"/>
   </xsl:function>
 
   <xsl:template match="w:p" mode="docx2hub:add-props">

@@ -27,7 +27,10 @@
                          dbk:br[@role eq 'column'][preceding-sibling::node() and following-sibling::node()]
                        ]" mode="docx2hub:join-runs" priority="5">
     <xsl:variable name="context" select="." as="element(dbk:para)"/>
-    <xsl:variable name="splitted" as="element(dbk:para)+">
+    <xsl:if test="@docx2hub:removable">
+      <xsl:message terminate="yes">SHRIEK <xsl:sequence select="."/></xsl:message>
+    </xsl:if>
+    <xsl:variable name="split" as="element(dbk:para)+">
       <xsl:for-each-group select="node()" group-starting-with="dbk:br[@role eq 'column']">
         <para>
           <xsl:sequence select="$context/@*"/>
@@ -38,7 +41,7 @@
         </para>
       </xsl:for-each-group>
     </xsl:variable>
-    <xsl:apply-templates select="$splitted" mode="#current"/>
+    <xsl:apply-templates select="$split" mode="#current"/>
   </xsl:template>
 
   <!-- w:r is here for historic reasons. We used to group the text runs
@@ -173,7 +176,7 @@
   <xsl:template match="@docx2hub:map-from | @docx2hub:field-function" mode="docx2hub:join-runs"/>
 
 
-  <xsl:template match="dbk:para" mode="docx2hub:join-runs">
+  <xsl:template match="dbk:para[not(@docx2hub:removable)]" mode="docx2hub:join-runs">
     <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
@@ -181,6 +184,19 @@
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
   </xsl:template>
+
+  <xsl:template match="*[exists(following-sibling::*[1]/@docx2hub:removable | preceding-sibling::*[1]/@docx2hub:removable)]" 
+    mode="docx2hub:join-runs" priority="-0.4">
+    <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:call-template name="docx2hub_pagebreak-elements-to-attributes"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
+
+  <xsl:template match="dbk:para[@docx2hub:removable]" mode="docx2hub:join-runs" priority="2"/>
 
   <xsl:template name="docx2hub_move-invalid-sidebar-elements">
     <xsl:for-each select=".//dbk:sidebar">
@@ -196,6 +212,28 @@
     <xsl:apply-templates select=".//dbk:br[@role[not(. eq 'textWrapping')]]
                                           [dbk:same-scope(., current())]" 
       mode="docx2hub:join-runs-br-attr"/>
+    <xsl:call-template name="docx2hub:preceding_pagebreak-elements-to-attributes"/>
+    <xsl:call-template name="docx2hub:following_pagebreak-elements-to-attributes"/>
+  </xsl:template>
+  
+  <xsl:template name="docx2hub:following_pagebreak-elements-to-attributes">
+    <xsl:variable name="following" as="element(dbk:para)?" select="following-sibling::*[1][@docx2hub:removable]"/>
+    <xsl:variable name="page-break-atts" as="attribute(*)?">
+      <xsl:apply-templates select="$following//dbk:br[@role[not(. eq 'textWrapping')]]
+                                                     [dbk:same-scope(., $following)]" 
+        mode="docx2hub:join-runs-br-attr"/>  
+    </xsl:variable>
+    <xsl:sequence select="$page-break-atts[name() = 'css:page-break-after']"/>
+  </xsl:template>
+  
+  <xsl:template name="docx2hub:preceding_pagebreak-elements-to-attributes">
+    <xsl:variable name="preceding" as="element(dbk:para)?" select="preceding-sibling::*[1][@docx2hub:removable]"/>
+    <xsl:variable name="page-break-atts" as="attribute(*)?">
+      <xsl:apply-templates select="$preceding//dbk:br[@role[not(. eq 'textWrapping')]]
+                                                     [dbk:same-scope(., $preceding)]" 
+        mode="docx2hub:join-runs-br-attr"/>  
+    </xsl:variable>
+    <xsl:sequence select="$page-break-atts[name() = 'css:page-break-before']"/>
   </xsl:template>
 
   <xsl:function name="tr:signature" as="xs:string?">

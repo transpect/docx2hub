@@ -406,40 +406,14 @@
                                       [every $r in wr satisfies exists($r/w:br[@w:type = 'page'])])"/>
   </xsl:function>
 
-  <!-- subsequent page breaks or page breaks in the first para might be an issue → fringe case, not handled yet -->
-  <xsl:template match="w:p[following-sibling::*[1]/self::w:p[docx2hub:is-removable-para(.)]]" mode="docx2hub:add-props">
+  <xsl:template match="w:p" mode="docx2hub:add-props">
+    <!-- Pseudo paras that are meant to hold only sectPr or page breaks will be removed in a later pass -->
     <xsl:copy>
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:variable name="sectPr" select="following-sibling::*[1]/w:pPr/w:sectPr" as="element(w:sectPr)?"/>
-      <xsl:choose>
-        <xsl:when test="exists(w:pPr)">
-          <xsl:apply-templates select="w:pPr" mode="#current">
-            <xsl:with-param name="sectPr" select="$sectPr" tunnel="yes"/>
-          </xsl:apply-templates>
-        </xsl:when>
-        <xsl:otherwise>
-          <w:pPr>
-            <xsl:apply-templates select="$sectPr/node()" mode="#current"/>
-          </w:pPr>
-        </xsl:otherwise>
-      </xsl:choose>
-      <xsl:apply-templates select="node() except w:pPr" mode="#current"/>
-      <xsl:apply-templates select="following-sibling::*[1]
-                                                       [w:r/w:br[@w:type = 'page']]
-                                                       [every $r in wr satisfies exists($r/w:br[@w:type = 'page'])]
-                                                     /w:r"
-                           mode="#current"/>
-    </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="w:p[docx2hub:is-removable-para(.)]" mode="docx2hub:add-props">
-    <xsl:comment>removed page break or sectPr para</xsl:comment>
-  </xsl:template>
-
-  <xsl:template match="w:pPr" mode="docx2hub:add-props">
-    <xsl:param name="sectPr" as="element(w:sectPr)?" tunnel="yes"/>
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node(), $sectPr/node()" mode="#current"/>
+      <xsl:variable name="is-removable" select="docx2hub:is-removable-para(.)" as="xs:boolean"/>
+      <xsl:if test="$is-removable">
+        <xsl:attribute name="docx2hub:removable" select="$is-removable"/>
+      </xsl:if>
+      <xsl:apply-templates select="@*, *" mode="#current"/>
     </xsl:copy>
   </xsl:template>
 

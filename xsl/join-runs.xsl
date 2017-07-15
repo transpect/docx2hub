@@ -226,8 +226,6 @@
         mode="docx2hub:join-runs-br-attr"/>  
     </xsl:variable>
     <xsl:sequence select="$page-break-atts[name() = 'css:page-break-after']"/>
-    <!-- There may be anchors (from w:bookmarkStart and w:bookmarkEnd) in removable paragraphs -->
-    <xsl:apply-templates select="$following//dbk:anchor" mode="#current"/>
   </xsl:template>
   
   <xsl:template name="docx2hub:preceding_pagebreak-elements-to-attributes">

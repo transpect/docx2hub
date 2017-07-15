@@ -394,6 +394,54 @@
   <xsl:template match="w:sectPr[parent::w:pPr]" mode="docx2hub:add-props" priority="+2">
     <xsl:apply-templates select="w:pgSz | w:footnotePr" mode="#current"/>
   </xsl:template>
+  
+  <!-- As a collateral, move column/page breaking instructions to the previous para and 
+    mark the para that they’ve been in as removable, because these paras won’t be displayed by 
+    Word. -->
+  <xsl:function name="docx2hub:is-removable-para" as="xs:boolean">
+    <xsl:param name="para" as="element(w:p)"/>
+    <xsl:sequence select="exists($para[not(.//w:r)]/w:pPr/w:sectPr)
+                          or
+                          exists($para[w:r/w:br[@w:type = 'page']]
+                                      [every $r in wr satisfies exists($r/w:br[@w:type = 'page'])])"/>
+  </xsl:function>
+
+  <!-- subsequent page breaks or page breaks in the first para might be an issue → fringe case, not handled yet -->
+  <xsl:template match="w:p[following-sibling::*[1]/self::w:p[docx2hub:is-removable-para(.)]]" mode="docx2hub:add-props">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:variable name="sectPr" select="following-sibling::*[1]/w:pPr/w:sectPr" as="element(w:sectPr)?"/>
+      <xsl:choose>
+        <xsl:when test="exists(w:pPr)">
+          <xsl:apply-templates select="w:pPr" mode="#current">
+            <xsl:with-param name="sectPr" select="$sectPr" tunnel="yes"/>
+          </xsl:apply-templates>
+        </xsl:when>
+        <xsl:otherwise>
+          <w:pPr>
+            <xsl:apply-templates select="$sectPr/node()" mode="#current"/>
+          </w:pPr>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="node() except w:pPr" mode="#current"/>
+      <xsl:apply-templates select="following-sibling::*[1]
+                                                       [w:r/w:br[@w:type = 'page']]
+                                                       [every $r in wr satisfies exists($r/w:br[@w:type = 'page'])]
+                                                     /w:r"
+                           mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="w:p[docx2hub:is-removable-para(.)]" mode="docx2hub:add-props">
+    <xsl:comment>removed page break or sectPr para</xsl:comment>
+  </xsl:template>
+
+  <xsl:template match="w:pPr" mode="docx2hub:add-props">
+    <xsl:param name="sectPr" as="element(w:sectPr)?" tunnel="yes"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node(), $sectPr/node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
 
   <xsl:template match="  w:style/*
                        | w:rPr[not(ancestor::m:oMath)]/* 

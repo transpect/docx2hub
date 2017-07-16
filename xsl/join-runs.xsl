@@ -57,7 +57,10 @@
     </xsl:if>
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:call-template name="docx2hub_pagebreak-elements-to-attributes"/>
+      <xsl:variable name="processed-pagebreak-elements" as="item()*">
+        <xsl:call-template name="docx2hub:pagebreak-elements-to-attributes"/>  
+      </xsl:variable>
+      <xsl:sequence select="$processed-pagebreak-elements/self::attribute(), $processed-pagebreak-elements/self::dbk:anchor"/>
       <xsl:for-each-group select="node()" group-adjacent="tr:signature(.)">
         <xsl:choose>
           <xsl:when test="current-grouping-key() eq ''">
@@ -75,6 +78,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:for-each-group>
+      <xsl:sequence select="$processed-pagebreak-elements/self::dbk:anchors-to-the-end/dbk:anchor"/>
     </xsl:copy>
   </xsl:template>
 
@@ -180,8 +184,12 @@
     <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:call-template name="docx2hub_pagebreak-elements-to-attributes"/>
+      <xsl:variable name="processed-pagebreak-elements" as="item()*">
+        <xsl:call-template name="docx2hub:pagebreak-elements-to-attributes"/>
+      </xsl:variable>
+      <xsl:sequence select="$processed-pagebreak-elements/self::attribute(), $processed-pagebreak-elements/self::dbk:anchor"/>
       <xsl:apply-templates mode="#current"/>
+      <xsl:sequence select="$processed-pagebreak-elements/self::dbk:anchors-to-the-end/dbk:anchor"/>
     </xsl:copy>
   </xsl:template>
 
@@ -192,8 +200,12 @@
     </xsl:if>
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:call-template name="docx2hub_pagebreak-elements-to-attributes"/>
+      <xsl:variable name="processed-pagebreak-elements" as="item()*">
+        <xsl:call-template name="docx2hub:pagebreak-elements-to-attributes"/>
+      </xsl:variable>
+      <xsl:sequence select="$processed-pagebreak-elements/self::attribute(), $processed-pagebreak-elements/self::dbk:anchor"/>
       <xsl:apply-templates mode="#current"/>
+      <xsl:sequence select="$processed-pagebreak-elements/self::dbk:anchors-to-the-end/dbk:anchor"/>
     </xsl:copy>
   </xsl:template>
 
@@ -210,7 +222,7 @@
     </xsl:for-each>
   </xsl:template>
 
-  <xsl:template name="docx2hub_pagebreak-elements-to-attributes">
+  <xsl:template name="docx2hub:pagebreak-elements-to-attributes">
     <xsl:apply-templates select=".//dbk:br[@role[not(. eq 'textWrapping')]]
                                           [dbk:same-scope(., current())]" 
       mode="docx2hub:join-runs-br-attr"/>
@@ -226,6 +238,10 @@
         mode="docx2hub:join-runs-br-attr"/>  
     </xsl:variable>
     <xsl:sequence select="$page-break-atts[name() = 'css:page-break-after']"/>
+    <!-- There may be anchors (from w:bookmarkStart and w:bookmarkEnd) in removable paragraphs -->
+    <anchors-to-the-end>
+      <xsl:apply-templates select="$following//dbk:anchor[following-sibling::dbk:br[@role[not(. eq 'textWrapping')]]]" mode="#current"/>  
+    </anchors-to-the-end>
   </xsl:template>
   
   <xsl:template name="docx2hub:preceding_pagebreak-elements-to-attributes">
@@ -237,7 +253,7 @@
     </xsl:variable>
     <xsl:sequence select="$page-break-atts[name() = 'css:page-break-before']"/>
     <!-- There may be anchors (from w:bookmarkStart and w:bookmarkEnd) in removable paragraphs -->
-    <xsl:apply-templates select="$preceding//dbk:anchor" mode="#current"/>
+    <xsl:apply-templates select="$preceding//dbk:anchor[preceding-sibling::dbk:br[@role[not(. eq 'textWrapping')]]]" mode="#current"/>
   </xsl:template>
 
   <xsl:function name="tr:signature" as="xs:string?">

@@ -347,8 +347,8 @@ it, but not when an ilvl=2 heading precedes it.
     <!-- for-each: just to avoid an XTDE1270 which shouldn't happen when the 3-arg form of key() is invoked: -->
     <xsl:variable name="lvls" as="element(w:lvl)*">
       <xsl:for-each select="$context">
-        <xsl:variable name="numPr" select="if ($context/w:numPr) 
-                                           then $context/w:numPr 
+        <xsl:variable name="numPr" select="if ($context/w:numPr[node()]) 
+                                           then $context/w:numPr[node()] 
                                            else ()"/>
         <xsl:variable name="numPr-from-pstyle" select="key('docx2hub:style-by-role', @role, root($context))[last()]/w:numPr" as="element(w:numPr)?"/>
         <!-- docx2hub:lvl-for-numPr-and-ilvl() is an attempt at making use of the new attributes in order

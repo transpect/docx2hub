@@ -24,8 +24,8 @@
   <xsl:template match="XE[@fldArgs]" mode="wml-to-dbk" priority="2">
     <xsl:variable name="context" as="element(XE)" select="."/>
     <xsl:choose>
-      <xsl:when test="matches(@fldArgs,'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">
-        <xsl:if test="matches(@fldArgs, '\\[^bfrity]')">
+      <xsl:when test="matches(@fldArgs,'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">       
+        <xsl:if test="matches(@fldArgs, '\\[^bfrity&#x201e;&#x201c;]')">
           <xsl:message>Unexpected index (XE) field function option in '<xsl:value-of select="@fldArgs"/>'.</xsl:message>
         </xsl:if>
         <xsl:variable name="see" as="xs:string?">
@@ -84,11 +84,12 @@
           </xsl:if>
         </xsl:variable>
         <xsl:variable name="temporary-term" as="node()*">
-          <xsl:sequence select="tr:extract-chars(@fldArgs,'\','\\')"/>
+          <!-- use replace to de-escape Words quote escape fldArgs="&#34;\„Fenster offen\“-Erkennung&#34;" -->
+          <xsl:sequence select="tr:extract-chars(replace(@fldArgs,'\\([&#x201e;&#x201c;])','$1'),'\','\\')"/>
         </xsl:variable>
         <xsl:variable name="real-term" as="node()*">
           <xsl:for-each-group select="$temporary-term" group-starting-with="*:text[matches(.,'^\\')]">
-            <xsl:choose>
+           <xsl:choose>
               <xsl:when test="current-group()[1][self::*:text[matches(.,'^\\')]]"/>
               <xsl:otherwise>
                 <xsl:for-each select="current-group()">

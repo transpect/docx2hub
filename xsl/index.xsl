@@ -84,8 +84,7 @@
           </xsl:if>
         </xsl:variable>
         <xsl:variable name="temporary-term" as="node()*">
-          <!-- use replace to de-escape Words quote escape fldArgs="&#34;\„Fenster offen\“-Erkennung&#34;" -->
-          <xsl:sequence select="tr:extract-chars(replace(@fldArgs,'\\([&#x201e;&#x201c;])','$1'),'\','\\')"/>
+          <xsl:sequence select="tr:extract-chars(@fldArgs,'\','\\')"/>
         </xsl:variable>
         <xsl:variable name="real-term" as="node()*">
           <xsl:for-each-group select="$temporary-term" group-starting-with="*:text[matches(.,'^\\')]">

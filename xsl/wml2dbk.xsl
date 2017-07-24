@@ -137,7 +137,8 @@
               </xsl:if>
             </xsl:matching-substring>
             <xsl:non-matching-substring>
-              <xsl:sequence select="normalize-space(.)"/>
+              <!-- use replace to de-escape Words quote escape fldArgs="&#34;\„Fenster offen\“-Erkennung&#34;" -->
+              <xsl:sequence select="replace(normalize-space(.),'\\([&#x201e;&#x201c;])','$1')"/>
             </xsl:non-matching-substring>
           </xsl:analyze-string>
         </xsl:variable>

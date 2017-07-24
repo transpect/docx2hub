@@ -9,6 +9,7 @@
   xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:w10="urn:schemas-microsoft-com:office:word"
   xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
   xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
+  xmlns:w16cid="http://schemas.microsoft.com/office/word/2016/wordml/cid"
   xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex"
   xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"

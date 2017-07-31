@@ -69,6 +69,9 @@
           <xsl:otherwise>
             <xsl:copy copy-namespaces="no">
               <xsl:apply-templates select="@role, @* except (@srcpath, @role)" mode="#current"/>
+              <xsl:if test="self::dbk:phrase[@role='hub:identifier'] and ancestor-or-self::dbk:footnote[@xreflabel]">
+                <xsl:apply-templates select="ancestor-or-self::dbk:footnote/@xreflabel" mode="#current"/>
+              </xsl:if>
               <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
@@ -85,6 +88,18 @@
   <xsl:template match="*" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@role, @* except @role, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="dbk:footnote[@xreflabel]" mode="docx2hub:join-runs">
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @xreflabel | node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase[@role='hub:identifier'][ancestor::dbk:footnote[@xreflabel]]" mode="docx2hub:join-runs" priority="+10">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | ancestor::dbk:footnote/@xreflabel | node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
 

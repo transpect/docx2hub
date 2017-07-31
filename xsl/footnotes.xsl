@@ -58,6 +58,10 @@
   <xsl:template match="w:footnoteReference" mode="wml-to-dbk">
     <footnote>
       <xsl:variable name="id" select="@w:id"/>
+      <xsl:variable name="xreflabel" select="if (@w:customMarkFollows=('1','on','true')) then following-sibling::w:t[1]/text() else ''" as="xs:string?"/>
+      <xsl:if test="not($xreflabel = '')">
+        <xsl:attribute name="xreflabel" select="$xreflabel"/>
+      </xsl:if>
       <xsl:apply-templates select="/*/w:footnotes/w:footnote[@w:id = $id]/@srcpath" mode="#current"/>
       <xsl:apply-templates select="/*/w:footnotes/w:footnote[@w:id = $id]" mode="#current"/>
     </footnote>
@@ -69,8 +73,6 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-  
-
   <xsl:variable name="docx2hub:footnote-marker-embellishment-regex" as="xs:string" select="'^[\p{P}\s\p{Zs}]*$'"/>
 
   <!-- collateral, has to run before the templates below. They currently match in docx2hub:join-instrText-runs --> 
@@ -248,7 +250,7 @@
  value="if (//w:footnoteReference[@w:id = current()/ancestor::w:footnote/@w:id]) 
                  then count(
                         distinct-values(
-                          //w:footnoteReference[@w:id = current()/ancestor::w:footnote/@w:id][1]/preceding::w:footnoteReference[not(@customMarkFollows = '1')]/@w:id
+                          //w:footnoteReference[@w:id = current()/ancestor::w:footnote/@w:id][1]/preceding::w:footnoteReference[not(@w:customMarkFollows = ('1','on','true'))]/@w:id
                         )
                       ) + 1 
                  else (count(preceding::w:footnoteRef) + 1)" 

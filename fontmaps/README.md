@@ -1,7 +1,17 @@
 ## Fontmaps
 ### What is a fontmap?
-A fontmap defines a relation from one encoding to another for each character in the initial font.  
-In our case, the characters come from non-unicode-encodings and should be translated to unicode.
+A fontmap defines a relation from one encoding to another for each character in the initial font. In our case, the characters come from non-unicode-encodings and should be translated to unicode.
+
+This example shows a font mapping for the character Phi from its encoding in the Symbol font to Unicode:
+
+```
+<?xml version="1.0" encoding="US-ASCII"?>
+<symbols docx-name="Symbol">
+  <!--GREEK SMALL LETTER PHI-->
+  <symbol number="F066" entity="&#xf066;" char="&#x3d5;"/>
+</symbols>    
+
+```
 
 Here is an example why a fontmap is needed:  
 For the greek character "phi", there exists variations of notation: φ, U+03C6 and ϕ, U+03D5.  
@@ -30,10 +40,10 @@ You can take a look at the docx2hub/fontmaps for sample mappings.
 
 A fontmap consists of an element `<symbols>`.  
 The name of the font will be solved in this order until one is matched:
-If there is an attribute 'mathtype-name', it is the font-name (Example: "Symbol", name as displayed in the font selector)  
-If there is an attribute 'docx-name', it is the font-name.  
+If there is an attribute `@mathtype-name`, it is the font-name (Example: "Symbol", name as displayed in the font selector)  
+If there is an attribute `@docx-name`, it is the font-name.  
 Else the font-name is extracted from the file-name(its base-uri()), where _ are replaced by spaces.  
-Thus, the file Mathype_MTCode.xml will be recognized as font-name 'Mathtype MTCode' if there are no attributes set in the file.  
+Thus, the file Mathype_MTCode.xml will be recognized as font-name `Mathtype MTCode` if there are no attributes set in the file.  
 The child-elements are named `<symbol>`, each containing only attributes
   * attribute number: the font-position with 4 digits, left-padded with zero's (Example: "006A" for phi)
   * attribute char: the char as a numeric entity (Example: "&amp;#x3c6;")

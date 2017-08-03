@@ -57,7 +57,7 @@
   <p:input port="custom-font-maps" primary="false" sequence="true">
     <p:documentation>See same port in mathtype2mml.xpl.
     If you need to match a specific docx font name that is not identical with the base name of the base URI’s file name part,
-    you can do so by including an attribute /symbols/docx-name.</p:documentation>
+    you can do so by including an attribute /symbols/@docx-name.</p:documentation>
     <p:empty/>
   </p:input>
   <p:output port="result" primary="true"/>

@@ -4,7 +4,7 @@ A fontmap defines a relation from one encoding to another for each character in 
 
 This example shows a font mapping for the character Phi from its encoding in the Symbol font to Unicode:
 
-```
+```xml
 <?xml version="1.0" encoding="US-ASCII"?>
 <symbols docx-name="Symbol">
   <!--GREEK SMALL LETTER PHI-->

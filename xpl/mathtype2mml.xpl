@@ -100,6 +100,7 @@
           <p:group>
             <tr:mathtype2mml name="convert">
               <p:input port="additional-font-maps">
+                <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>

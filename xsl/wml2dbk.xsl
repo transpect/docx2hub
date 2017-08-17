@@ -640,9 +640,13 @@
   </xsl:template>
   
   <!-- comments -->
-  <xsl:template match="w:commentRangeStart" mode="wml-to-dbk"/>
+  <xsl:template match="w:commentRangeStart" mode="wml-to-dbk">
+    <anchor role="start" xml:id="comment_{@w:id}"/>
+  </xsl:template>
   
-  <xsl:template match="w:commentRangeEnd" mode="wml-to-dbk"/>
+  <xsl:template match="w:commentRangeEnd" mode="wml-to-dbk">
+    <anchor role="end" xml:id="comment_{@w:id}_end"/>
+  </xsl:template>
   
   <xsl:template match="w:proofErr" mode="wml-to-dbk"/>
  

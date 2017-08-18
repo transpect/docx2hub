@@ -30,7 +30,7 @@
   xmlns:m = "http://schemas.openxmlformats.org/officeDocument/2006/math"
   xmlns:docx2hub ="http://transpect.io/docx2hub"
   xmlns="http://docbook.org/ns/docbook"
-  exclude-result-prefixes = "xs dbk docx2hub tr">
+  exclude-result-prefixes = "xs dbk docx2hub tr word200x wx pkg mml">
 
   <!-- mode docx2hub:changemarkup is for applying user`s tracked changes -->
 
@@ -47,12 +47,31 @@
                        name() = ('w:del', 'w:pPr', 'w:moveFromRangeStart', 'w:moveFromRangeEnd', 'w:moveFrom') or self::m:oMath[every $i in descendant::text() satisfies $i/ancestor::w:del]
                        ]
                      ]
-                    )(: or exists($para/self::w:p[w:pPr[w:rPr[w:del]]]):)"/>
+                    )
+              or
+              exists( (: yes, I created something like this in Word 2016: an ins with nothing but a del inside :)
+                      $para/self::w:p[w:ins/w:del]
+                                     [every $e in (* except (w:pPr | w:del | w:moveFrom | m:oMath[every $i in descendant::text() satisfies $i/ancestor::w:del])) 
+                                      satisfies ($e/self::w:ins
+                                                 and
+                                                 count($e/(* except (w:del | w:moveFrom | m:oMath[every $i in descendant::text() satisfies $i/ancestor::w:del]))) = 0)]
+                    )" />
   </xsl:function>
 
   <!-- changemarkup: remove deleted paragraphs -->
   <xsl:template mode="docx2hub:apply-changemarkup"
-    match="w:p[docx2hub:is-changemarkup-removed-para(.)]"/>
+    match="w:p[docx2hub:is-changemarkup-removed-para(.)]">
+    <xsl:if test=". is parent::w:tc/w:p[1]">
+      <!-- Word file will be corrupt without w:p in w:tc -->
+      <w:p/>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- All cell contents have been deleted → Word considers row to be deleted. What about whole tables? -->
+  <xsl:template mode="docx2hub:apply-changemarkup"
+    match="w:tr[every $p in .//w:tc/w:p satisfies docx2hub:is-changemarkup-removed-para($p)]"/>
+  <xsl:template mode="docx2hub:apply-changemarkup"
+    match="w:tbl[every $p in .//w:tc/w:p satisfies docx2hub:is-changemarkup-removed-para($p)]"/>
 
   <xsl:template match="w:del" mode="docx2hub:apply-changemarkup"/>
   <xsl:template match="m:oMath[every $i in descendant::text() satisfies $i/ancestor::w:del]" mode="docx2hub:apply-changemarkup"/>

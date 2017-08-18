@@ -63,11 +63,6 @@
       a srcpath of their own. In principle, srcpath generation may be sped up by computing them more efficiently,
       building on a tunnelled parameter that contains the parent element’s already-computed srcpath.</p:documentation>
   </p:option>
-  <p:option name="apply-changemarkup" required="false" select="'yes'">
-    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
-      <p>Apply all change markup on the compound word document.</p>
-    </p:documentation>
-  </p:option>  
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   

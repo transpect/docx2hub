@@ -23,10 +23,11 @@
 
   <xsl:template match="XE[@fldArgs]" mode="wml-to-dbk" priority="2">
     <xsl:variable name="context" as="element(XE)" select="."/>
+    <xsl:apply-templates select="w:r" mode="#current"/>
     <xsl:choose>
       <xsl:when test="matches(@fldArgs,'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">       
         <xsl:if test="matches(@fldArgs, '\\[^bfrity&#x201e;&#x201c;]')">
-          <xsl:message>Unexpected index (XE) field function option in '<xsl:value-of select="@fldArgs"/>'.</xsl:message>
+          <xsl:message select="concat('Unexpected index (XE) field function option in ''', @fldArgs, '''')"/>
         </xsl:if>
         <xsl:variable name="see" as="xs:string?">
           <xsl:if test="matches(@fldArgs, '\\t')">

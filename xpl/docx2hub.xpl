@@ -135,6 +135,35 @@
   <p:option name="mathtype2mml" required="false" select="'yes'">
     <p:documentation xmlns="http://www.w3.org/1999/xhtml">
       <p>Activates use of mathtype2mml extension.</p>
+      <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Should be one of the following String values:</p>
+      <dl>
+        <dt>no</dt>
+          <dd>no conversion happens</dd>
+        <dt>ole</dt>
+          <dd>Use the OLE-Object as source for equation.</dd>
+        <dt>wmf</dt>
+          <dd>
+            Use the wmf-image as source for MTEF equation. <br/>
+            If no equation is found in wmf file, OLE-Object is used as fallback
+          </dd>
+        <dt>'wmf+ole' | 'ole+wmf'</dt>
+          <dd>
+            Use both, wmf and OLE as source for MTEF equation <br/>
+            If both are deep-equal, only one MathML equation will be output. <br/>
+            If they differ, both equations will be output. <br/>
+            In addition, a processing-instruction will be added after the MathML equation, stating that the MathML equations (from wmf and ole sources) differ. <br/>
+            The order is defined by the order in the String (wmf+ole makes wmf equation appear first, ole+wmf makes ole equation appear first).
+          </dd>
+        <dt>yes</dt>
+          <dd>
+            Same as 'ole'. <br/>
+            This is the default value for the option.
+          </dd>
+        <dt>any other String</dt>
+          <dd>Is treated as 'yes'.</dd>
+      </dl>
+    </p:documentation>
     </p:documentation>
   </p:option>
   <p:option name="apply-changemarkup" required="false" select="'yes'">

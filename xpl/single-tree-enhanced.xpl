@@ -111,6 +111,7 @@
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
     <p:with-option name="active" select="$mathtype2mml"/>
+    <p:with-option name="sources" select="$mathtype2mml"/>
     <p:input port="params">
       <p:pipe step="single-tree" port="params"/>
     </p:input>

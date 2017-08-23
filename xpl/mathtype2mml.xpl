@@ -56,7 +56,10 @@
   <p:option name="debug" required="false" select="'no'"/>
   <p:option name="debug-dir-uri" required="false" select="'file:/tmp/debug'"/>
   <p:option name="active" required="false" select="'yes'">
-    <p:documentation>Whether MathType→MathML conversion happens at all.</p:documentation>
+    <p:documentation>see corresponding documentation for docx2hub</p:documentation>
+  </p:option>
+  <p:option name="sources" required="false" select="$mathtype2mml">
+    <p:documentation>see documentation for 'active' in docx2hub</p:documentation>
   </p:option>
   <p:option name="mml-space-handling" select="'mspace'">
     <p:documentation>see corresponding documentation for docx2hub</p:documentation>
@@ -67,7 +70,7 @@
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
 
   <p:choose name="convert-mathtype2mml">
-    <p:when test="$active eq 'yes'">
+    <p:when test="not($active eq 'no')">
       <p:output port="result" primary="true"/>
       <p:output port="zip-manifest">
         <p:pipe port="result" step="remove-converted-objects-from-zip-manifest"/>
@@ -78,27 +81,43 @@
       </p:output>
       <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
       
-      <p:viewport match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object/o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"
-                  name="mathtype2mml-viewport">
-        <p:variable name="rel-id" select="o:OLEObject/@r:id"/>
-        <p:variable name="rels-elt" select="if (contains(base-uri(/*), '/word/document'))
-                                              then 'w:docRels'
-                                            else if (contains(base-uri(/*), '/word/footnotes'))
-                                              then 'w:footnoteRels'
-                                            else if (contains(base-uri(/*), '/word/endnotes'))
-                                              then 'w:endnoteRels'
-                                            else if (contains(base-uri(/*), '/word/comments'))
-                                              then 'w:commentRels'
-                                            else ''"/>
-        <p:variable name="equation-href" select="concat(/w:root/@xml:base, 'word/',
-                                                        /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-id]/@Target
-                                               )">
+      <p:viewport
+        match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]]"
+        name="mathtype2mml-viewport">
+        <p:variable name="rel-wmf-id" select="w:object/v:shape/v:imagedata/@r:id"
+          xmlns:v="urn:schemas-microsoft-com:vml"/>
+        <p:variable name="rel-ole-id" select="w:object/o:OLEObject/@r:id"/>
+        <p:variable name="rels-elt"
+          select="if (contains(base-uri(/*), '/word/document'))
+                    then 'w:docRels'
+                    else if (contains(base-uri(/*), '/word/footnotes'))
+                      then 'w:footnoteRels'
+                    else if (contains(base-uri(/*), '/word/endnotes'))
+                      then 'w:endnoteRels'
+                    else if (contains(base-uri(/*), '/word/comments'))
+                      then 'w:commentRels'
+                    else ''"/>
+        <p:variable name="equation-wmf-href"
+          select="if ($rel-wmf-id)
+                    then concat(/w:root/@xml:base, 'word/',
+                                /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-wmf-id]/@Target
+                               )
+                    else 'no-image-found'">
           <p:pipe port="source" step="mathtype2mml"/>
         </p:variable>
-        
-        <p:try name="mathtype2mml-wrapper">
+        <p:variable name="equation-ole-href"
+          select="concat(/w:root/@xml:base, 'word/',
+                         /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-ole-id]/@Target
+                        )">
+          <p:pipe port="source" step="mathtype2mml"/>
+        </p:variable>
+        <cx:message>
+          <p:with-option name="message"
+            select="'wmf:', $rel-wmf-id, ' ole:', $rel-ole-id, ' wmf-href:', $equation-wmf-href"/>
+        </cx:message>
+        <p:try>
           <p:group>
-            <tr:mathtype2mml name="convert">
+            <tr:mathtype2mml name="convert-wmf">
               <p:input port="additional-font-maps">
                 <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
                 <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
@@ -112,45 +131,151 @@
                 <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>
                 <p:pipe port="custom-font-maps" step="mathtype2mml"/>
               </p:input>
-              <p:with-option name="href" select="$equation-href"/>
+              <p:with-option name="href" select="$equation-wmf-href"/>
               <p:with-option name="debug" select="$debug"/>
               <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
             </tr:mathtype2mml>
             <p:choose>
-              <p:when test="/c:errors">
-                <p:set-attributes match="/*" name="set-atts">
-                  <p:input port="source" select="/c:errors/c:error">
-                    <p:pipe port="result" step="convert"/>
+              <p:when test="/c:errors or matches($active, 'ole|yes')">
+                <tr:mathtype2mml name="convert-ole">
+                  <p:input port="additional-font-maps">
+                    <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Euclid_Extra.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Euclid_Fraktur.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Euclid_Math_One.xml"/>
+                    <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>
+                    <p:pipe port="custom-font-maps" step="mathtype2mml"/>
                   </p:input>
-                  <p:input port="attributes">
-                    <p:pipe port="result" step="convert"/>
-                  </p:input>
-                </p:set-attributes>
-                <p:add-attribute name="add-srcpath" attribute-name="srcpath" match="/*">
-                  <p:with-option name="attribute-value" select="/*/@srcpath">
-                    <p:pipe port="current" step="mathtype2mml-viewport"/>
-                  </p:with-option>
-                </p:add-attribute>
-                <p:add-attribute name="add-role" attribute-name="role" attribute-value="error" match="/*"/>
-                <p:sink/>
-                <p:identity>
-                  <p:input port="source">
-                    <p:pipe port="current" step="mathtype2mml-viewport"/>
-                    <p:pipe port="result" step="add-role"/>
-                  </p:input>
-                </p:identity>                  
+                  <p:with-option name="href" select="$equation-ole-href"/>
+                  <p:with-option name="debug" select="$debug"/>
+                  <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
+                </tr:mathtype2mml>
+                <p:choose>
+                  <p:when test="/c:errors">
+                    <!-- wmf error, ole error -->
+                    <p:set-attributes match="/*" name="set-atts">
+                      <p:input port="source" select="/c:errors/c:error">
+                        <p:pipe port="result" step="convert-ole"/>
+                      </p:input>
+                      <p:input port="attributes">
+                        <p:pipe port="result" step="convert-ole"/>
+                      </p:input>
+                    </p:set-attributes>
+                    <p:add-attribute name="add-srcpath" attribute-name="srcpath" match="/*">
+                      <p:with-option name="attribute-value" select="/*/@srcpath">
+                        <p:pipe port="current" step="mathtype2mml-viewport"/>
+                      </p:with-option>
+                    </p:add-attribute>
+                    <p:add-attribute name="add-role" attribute-name="role" attribute-value="error" match="/*"/>
+                    <p:sink/>
+                    <p:identity>
+                      <p:input port="source">
+                        <p:pipe port="current" step="mathtype2mml-viewport"/>
+                        <p:pipe port="result" step="add-role"/>
+                      </p:input>
+                    </p:identity>
+                  </p:when>
+                  <p:when test="matches($active, 'wmf')">
+                    <!-- wmf ok, ole ok -->
+                    <p:compare name="compare-mml" fail-if-not-equal="false">
+                      <p:input port="source">
+                        <p:pipe port="result" step="convert-wmf"/>
+                      </p:input>
+                      <p:input port="alternate">
+                        <p:pipe port="result" step="convert-ole"/>
+                      </p:input>
+                    </p:compare>
+                    <p:identity>
+                      <p:input port="source">
+                        <p:pipe port="result" step="compare-mml"/>
+                      </p:input>
+                    </p:identity>
+                    <p:choose>
+                      <p:when test="c:result = true()">
+                        <!-- wmf equals ole, only output MathML once -->
+                        <p:identity>
+                          <p:input port="source">
+                            <p:pipe port="result" step="convert-wmf"/>
+                          </p:input>
+                        </p:identity>
+                      </p:when>
+                      <p:otherwise>
+                        <!-- wmf differs from ole, output both and a pi -->
+                        <p:choose>
+                          <p:when test="matches($active, '^ole')">
+                            <p:wrap-sequence wrapper="wrap-mml">
+                              <p:input port="source">
+                                <p:pipe port="result" step="convert-ole"/>
+                                <p:pipe port="result" step="convert-wmf"/>
+                              </p:input>
+                            </p:wrap-sequence>
+                          </p:when>
+                          <p:otherwise>
+                            <p:wrap-sequence wrapper="wrap-mml">
+                              <p:input port="source">
+                                <p:pipe port="result" step="convert-wmf"/>
+                                <p:pipe port="result" step="convert-ole"/>
+                              </p:input>
+                            </p:wrap-sequence>
+                          </p:otherwise>
+                        </p:choose>
+                        <p:identity name="merge"/>
+                        <p:insert match="*:math[1]" position="after">
+                          <p:input port="source">
+                            <p:pipe port="result" step="merge"/>
+                          </p:input>
+                          <p:input port="insertion">
+                            <p:inline><wrap-mml><?tr M2M_201 MathML equation (sources: wmf, ole) differ?></wrap-mml></p:inline>
+                          </p:input>
+                        </p:insert>
+                      </p:otherwise>
+                    </p:choose>
+                  </p:when>
+                  <p:otherwise>
+                    <!-- wmf ok, ole ok, no diff -->
+                    <p:identity>
+                      <p:input port="source">
+                        <p:pipe port="result" step="convert-ole"/>
+                      </p:input>
+                    </p:identity>
+                  </p:otherwise>
+                </p:choose>
               </p:when>
               <p:otherwise>
-                <p:identity/>
+                <!-- wmf ok, no ole -->
+                <p:identity>
+                  <p:input port="source">
+                    <p:pipe port="result" step="convert-wmf"/>
+                  </p:input>
+                </p:identity>
               </p:otherwise>
             </p:choose>
+            <p:identity name="chosen-mml"/>
+            <p:insert match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" position="after">
+              <p:input port="source">
+                <p:pipe port="current" step="mathtype2mml-viewport"/>
+              </p:input>
+              <p:input port="insertion">
+                <p:pipe port="result" step="chosen-mml"/>
+              </p:input>
+            </p:insert>
+            <p:delete match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"/>
           </p:group>
           <p:catch>
+            <cx:message>
+              <p:with-option name="message" select="'catch :(', node()"/>
+            </cx:message>
             <p:identity/>
           </p:catch>
         </p:try>
-        
       </p:viewport>
+      
+      <p:unwrap match="wrap-mml"></p:unwrap>
 
       <p:xslt name="remove-unused-rels">
         <p:input port="stylesheet">

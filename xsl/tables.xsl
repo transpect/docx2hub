@@ -149,9 +149,11 @@
     <xsl:apply-templates select="@css:*[not(contains(local-name(), 'inside'))]" mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="w:bookmarkStart | w:bookmarkEnd" mode="tables">
-    <!-- das sollte noch mal gecheckt werden -->
+  <xsl:template match="w:commentRangeStart | w:bookmarkStart | w:bookmarkEnd" mode="tables">
+    <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
+  
+  <xsl:template match="w:commentRangeEnd" mode="tables"/>
 
   <xsl:template match="*" mode="tables">
     <xsl:call-template name="signal-error" xmlns="">

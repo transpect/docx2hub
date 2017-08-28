@@ -23,6 +23,9 @@
   <xsl:variable name="comment-reference-style-regex" select="'^(Kommentarzeichen)$'"/>
 
   <xsl:template match="w:commentReference" mode="wml-to-dbk">
+    <xsl:if test="//w:commentRangeEnd[@w:id=current()/@w:id][parent::w:tbl]">
+      <xsl:apply-templates select="//w:commentRangeEnd[@w:id=current()/@w:id][parent::w:tbl]" mode="#current"/>
+    </xsl:if>
     <xsl:apply-templates select="key('comment-by-id', @w:id)" mode="comment"/>
   </xsl:template>
 

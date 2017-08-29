@@ -149,11 +149,7 @@
     <xsl:apply-templates select="@css:*[not(contains(local-name(), 'inside'))]" mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="w:commentRangeStart | w:bookmarkStart | w:bookmarkEnd" mode="tables">
-    <xsl:apply-templates select="." mode="wml-to-dbk"/>
-  </xsl:template>
-  
-  <xsl:template match="w:commentRangeEnd" mode="tables"/>
+  <xsl:template match="w:commentRangeEnd | w:commentRangeStart | w:bookmarkStart | w:bookmarkEnd" mode="tables"/>
 
   <xsl:template match="*" mode="tables">
     <xsl:call-template name="signal-error" xmlns="">
@@ -291,6 +287,14 @@
       <xsl:call-template name="cell.style"/>
       <xsl:call-template name="cell.align"/>
       -->
+      <xsl:if test="not(preceding-sibling::w:tc) and 
+                    parent::w:tr/preceding-sibling::*[1][self::w:commentRangeStart or self::w:bookmarkStart or self::w:bookmarkEnd]">
+        <xsl:apply-templates select="parent::w:tr/preceding-sibling::*[1]
+                                                                      [self::w:commentRangeStart or 
+                                                                       self::w:bookmarkStart or 
+                                                                       self::w:bookmarkEnd]" 
+                             mode="wml-to-dbk"/>
+      </xsl:if>
       <xsl:apply-templates select="*" mode="#current"/>
     </xsl:element>
   </xsl:template>

@@ -272,12 +272,15 @@
   <!--GREEK SMALL LETTER CHI-->
   <symbol number="F063" entity="&#xf063;" char="&#x3c7;"/>
   <symbol number="0063" entity="&#x0063;" char="&#x3c7;"/>
-  <!--GREEK SMALL LETTER PSI-->
-  <symbol number="F079" entity="&#xf079;" char="&#x3c8;"/>
-  <symbol number="0079" entity="&#x0079;" char="&#x3c8;"/>
   <!--GREEK SMALL LETTER OMEGA-->
   <symbol number="F077" entity="&#xf077;" char="&#x3c9;"/>
   <symbol number="0077" entity="&#x0077;" char="&#x3c9;"/>
+  <!--GREEK SMALL LETTER PSI-->
+  <symbol number="F079" entity="&#xf079;" char="&#x3c8;"/>
+  <symbol number="0079" entity="&#x0079;" char="&#x3c8;"/>
+  <!--BALLOT BOX-->
+  <symbol number="F080" entity="&#xf080;" char="&#x2610;"/>
+  <symbol number="0080" entity="&#x0080;" char="&#x2610;"/>
   <!--GREEK THETA SYMBOL-->
   <symbol number="F04A" entity="&#xf04a;" char="&#x3d1;"/>
   <symbol number="004A" entity="&#x004A;" char="&#x3d1;"/>

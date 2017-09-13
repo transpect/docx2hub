@@ -1769,7 +1769,7 @@
           <xsl:value-of select="substring($ndLastChr/@m:val,1,1)"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:text>&amp;#x023DF;</xsl:text>
+          <xsl:text>&#x023DF;</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -1782,14 +1782,14 @@
                 <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
               </mml:mrow>
               <mml:mo>
-                <xsl:value-of disable-output-escaping="yes" select="$chr"/>
+                <xsl:value-of select="$chr"/>
               </mml:mo>
             </mml:mover>
           </xsl:when>
           <xsl:otherwise>
             <mml:munder accentunder="false">
               <mml:mo>
-                <xsl:value-of disable-output-escaping="yes" select="$chr"/>
+                <xsl:value-of select="$chr"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
@@ -1803,7 +1803,7 @@
           <xsl:when test="$sLowerCaseVertJc = 'bot'">
             <mml:mover accent="false">
               <mml:mo>
-                <xsl:value-of disable-output-escaping="yes" select="$chr"/>
+                <xsl:value-of select="$chr"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
@@ -1816,7 +1816,7 @@
                 <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
               </mml:mrow>
               <mml:mo>
-                <xsl:value-of disable-output-escaping="yes" select="$chr"/>
+                <xsl:value-of select="$chr"/>
               </mml:mo>
             </mml:munder>
           </xsl:otherwise>

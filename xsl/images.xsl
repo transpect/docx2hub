@@ -27,7 +27,7 @@
     </mediaobject>
   </xsl:template>
   
-  <xsl:template match="w:drawing[not(descendant::a:blip)]" mode="wml-to-dbk">
+ <xsl:template match="w:drawing[not(descendant::a:blip) or descendant::*:webVideoPr]" mode="wml-to-dbk">
     <phrase role="hub:foreign">
       <xsl:apply-templates select="." mode="foreign"/>
     </phrase>

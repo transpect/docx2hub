@@ -65,5 +65,6 @@
   <symbol number="F056" entity="&#xf056;" char="&#x25b3;"/>
   <!-- WHITE LARGE SQUARE -->
   <symbol number="F057" entity="&#xf057;" char="&#x2b1c;"/>
-  
+  <!-- SMALL SCRIPT L -->
+  <symbol number="F06C" entity="&#xf06c;" char="&#x2113;"/>
 </symbols>

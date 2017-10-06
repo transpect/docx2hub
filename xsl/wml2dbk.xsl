@@ -849,6 +849,18 @@
     </xsl:choose>
   </xsl:template>
   
+  <!-- SYMBOL field function with translated characters already present in separate-markup -->
+  <xsl:template match="SYMBOL[@fldArgs[matches(., '^\d+.*\\f\s&quot;?Symbol&quot;?')]]
+                             [string-length(normalize-space(.)) = 1]
+                             [key(
+                               'symbol-by-number', 
+                               tr:dec-to-hex(xs:integer(replace(@fldArgs, '^(\d+).+$', '$1'))), 
+                               $symbol-font-map
+                              )/@char = normalize-space(.)
+                             ]" mode="wml-to-dbk" priority="2">
+    <xsl:apply-templates select="node()" mode="#current"/>
+  </xsl:template>
+  
   <xsl:variable name="mail-regex" as="xs:string" select="'^[-a-zA-Z0-9.!#$~_]+@[-a-zA-Z0-9]+\.[a-zA-Z0-9]+$'"/>
   
   <xsl:template match="*[@fldArgs]" mode="wml-to-dbk tables">

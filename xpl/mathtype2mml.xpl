@@ -80,7 +80,6 @@
         <p:pipe port="result" step="extract-errors"/>
       </p:output>
       <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
-      
       <p:viewport
         match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]]"
         name="mathtype2mml-viewport">
@@ -274,49 +273,57 @@
           </p:catch>
         </p:try>
       </p:viewport>
-      
       <p:unwrap match="wrap-mml"></p:unwrap>
-
-      <p:xslt name="remove-unused-rels">
-        <p:input port="stylesheet">
-          <p:inline>
-            <xsl:stylesheet version="2.0">
-              
-              <xsl:template match="*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]/rel:Relationships/rel:Relationship
-                [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
-                <xsl:variable name="objects" 
-                              select="if(ancestor::w:docRels) 
-                                        then /w:root/w:document//o:OLEObject
-                                      else if(ancestor::w:footnoteRels)
-                                        then /w:root/w:footnotes//o:OLEObject
-                                      else if(ancestor::w:endnoteRels)
-                                        then /w:root/w:endnotes//o:OLEObject
-                                      else if(ancestor::w:commentRels)
-                                        then /w:root/w:comments//o:OLEObject
-                                      else ()"
-                              as="element(o:OLEObject)*"/>
-                <xsl:copy>
-                  <xsl:apply-templates select="@*"/>
-                  <xsl:if test="not(@Id = $objects/@r:id)">
-                    <xsl:attribute name="remove" select="'yes'"/>
-                  </xsl:if>
-                  <xsl:apply-templates/>
-                </xsl:copy>
-              </xsl:template>
-              
-              <xsl:template match="node() | @*">
-                <xsl:copy>
-                  <xsl:apply-templates select="@*, node()"/>
-                </xsl:copy>
-              </xsl:template>
-              
-            </xsl:stylesheet>
-          </p:inline>
-        </p:input>
-        <p:input port="parameters">
-          <p:empty/>
-        </p:input>
-      </p:xslt>
+      <p:group name="remove-unused-rels">
+        <p:output port="result"/>
+        <p:choose>
+          <p:when
+            test="*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]/rel:Relationships/rel:Relationship
+                  [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
+            <p:xslt>
+              <p:input port="stylesheet">
+                <p:inline>
+                  <xsl:stylesheet version="2.0">
+                    <xsl:template
+                      match="*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]/rel:Relationships/rel:Relationship
+                             [@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
+                      <xsl:variable name="objects"
+                        select="if(ancestor::w:docRels) 
+                                  then /w:root/w:document//o:OLEObject
+                                else if(ancestor::w:footnoteRels)
+                                  then /w:root/w:footnotes//o:OLEObject
+                                else if(ancestor::w:endnoteRels)
+                                  then /w:root/w:endnotes//o:OLEObject
+                                else if(ancestor::w:commentRels)
+                                  then /w:root/w:comments//o:OLEObject
+                                else ()"
+                        as="element(o:OLEObject)*"/>
+                      <xsl:copy>
+                        <xsl:apply-templates select="@*"/>
+                        <xsl:if test="not(@Id = $objects/@r:id)">
+                          <xsl:attribute name="remove" select="'yes'"/>
+                        </xsl:if>
+                        <xsl:apply-templates/>
+                      </xsl:copy>
+                    </xsl:template>
+                    <xsl:template match="node() | @*">
+                      <xsl:copy>
+                        <xsl:apply-templates select="@*, node()"/>
+                      </xsl:copy>
+                    </xsl:template>
+                  </xsl:stylesheet>
+                </p:inline>
+              </p:input>
+              <p:input port="parameters">
+                <p:empty/>
+              </p:input>
+            </p:xslt>
+          </p:when>
+          <p:otherwise>
+            <p:identity/>
+          </p:otherwise>
+        </p:choose>
+      </p:group>
 
       <tr:store-debug name="store-viewport">
         <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/02b-mathtype-converted')"/>

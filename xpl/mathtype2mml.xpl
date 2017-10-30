@@ -205,11 +205,17 @@
                       </p:when>
                       <p:otherwise>
                         <!-- wmf differs from ole, output both and a pi -->
+                        <p:identity name="wrap-mml-error">
+                          <p:input port="source">
+                            <p:inline><wrap-mml><?tr M2M_201 MathML equation (sources: wmf, ole) differ?></wrap-mml></p:inline>
+                          </p:input>
+                        </p:identity>
                         <p:choose>
                           <p:when test="matches($active, '^ole')">
                             <p:wrap-sequence wrapper="wrap-mml">
                               <p:input port="source">
                                 <p:pipe port="result" step="convert-ole"/>
+                                <p:pipe port="result" step="wrap-mml-error"/>
                                 <p:pipe port="result" step="convert-wmf"/>
                               </p:input>
                             </p:wrap-sequence>
@@ -218,20 +224,12 @@
                             <p:wrap-sequence wrapper="wrap-mml">
                               <p:input port="source">
                                 <p:pipe port="result" step="convert-wmf"/>
+                                <p:pipe port="result" step="wrap-mml-error"/>
                                 <p:pipe port="result" step="convert-ole"/>
                               </p:input>
                             </p:wrap-sequence>
                           </p:otherwise>
                         </p:choose>
-                        <p:identity name="merge"/>
-                        <p:insert match="*:math[1]" position="after">
-                          <p:input port="source">
-                            <p:pipe port="result" step="merge"/>
-                          </p:input>
-                          <p:input port="insertion">
-                            <p:inline><wrap-mml><?tr M2M_201 MathML equation (sources: wmf, ole) differ?></wrap-mml></p:inline>
-                          </p:input>
-                        </p:insert>
                       </p:otherwise>
                     </p:choose>
                   </p:when>

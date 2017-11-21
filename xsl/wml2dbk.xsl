@@ -1253,7 +1253,9 @@
   	<xsl:value-of select="'&#xad;'"/>
   </xsl:template>
  
-  <xsl:template match="w:noBreakHyphen" mode="wml-to-dbk">
+  <!-- used to be handled in wml-to-dbk, earlier translation due to problems when used in 
+       fieldfunctions  -->
+  <xsl:template match="w:noBreakHyphen" mode="docx2hub:join-instrText-runs">
       <xsl:value-of select="'&#x2011;'"/>
   </xsl:template>
 

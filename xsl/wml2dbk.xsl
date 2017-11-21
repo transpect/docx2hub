@@ -318,6 +318,23 @@
   </xsl:template>
   
   <xsl:template match="w:r[every $child in * satisfies $child/(self::w:instrText | self::w:fldChar)]" mode="docx2hub:field-functions"/>
+  
+    <!-- used to be handled in wml-to-dbk, earlier translation due to problems when used in 
+       fieldfunctions  -->
+  <xsl:template match="w:r[w:noBreakHyphen[following-sibling::w:instrText]]" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node() except w:noBreakHyphen" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <!-- change to normal hyphen when used in fieldfunction &#x2d;-->
+  <xsl:template match="w:instrText[ancestor::w:r[w:noBreakHyphen[following-sibling::w:instrText]]]" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:value-of select="'&#x2d;'"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
 
   <!-- ================================================================================ -->
   <!-- Mode: wml-to-dbk -->
@@ -1253,9 +1270,7 @@
   	<xsl:value-of select="'&#xad;'"/>
   </xsl:template>
  
-  <!-- used to be handled in wml-to-dbk, earlier translation due to problems when used in 
-       fieldfunctions  -->
-  <xsl:template match="w:noBreakHyphen" mode="docx2hub:join-instrText-runs">
+  <xsl:template match="w:noBreakHyphen" mode="wml-to-dbk">
       <xsl:value-of select="'&#x2011;'"/>
   </xsl:template>
 

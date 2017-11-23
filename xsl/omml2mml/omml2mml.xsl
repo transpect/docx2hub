@@ -1520,53 +1520,22 @@
 		using an mo, msup, msub, or msubsup for the n-ary operator		
 	-->
   <xsl:template match="m:nary" mode="omml2mml">
-    <xsl:variable name="sLowerCaseSubHide">
-      <xsl:choose>
-        <xsl:when test="count(m:naryPr[last()]/m:subHide) = 0">
-          <xsl:text>off</xsl:text>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of
-            select="translate(m:naryPr[last()]/m:subHide/@m:val, $alpha-uppercase, $alpha-lowercase)"
-          />
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="sLowerCaseSupHide">
-      <xsl:choose>
-        <xsl:when test="count(m:naryPr[last()]/m:supHide) = 0">
-          <xsl:text>off</xsl:text>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of
-            select="translate(m:naryPr[last()]/m:supHide/@m:val, $alpha-uppercase, $alpha-lowercase)"
-          />
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="sLowerCaseLimLoc">
-      <xsl:value-of
-        select="translate(m:naryPr[last()]/m:limLoc/@m:val, $alpha-uppercase, $alpha-lowercase)"
-      />
-    </xsl:variable>
-    <xsl:variable name="fLimLocSubSup">
-      <xsl:choose>
-        <xsl:when test="count(m:naryPr[last()]/m:limLoc)=0 or $sLowerCaseLimLoc='subsup'">1</xsl:when>
-        <xsl:otherwise>0</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
+    <xsl:variable name="sLowerCaseSubHide" select="if(count(m:naryPr[last()]/m:subHide) = 0)
+                                                   then 'off'
+                                                   else translate(m:naryPr[last()]/m:subHide/@m:val, $alpha-uppercase, $alpha-lowercase)" as="xs:string"/>
+    <xsl:variable name="sLowerCaseSupHide" select="if(count(m:naryPr[last()]/m:supHide) = 0) 
+                                                   then 'off' 
+                                                   else translate(m:naryPr[last()]/m:supHide/@m:val, $alpha-uppercase, $alpha-lowercase)" as="xs:string"/>
+    <xsl:variable name="sLowerCaseLimLoc" select="translate(m:naryPr[last()]/m:limLoc/@m:val, $alpha-uppercase, $alpha-lowercase)" as="xs:string"/>
+    <xsl:variable name="fLimLocSubSup" select="if(count(m:naryPr[last()]/m:limLoc)=0 or $sLowerCaseLimLoc='subsup')
+                                               then 1 else 0" as="xs:integer"/>
+    <xsl:variable name="mval" select="if(not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val='')
+                                      then '&#x222b;' 
+                                      else m:naryPr[last()]/m:chr/@m:val" as="xs:string"/>
     <xsl:choose>
       <xsl:when test="not($sLowerCaseSupHide='off') and not($sLowerCaseSubHide='off')">
         <mml:mo>
-          <xsl:choose>
-            <xsl:when
-              test="not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val=''">
-              <xsl:text>&#x222b;</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="m:naryPr[last()]/m:chr/@m:val"/>
-            </xsl:otherwise>
-          </xsl:choose>
+          <xsl:value-of select="$mval"/>
         </mml:mo>
       </xsl:when>
       <xsl:when test="not($sLowerCaseSubHide='off')">
@@ -1574,15 +1543,7 @@
           <xsl:when test="$fLimLocSubSup=1">
             <mml:msup>
               <mml:mo>
-                <xsl:choose>
-                  <xsl:when
-                    test="not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val=''">
-                    <xsl:text>&#x222b;</xsl:text>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="m:naryPr[last()]/m:chr/@m:val"/>
-                  </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$mval"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
@@ -1592,15 +1553,7 @@
           <xsl:otherwise>
             <mml:mover>
               <mml:mo>
-                <xsl:choose>
-                  <xsl:when
-                    test="not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val=''">
-                    <xsl:text>&#x222b;</xsl:text>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="m:naryPr[last()]/m:chr/@m:val"/>
-                  </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$mval"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
@@ -1614,14 +1567,7 @@
           <xsl:when test="$fLimLocSubSup=1">
             <mml:msub>
               <mml:mo>
-                <xsl:choose>
-                  <xsl:when test="not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val=''">
-                    <xsl:text>&#x222b;</xsl:text>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="m:naryPr[last()]/m:chr/@m:val"/>
-                  </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$mval"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
@@ -1631,14 +1577,7 @@
           <xsl:otherwise>
             <mml:munder>
               <mml:mo>
-                <xsl:choose>
-                  <xsl:when test="not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val=''">
-                    <xsl:text>&#x222b;</xsl:text>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="m:naryPr[last()]/m:chr/@m:val"/>
-                  </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$mval"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
@@ -1652,14 +1591,7 @@
           <xsl:when test="$fLimLocSubSup=1">
             <mml:msubsup>
               <mml:mo>
-                <xsl:choose>
-                  <xsl:when test="not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val=''">
-                    <xsl:text>&#x222b;</xsl:text>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="m:naryPr[last()]/m:chr/@m:val"/>
-                  </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$mval"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
@@ -1672,14 +1604,7 @@
           <xsl:otherwise>
             <mml:munderover>
               <mml:mo>
-                <xsl:choose>
-                  <xsl:when test="not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val=''">
-                    <xsl:text>&#x222b;</xsl:text>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="m:naryPr[last()]/m:chr/@m:val"/>
-                  </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$mval"/>
               </mml:mo>
               <mml:mrow>
                 <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>

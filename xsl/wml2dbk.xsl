@@ -1301,14 +1301,18 @@
   <xsl:template match="m:oMathPara" mode="wml-to-dbk">
     <equation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
-      <xsl:apply-templates select="node()" mode="omml2mml"/>
+      <xsl:apply-templates select="node()" mode="omml2mml">
+        <xsl:with-param name="inline" select="false()" tunnel="yes"/>
+      </xsl:apply-templates>
     </equation>
   </xsl:template>
 
   <xsl:template match="m:oMath" mode="wml-to-dbk">
     <inlineequation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
-      <xsl:apply-templates select="." mode="omml2mml"/>
+      <xsl:apply-templates select="." mode="omml2mml">
+        <xsl:with-param name="inline" select="true()" tunnel="yes"/>
+      </xsl:apply-templates>
     </inlineequation>
   </xsl:template>
   

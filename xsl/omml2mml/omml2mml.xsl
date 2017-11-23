@@ -1520,6 +1520,7 @@
 		using an mo, msup, msub, or msubsup for the n-ary operator		
 	-->
   <xsl:template match="m:nary" mode="omml2mml">
+    <xsl:param name="inline" tunnel="yes" as="xs:boolean" select="true()"/>
     <xsl:variable name="sLowerCaseSubHide" select="if(count(m:naryPr[last()]/m:subHide) = 0)
                                                    then 'off'
                                                    else translate(m:naryPr[last()]/m:subHide/@m:val, $alpha-uppercase, $alpha-lowercase)" as="xs:string"/>
@@ -1527,7 +1528,7 @@
                                                    then 'off' 
                                                    else translate(m:naryPr[last()]/m:supHide/@m:val, $alpha-uppercase, $alpha-lowercase)" as="xs:string"/>
     <xsl:variable name="sLowerCaseLimLoc" select="translate(m:naryPr[last()]/m:limLoc/@m:val, $alpha-uppercase, $alpha-lowercase)" as="xs:string"/>
-    <xsl:variable name="fLimLocSubSup" select="if(count(m:naryPr[last()]/m:limLoc)=0 or $sLowerCaseLimLoc='subsup')
+    <xsl:variable name="fLimLocSubSup" select="if((count(m:naryPr[last()]/m:limLoc)=0 and $inline) or $sLowerCaseLimLoc='subsup')
                                                then 1 else 0" as="xs:integer"/>
     <xsl:variable name="mval" select="if(not(m:naryPr[last()]/m:chr/@m:val) or m:naryPr[last()]/m:chr/@m:val='')
                                       then '&#x222b;' 

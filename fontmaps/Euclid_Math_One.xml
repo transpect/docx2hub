@@ -41,5 +41,6 @@
   <symbol number="0059" entity="&#x0059;" char="&#x1d4b4;"/>
   <!-- MATHEMATICAL SCRIPT CAPITAL Z -->
   <symbol number="005A" entity="&#x005a;" char="&#x1d4b5;"/>
-  
+  <!-- THINSPACE -->
+  <symbol number="F700" entity="&#xf700;" char="&#x2009;"/>
 </symbols>

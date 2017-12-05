@@ -2695,17 +2695,20 @@
                   <xsl:otherwise>1</xsl:otherwise>
                 </xsl:choose>
               </xsl:variable>
-    
-              <mml:mi>
+              <xsl:variable name="local-name" select="if(matches(substring($sToParse, 1, $nCharToPrint), '^\s+$')
+                                                       and $context/m:t/@xml:space eq 'preserve') 
+                                                      then 'mtext' 
+                                                      else 'mi'"/>
+              <xsl:element name="mml:{$local-name}">
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr" select="$scr"/>
                   <xsl:with-param name="sty" select="$sty"/>
                   <xsl:with-param name="nor" select="$nor"/>
                   <xsl:with-param name="nCharToPrint" select="$nCharToPrint"/>
-                  <xsl:with-param name="sTokenType" select="'mi'"/>
+                  <xsl:with-param name="sTokenType" select="$local-name"/>
                 </xsl:call-template>
                 <xsl:value-of select="substring($sToParse, 1, $nCharToPrint)"/>
-              </mml:mi>
+              </xsl:element>
               <xsl:call-template name="ParseMt">
                 <xsl:with-param name="context" select="$context"/>
                 <xsl:with-param name="sToParse" select="substring($sToParse, $nCharToPrint+1)"/>

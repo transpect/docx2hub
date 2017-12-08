@@ -709,7 +709,9 @@
       </xsl:when>
 
       <xsl:when test=". eq 'docx-length-attr'">
-        <docx2hub:attribute name="{../@target-name}"><xsl:value-of select="docx2hub:pt-length(($val, $val/@w:val, $val/@w:w)[normalize-space()][1])" /></docx2hub:attribute>
+        <xsl:if test="not($val/../@w:w='0' and $val/../@w:type='auto')">
+          <docx2hub:attribute name="{../@target-name}"><xsl:value-of select="docx2hub:pt-length(($val, $val/@w:val, $val/@w:w)[normalize-space()][1])" /></docx2hub:attribute>
+        </xsl:if>
       </xsl:when>
       
       <xsl:when test=". eq 'docx-image-size-attr'">

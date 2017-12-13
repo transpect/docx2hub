@@ -110,30 +110,59 @@
                         )">
           <p:pipe port="source" step="mathtype2mml"/>
         </p:variable>
-        <cx:message>
-          <p:with-option name="message"
-            select="'wmf:', $rel-wmf-id, ' ole:', $rel-ole-id, ' wmf-href:', $equation-wmf-href"/>
-        </cx:message>
+
+        <p:choose>
+          <p:when test="$debug">
+            <cx:message>
+              <p:with-option name="message"
+                select="'wmf:', $rel-wmf-id, ' ole:', $rel-ole-id, ' wmf-href:', $equation-wmf-href, 'ole-href:', $equation-ole-href"/>
+            </cx:message>
+          </p:when>
+          <p:otherwise>
+            <p:identity/>
+          </p:otherwise>
+        </p:choose>
+
         <p:try>
           <p:group>
-            <tr:mathtype2mml name="convert-wmf">
-              <p:input port="additional-font-maps">
-                <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Euclid_Extra.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Euclid_Fraktur.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Euclid_Math_One.xml"/>
-                <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>
-                <p:pipe port="custom-font-maps" step="mathtype2mml"/>
-              </p:input>
-              <p:with-option name="href" select="$equation-wmf-href"/>
-              <p:with-option name="debug" select="$debug"/>
-              <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
-            </tr:mathtype2mml>
+            <p:group name="convert-wmf">
+              <p:output port="result"/>
+              <p:choose>
+                <p:when test="matches($active, 'wmf')">
+                  <tr:mathtype2mml>
+                    <p:input port="additional-font-maps">
+                      <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Euclid_Extra.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Euclid_Fraktur.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Euclid_Math_One.xml"/>
+                      <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>
+                      <p:pipe port="custom-font-maps" step="mathtype2mml"/>
+                    </p:input>
+                    <p:with-option name="href" select="$equation-wmf-href"/>
+                    <p:with-option name="debug" select="$debug"/>
+                    <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
+                  </tr:mathtype2mml>
+                </p:when>
+                <p:otherwise>
+                  <!-- since $active is not 'wmf', c:errors will trigger other conversion but not be compared to those results -->
+                  <p:identity>
+                    <p:input port="source">
+                      <p:inline>
+                        <c:errors>
+                          <c:error/>
+                        </c:errors>
+                      </p:inline>
+                    </p:input>
+                  </p:identity>
+                </p:otherwise>
+              </p:choose>
+            </p:group>
+            
             <p:choose>
               <p:when test="/c:errors or matches($active, 'ole|yes')">
                 <tr:mathtype2mml name="convert-ole">

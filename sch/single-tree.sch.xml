@@ -45,4 +45,13 @@
     </rule>
   </pattern>
   
+  <pattern id="drawing">
+    <rule context="*:inline">
+      <report id="scaled_image" role="warning" test="*:extent[@cx != parent::*/a:graphic//a:ext/@cx] or *:extent[@cy != parent::*/a:graphic//a:ext/@cy]">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        Das Bild <xsl:value-of select="tokenize(//*:Relationship[@Id=current()//a:blip/@*:link]/@Target,'[/\\]')[last()]"/> wurde skaliert
+      </report>
+    </rule>
+  </pattern>
+  
 </schema>

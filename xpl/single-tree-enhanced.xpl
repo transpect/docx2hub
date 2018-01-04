@@ -54,6 +54,11 @@
   <p:output port="params">
     <p:pipe port="params" step="single-tree"/>
   </p:output>
+  <p:output port="schema" sequence="true">
+    <p:pipe port="schema" step="single-tree"/>
+    <p:pipe port="schema" step="apply-changemarkup"/>
+    <p:pipe port="schema" step="mathtype2mml"/>
+  </p:output>
   
   <!-- Options: See documentation in docx2hub.xpl-->
   <p:option name="docx" required="true"/>

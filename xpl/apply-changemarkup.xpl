@@ -34,6 +34,9 @@
   <p:output port="report" sequence="true">
     <p:pipe port="report" step="convert-apply-changemarkup"/>
   </p:output>
+  <p:output port="schema" sequence="true">
+    <p:pipe port="result" step="schematron-atts"/>
+  </p:output>
 
   <p:serialization port="result" omit-xml-declaration="false"/>
   
@@ -111,5 +114,27 @@
   </p:choose>
 
   <p:sink/>
-
+  
+  <p:add-attribute match="/*" 
+    attribute-name="tr:step-name" 
+    attribute-value="docx2hub">
+    <p:input port="source">
+      <p:pipe port="schematron" step="apply-changemarkup"/>
+    </p:input>
+  </p:add-attribute>
+  
+  <p:add-attribute 
+    match="/*" 
+    attribute-name="tr:rule-family" 
+    attribute-value="docx2hub">
+  </p:add-attribute>
+  
+  <p:insert name="schematron-atts" match="/*" position="first-child">
+    <p:input port="insertion" select="/*/*:title">
+      <p:pipe port="schematron" step="apply-changemarkup"/>
+    </p:input>
+  </p:insert>
+  
+  <p:sink/>
+  
 </p:declare-step>

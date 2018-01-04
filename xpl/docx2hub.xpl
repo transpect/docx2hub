@@ -80,6 +80,8 @@
   </p:output>
   <p:output port="schema" sequence="true">
     <p:pipe port="result" step="decorate-field-functions-schematron"/>
+    <p:pipe port="result" step="decorate-result-schematron"/>
+    <p:pipe port="schema" step="single-tree-enhanced"/>
   </p:output>
   <p:output port="zip-manifest">
     <p:pipe port="zip-manifest" step="single-tree-enhanced"/>
@@ -357,14 +359,17 @@
   <p:sink/>
   
   <p:add-attribute match="/*" 
-    attribute-name="tr:step-name" attribute-value="docx2hub">
+                   attribute-name="tr:step-name" 
+                   attribute-value="docx2hub">
     <p:input port="source">
       <p:pipe port="field-functions-schematron" step="docx2hub"/>
     </p:input>
   </p:add-attribute>
   
-  <p:add-attribute name="decorate-field-functions-schematron0" match="/*" 
-    attribute-name="tr:rule-family" attribute-value="docx2hub">
+  <p:add-attribute name="decorate-field-functions-schematron0" 
+                   match="/*" 
+                   attribute-name="tr:rule-family" 
+                   attribute-value="docx2hub">
   </p:add-attribute>
   
   <p:insert name="decorate-field-functions-schematron" match="/*" position="first-child">

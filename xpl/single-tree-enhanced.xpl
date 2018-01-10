@@ -74,6 +74,7 @@
   <p:option name="extract-dir" select="''"/>
   <p:option name="mathtype2mml" required="false" select="'yes'"/>
   <p:option name="apply-changemarkup" required="false" select="'yes'"/>
+  <p:option name="use-filename-from-http-response" required="false" select="'no'"/>
 
   <p:import href="single-tree.xpl"/>
   <p:import href="apply-changemarkup.xpl"/>
@@ -90,6 +91,7 @@
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="srcpaths" select="$srcpaths"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
+    <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>
     <p:input port="schematron">
       <p:pipe step="single-tree-enhanced" port="single-tree-schematron"/>
     </p:input>
@@ -97,7 +99,7 @@
       <p:pipe step="single-tree-enhanced" port="xslt"/>
     </p:input>
   </docx2hub:single-tree>
-
+  
   <docx2hub:apply-changemarkup name="apply-changemarkup">
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>

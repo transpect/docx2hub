@@ -38,7 +38,7 @@
     <p:pipe port="report" step="group"/>
   </p:output>
   <p:output port="schema" sequence="true">
-    <p:pipe port="result" step="schematron-atts"/>
+    <p:pipe port="schematron-atts" step="group"/>
   </p:output>
 
   <p:serialization port="result" omit-xml-declaration="false"/>
@@ -96,6 +96,9 @@
     </p:output>
     <p:output port="report" sequence="true">
       <p:pipe port="result" step="check"/>
+    </p:output>
+    <p:output port="schematron-atts" sequence="true">
+      <p:pipe port="result" step="schematron-atts"/>
     </p:output>
     
     <p:variable name="basename"
@@ -293,8 +296,10 @@
       </p:input>
     </p:insert>
   
+  <p:sink/>
+
   <p:add-attribute match="/*" 
-    attribute-name="tr:step-name" 
+   attribute-name="tr:step-name" 
     attribute-value="docx2hub">
     <p:input port="source">
       <p:pipe port="schematron" step="single-tree"/>
@@ -315,7 +320,6 @@
   
   <p:sink/>
 
-    <p:sink/>
 
   </p:group>
 

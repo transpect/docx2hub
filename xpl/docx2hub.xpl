@@ -137,7 +137,6 @@
   <p:option name="mathtype2mml" required="false" select="'yes'">
     <p:documentation xmlns="http://www.w3.org/1999/xhtml">
       <p>Activates use of mathtype2mml extension.</p>
-      <p:documentation xmlns="http://www.w3.org/1999/xhtml">
       <p>Should be one of the following String values:</p>
       <dl>
         <dt>no</dt>
@@ -165,7 +164,6 @@
         <dt>any other String</dt>
           <dd>Is treated as 'yes'.</dd>
       </dl>
-    </p:documentation>
     </p:documentation>
   </p:option>
   <p:option name="apply-changemarkup" required="false" select="'yes'">

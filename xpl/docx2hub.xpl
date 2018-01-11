@@ -16,7 +16,7 @@
         <a href="https://subversion.le-tex.de/docxtools/trunk/docx2hub_frontend/">front-end project</a>.</p>
     <p>From the directory wherey you checked out the front-end project, you invoke it with:</p>
     <p><code>calabash/calabash.sh docx2hub/wml2hub.xpl docx=PATH-TO-MY-DOCX-FILE.docx</code></p>
-    <p>where docx may be a an OS path or a file:, http:, or https: URL.</p>
+    <p>where docx may be an OS path or a file:, http:, or https: URL.</p>
     <p>Import it with</p>
     <p><code>&lt;p:import href="http://transpect.io/docx2hub/xpl/wml2hub.xpl" /></code></p>
     <p>if you use it from transpect or if you imported this project as svn:external.</p>

@@ -318,7 +318,7 @@
           <p:input port="stylesheet">
             <p:inline>
               <xsl:stylesheet version="2.0">
-                <xsl:template match="rel:Relationship">
+                <xsl:template match="rel:Relationship[@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
                   <xsl:variable name="objects"
                     select="if(ancestor::w:docRels) 
                               then collection()[2]//w:document//o:OLEObject

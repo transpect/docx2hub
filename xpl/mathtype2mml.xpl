@@ -7,6 +7,7 @@
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
   xmlns:tr="http://transpect.io"
@@ -59,7 +60,14 @@
   <p:option name="debug" required="false" select="'no'"/>
   <p:option name="debug-dir-uri" required="false" select="'file:/tmp/debug'"/>
   <p:option name="active" required="false" select="'yes'">
-    <p:documentation>see corresponding documentation for docx2hub</p:documentation>
+    <p:documentation>see corresponding documentation for docx2hub.
+    Additionally append '+try-all-pict-wmf' to try conversion
+    of all referenced '*.wmf' files in word/media/
+    Example for ole/wmf and wmf pictures: ole+wmf+try-all-pict-wmf</p:documentation>
+  </p:option>
+  <p:option name="word-container-cleanup" required="false" select="'yes'">
+    <p:documentation>'yes': the files in media and/or embeddings directory
+    and the Relationship elements of the replaced formulas are removed too.</p:documentation>
   </p:option>
   <p:option name="sources" required="false" select="$mathtype2mml">
     <p:documentation>see documentation for 'active' in docx2hub</p:documentation>
@@ -71,6 +79,29 @@
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/mathtype-extension/xpl/mathtype2mml-declaration.xpl"/>
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
+
+  <p:identity name="docx2hub-font-maps">
+    <p:input port="source" sequence="true">
+      <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Euclid_Extra.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Euclid_Fraktur.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Euclid_Math_One.xml"/>
+      <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>
+    </p:input>
+  </p:identity>
+  
+  <p:sink/>
+
+  <p:identity>
+    <p:input port="source">
+      <p:pipe port="source" step="mathtype2mml"/>
+    </p:input>
+  </p:identity>
 
   <p:choose name="convert-mathtype2mml">
     <p:when test="not($active eq 'no')">
@@ -134,16 +165,7 @@
                 <p:when test="matches($active, 'wmf')">
                   <tr:mathtype2mml>
                     <p:input port="additional-font-maps">
-                      <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Euclid_Extra.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Euclid_Fraktur.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Euclid_Math_One.xml"/>
-                      <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>
+                      <p:pipe port="result" step="docx2hub-font-maps"/>
                       <p:pipe port="custom-font-maps" step="mathtype2mml"/>
                     </p:input>
                     <p:with-option name="href" select="$equation-wmf-href"/>
@@ -170,16 +192,7 @@
               <p:when test="/c:errors or matches($active, 'ole|yes')">
                 <tr:mathtype2mml name="convert-ole">
                   <p:input port="additional-font-maps">
-                    <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Wingdings.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Wingdings_2.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Wingdings_3.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Euclid_Extra.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Euclid_Fraktur.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Euclid_Math_One.xml"/>
-                    <p:document href="http://transpect.io/fontmaps/Euclid_Math_Two.xml"/>
+                    <p:pipe port="result" step="docx2hub-font-maps"/>
                     <p:pipe port="custom-font-maps" step="mathtype2mml"/>
                   </p:input>
                   <p:with-option name="href" select="$equation-ole-href"/>
@@ -305,10 +318,87 @@
       </p:viewport>
       <p:unwrap match="wrap-mml"/>
 
+      <p:choose>
+        <p:when test="contains($active, '+try-all-pict-wmf')">
+          <p:viewport name="pict-wmf-to-mml-viewport" 
+            match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]
+                     //w:drawing[
+                       descendant::a:blip[
+                         @r:embed = /w:root/*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]
+                           /rel:Relationships
+                             /rel:Relationship[
+                               matches(@Target, '^media/.+\.wmf$') and
+                               @Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
+                             ]/@Id
+                       ]
+                     ]">
+
+            <p:variable name="rel-wmf-id" select="descendant::a:blip/@r:embed"/>
+            <p:variable name="rels-elt"
+              select="if (contains(base-uri(/*), '/word/document'))
+                        then 'w:docRels'
+                        else if (contains(base-uri(/*), '/word/footnotes'))
+                          then 'w:footnoteRels'
+                        else if (contains(base-uri(/*), '/word/endnotes'))
+                          then 'w:endnoteRels'
+                        else if (contains(base-uri(/*), '/word/comments'))
+                          then 'w:commentRels'
+                        else ''"/>
+            <p:variable name="image-wmf-href"
+              select="if ($rel-wmf-id)
+                        then concat(/w:root/@xml:base, 'word/',
+                                    /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-wmf-id]/@Target
+                                   )
+                        else 'no-image-found'">
+              <p:pipe port="source" step="mathtype2mml"/>
+            </p:variable>
+
+            <p:choose>
+              <p:when test="$debug">
+                <cx:message>
+                  <p:with-option name="message" select="'image-wmf:', $rel-wmf-id, ' wmf-href:', $image-wmf-href"/>
+                </cx:message>
+              </p:when>
+              <p:otherwise>
+                <p:identity/>
+              </p:otherwise>
+            </p:choose>
+        
+            <p:try>
+              <p:group name="convert-image-wmf">
+                <tr:mathtype2mml name="image-wmf2mml">
+                  <p:input port="additional-font-maps">
+                    <p:pipe port="result" step="docx2hub-font-maps"/>
+                    <p:pipe port="custom-font-maps" step="mathtype2mml"/>
+                  </p:input>
+                  <p:with-option name="href" select="$image-wmf-href"/>
+                  <p:with-option name="debug" select="$debug"/>
+                  <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
+                </tr:mathtype2mml>
+              </p:group>
+              <p:catch>
+                <cx:message>
+                  <p:with-option name="message" select="'image-wmf catch :(', node()"/>
+                </cx:message>
+                <p:identity/>
+              </p:catch>
+            </p:try>
+          </p:viewport>
+        </p:when>
+        <p:otherwise>
+          <p:identity/>
+        </p:otherwise>
+      </p:choose>
+
       <p:viewport name="remove-unused-rels"
         match="*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]
-                [rel:Relationships/rel:Relationship[
-                  @Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']
+                [rel:Relationships
+                  /rel:Relationship[
+                    @Type = (
+                      'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject',
+                      'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
+                    )
+                  ]
                 ]">
         <p:xslt>
           <p:input port="source">
@@ -318,21 +408,49 @@
           <p:input port="stylesheet">
             <p:inline>
               <xsl:stylesheet version="2.0">
-                <xsl:template match="rel:Relationship[@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
-                  <xsl:variable name="objects"
-                    select="if(ancestor::w:docRels) 
-                              then collection()[2]//w:document//o:OLEObject
-                            else if(ancestor::w:footnoteRels)
-                              then collection()[2]//w:footnotes//o:OLEObject
-                            else if(ancestor::w:endnoteRels)
-                              then collection()[2]//w:endnotes//o:OLEObject
-                            else if(ancestor::w:commentRels)
-                              then collection()[2]//w:comments//o:OLEObject
-                            else ()"
-                    as="element(o:OLEObject)*"/>
+                <xsl:param name="active"/>
+                <xsl:param name="word-container-cleanup" select="'yes'"/>
+                <xsl:variable name="ole-objects"
+                  select="if(ancestor::w:docRels) 
+                            then collection()[2]//w:document//o:OLEObject
+                          else if(ancestor::w:footnoteRels)
+                            then collection()[2]//w:footnotes//o:OLEObject
+                          else if(ancestor::w:endnoteRels)
+                            then collection()[2]//w:endnotes//o:OLEObject
+                          else if(ancestor::w:commentRels)
+                            then collection()[2]//w:comments//o:OLEObject
+                          else ()"
+                  as="element()*"/>
+                <xsl:variable name="image-wmf-objects"
+                  select="if(ancestor::w:docRels) 
+                            then collection()[2]//w:document//w:drawing//a:blip
+                          else if(ancestor::w:footnoteRels)
+                            then collection()[2]//w:footnotes//w:drawing//a:blip
+                          else if(ancestor::w:endnoteRels)
+                            then collection()[2]//w:endnotes//w:drawing//a:blip
+                          else if(ancestor::w:commentRels)
+                            then collection()[2]//w:comments//w:drawing//a:blip
+                          else ()"
+                  as="element()*"/>
+                <xsl:template 
+                  match="rel:Relationship[@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject']">
                   <xsl:copy>
                     <xsl:apply-templates select="@*"/>
-                    <xsl:if test="not(@Id = $objects/@r:id)">
+                    <xsl:if test="$word-container-cleanup = 'yes' and
+                                  matches($active, 'yes|wmf|ole') and
+                                  not(@Id = $ole-objects/@r:id)">
+                      <xsl:attribute name="remove" select="'yes'"/>
+                    </xsl:if>
+                    <xsl:apply-templates/>
+                  </xsl:copy>
+                </xsl:template>
+                <xsl:template 
+                  match="rel:Relationship[@Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image']">
+                  <xsl:copy>
+                    <xsl:apply-templates select="@*"/>
+                    <xsl:if test="$word-container-cleanup = 'yes' and
+                                  contains($active, '+try-all-pict-wmf') and
+                                  not(@Id = $image-wmf-objects/@r:embed)">
                       <xsl:attribute name="remove" select="'yes'"/>
                     </xsl:if>
                     <xsl:apply-templates/>
@@ -346,6 +464,8 @@
               </xsl:stylesheet>
             </p:inline>
           </p:input>
+          <p:with-param name="active" select="$active"/>
+          <p:with-param name="word-container-cleanup" select="$word-container-cleanup"/>
           <p:input port="parameters">
             <p:empty/>
           </p:input>

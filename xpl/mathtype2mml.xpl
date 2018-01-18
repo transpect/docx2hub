@@ -81,7 +81,7 @@
   <p:import href="http://transpect.io/xproc-util/store-debug/xpl/store-debug.xpl"/>
 
   <p:identity name="docx2hub-font-maps">
-    <p:input port="source" sequence="true">
+    <p:input port="source">
       <p:document href="http://transpect.io/fontmaps/MT_Extra.xml"/>
       <p:document href="http://transpect.io/fontmaps/Symbol.xml"/>
       <p:document href="http://transpect.io/fontmaps/Webdings.xml"/>
@@ -364,8 +364,8 @@
               </p:otherwise>
             </p:choose>
         
-            <p:try>
-              <p:group name="convert-image-wmf">
+            <p:try name="convert-image-wmf">
+              <p:group>
                 <tr:mathtype2mml name="image-wmf2mml">
                   <p:input port="additional-font-maps">
                     <p:pipe port="result" step="docx2hub-font-maps"/>

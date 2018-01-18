@@ -138,7 +138,17 @@
             </xsl:matching-substring>
             <xsl:non-matching-substring>
               <!-- use replace to de-escape Words quote escape fldArgs="&#34;\„Fenster offen\“-Erkennung&#34;" -->
-              <xsl:sequence select="replace(normalize-space(.),'\\([&#x201e;&#x201c;])','$1')"/>
+              <!-- use replace to fix wrong applied quotes/ spaces in Word fldArgs="&#34; Very-Low-Cycle-Fatigue, VLCF&#34;" -->
+              <xsl:sequence select="replace(
+                                          normalize-space(replace(
+                                                              replace(
+                                                                      .,
+                                                                      '^(&#34;)\s*(.+)$',
+                                                                      '$1$2'),
+                                                              '\s*(&#34;)$',
+                                                              '$1')),
+                                          '\\([&#x201e;&#x201c;])',
+                                          '$1')"/>
             </xsl:non-matching-substring>
           </xsl:analyze-string>
         </xsl:variable>

@@ -11,6 +11,7 @@
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
   xmlns:tr="http://transpect.io"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
   version="1.0" 
   name="mathtype2mml"
   type="docx2hub:mathtype2mml">
@@ -114,6 +115,7 @@
         <p:pipe port="result" step="extract-errors"/>
       </p:output>
       <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
+      
       <p:viewport
         match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]]"
         name="mathtype2mml-viewport">
@@ -163,6 +165,7 @@
               <p:output port="result"/>
               <p:choose>
                 <p:when test="matches($active, 'wmf')">
+                  
                   <tr:mathtype2mml>
                     <p:input port="additional-font-maps">
                       <p:pipe port="result" step="docx2hub-font-maps"/>
@@ -172,6 +175,7 @@
                     <p:with-option name="debug" select="$debug"/>
                     <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                   </tr:mathtype2mml>
+                  
                 </p:when>
                 <p:otherwise>
                   <!-- since $active is not 'wmf', c:errors will trigger other conversion but not be compared to those results -->
@@ -306,7 +310,17 @@
                 <p:pipe port="result" step="chosen-mml"/>
               </p:input>
             </p:insert>
+            
             <p:delete match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"/>
+            
+            <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-ole-id">
+              <p:with-option name="attribute-value" select="$rel-ole-id"/>
+            </p:add-attribute>
+            
+            <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-wmf-id">
+              <p:with-option name="attribute-value" select="$rel-wmf-id"/>
+            </p:add-attribute>
+            
           </p:group>
           <p:catch>
             <cx:message>
@@ -375,6 +389,11 @@
                   <p:with-option name="debug" select="$debug"/>
                   <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                 </tr:mathtype2mml>
+                
+                <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-wmf-id">
+                  <p:with-option name="attribute-value" select="$rel-wmf-id"/>
+                </p:add-attribute>
+                
               </p:group>
               <p:catch>
                 <cx:message>
@@ -389,21 +408,14 @@
           <p:identity/>
         </p:otherwise>
       </p:choose>
+      
+      <p:identity name="ugly-identity"/><!-- can somebody please fix this pipeline? -->
 
-      <p:viewport name="remove-unused-rels"
-        match="*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]
-                [rel:Relationships
-                  /rel:Relationship[
-                    @Type = (
-                      'http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject',
-                      'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
-                    )
-                  ]
-                ]">
+      <p:viewport name="remove-unused-rels" match="w:docRels|w:footnoteRels|w:endnoteRels|w:commentRels">
         <p:xslt>
           <p:input port="source">
             <p:pipe port="current" step="remove-unused-rels"/>
-            <p:pipe port="source" step="mathtype2mml"/>
+            <p:pipe port="result" step="ugly-identity"/>
           </p:input>
           <p:input port="stylesheet">
             <p:document href="../xsl/remove-unused-rels.xsl"/>
@@ -514,7 +526,10 @@
       
       <p:sink/>
 
-      <p:delete match="rel:Relationship[@remove = 'yes'] | c:error" name="remove-rels">
+      <p:delete match="rel:Relationship[@remove = 'yes']
+                      |mml:math/@docx2hub:rel-ole-id
+                      |mml:math/@docx2hub:rel-wmf-id
+                      |c:error" name="remove-rels">
         <p:input port="source">
           <p:pipe port="result" step="store-viewport"/>  
         </p:input>

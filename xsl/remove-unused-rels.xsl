@@ -21,22 +21,17 @@
                 select="collection()[2]//mml:math/@docx2hub:rel-wmf-id"/>
 
   <xsl:template match="rel:Relationship[$word-container-cleanup eq 'yes' ]
-   
-                                         (:and (   (@Id = ($former-ole-objects, $former-image-wmf-objects) and matches($active, 'yes|wmf|ole'))
-                                              or (@Id = $former-image-wmf-objects and contains($active, '+try-all-pict-wmf')))
-                                         and rel:find-rel-element-by-ref(., collection()[2]/w:root)
-                                         :)
-                                         [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject', 
-                                                   'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image')]                                                 
-                                         [@Id = ($former-ole-objects, $former-image-wmf-objects)]
-                                         [rel:find-rel-element-by-ref(., collection()[2]/w:root)]">
+                                        [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject', 
+                                                  'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image')]                                                 
+                                        [@Id = ($former-ole-objects, $former-image-wmf-objects)]
+                                        [rel:find-rel-element-by-ref(., collection()[2]/w:root)]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:attribute name="remove" select="'yes'"/>
     </xsl:copy>
   </xsl:template>
   
-  <xsl:function name="rel:find-rel-element-by-ref" as="element()?">
+  <xsl:function name="rel:find-rel-element-by-ref" as="xs:boolean">
     <xsl:param name="rel" as="element(rel:Relationship)"/>
     <xsl:param name="root" as="element(w:root)"/>
     <xsl:variable name="rel-element" as="element()?"
@@ -45,7 +40,7 @@
          else if($rel/ancestor::*[2]/name() eq 'w:endnoteRels')  then $root/w:endnotes//mml:math[(@docx2hub:rel-wmf-id, @docx2hub:rel-ole-id) = $rel/@Id]
          else if($rel/ancestor::*[2]/name() eq 'w:commentRels')  then $root/w:comments//mml:math[(@docx2hub:rel-wmf-id, @docx2hub:rel-ole-id) = $rel/@Id]
                                  else ()"/>
-    <xsl:sequence select="$rel-element"/>
+    <xsl:sequence select="exists($rel-element)"/>
   </xsl:function>
 
   <xsl:template match="*|@*">

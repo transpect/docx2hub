@@ -10,6 +10,7 @@
   xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+  xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:tr="http://transpect.io"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   version="1.0" 
@@ -321,6 +322,8 @@
               <p:with-option name="attribute-value" select="$rel-wmf-id"/>
             </p:add-attribute>
             
+            <p:delete match="w:object/v:shape[v:imagedata[@r:id]]"/>
+            
           </p:group>
           <p:catch>
             <cx:message>
@@ -393,6 +396,8 @@
                 <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-wmf-id">
                   <p:with-option name="attribute-value" select="$rel-wmf-id"/>
                 </p:add-attribute>
+                
+                <p:delete match="w:object/v:shape[v:imagedata[@r:id]]"/>
                 
               </p:group>
               <p:catch>

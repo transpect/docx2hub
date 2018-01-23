@@ -73,6 +73,7 @@
   <p:option name="field-vars" select="'no'"/>
   <p:option name="extract-dir" select="''"/>
   <p:option name="mathtype2mml" required="false" select="'yes'"/>
+  <p:option name="mathtype-source-pi" required="false" select="'no'"/>
   <p:option name="mathtype2mml-cleanup" required="false" select="'yes'"/>
   <p:option name="apply-changemarkup" required="false" select="'yes'"/>
   <p:option name="use-filename-from-http-response" required="false" select="'no'"/>
@@ -121,6 +122,7 @@
     <p:with-option name="active" select="$mathtype2mml"/>
     <p:with-option name="word-container-cleanup" select="$mathtype2mml-cleanup"/>
     <p:with-option name="sources" select="$mathtype2mml"/>
+    <p:with-option name="source-pi" select="$mathtype-source-pi"/>
     <p:input port="params">
       <p:pipe step="single-tree" port="params"/>
     </p:input>

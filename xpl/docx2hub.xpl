@@ -154,15 +154,7 @@
             If both are deep-equal, only one MathML equation will be output. <br/>
             If they differ, both equations will be output. <br/>
             In addition, a processing-instruction will be added after the MathML equation, stating that the MathML equations (from wmf and ole sources) differ. <br/>
-            The order is defined by the order in the String (wmf+ole makes wmf equation appear first, ole+wmf makes ole equation appear first). <br/>
-            Each mml-equation also bears a processing-instruction stating its source:
-            <dl>
-              <dt>M2M_210</dt>
-              <dd>MathML equation source:ole</dd>
-              <dt>M2M_211</dt>
-              <dd>MathML equation source:wmf</dd>
-            </dl>
-          </dd>
+            The order is defined by the order in the String (wmf+ole makes wmf equation appear first, ole+wmf makes ole equation appear first).
         <dt>yes</dt>
           <dd>
             Same as 'ole'. <br/>
@@ -170,7 +162,20 @@
           </dd>
         <dt>any other String</dt>
           <dd>Is treated as 'yes'.</dd>
+          </dd>
       </dl>
+    </p:documentation>
+  </p:option>
+  <p:option name="mathtype-source-pi" required="false" select="'no'">
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>If not set to 'no', each mml-equation also bears a processing-instruction stating its source (file ending):
+        <dl>
+          <dt>M2M_210</dt>
+          <dd>MathML equation source:ole</dd>
+          <dt>M2M_211</dt>
+          <dd>MathML equation source:wmf</dd>
+        </dl>
+      </p>
     </p:documentation>
   </p:option>
   <p:option name="apply-changemarkup" required="false" select="'yes'">
@@ -223,6 +228,7 @@
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
     <p:with-option name="mathtype2mml" select="$mathtype2mml"/>
+    <p:with-option name="mathtype-source-pi" select="$mathtype-source-pi"/>
     <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>
     <p:input port="single-tree-schematron">
       <p:pipe step="docx2hub" port="single-tree-schematron"/>

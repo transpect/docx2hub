@@ -74,6 +74,7 @@
   <p:option name="sources" required="false" select="$mathtype2mml">
     <p:documentation>see documentation for 'active' in docx2hub</p:documentation>
   </p:option>
+  <p:option name="source-pi" required="false" select="'no'"/>
   <p:option name="mml-space-handling" select="'mspace'">
     <p:documentation>see corresponding documentation for docx2hub</p:documentation>
   </p:option>
@@ -166,7 +167,6 @@
               <p:output port="result"/>
               <p:choose>
                 <p:when test="matches($active, 'wmf')">
-                  
                   <tr:mathtype2mml>
                     <p:input port="additional-font-maps">
                       <p:pipe port="result" step="docx2hub-font-maps"/>
@@ -176,7 +176,6 @@
                     <p:with-option name="debug" select="$debug"/>
                     <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                   </tr:mathtype2mml>
-                  
                 </p:when>
                 <p:otherwise>
                   <!-- since $active is not 'wmf', c:errors will trigger other conversion but not be compared to those results -->
@@ -247,11 +246,20 @@
                     <p:choose>
                       <p:when test="c:result = true()">
                         <!-- wmf equals ole, only output MathML once -->
-                        <p:identity>
-                          <p:input port="source">
-                            <p:pipe port="result" step="convert-wmf"/>
-                          </p:input>
-                        </p:identity>
+                        
+                          <p:insert match="mml:math" position="first-child" name="comp-ole">
+                      <p:input port="source">
+                        <p:pipe port="result" step="convert-wmf"/>
+                      </p:input>
+                      <p:input port="insertion">
+                        <p:inline><wrap-mml><?tr M2M_210 MathML equation source:ole?></wrap-mml></p:inline>
+                      </p:input>
+                    </p:insert>
+                    <p:insert match="mml:math" position="first-child">
+                      <p:input port="insertion">
+                        <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
+                      </p:input>
+                    </p:insert>
                       </p:when>
                       <p:otherwise>
                         <!-- wmf differs from ole, output both and a pi -->
@@ -311,6 +319,19 @@
                         <p:pipe port="result" step="convert-ole"/>
                       </p:input>
                     </p:identity>
+                    <p:insert match="mml:math" position="first-child" name="comp-ole">
+                      <p:input port="source">
+                        <p:pipe port="result" step="convert-ole"/>
+                      </p:input>
+                      <p:input port="insertion">
+                        <p:inline><wrap-mml><?tr M2M_210 MathML equation source:ole?></wrap-mml></p:inline>
+                      </p:input>
+                    </p:insert>
+                    <p:insert match="mml:math" position="first-child">
+                      <p:input port="insertion">
+                        <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
+                      </p:input>
+                    </p:insert>
                   </p:otherwise>
                 </p:choose>
               </p:when>
@@ -356,92 +377,107 @@
       </p:viewport>
       <p:unwrap match="wrap-mml"/>
 
-      <p:choose>
-        <p:when test="contains($active, '+try-all-pict-wmf')">
-          <p:viewport name="pict-wmf-to-mml-viewport" 
-            match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]
-                     //w:drawing[
-                       descendant::a:blip[
-                         @r:embed = /w:root/*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]
-                           /rel:Relationships
-                             /rel:Relationship[
-                               matches(@Target, '^media/.+\.wmf$') and
-                               @Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
-                             ]/@Id
-                       ]
-                     ]">
+      <p:group name="all-wmf">
+        <p:output port="result" primary="true"/>
+        <p:choose>
+          <p:when test="contains($active, '+try-all-pict-wmf')">
+            <p:viewport name="pict-wmf-to-mml-viewport" 
+              match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]
+                       //w:drawing[
+                         descendant::a:blip[
+                           @r:embed = /w:root/*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]
+                             /rel:Relationships
+                               /rel:Relationship[
+                                 matches(@Target, '^media/.+\.wmf$') and
+                                 @Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
+                               ]/@Id
+                         ]
+                       ]">
+  
+              <p:variable name="rel-wmf-id" select="descendant::a:blip/@r:embed"/>
+              <p:variable name="rels-elt"
+                select="if (contains(base-uri(/*), '/word/document'))
+                          then 'w:docRels'
+                          else if (contains(base-uri(/*), '/word/footnotes'))
+                            then 'w:footnoteRels'
+                          else if (contains(base-uri(/*), '/word/endnotes'))
+                            then 'w:endnoteRels'
+                          else if (contains(base-uri(/*), '/word/comments'))
+                            then 'w:commentRels'
+                          else ''"/>
+              <p:variable name="image-wmf-href"
+                select="if ($rel-wmf-id)
+                          then concat(/w:root/@xml:base, 'word/',
+                                      /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-wmf-id]/@Target
+                                     )
+                          else 'no-image-found'">
+                <p:pipe port="source" step="mathtype2mml"/>
+              </p:variable>
 
-            <p:variable name="rel-wmf-id" select="descendant::a:blip/@r:embed"/>
-            <p:variable name="rels-elt"
-              select="if (contains(base-uri(/*), '/word/document'))
-                        then 'w:docRels'
-                        else if (contains(base-uri(/*), '/word/footnotes'))
-                          then 'w:footnoteRels'
-                        else if (contains(base-uri(/*), '/word/endnotes'))
-                          then 'w:endnoteRels'
-                        else if (contains(base-uri(/*), '/word/comments'))
-                          then 'w:commentRels'
-                        else ''"/>
-            <p:variable name="image-wmf-href"
-              select="if ($rel-wmf-id)
-                        then concat(/w:root/@xml:base, 'word/',
-                                    /w:root/*[name() = $rels-elt]/rel:Relationships/rel:Relationship[@Id eq $rel-wmf-id]/@Target
-                                   )
-                        else 'no-image-found'">
-              <p:pipe port="source" step="mathtype2mml"/>
-            </p:variable>
+              <p:choose>
+                <p:when test="$debug">
+                  <cx:message>
+                    <p:with-option name="message" select="'image-wmf:', $rel-wmf-id, ' wmf-href:', $image-wmf-href"/>
+                  </cx:message>
+                </p:when>
+                <p:otherwise>
+                  <p:identity/>
+                </p:otherwise>
+              </p:choose>
 
-            <p:choose>
-              <p:when test="$debug">
-                <cx:message>
-                  <p:with-option name="message" select="'image-wmf:', $rel-wmf-id, ' wmf-href:', $image-wmf-href"/>
-                </cx:message>
-              </p:when>
-              <p:otherwise>
-                <p:identity/>
-              </p:otherwise>
-            </p:choose>
-        
-            <p:try name="convert-image-wmf">
-              <p:group>
-                <tr:mathtype2mml name="image-wmf2mml">
-                  <p:input port="additional-font-maps">
-                    <p:pipe port="result" step="docx2hub-font-maps"/>
-                    <p:pipe port="custom-font-maps" step="mathtype2mml"/>
-                  </p:input>
-                  <p:with-option name="href" select="$image-wmf-href"/>
-                  <p:with-option name="debug" select="$debug"/>
-                  <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
-                </tr:mathtype2mml>
-                
-                <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-wmf-id">
-                  <p:with-option name="attribute-value" select="$rel-wmf-id"/>
-                </p:add-attribute>
-                
-                <p:delete match="w:object/v:shape[v:imagedata[@r:id]]"/>
-                
-              </p:group>
-              <p:catch>
-                <cx:message>
-                  <p:with-option name="message" select="'image-wmf catch :(', node()"/>
-                </cx:message>
-                <p:identity/>
-              </p:catch>
-            </p:try>
-          </p:viewport>
-        </p:when>
-        <p:otherwise>
-          <p:identity/>
-        </p:otherwise>
-      </p:choose>
-      
-      <p:identity name="ugly-identity"/><!-- can somebody please fix this pipeline? -->
+              <p:try name="convert-image-wmf">
+                <p:group>
+                  <tr:mathtype2mml name="image-wmf2mml">
+                    <p:input port="additional-font-maps">
+                      <p:pipe port="result" step="docx2hub-font-maps"/>
+                      <p:pipe port="custom-font-maps" step="mathtype2mml"/>
+                    </p:input>
+                    <p:with-option name="href" select="$image-wmf-href"/>
+                    <p:with-option name="debug" select="$debug"/>
+                    <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
+                  </tr:mathtype2mml>
+                  
+                  <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-wmf-id">
+                    <p:with-option name="attribute-value" select="$rel-wmf-id"/>
+                  </p:add-attribute>
+                  
+                  <p:insert match="w:object/mml:math" position="first-child">
+                    <p:input port="insertion">
+                      <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
+                    </p:input>
+                  </p:insert>
+                  
+                  <p:delete match="w:object/v:shape[v:imagedata[@r:id]]"/>
+                  
+                </p:group>
+                <p:catch>
+                  <cx:message>
+                    <p:with-option name="message" select="'image-wmf catch :(', node()"/>
+                  </cx:message>
+                  <p:identity/>
+                </p:catch>
+              </p:try>
+            </p:viewport>
+          </p:when>
+          <p:otherwise>
+            <p:identity/>
+          </p:otherwise>
+        </p:choose>
+        <p:choose>
+          <p:when test="$source-pi = 'no'">
+            <p:delete match="processing-instruction()[matches(., 'M2M_21[01]')]"/>
+          </p:when>
+          <p:otherwise>
+            <p:identity/>
+          </p:otherwise>
+        </p:choose>
+      </p:group>
 
       <p:viewport name="remove-unused-rels" match="w:docRels|w:footnoteRels|w:endnoteRels|w:commentRels">
         <p:xslt>
           <p:input port="source">
             <p:pipe port="current" step="remove-unused-rels"/>
-            <p:pipe port="result" step="ugly-identity"/>
+            <p:pipe port="result" step="all-wmf"/>
           </p:input>
           <p:input port="stylesheet">
             <p:document href="../xsl/remove-unused-rels.xsl"/>

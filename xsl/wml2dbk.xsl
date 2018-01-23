@@ -206,9 +206,9 @@
                       return if (
                                   empty($end-fldChar/ancestor::w:p[1]//w:t intersect $end-fldChar/parent::w:r/preceding::w:t)
                                   and
-                                  exists($p/preceding-sibling::*[1])
+                                  exists($p/preceding-sibling::w:p[1])
                                 )
-                             then $p/preceding-sibling::*[1]
+                             then $p/preceding-sibling::w:p[1]
                              else $p"/>
             <xsl:for-each-group select="current-group()" group-ending-with="w:p[. is $end-p]">
               <xsl:choose>

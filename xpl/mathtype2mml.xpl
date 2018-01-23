@@ -197,10 +197,10 @@
               </p:choose>
             </p:group>
             
-            <p:choose>
-              <p:when test="/c:errors or matches($active, 'ole|yes')">
-                <p:group name="convert-ole">
-                  <p:output port="result" primary="true"/>
+            <p:group name="convert-ole">
+              <p:output port="result" primary="true"/>
+              <p:choose>
+                <p:when test="matches($active, 'ole|yes')">
                   <tr:mathtype2mml>
                     <p:input port="additional-font-maps">
                       <p:pipe port="result" step="docx2hub-font-maps"/>
@@ -215,96 +215,70 @@
                       <p:inline><wrap-mml><?tr M2M_210 MathML equation source:ole?></wrap-mml></p:inline>
                     </p:input>
                   </p:insert>
-                </p:group>
+                </p:when>
+                <p:otherwise>
+                  <p:identity>
+                    <p:input port="source">
+                      <p:inline>
+                        <c:errors>
+                          <c:error/>
+                        </c:errors>
+                      </p:inline>
+                    </p:input>
+                  </p:identity>
+                </p:otherwise>
+              </p:choose>
+            </p:group>
+            
+            <p:pack wrapper="formulae">
+              <p:input port="alternate">
+                <p:pipe port="result" step="convert-wmf"/>
+              </p:input>
+            </p:pack>
+            
+            <p:choose>
+              <p:when test="not(//mml:math)">
+                <!-- wmf error, ole error -->
+                <p:set-attributes match="/*" name="set-atts">
+                  <p:input port="source" select="/c:errors/c:error">
+                    <p:pipe port="result" step="convert-ole"/>
+                  </p:input>
+                  <p:input port="attributes">
+                    <p:pipe port="result" step="convert-ole"/>
+                  </p:input>
+                </p:set-attributes>
+                <p:add-attribute name="add-srcpath" attribute-name="srcpath" match="/*">
+                  <p:with-option name="attribute-value" select="/*/@srcpath">
+                    <p:pipe port="current" step="mathtype2mml-viewport"/>
+                  </p:with-option>
+                </p:add-attribute>
+                <p:add-attribute name="add-role" attribute-name="role" attribute-value="error" match="/*"/>
+                <p:sink/>
+                <p:identity>
+                  <p:input port="source">
+                    <p:pipe port="current" step="mathtype2mml-viewport"/>
+                    <p:pipe port="result" step="add-role"/>
+                  </p:input>
+                </p:identity>
+              </p:when>
+              <p:when test="matches($active, 'wmf') and matches($active, 'ole|yes')">
+                <!-- wmf ok, ole ok, with diff -->
+                <p:compare name="compare-mml" fail-if-not-equal="false">
+                  <p:input port="source">
+                    <p:pipe port="result" step="convert-wmf"/>
+                  </p:input>
+                  <p:input port="alternate">
+                    <p:pipe port="result" step="convert-ole"/>
+                  </p:input>
+                </p:compare>
+                <p:identity>
+                  <p:input port="source">
+                    <p:pipe port="result" step="compare-mml"/>
+                  </p:input>
+                </p:identity>
                 <p:choose>
-                  <p:when test="/c:errors">
-                    <!-- wmf error, ole error -->
-                    <p:set-attributes match="/*" name="set-atts">
-                      <p:input port="source" select="/c:errors/c:error">
-                        <p:pipe port="result" step="convert-ole"/>
-                      </p:input>
-                      <p:input port="attributes">
-                        <p:pipe port="result" step="convert-ole"/>
-                      </p:input>
-                    </p:set-attributes>
-                    <p:add-attribute name="add-srcpath" attribute-name="srcpath" match="/*">
-                      <p:with-option name="attribute-value" select="/*/@srcpath">
-                        <p:pipe port="current" step="mathtype2mml-viewport"/>
-                      </p:with-option>
-                    </p:add-attribute>
-                    <p:add-attribute name="add-role" attribute-name="role" attribute-value="error" match="/*"/>
-                    <p:sink/>
-                    <p:identity>
-                      <p:input port="source">
-                        <p:pipe port="current" step="mathtype2mml-viewport"/>
-                        <p:pipe port="result" step="add-role"/>
-                      </p:input>
-                    </p:identity>
-                  </p:when>
-                  <p:when test="matches($active, 'wmf')">
-                    <!-- wmf ok, ole ok -->
-                    <p:compare name="compare-mml" fail-if-not-equal="false">
-                      <p:input port="source">
-                        <p:pipe port="result" step="convert-wmf"/>
-                      </p:input>
-                      <p:input port="alternate">
-                        <p:pipe port="result" step="convert-ole"/>
-                      </p:input>
-                    </p:compare>
-                    <p:identity>
-                      <p:input port="source">
-                        <p:pipe port="result" step="compare-mml"/>
-                      </p:input>
-                    </p:identity>
-                    <p:choose>
-                      <p:when test="c:result = true()">
-                        <!-- wmf equals ole, only output MathML once -->
-                        <p:identity>
-                          <p:input port="source">
-                            <p:pipe port="result" step="convert-wmf"/>
-                          </p:input>
-                        </p:identity>
-                        <p:insert match="mml:math" position="first-child">
-                          <p:input port="insertion">
-                            <p:inline><wrap-mml><?tr M2M_210 MathML equation source:ole?></wrap-mml></p:inline>
-                          </p:input>
-                        </p:insert>
-                      </p:when>
-                      <p:otherwise>
-                        <!-- wmf differs from ole, output both and a pi -->
-                        <p:identity name="wrap-mml-error">
-                          <p:input port="source">
-                            <p:inline>
-                              <wrap-mml><?tr M2M_201 MathML equation (sources: wmf, ole) differ?></wrap-mml>
-                            </p:inline>
-                          </p:input>
-                        </p:identity>
-                        <p:sink/>
-                        <p:choose>
-                          <p:when test="matches($active, '^ole')">
-                            <p:wrap-sequence wrapper="wrap-mml">
-                              <p:input port="source">
-                                <p:pipe port="result" step="convert-ole"/>
-                                <p:pipe port="result" step="wrap-mml-error"/>
-                                <p:pipe port="result" step="convert-wmf"/>
-                              </p:input>
-                            </p:wrap-sequence>
-                          </p:when>
-                          <p:otherwise>
-                            <p:wrap-sequence wrapper="wrap-mml">
-                              <p:input port="source">
-                                <p:pipe port="result" step="convert-wmf"/>
-                                <p:pipe port="result" step="wrap-mml-error"/>
-                                <p:pipe port="result" step="convert-ole"/>
-                              </p:input>
-                            </p:wrap-sequence>
-                          </p:otherwise>
-                        </p:choose>
-                      </p:otherwise>
-                    </p:choose>
-                  </p:when>
-                  <p:otherwise>
-                    <!-- wmf ok, ole ok, no diff -->
+                  <p:when test="c:result = true()">
+                    <!-- wmf equals ole, only output MathML once -->
                     <p:identity>
                       <p:input port="source">
                         <p:pipe port="result" step="convert-wmf"/>
@@ -315,18 +289,79 @@
                         <p:inline><wrap-mml><?tr M2M_210 MathML equation source:ole?></wrap-mml></p:inline>
                       </p:input>
                     </p:insert>
+                  </p:when>
+                  <p:otherwise>
+                    <!-- wmf differs from ole, output both and a pi -->
+                    <p:identity name="wrap-mml-error">
+                      <p:input port="source">
+                        <p:inline><wrap-mml><?tr M2M_201 MathML equation (sources: wmf, ole) differ?></wrap-mml></p:inline>
+                      </p:input>
+                    </p:identity>
+                    <p:sink/>
+                    <p:choose>
+                      <p:when test="matches($active, '^ole')">
+                        <p:wrap-sequence wrapper="wrap-mml">
+                          <p:input port="source">
+                            <p:pipe port="result" step="convert-ole"/>
+                            <p:pipe port="result" step="wrap-mml-error"/>
+                            <p:pipe port="result" step="convert-wmf"/>
+                          </p:input>
+                        </p:wrap-sequence>
+                      </p:when>
+                      <p:otherwise>
+                        <p:wrap-sequence wrapper="wrap-mml">
+                          <p:input port="source">
+                            <p:pipe port="result" step="convert-wmf"/>
+                            <p:pipe port="result" step="wrap-mml-error"/>
+                            <p:pipe port="result" step="convert-ole"/>
+                          </p:input>
+                        </p:wrap-sequence>
+                      </p:otherwise>
+                    </p:choose>
                   </p:otherwise>
                 </p:choose>
               </p:when>
-              <p:otherwise>
-                <!-- wmf ok, no ole -->
+              <!-- at least one result, pick one -->
+              <p:when test="matches($active, 'wmf')">
                 <p:identity>
                   <p:input port="source">
                     <p:pipe port="result" step="convert-wmf"/>
                   </p:input>
                 </p:identity>
+                <p:choose>
+                  <p:when test="/c:errors">
+                    <p:identity>
+                      <p:input port="source">
+                        <p:pipe port="result" step="convert-ole"/>
+                      </p:input>
+                    </p:identity>
+                  </p:when>
+                  <p:otherwise>
+                    <p:identity/>
+                  </p:otherwise>
+                </p:choose>
+              </p:when>
+              <p:otherwise>
+                <p:identity>
+                  <p:input port="source">
+                    <p:pipe port="result" step="convert-ole"/>
+                  </p:input>
+                </p:identity>
+                <p:choose>
+                  <p:when test="/c:errors">
+                    <p:identity>
+                      <p:input port="source">
+                        <p:pipe port="result" step="convert-wmf"/>
+                      </p:input>
+                    </p:identity>
+                  </p:when>
+                  <p:otherwise>
+                    <p:identity/>
+                  </p:otherwise>
+                </p:choose>
               </p:otherwise>
             </p:choose>
+
             <p:identity name="chosen-mml"/>
             <p:insert match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" position="after">
               <p:input port="source">

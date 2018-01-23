@@ -152,7 +152,7 @@
           <p:when test="$debug">
             <cx:message>
               <p:with-option name="message"
-                select="'wmf:', $rel-wmf-id, ' ole:', $rel-ole-id, ' wmf-href:', $equation-wmf-href, 'ole-href:', $equation-ole-href"/>
+                select="'wmf:', $rel-wmf-id, ' ole:', $rel-ole-id, ' wmf-href:', $equation-wmf-href, ' ole-href:', $equation-ole-href"/>
             </cx:message>
           </p:when>
           <p:otherwise>
@@ -257,25 +257,46 @@
                         <!-- wmf differs from ole, output both and a pi -->
                         <p:identity name="wrap-mml-error">
                           <p:input port="source">
-                            <p:inline><wrap-mml><?tr M2M_201 MathML equation (sources: wmf, ole) differ?></wrap-mml></p:inline>
+                            <p:inline>
+                              <wrap-mml><?tr M2M_201 MathML equation (sources: wmf, ole) differ?></wrap-mml>
+                            </p:inline>
                           </p:input>
                         </p:identity>
+                        <p:sink/>
+                        <p:insert match="mml:math" position="first-child" name="comp-ole">
+                          <p:input port="source">
+                            <p:pipe port="result" step="convert-ole"/>
+                          </p:input>
+                          <p:input port="insertion">
+                            <p:inline><wrap-mml><?tr M2M_210 MathML equation source:ole?></wrap-mml></p:inline>
+                          </p:input>
+                        </p:insert>
+                        <p:sink/>
+                        <p:insert match="mml:math" position="first-child" name="comp-wmf">
+                          <p:input port="source">
+                            <p:pipe port="result" step="convert-wmf"/>
+                          </p:input>
+                          <p:input port="insertion">
+                            <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
+                          </p:input>
+                        </p:insert>
+                        <p:sink/>
                         <p:choose>
                           <p:when test="matches($active, '^ole')">
                             <p:wrap-sequence wrapper="wrap-mml">
                               <p:input port="source">
-                                <p:pipe port="result" step="convert-ole"/>
+                                <p:pipe port="result" step="comp-ole"/>
                                 <p:pipe port="result" step="wrap-mml-error"/>
-                                <p:pipe port="result" step="convert-wmf"/>
+                                <p:pipe port="result" step="comp-wmf"/>
                               </p:input>
                             </p:wrap-sequence>
                           </p:when>
                           <p:otherwise>
                             <p:wrap-sequence wrapper="wrap-mml">
                               <p:input port="source">
-                                <p:pipe port="result" step="convert-wmf"/>
+                                <p:pipe port="result" step="comp-wmf"/>
                                 <p:pipe port="result" step="wrap-mml-error"/>
-                                <p:pipe port="result" step="convert-ole"/>
+                                <p:pipe port="result" step="comp-ole"/>
                               </p:input>
                             </p:wrap-sequence>
                           </p:otherwise>

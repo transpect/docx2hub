@@ -154,7 +154,14 @@
             If both are deep-equal, only one MathML equation will be output. <br/>
             If they differ, both equations will be output. <br/>
             In addition, a processing-instruction will be added after the MathML equation, stating that the MathML equations (from wmf and ole sources) differ. <br/>
-            The order is defined by the order in the String (wmf+ole makes wmf equation appear first, ole+wmf makes ole equation appear first).
+            The order is defined by the order in the String (wmf+ole makes wmf equation appear first, ole+wmf makes ole equation appear first). <br/>
+            Each mml-equation also bears a processing-instruction stating its source:
+            <dl>
+              <dt>M2M_210</dt>
+              <dd>MathML equation source:ole</dd>
+              <dt>M2M_211</dt>
+              <dd>MathML equation source:wmf</dd>
+            </dl>
           </dd>
         <dt>yes</dt>
           <dd>

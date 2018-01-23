@@ -201,7 +201,7 @@
               <p:when test="/c:errors or matches($active, 'ole|yes')">
                 <p:group name="convert-ole">
                   <p:output port="result" primary="true"/>
-                  <tr:mathtype2mml name="convert-ole">
+                  <tr:mathtype2mml>
                     <p:input port="additional-font-maps">
                       <p:pipe port="result" step="docx2hub-font-maps"/>
                       <p:pipe port="custom-font-maps" step="mathtype2mml"/>

@@ -34,7 +34,7 @@
   <xsl:function name="rel:find-rel-element-by-ref" as="xs:boolean">
     <xsl:param name="rel" as="element(rel:Relationship)"/>
     <xsl:param name="root" as="element(w:root)"/>
-    <xsl:variable name="rel-element" as="element()?"
+    <xsl:variable name="rel-element" as="element()*"
       select="if($rel/ancestor::*[2]/name() eq 'w:docRels')      then $root/w:document//mml:math[(@docx2hub:rel-wmf-id, @docx2hub:rel-ole-id) = $rel/@Id]
          else if($rel/ancestor::*[2]/name() eq 'w:footnoteRels') then $root/w:footnotes//mml:math[(@docx2hub:rel-wmf-id, @docx2hub:rel-ole-id) = $rel/@Id]
          else if($rel/ancestor::*[2]/name() eq 'w:endnoteRels')  then $root/w:endnotes//mml:math[(@docx2hub:rel-wmf-id, @docx2hub:rel-ole-id) = $rel/@Id]

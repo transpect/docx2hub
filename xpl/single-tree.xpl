@@ -4,6 +4,7 @@
   xmlns:cx="http://xmlcalabash.com/ns/extensions"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:dbk="http://docbook.org/ns/docbook"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -86,7 +87,7 @@
 
   <p:group name="group">
     <p:output port="result" primary="true">
-      <p:pipe port="result" step="add-xml-base-attr"/>
+      <p:pipe port="result" step="insert-archive-uri"/>
     </p:output>
     <p:output port="params">
       <p:pipe port="result" step="params"/>
@@ -151,7 +152,7 @@
                 )"/>
     </p:load>
 
-    <p:sink/>
+    <p:sink name="sink1"/>
 
     <p:xslt name="zip-manifest">
       <p:input port="source">
@@ -186,7 +187,7 @@
       <p:with-option name="base-uri" select="$debug-dir-uri"/>
     </tr:store-debug>
 
-    <p:sink/>
+    <p:sink name="sink2"/>
 
     <p:add-attribute attribute-name="value" match="/c:param" name="error-msg-file-path">
       <p:with-option name="attribute-value" select="replace(static-base-uri(), '/[^/]+$', '')"/>
@@ -240,7 +241,7 @@
       <p:with-option name="base-uri" select="$debug-dir-uri"/>
     </tr:store-debug>
 
-    <p:sink/>
+    <p:sink name="sink3"/>
 
     <tr:xslt-mode msg="yes" mode="insert-xpath" name="insert-xpath">
       <p:input port="source">
@@ -273,6 +274,18 @@
         <p:pipe port="result" step="unzip"/>
       </p:with-option>
     </p:add-attribute>
+    
+    <p:add-attribute match="/*" name="insert-archive-uri-local" attribute-name="archive-uri-local">
+      <p:with-option name="attribute-value" select="/*/@local-href">
+        <p:pipe port="result" step="locate-docx"/>
+      </p:with-option>
+    </p:add-attribute>
+    
+    <p:add-attribute match="/*" name="insert-archive-uri" attribute-name="archive-uri">
+      <p:with-option name="attribute-value" select="/*/@href">
+        <p:pipe port="result" step="locate-docx"/>
+      </p:with-option>
+    </p:add-attribute>
 
     <p:validate-with-schematron assert-valid="false" name="val-sch">
       <p:input port="schema">
@@ -282,7 +295,7 @@
       <p:with-param name="allow-foreign" select="'true'"/>
     </p:validate-with-schematron>
 
-    <p:sink/>
+    <p:sink name="sink4"/>
 
     <p:add-attribute name="check0" match="/*" attribute-name="tr:rule-family" attribute-value="docx2hub_single-tree">
       <p:input port="source">
@@ -296,7 +309,7 @@
       </p:input>
     </p:insert>
   
-  <p:sink/>
+  <p:sink name="sink5"/>
 
   <p:add-attribute match="/*" 
    attribute-name="tr:step-name" 
@@ -318,8 +331,7 @@
     </p:input>
   </p:insert>
   
-  <p:sink/>
-
+  <p:sink name="sink6"/>
 
   </p:group>
 

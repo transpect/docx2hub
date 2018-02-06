@@ -2054,131 +2054,110 @@
          in docx.
     -->
     <xsl:variable name="sLowerCaseNor"
-      select="translate(child::m:rPr[last()]/m:nor/@m:val, $alpha-uppercase,                                                                           $alpha-lowercase)"/>
+      select="translate(child::m:rPr[last()]/m:nor/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
     <xsl:variable name="sLowerCaseLit"
-      select="translate(child::m:rPr[child::m:lit][last()]/@m:val, $alpha-uppercase,                                                                           $alpha-lowercase)"/>
-
-    <xsl:variable name="fNor">
-      <xsl:choose>
-        <xsl:when test="$sLowerCaseNor='off' or count(child::m:rPr[last()]/m:nor) = 0">0</xsl:when>
-        <xsl:otherwise>1</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="fLit">
-      <xsl:choose>
-        <xsl:when test="not(child::m:rPr[child::m:lit][last()]) or $sLowerCaseLit='off'">0</xsl:when>
-        <xsl:otherwise>1</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="fSub">
-      <xsl:choose>
-        <xsl:when test="number(w:rPr/w:position/@w:val) lt 0">1</xsl:when>
-        <xsl:otherwise>0</xsl:otherwise>
-			</xsl:choose>
-      </xsl:variable>
-		<xsl:variable name="fSup">
-			<xsl:choose>
-				<xsl:when test="number(w:rPr/w:position/@w:val) gt 0">1</xsl:when>
-				<xsl:otherwise>0</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		
+      select="translate(child::m:rPr[child::m:lit][last()]/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
+    <xsl:variable name="fNor" select="if($sLowerCaseNor='off' or count(child::m:rPr[last()]/m:nor) = 0) then 0 else 1" as="xs:integer"/>
+    <xsl:variable name="fLit" select="if(not(child::m:rPr[child::m:lit][last()]) or $sLowerCaseLit='off') then 0 else 1" as="xs:integer"/>
+    <xsl:variable name="fSub" select="if(number(w:rPr/w:position/@w:val) lt 0) then 1 else 0" as="xs:integer"/>
+    <xsl:variable name="fSup" select="if(number(w:rPr/w:position/@w:val) gt 0) then 1 else 0" as="xs:integer"/>
     <xsl:variable name="context" as="element(m:r)" select="."/>
     <xsl:variable name="text-nodes" as="node()*">
       <xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
-    </xsl:variable>    
+    </xsl:variable>
     <xsl:choose>
-			<xsl:when test="$fSub=1 or $fSup=1">
-				<xsl:element name="{if ($fSub=1) then 'mml:msub' else 'mml:msup'}">
-					<mml:mrow/>
-					<mml:mrow>
-						<xsl:choose>
-							<xsl:when test="$fNor=1">
-								<xsl:choose>
-									<xsl:when test="$fLit=1">
-										<mml:maction actiontype="lit">
-										  <xsl:call-template name="m:preliminary-mtext1">
-										    <xsl:with-param name="context" select="$context"/>
-										    <xsl:with-param name="text-nodes" select="$text-nodes"/>
-										  </xsl:call-template>
-										</mml:maction>
-									</xsl:when>
-									<xsl:otherwise>
+      <xsl:when test="$fSub=1 or $fSup=1">
+        <xsl:element name="{if ($fSub=1) then 'mml:msub' else 'mml:msup'}">
+          <mml:mrow/>
+          <mml:mrow>
+            <xsl:choose>
+              <xsl:when test="$fNor=1">
+                <xsl:choose>
+                  <xsl:when test="$fLit=1">
+                    <mml:maction actiontype="lit">
+                      <xsl:call-template name="m:preliminary-mtext1">
+                        <xsl:with-param name="context" select="$context"/>
+                        <xsl:with-param name="text-nodes" select="$text-nodes"/>
+                      </xsl:call-template>
+                    </mml:maction>
+                  </xsl:when>
+                  <xsl:otherwise>
                     <xsl:call-template name="m:preliminary-mtext1">
                       <xsl:with-param name="context" select="$context"/>
                       <xsl:with-param name="text-nodes" select="$text-nodes"/>
                     </xsl:call-template>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:choose>
-									<xsl:when test="not($context)"></xsl:when>
-									<xsl:when test="$fLit=1">
-										<mml:maction actiontype="lit">
-										  <xsl:call-template name="m:preliminary-mtext2">
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:choose>
+                  <xsl:when test="not($context)"></xsl:when>
+                  <xsl:when test="$fLit=1">
+                    <mml:maction actiontype="lit">
+                      <xsl:call-template name="m:preliminary-mtext2">
                         <xsl:with-param name="context" select="$context"/>
                         <xsl:with-param name="text-nodes" select="$text-nodes"/>
-										  </xsl:call-template>
-										</mml:maction>
-									</xsl:when>
-									<xsl:otherwise>
+                      </xsl:call-template>
+                    </mml:maction>
+                  </xsl:when>
+                  <xsl:otherwise>
                     <xsl:call-template name="m:preliminary-mtext2">
                       <xsl:with-param name="context" select="$context"/>
                       <xsl:with-param name="text-nodes" select="$text-nodes"/>
                     </xsl:call-template>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:otherwise>
-						</xsl:choose>
-					</mml:mrow>
-				</xsl:element>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:choose>
-					<xsl:when test="$fNor=1">
-						<xsl:choose>
-							<xsl:when test="$fLit=1">
-								<mml:maction actiontype="lit">
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:otherwise>
+            </xsl:choose>
+          </mml:mrow>
+        </xsl:element>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="$fNor=1">
+            <xsl:choose>
+              <xsl:when test="$fLit=1">
+                <mml:maction actiontype="lit">
                   <xsl:call-template name="m:preliminary-mtext1">
                     <xsl:with-param name="context" select="$context"/>
                     <xsl:with-param name="text-nodes" select="$text-nodes"/>
                   </xsl:call-template>
-								</mml:maction>
-							</xsl:when>
-							<xsl:otherwise>
+                </mml:maction>
+              </xsl:when>
+              <xsl:otherwise>
                 <xsl:call-template name="m:preliminary-mtext1">
                   <xsl:with-param name="context" select="$context"/>
                   <xsl:with-param name="text-nodes" select="$text-nodes"/>
                 </xsl:call-template>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym)[1]/.."/>
-						<xsl:choose>
-							<xsl:when test="not($context)"></xsl:when>
-							<xsl:when test="$fLit=1">
-								<mml:maction actiontype="lit">
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym | .//w:br)[1]/.."/>
+            <xsl:choose>
+              <xsl:when test="$fLit=1">
+                <mml:maction actiontype="lit">
                   <xsl:call-template name="m:preliminary-mtext2">
                     <xsl:with-param name="context" select="$context"/>
                     <xsl:with-param name="text-nodes" select="$text-nodes"/>
                   </xsl:call-template>
-								</mml:maction>
-							</xsl:when>
-							<xsl:otherwise>
+                </mml:maction>
+              </xsl:when>
+              <xsl:when test="$context/w:br and not($context/m:t)">
+                <mml:mspace linebreak="newline"/>
+              </xsl:when>
+              <xsl:otherwise>
                 <xsl:call-template name="m:preliminary-mtext2">
                   <xsl:with-param name="context" select="$context"/>
                   <xsl:with-param name="text-nodes" select="$text-nodes"/>
                 </xsl:call-template>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
   <xsl:template name="CreateTokenAttributes">
     <xsl:param name="scr"/>

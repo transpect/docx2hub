@@ -66,6 +66,7 @@
   <p:option name="debug-dir-uri" select="'debug'"/>
   <p:option name="status-dir-uri" select="'status'"/>
   <p:option name="srcpaths" select="'no'"/>
+  <p:option name="no-srcpaths-for-text-runs-threshold" select="'40000'"/>
   <p:option name="unwrap-tooltip-links" select="'no'"/>
   <p:option name="mml-space-handling" select="'mspace'"/>
   <p:option name="hub-version" select="'1.2'"/>
@@ -92,6 +93,7 @@
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="srcpaths" select="$srcpaths"/>
+    <p:with-option name="no-srcpaths-for-text-runs-threshold" select="$no-srcpaths-for-text-runs-threshold"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
     <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>
     <p:input port="schematron">

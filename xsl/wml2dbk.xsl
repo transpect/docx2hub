@@ -1362,7 +1362,21 @@
     <!-- Attribute von smartTag vorerst ignoriert. -->
   </xsl:template>
   
-  <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]" mode="wml-to-dbk">
+  <xsl:template match="w:sdt[descendant::w:tc]
+                            [ancestor::w:tbl]" mode="docx2hub:field-functions">
+  <xsl:element name="w:tc">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+   </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="w:tc[ancestor::w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]]
+                           [ancestor::w:tbl]" mode="docx2hub:field-functions">
+    <xsl:apply-templates select="node()" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]" mode="wml-to-dbk tables">
     <xsl:element name="blockquote">
       <xsl:attribute name="role" select="if (w:sdtPr/w:citation) then 'hub:citation' else w:sdtPr/w:alias/@w:val"/>
       <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>

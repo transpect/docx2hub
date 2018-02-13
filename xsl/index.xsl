@@ -29,24 +29,16 @@
         <xsl:if test="matches(@fldArgs, '\\[^bfrity&#x201e;&#x201c;]')">
           <xsl:message select="concat('Unexpected index (XE) field function option in ''', @fldArgs, '''')"/>
         </xsl:if>
-        <xsl:variable name="see" as="xs:string?">
-          <xsl:if test="matches(@fldArgs, '\\t')">
-            <xsl:sequence select="replace(@fldArgs, '^.*\\t\s*&quot;(.+?)&quot;(.*$|$)', '$1')"/>
-          </xsl:if>
-        </xsl:variable>
-        <xsl:variable name="type" as="xs:string?">
-          <xsl:choose>
-            <xsl:when test="matches(@fldArgs, '\\f')">
-              <xsl:value-of select="replace(@fldArgs, '^.*\\f\s*&quot;?(.+?)&quot;?\s*(\\.*$|$)', '$1')"/>
-            </xsl:when>
-            <xsl:when test="some $i in tokenize(@fldArgs,':') satisfies matches($i,'Register§§')">
-              <xsl:value-of select="replace(tokenize(@fldArgs,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:sequence select="()"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
+        <xsl:variable name="see" as="xs:string?" 
+                      select="if(matches(@fldArgs, '\\t')) 
+                              then replace(@fldArgs, '^.*\\t\s*&quot;(.+?)&quot;(.*$|$)', '$1') 
+                              else ()"/>
+        <xsl:variable name="type" as="xs:string?" 
+                    select="if(matches(@fldArgs, '\\f')) 
+                              then replace(@fldArgs, '^.*\\f\s*&quot;?(.+?)&quot;?\s*(\\.*$|$)', '$1')
+                       else if(some $i in tokenize(@fldArgs,':') satisfies matches($i,'Register§§')) 
+                              then replace(tokenize(@fldArgs,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')
+                       else        ()"/>
         <xsl:variable name="indexterm-attributes" as="attribute()*">
           <xsl:if test="matches(@fldArgs, '\\i')">
             <xsl:attribute name="role" select="'hub:pagenum-italic'"/>
@@ -84,9 +76,7 @@
             <xsl:attribute name="type" select="tr:rereplace-chars($type)"/>
           </xsl:if>
         </xsl:variable>
-        <xsl:variable name="temporary-term" as="node()*">
-          <xsl:sequence select="tr:extract-chars(@fldArgs,'\','\\')"/>
-        </xsl:variable>
+        <xsl:variable name="temporary-term" as="node()*" select="tr:extract-chars(@fldArgs,'\','\\')"/>
         <xsl:variable name="real-term" as="node()*">
           <xsl:for-each-group select="$temporary-term" group-starting-with="*:text[matches(.,'^\\')]">
            <xsl:choose>
@@ -170,14 +160,9 @@
   <xsl:template match="text()[matches(., '^\s*[xX][eE]\s*$')]" mode="index-processing"/>
 
   <xsl:template match="text()[matches(.,'^\s*&quot;[^\s]+')]" mode="index-processing" priority="+1">
-    <xsl:choose>
-      <xsl:when test="matches(., '^\s*&quot;(.*)&quot;\s*$')">
-        <xsl:value-of select="replace(., '^\s*&quot;(.*)&quot;\s*$', '$1')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="replace(., '^\s*&quot;(.*)$', '$1')"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:value-of select="if(matches(., '^\s*&quot;(.*)&quot;\s*$')) 
+                          then replace(., '^\s*&quot;(.*)&quot;\s*$', '$1')
+                          else replace(., '^\s*&quot;(.*)$', '$1')"/>
   </xsl:template>
 
   <xsl:template match="text()[matches(.,'&quot;\s*$')]" mode="index-processing">
@@ -186,17 +171,7 @@
   
   <xsl:function name="tr:primary-secondary-tertiary-number" as="xs:integer?">
     <xsl:param name="name" as="xs:string"/>
-    <xsl:choose>
-      <xsl:when test="$name = 'primary'">
-        <xsl:sequence select="1"/>
-      </xsl:when>
-      <xsl:when test="$name = 'secondary'">
-        <xsl:sequence select="2"/>
-      </xsl:when>
-      <xsl:when test="$name = 'tertiary'">
-        <xsl:sequence select="3"/>
-      </xsl:when>
-    </xsl:choose>
+    <xsl:value-of select="index-of(('primary', 'secondary', 'tertiary'), $name)"/>
   </xsl:function>
   
   <xsl:template match="dbk:primary | dbk:secondary | dbk:tertiary" mode="index-processing-1" priority="1">
@@ -250,7 +225,6 @@
     <xsl:param name="context" as="item()*"/><!-- attribute(fldArgs), text(), or element -->
     <xsl:param name="string-char" as="xs:string"/>
     <xsl:param name="regex-char" as="xs:string"/>
-    
     <xsl:for-each select="$context">
       <xsl:choose>
         <xsl:when test="matches(.,$regex-char)">

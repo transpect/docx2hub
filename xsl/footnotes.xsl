@@ -20,7 +20,7 @@
   xmlns:docx2hub ="http://transpect.io/docx2hub"
   xmlns:tr="http://transpect.io"
   xmlns="http://docbook.org/ns/docbook"
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn mml docx2hub tr"
+  exclude-result-prefixes = "fn xs w word200x v dbk wx o pkg r rel exsl saxon mml css docx2hub tr"
   >
 
   <!-- We don’t need to include MS Word localized style names if we trust it to
@@ -82,11 +82,18 @@
     <xsl:for-each-group select="* except w:rPr" group-starting-with="*[self::w:tab]">
       <xsl:sequence select="current-group()[self::w:tab]"/>
       <xsl:for-each select="$r">
-        <xsl:copy copy-namespaces="no">
+        <xsl:copy>
           <xsl:sequence select="@*, w:rPr, current-group()[not(self::w:tab)]"/>
         </xsl:copy>
       </xsl:for-each>
     </xsl:for-each-group>
+  </xsl:template>
+
+  <xsl:template match="*" mode="docx2hub:join-instrText-runs docx2hub:join-instrText-runs_footnote-tabs" priority="-0.25">
+    <!-- suppress excessive namespace declarations on every element -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
   </xsl:template>
 
   <!-- The normal case is a run with rStyle='FootnoteReference' (or al localized name) with an element w:footnoteRef,

@@ -56,7 +56,7 @@
   <xsl:template match="mc:AlternateContent/mc:Choice[$docx2hub:discard-alternate-choices]" mode="docx2hub:add-props"/>
 
   <xsl:template match="@* | * | w:drawing | w:txbxContent | w:pict" mode="foreign">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy >
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>

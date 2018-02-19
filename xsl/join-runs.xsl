@@ -502,7 +502,7 @@
   
   <!-- This mode has to run before docx2hub:field-functions --> 
   <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" 
         group-adjacent="exists(self::w:r[w:instrText][every $c in * satisfies $c/(self::w:instrText | self::w:br (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]

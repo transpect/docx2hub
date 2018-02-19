@@ -25,7 +25,7 @@
   xmlns:ct="http://schemas.openxmlformats.org/package/2006/content-types"
   xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
   xmlns:docx2hub="http://transpect.io/docx2hub"
-  exclude-result-prefixes="xs docx2hub mml tr dbk cp"
+  exclude-result-prefixes="docx2hub mml tr dbk cp"
   version="2.0">
   
   <xsl:param name="srcpaths-on-runs" as="xs:string" select="'yes'"/>
@@ -81,13 +81,19 @@
                         [ not(ancestor::w:pPr) (: suppress srcpath in tab declarations :)] 
                         [ /*/name() = ('w:document', 'w:footnotes', 'w:endnotes', 'w:comments')]
                         " mode="insert-xpath">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:attribute name="srcpath" select="docx2hub:srcpath(.)"/>
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/><!-- there was a case where the input was overwritten with an output that contained srcpaths -->
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
   </xsl:template>
 
+  <xsl:template match="*" mode="insert-xpath" priority="-0.25">
+    <!-- suppress excessive namespace declarations on every element -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
   <xsl:template match="/w:document" mode="insert-xpath" as="document-node(element(w:root))" priority="2">
     <xsl:variable name="container-base-uri" select="replace($base-dir, 'word/$', '')" as="xs:string"/>
     <xsl:variable name="docRels-uri" as="xs:anyURI"
@@ -210,7 +216,7 @@
   <xsl:template match="  w:document | w:numbering | w:endnotes | w:footnotes 
                        | w:settings | w:fonts | rel:Relationships | w:comments 
                        | ct:Types | w:hdr | w:ftr | *:Properties | cp:coreProperties" mode="insert-xpath">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:attribute name="xml:base" select="base-uri()" />
       <xsl:apply-templates select="@*, *" mode="#current"/>      
     </xsl:copy>
@@ -240,7 +246,7 @@
 
   <xsl:template match="/w:styles" mode="insert-xpath">
     <xsl:param name="themes" as="document-node(element(a:theme))*" tunnel="yes"/>
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:attribute name="xml:base" select="base-uri()" />
       <!-- Font des Standardtextes -->
       <xsl:variable name="normal" as="element(w:style)?"
@@ -284,7 +290,7 @@
     <xsl:param name="default-font" as="xs:string?" tunnel="yes"/>
     <xsl:param name="default-font-size" as="xs:string" tunnel="yes"/>
     <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*, *" mode="#current"/>
       <xsl:if test="not(w:sz) and $default-font-size">
         <w:sz w:val="{$default-font-size}"/>
@@ -301,7 +307,7 @@
   <xsl:template match="w:style[@w:type = 'paragraph']
                               [not(w:basedOn)]/w:rPr/w:lang[not(@w:val)]" mode="insert-xpath">
     <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:attribute name="w:val" select="$default-lang"/>
       <xsl:sequence select="@*"/>
     </xsl:copy>
@@ -313,7 +319,7 @@
     <xsl:param name="default-font" as="xs:string?" tunnel="yes"/>
     <xsl:param name="default-font-size" as="xs:string" tunnel="yes"/>
     <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
       <w:rPr>
         <xsl:if test="$default-font-size">

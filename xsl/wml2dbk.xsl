@@ -104,6 +104,13 @@
 
   <!-- Each field function will be replaced with an XML element with the same name as the field function -->
 
+  <xsl:template match="*" mode="docx2hub:field-functions" priority="-0.25">
+    <!-- suppress excessive namespace declarations on every element -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template match="/" mode="docx2hub:field-functions">
     <xsl:variable name="field-begins" as="element(w:fldChar)*" 
       select="for $it in .//w:instrText
@@ -498,7 +505,7 @@
   <!-- collateral, has to happen before wml-to-hub because redundant xml:lang attributes will
     be eliminated then (redundant = same as this top-level language) -->
   <xsl:template match="/dbk:*" mode="docx2hub:join-instrText-runs">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:variable name="most-frequent-lang" select="docx2hub:most-frequent-lang(.)" as="xs:string?"/>
       <xsl:if test="exists($most-frequent-lang)">

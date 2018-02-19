@@ -22,7 +22,7 @@
   xmlns:customProps="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
-  exclude-result-prefixes="#all">
+  exclude-result-prefixes="w xs dbk r rel tr m docx2hub v wp">
 
   <xsl:import href="propmap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/colors/xsl/colors.xsl"/>
@@ -253,6 +253,14 @@
 
   <xsl:template match="w:basedOn/@w:val" mode="docx2hub:add-props" />
 
+  <xsl:template match="*" mode="docx2hub:join-instrText-runs docx2hub:remove-redundant-run-atts 
+    docx2hub:add-props docx2hub:XML-Hubformat-add-properties_layout-type" priority="-0.25">
+    <!-- suppress excessive namespace declarations on every element -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="w:style"
     mode="docx2hub:XML-Hubformat-add-properties_layout-type">
     <xsl:param name="version" tunnel="yes" as="xs:string"/>
@@ -325,7 +333,7 @@
   
   <xsl:template match="w:style/w:pPr/w:numPr[not(w:ilvl)]" mode="docx2hub:add-props" priority="1">
     <xsl:param name="ilvl" as="xs:integer?" tunnel="yes"/>
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="*" mode="#current"/>
       <xsl:if test="$ilvl">
         <w:ilvl w:val="{$ilvl}"/>  
@@ -334,7 +342,7 @@
   </xsl:template>
   
   <xsl:template match="w:lvl/w:rPr | w:lvl/w:pPr" mode="docx2hub:add-props" priority="3">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="*" mode="#current" />
       <!-- in order for subsequent (numbering.xsl) symbol mappings, the original rFonts must also be preserved -->
       <xsl:sequence select="*"/>
@@ -345,7 +353,7 @@
   <xsl:template match="w:pPr/w:rPr" mode="docx2hub:add-props" priority="2.5" />
 
   <xsl:template match="w:tblPr | w:tblPrEx" mode="docx2hub:add-props" priority="2">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="*" mode="#current" />
     </xsl:copy>
   </xsl:template>
@@ -1261,7 +1269,7 @@
   <!-- collateral: denote numbering resets -->
   <xsl:template match="w:p" mode="docx2hub:remove-redundant-run-atts">
     <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:variable name="style" select="key('docx2hub:style-by-role', @role, $root)[1]" as="element(css:rule)?"/>
       <xsl:variable name="numId" as="element(w:numId)?" 
         select="(w:numPr/w:numId, $style/w:numPr/w:numId)[1]"/>

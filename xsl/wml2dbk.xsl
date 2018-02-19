@@ -16,7 +16,7 @@
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0" 
-  exclude-result-prefixes = "w xs dbk r rel tr m mc xlink docx2hub v wp">
+  exclude-result-prefixes = "w xs dbk r rel tr m mc docx2hub v wp">
 
   <!-- ================================================================================ -->
   <!-- IMPORT OF OTHER STYLESHEETS -->
@@ -104,7 +104,7 @@
 
   <!-- Each field function will be replaced with an XML element with the same name as the field function -->
 
-  <xsl:template match="*" mode="docx2hub:field-functions" priority="-0.25">
+  <xsl:template match="*" mode="docx2hub:field-functions wml-to-dbk-bookmarkStart wml-to-dbk-bookmarkEnd" priority="-0.25">
     <!-- suppress excessive namespace declarations on every element -->
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
@@ -395,7 +395,7 @@
   </xsl:template>
 
   <xsl:template match="dbk:* | css:*" mode="wml-to-dbk" priority="-0.1">
-     <xsl:copy copy-namespaces="no">
+     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current" />
       <xsl:apply-templates select="node()" mode="#current" />
     </xsl:copy>
@@ -405,7 +405,7 @@
     <xsl:param name="content" as="element(*)*">
       <!-- linked-style, css:attic -->
     </xsl:param>
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:if test="w:numPr">
         <xsl:variable name="ilvl" select="w:numPr/w:ilvl/@w:val"/>
         <xsl:variable name="lvl-properties" select="key('abstract-numbering-by-id',key('numbering-by-id',w:numPr/w:numId/@w:val)/w:abstractNumId/@w:val)/w:lvl[@w:ilvl=$ilvl]"/>
@@ -416,7 +416,7 @@
   </xsl:template>
   
   <xsl:template match="css:rule[w:tblPr[@*[contains(local-name(), 'inside')]]]" mode="wml-to-dbk">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:attribute name="layout-type" select="'cell'"/>
       <xsl:attribute name="name" select="docx2hub:linked-cell-style-name(@name)"/>
       <xsl:apply-templates select="w:tblPr/@*[contains(local-name(), 'inside')]" mode="#current">
@@ -534,7 +534,7 @@
 
 
   <xsl:template match="/dbk:*" mode="wml-to-dbk">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*, *" mode="#current"/>
     </xsl:copy>
   </xsl:template>
@@ -1344,7 +1344,7 @@
   
   <!-- identity template to preserve mathml text nodes -->
   <xsl:template match="mml:*" mode="mathml">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>

@@ -19,7 +19,7 @@
   xmlns:css="http://www.w3.org/1996/css"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml">
+  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr">
 
   <xsl:template match="XE[@fldArgs]" mode="wml-to-dbk" priority="2">
     <xsl:variable name="context" as="element(XE)" select="."/>

@@ -23,6 +23,13 @@
 
   <!--<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>-->
 
+  <xsl:template match="/*" mode="docx2hub:join-runs" priority="-0.2">
+    <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template match="dbk:para[
                          dbk:br[@role eq 'column'][preceding-sibling::node() and following-sibling::node()]
                        ]" mode="docx2hub:join-runs" priority="5">
@@ -92,13 +99,13 @@
   </xsl:template>
   
   <xsl:template match="dbk:footnote[@xreflabel]" mode="docx2hub:join-runs">
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@* except @xreflabel | node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
   
   <xsl:template match="dbk:phrase[@role='hub:identifier'][ancestor::dbk:footnote[@xreflabel]]" mode="docx2hub:join-runs" priority="+10">
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@* | ancestor::dbk:footnote/@xreflabel | node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
@@ -115,7 +122,7 @@
   <xsl:template match="dbk:anchor[
                          following-sibling::node()[1] is key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:anchor
                        ]" mode="docx2hub:join-runs">
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@* except @role" mode="#current"/>
     </xsl:copy>
   </xsl:template>
@@ -143,7 +150,7 @@
       <xsl:variable name="id" select="concat('itr_', generate-id())" as="xs:string"/>
       <xsl:choose>
         <xsl:when test="$pos = 1">
-          <xsl:copy>
+          <xsl:copy copy-namespaces="no">
             <xsl:apply-templates select="@* except @linkends" mode="#current"/>
             <xsl:if test="$next-match/@role = ('start', 'hub:start')">
               <xsl:attribute name="xml:id" select="$id"/>
@@ -153,7 +160,7 @@
           </xsl:copy>
         </xsl:when>
         <xsl:when test="$pos = 2 and exists($next-match)">
-          <xsl:copy>
+          <xsl:copy copy-namespaces="no">
             <xsl:apply-templates select="@* except @linkends" mode="#current"/>
             <xsl:attribute name="startref" select="$id"/>
             <xsl:attribute name="class" select="'endofrange'"/>
@@ -197,7 +204,7 @@
 
   <xsl:template match="dbk:para[not(@docx2hub:removable)]" mode="docx2hub:join-runs">
     <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:variable name="processed-pagebreak-elements" as="item()*">
         <xsl:call-template name="docx2hub:pagebreak-elements-to-attributes"/>
@@ -213,7 +220,7 @@
     <xsl:if test="self::dbk:para">
       <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>  
     </xsl:if>
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:variable name="processed-pagebreak-elements" as="item()*">
         <xsl:call-template name="docx2hub:pagebreak-elements-to-attributes"/>
@@ -229,7 +236,7 @@
 
   <xsl:template name="docx2hub_move-invalid-sidebar-elements">
     <xsl:for-each select=".//dbk:sidebar">
-      <xsl:copy>
+      <xsl:copy copy-namespaces="no">
         <xsl:apply-templates select="@*" mode="#current"/>
         <xsl:attribute name="linkend" select="concat('id_', generate-id(.))"/>
         <xsl:apply-templates select="node()" mode="#current"/>
@@ -484,7 +491,7 @@
   
   <xsl:template match="*:keywordset[@role='fieldVars']" mode="docx2hub:join-runs">
     <xsl:if test="exists(//*:keyword[matches(@role,'^fieldVar_')])">
-      <xsl:copy>
+      <xsl:copy copy-namespaces="no">
         <xsl:apply-templates select="@*" mode="#current"/>
         <xsl:apply-templates select="//*:keyword[matches(@role,'^fieldVar_')]" mode="field-var"/>
       </xsl:copy>  
@@ -492,7 +499,7 @@
   </xsl:template>
   
   <xsl:template match="*:keyword[matches(@role,'^fieldVar_')]" mode="field-var">
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:attribute name="role" select="replace(@role,'^fieldVar_','')"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
@@ -502,7 +509,7 @@
   
   <!-- This mode has to run before docx2hub:field-functions --> 
   <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs">
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" 
         group-adjacent="exists(self::w:r[w:instrText][every $c in * satisfies $c/(self::w:instrText | self::w:br (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]
@@ -560,7 +567,7 @@
   
   <!-- this happened in a previous mode: -->
   <xsl:template match="w:fldChar" mode="docx2hub:remove-redundant-run-atts">
-    <xsl:copy>
+    <xsl:copy copy-namespaces="no">
       <xsl:attribute name="xml:id" select="concat('fldChar_', generate-id())"/>
       <xsl:apply-templates select="@*" mode="#current"/>
     </xsl:copy>    

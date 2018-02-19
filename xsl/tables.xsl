@@ -19,7 +19,7 @@
   xmlns:css="http://www.w3.org/1996/css"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml docx2hub">
+  exclude-result-prefixes = "w o v wx dbk pkg r rel word200x exsl saxon fn tr">
 
   <xsl:template match="w:tbl" mode="wml-to-dbk">
     <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>

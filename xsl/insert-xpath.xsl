@@ -94,6 +94,32 @@
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
+  
+  <xsl:template match="/*" mode="insert-xpath" priority="-0.2">
+    <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
+    <xsl:copy>
+      <xsl:namespace name="w16cid">http://schemas.microsoft.com/office/word/2016/wordml/cid</xsl:namespace>
+      <xsl:namespace name="w16se">http://schemas.microsoft.com/office/word/2015/wordml/symex</xsl:namespace>
+      <xsl:namespace name="tr">http://transpect.io</xsl:namespace>
+      <xsl:namespace name="m">http://schemas.openxmlformats.org/officeDocument/2006/math</xsl:namespace>
+      <xsl:namespace name="mml">http://www.w3.org/1998/Math/MathML</xsl:namespace>
+      <xsl:namespace name="o">urn:schemas-microsoft-com:office:office</xsl:namespace>
+      <xsl:namespace name="pkg">http://schemas.microsoft.com/office/2006/xmlPackage</xsl:namespace>
+      <xsl:namespace name="r">http://schemas.openxmlformats.org/officeDocument/2006/relationships</xsl:namespace>
+      <xsl:namespace name="rel">http://schemas.openxmlformats.org/package/2006/relationships</xsl:namespace>
+      <xsl:namespace name="v">urn:schemas-microsoft-com:vml</xsl:namespace> 
+      <xsl:namespace name="w">http://schemas.openxmlformats.org/wordprocessingml/2006/main</xsl:namespace>
+      <xsl:namespace name="word200x">http://schemas.microsoft.com/office/word/2003/wordml</xsl:namespace>
+      <xsl:namespace name="wx">http://schemas.microsoft.com/office/word/2003/auxHint</xsl:namespace>
+      <xsl:namespace name="w14">http://schemas.microsoft.com/office/word/2010/wordml</xsl:namespace>
+      <xsl:namespace name="wp">http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing</xsl:namespace>
+      <xsl:namespace name="cp">http://schemas.openxmlformats.org/package/2006/metadata/core-properties</xsl:namespace>
+      <xsl:namespace name="extendedProps">http://schemas.openxmlformats.org/officeDocument/2006/extended-properties</xsl:namespace>
+      <xsl:namespace name="customProps">http://schemas.openxmlformats.org/officeDocument/2006/custom-properties</xsl:namespace>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template match="/w:document" mode="insert-xpath" as="document-node(element(w:root))" priority="2">
     <xsl:variable name="container-base-uri" select="replace($base-dir, 'word/$', '')" as="xs:string"/>
     <xsl:variable name="docRels-uri" as="xs:anyURI"

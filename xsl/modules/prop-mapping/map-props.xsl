@@ -22,7 +22,7 @@
   xmlns:customProps="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
-  exclude-result-prefixes="w xs dbk r rel tr m docx2hub v wp">
+  exclude-result-prefixes="w dbk r rel tr m v wp">
 
   <xsl:import href="propmap.xsl"/>
   <xsl:import href="http://transpect.io/xslt-util/colors/xsl/colors.xsl"/>
@@ -41,6 +41,40 @@
 
   <xsl:template match="w:body" mode="docx2hub:add-props">
     <xsl:element name="{if ($hub-version eq '1.0') then 'Body' else 'hub'}">
+      <xsl:namespace name="a">http://schemas.openxmlformats.org/drawingml/2006/main</xsl:namespace>
+      <xsl:namespace name="cp">http://schemas.openxmlformats.org/package/2006/metadata/core-properties</xsl:namespace>
+      <xsl:namespace name="ct">http://schemas.openxmlformats.org/package/2006/content-types</xsl:namespace>
+      <xsl:namespace name="cx">http://schemas.microsoft.com/office/drawing/2014/chartex</xsl:namespace>
+      <xsl:namespace name="cx1">http://schemas.microsoft.com/office/drawing/2015/9/8/chartex</xsl:namespace>
+      <xsl:namespace name="customProps">http://schemas.openxmlformats.org/officeDocument/2006/custom-properties</xsl:namespace>
+      <xsl:namespace name="docx2hub">http://transpect.io/docx2hub</xsl:namespace>
+      <xsl:namespace name="extendedProps">http://schemas.openxmlformats.org/officeDocument/2006/extended-properties</xsl:namespace>
+      <xsl:namespace name="m">http://schemas.openxmlformats.org/officeDocument/2006/math</xsl:namespace>
+      <xsl:namespace name="mc">http://schemas.openxmlformats.org/markup-compatibility/2006</xsl:namespace>
+      <xsl:namespace name="mml">http://www.w3.org/1998/Math/MathML</xsl:namespace>
+      <xsl:namespace name="o">urn:schemas-microsoft-com:office:office</xsl:namespace>
+      <xsl:namespace name="pkg">http://schemas.microsoft.com/office/2006/xmlPackage</xsl:namespace>
+      <xsl:namespace name="r">http://schemas.openxmlformats.org/officeDocument/2006/relationships</xsl:namespace>
+      <xsl:namespace name="rel">http://schemas.openxmlformats.org/package/2006/relationships</xsl:namespace>
+      <xsl:namespace name="tr">http://transpect.io</xsl:namespace>
+      <xsl:namespace name="v">urn:schemas-microsoft-com:vml</xsl:namespace> 
+      <xsl:namespace name="w">http://schemas.openxmlformats.org/wordprocessingml/2006/main</xsl:namespace>
+      <xsl:namespace name="w10">urn:schemas-microsoft-com:office:word</xsl:namespace>
+      <xsl:namespace name="w14">http://schemas.microsoft.com/office/word/2010/wordml</xsl:namespace>
+      <xsl:namespace name="w15">http://schemas.microsoft.com/office/word/2012/wordml</xsl:namespace>
+      <xsl:namespace name="w16cid">http://schemas.microsoft.com/office/word/2016/wordml/cid</xsl:namespace>
+      <xsl:namespace name="w16se">http://schemas.microsoft.com/office/word/2015/wordml/symex</xsl:namespace>
+      <xsl:namespace name="wne">http://schemas.microsoft.com/office/word/2006/wordml</xsl:namespace>
+      <xsl:namespace name="word200x">http://schemas.microsoft.com/office/word/2003/wordml</xsl:namespace>
+      <xsl:namespace name="wp">http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing</xsl:namespace>
+      <xsl:namespace name="wp14">http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing</xsl:namespace>
+      <xsl:namespace name="wpc">http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas</xsl:namespace>
+      <xsl:namespace name="wpg">http://schemas.microsoft.com/office/word/2010/wordprocessingGroup</xsl:namespace>
+      <xsl:namespace name="wpi">http://schemas.microsoft.com/office/word/2010/wordprocessingInk</xsl:namespace>
+      <xsl:namespace name="wps">http://schemas.microsoft.com/office/word/2010/wordprocessingShape</xsl:namespace>
+      <xsl:namespace name="wx">http://schemas.microsoft.com/office/word/2003/auxHint</xsl:namespace>
+      <xsl:namespace name="xlink">http://www.w3.org/1999/xlink</xsl:namespace>
+      <xsl:namespace name="xs">http://www.w3.org/2001/XMLSchema</xsl:namespace>
       <xsl:if test="../../w:styles/@xml:lang">
         <!-- might be superseded by the most frequently used language in a later mode --> 
         <xsl:attribute name="xml:lang" select="replace(../../w:styles/@xml:lang, '\-[A-Z]+$', '')"/>  
@@ -255,7 +289,7 @@
 
   <xsl:template match="*" mode="docx2hub:join-instrText-runs docx2hub:remove-redundant-run-atts 
     docx2hub:add-props docx2hub:XML-Hubformat-add-properties_layout-type" priority="-0.25">
-    <!-- suppress excessive namespace declarations on every element -->
+    <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>

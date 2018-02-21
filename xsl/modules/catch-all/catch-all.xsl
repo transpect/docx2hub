@@ -31,7 +31,7 @@
   </xsl:template>
 
   <xsl:template match="*" mode="wml-to-dbk docx2hub:add-props" priority="-0.9">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*, *" mode="#current"/>
     </xsl:copy>
   </xsl:template>
@@ -43,10 +43,9 @@
                        | wp:posOffset
                        | wp14:pctWidth
                        | wp14:pctHeight" mode="wml-to-dbk docx2hub:add-props" priority="-0.8">
-    <xsl:copy copy-namespaces="no">
+    <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
-  </xsl:template>
-  
+  </xsl:template>  
 
 </xsl:stylesheet>

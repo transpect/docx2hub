@@ -288,7 +288,7 @@
   <xsl:template match="w:basedOn/@w:val" mode="docx2hub:add-props" />
 
   <xsl:template match="*" mode="docx2hub:join-instrText-runs docx2hub:remove-redundant-run-atts 
-    docx2hub:add-props docx2hub:XML-Hubformat-add-properties_layout-type" priority="-0.25">
+    docx2hub:XML-Hubformat-add-properties_layout-type" priority="-0.95">
     <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>

@@ -393,7 +393,6 @@
           </p:catch>
         </p:try>
       </p:viewport>
-      <p:unwrap match="wrap-mml"/>
 
       <p:group name="all-wmf">
         <p:output port="result" primary="true"/>
@@ -435,7 +434,7 @@
               <p:choose>
                 <p:when test="$debug">
                   <cx:message>
-                    <p:with-option name="message" select="'image-wmf:', $rel-wmf-id, ' wmf-href:', $image-wmf-href"/>
+                    <p:with-option name="message" select="'try-all-wmf: image-wmf:', $rel-wmf-id, ' wmf-href:', $image-wmf-href"/>
                   </cx:message>
                 </p:when>
                 <p:otherwise>
@@ -455,18 +454,15 @@
                     <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                   </tr:mathtype2mml>
                   
-                  <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-wmf-id">
+                  <p:add-attribute match="mml:math" attribute-name="docx2hub:rel-wmf-id">
                     <p:with-option name="attribute-value" select="$rel-wmf-id"/>
                   </p:add-attribute>
                   
-                  <p:insert match="w:object/mml:math" position="first-child">
+                  <p:insert match="mml:math" position="first-child">
                     <p:input port="insertion">
                       <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
                     </p:input>
                   </p:insert>
-                  
-                  <p:delete match="w:object/v:shape[v:imagedata[@r:id]]"/>
-                  
                 </p:group>
                 <p:catch>
                   <cx:message>
@@ -490,6 +486,8 @@
           </p:otherwise>
         </p:choose>
       </p:group>
+      
+      <p:unwrap match="wrap-mml"/>
 
       <p:viewport name="remove-unused-rels" match="w:docRels|w:footnoteRels|w:endnoteRels|w:commentRels">
         <p:xslt>

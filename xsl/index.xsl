@@ -171,7 +171,7 @@
   
   <xsl:function name="tr:primary-secondary-tertiary-number" as="xs:integer?">
     <xsl:param name="name" as="xs:string"/>
-    <xsl:value-of select="index-of(('primary', 'secondary', 'tertiary'), $name)"/>
+    <xsl:sequence select="index-of(('primary', 'secondary', 'tertiary'), $name)"/>
   </xsl:function>
   
   <xsl:template match="dbk:primary | dbk:secondary | dbk:tertiary" mode="index-processing-1" priority="1">

@@ -57,7 +57,8 @@
       <xsl:namespace name="r">http://schemas.openxmlformats.org/officeDocument/2006/relationships</xsl:namespace>
       <xsl:namespace name="rel">http://schemas.openxmlformats.org/package/2006/relationships</xsl:namespace>
       <xsl:namespace name="tr">http://transpect.io</xsl:namespace>
-      <xsl:namespace name="v">urn:schemas-microsoft-com:vml</xsl:namespace> 
+      <xsl:namespace name="v">urn:schemas-microsoft-com:vml</xsl:namespace>
+      <xsl:namespace name="ve">http://schemas.openxmlformats.org/markup-compatibility/2006</xsl:namespace>
       <xsl:namespace name="w">http://schemas.openxmlformats.org/wordprocessingml/2006/main</xsl:namespace>
       <xsl:namespace name="w10">urn:schemas-microsoft-com:office:word</xsl:namespace>
       <xsl:namespace name="w14">http://schemas.microsoft.com/office/word/2010/wordml</xsl:namespace>

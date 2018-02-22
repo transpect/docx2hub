@@ -89,7 +89,7 @@
     </xsl:for-each-group>
   </xsl:template>
 
-  <xsl:template match="*" mode="docx2hub:join-instrText-runs docx2hub:join-instrText-runs_footnote-tabs" priority="-0.25">
+  <xsl:template match="*" mode="docx2hub:join-instrText-runs" priority="-0.25">
     <!-- suppress excessive namespace declarations on every element -->
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>

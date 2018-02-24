@@ -89,12 +89,6 @@
     </xsl:for-each-group>
   </xsl:template>
 
-  <xsl:template match="*" mode="docx2hub:join-instrText-runs" priority="-0.25">
-    <!-- suppress excessive namespace declarations on every element -->
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </xsl:copy>
-  </xsl:template>
 
   <!-- The normal case is a run with rStyle='FootnoteReference' (or al localized name) with an element w:footnoteRef,
     followed by a run in the same style with a w:t that consists of a single space.

@@ -30,12 +30,6 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="*" mode="wml-to-dbk docx2hub:add-props" priority="-0.9">
-    <xsl:copy>
-      <xsl:apply-templates select="@*, *" mode="#current"/>
-    </xsl:copy>
-  </xsl:template>
-
   <xsl:template match="  w:t 
                        | m:t
                        | *[@xml:space eq 'preserve']
@@ -47,5 +41,21 @@
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>  
-
+  <xsl:template match="*" mode="
+    insert-xpath
+    docx2hub:add-props
+    docx2hub:XML-Hubformat-add-properties_layout-type
+    docx2hub:remove-redundant-run-atts 
+    docx2hub:join-instrText-runs 
+    docx2hub:join-instrText-runs_footnote-tabs
+    docx2hub:field-functions
+    wml-to-dbk
+    " priority="-0.25">
+    <!-- suppress excessive namespace declarations on every element -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  
 </xsl:stylesheet>

@@ -88,12 +88,6 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="*" mode="insert-xpath" priority="-0.25">
-    <!-- suppress excessive namespace declarations on every element -->
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </xsl:copy>
-  </xsl:template>
   
   <xsl:template match="/*" mode="insert-xpath" priority="-0.2">
     <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->

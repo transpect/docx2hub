@@ -104,13 +104,6 @@
 
   <!-- Each field function will be replaced with an XML element with the same name as the field function -->
 
-  <xsl:template match="*" mode="docx2hub:field-functions wml-to-dbk-bookmarkStart wml-to-dbk-bookmarkEnd" priority="-0.25">
-    <!-- suppress excessive namespace declarations on every element -->
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </xsl:copy>
-  </xsl:template>
-  
   <xsl:template match="/" mode="docx2hub:field-functions">
     <xsl:variable name="field-begins" as="element(w:fldChar)*" 
       select="for $it in .//w:instrText

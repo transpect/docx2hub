@@ -3,6 +3,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:dbk="http://docbook.org/ns/docbook"
+  xmlns:extendedProps="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
   xmlns:tr="http://transpect.io"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
@@ -234,7 +235,8 @@
   </xsl:template>
 
   <xsl:template match="  w:document | w:numbering | w:endnotes | w:footnotes 
-                       | w:settings | w:fonts | rel:Relationships | w:comments 
+                       | w:settings | w:fonts | rel:Relationships | w:comments
+                       | extendedProps:Properties
                        | ct:Types | w:hdr | w:ftr | *:Properties | cp:coreProperties" mode="insert-xpath">
     <xsl:copy>
       <xsl:attribute name="xml:base" select="base-uri()" />

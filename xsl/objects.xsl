@@ -56,7 +56,7 @@
   <xsl:template match="mc:AlternateContent/mc:Choice[$docx2hub:discard-alternate-choices]" mode="docx2hub:add-props"/>
 
   <xsl:template match="@* | * | w:drawing | w:txbxContent | w:pict" mode="foreign">
-    <xsl:copy >
+    <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
@@ -291,6 +291,9 @@
   <xsl:template match="v:stroke" mode="vml">
     <!--    <xsl:message>Achtung. Strichzeichnung ignoriert (stroke).</xsl:message> -->
   </xsl:template>
+  
+  
+  <xsl:template match="text()[not(normalize-space())][not(../@xml:space='preserve')]" mode="vml"/>
 
 
   <xsl:template match="*" mode="vml">

@@ -41,6 +41,7 @@
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>  
+
   <xsl:template match="*" mode="
     insert-xpath
     docx2hub:add-props
@@ -50,7 +51,7 @@
     docx2hub:join-instrText-runs_footnote-tabs
     docx2hub:field-functions
     wml-to-dbk
-    " priority="-0.25">
+    " priority="-0.6">
     <!-- suppress excessive namespace declarations on every element -->
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>

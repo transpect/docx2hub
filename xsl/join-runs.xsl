@@ -512,17 +512,77 @@
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" 
-        group-adjacent="exists(self::w:r[w:instrText][every $c in * satisfies $c/(self::w:instrText | self::w:br (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]
-                               | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
+        group-adjacent="exists(
+                          self::w:r[w:instrText]
+                                   [every $c in * 
+                                    satisfies $c/(self::w:instrText | self::w:br 
+                                    (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]
+                          | self::w:fldSimple (: prEN_16815 :)
+                          | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
         <xsl:choose>
-          <xsl:when test="current-grouping-key() and exists(current-group()/self::w:r)">
+          <xsl:when test="current-grouping-key() and exists(current-group()/(self::w:r | self::w:fldsimple))">
+            <xsl:variable name="start" as="element(w:fldChar)"
+              select="(current-group()/w:instrText)[1]/preceding::w:fldChar[@w:fldCharType = 'begin'][1]"/>
             <w:r>
               <xsl:apply-templates select="current-group()/self::w:r/(@* except @srcpath)" mode="#current"/>
               <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
               <w:instrText xsl:exclude-result-prefixes="#all">
-                <xsl:sequence select="string-join(current-group()/w:instrText, '')"/>
+                <xsl:variable name="instr-text" as="xs:string" 
+                  select="string-join((
+                            current-group()/w:instrText |
+                            current-group()/self::w:fldSimple/@w:instr |
+                            current-group()/self::w:fldSimple/w:r/w:instrText
+                          ), '')"/>
+                <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
+                <xsl:choose>
+                  <xsl:when test="empty($instr-text)">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN3'"/>
+                    <xsl:attribute name="docx2hub:field-function-error" select="'missing or wrongly named w:instrText element'"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:variable name="prelim" as="attribute()+">
+                      <xsl:analyze-string select="$instr-text" regex="^\s*\\?(\i\c*)\s+">
+                        <xsl:matching-substring>
+                          <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))">
+                            <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms -->
+                          </xsl:attribute>
+                          <xsl:if test="empty(regex-group(1))">
+                            <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN1'"/>
+                            <xsl:attribute name="docx2hub:field-function-error" 
+                              select="string-join(('not a proper field function name:', .), ' ')"/>
+                          </xsl:if>
+                        </xsl:matching-substring>
+                        <xsl:non-matching-substring>
+                          <!-- use replace to de-escape Words quote escape fldArgs="&#34;\„Fenster offen\“-Erkennung&#34;" -->
+                          <!-- use replace to fix wrong applied quotes/ spaces in Word fldArgs="&#34; Very-Low-Cycle-Fatigue, VLCF&#34;" -->
+                          <xsl:attribute name="docx2hub:field-function-args" select="replace(
+                                                      normalize-space(replace(
+                                                                          replace(
+                                                                                  .,
+                                                                                  '^(&#34;)\s*(.+)$',
+                                                                                  '$1$2'),
+                                                                          '\s*(&#34;)$',
+                                                                          '$1')),
+                                                      '\\([&#x201e;&#x201c;])',
+                                                      '$1')"/>
+                        </xsl:non-matching-substring>
+                      </xsl:analyze-string>
+                    </xsl:variable>
+                    <xsl:choose>
+                      <xsl:when test="count($prelim) = 1 and not(matches($prelim[1], '^\i\c*$'))">
+                        <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN2'"/>
+                        <xsl:attribute name="docx2hub:field-function-error" 
+                          select="string-join(('not a proper field function name:', $prelim), ' ')"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:sequence select="$prelim"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:otherwise>
+                </xsl:choose>
+                <xsl:value-of select="$instr-text"/>
               </w:instrText>
             </w:r>
             <xsl:sequence select="current-group()/(self::w:bookmarkStart | self::w:bookmarkEnd)"/>

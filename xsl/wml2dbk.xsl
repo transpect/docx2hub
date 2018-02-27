@@ -104,66 +104,50 @@
 
   <!-- Each field function will be replaced with an XML element with the same name as the field function -->
 
-  <xsl:template match="/" mode="docx2hub:field-functions">
+  <xsl:template match="/dbk:hub" mode="docx2hub:field-functions" priority="2">
     <xsl:variable name="field-begins" as="element(w:fldChar)*" 
-      select="for $it in .//w:instrText
-              return $it/preceding::w:fldChar[1][@w:fldCharType = 'begin']"/>
+      select="key('docx2hub:item-by-id', .//w:instrText/@docx2hub:fldChar-start-id)"/>
+    <xsl:variable name="field-begin-ids" select="$field-begins/@xml:id" as="xs:string*"/>
     <xsl:variable name="field-ends" as="element(w:fldChar)*" 
       select=".//w:fldChar[@w:fldCharType = 'end']
-                          [exists(key('docx2hub:item-by-id', @linkend) intersect $field-begins)]"/>
+                          [@linkend = $field-begin-ids]"/>
+    <xsl:variable name="non-block-field-begins" as="element(w:fldChar)*" 
+      select="$field-begins[not(
+                              key('docx2hub:instrText-by-start-id', @xml:id)/@docx2hub:field-function-name 
+                              = $docx2hub:block-field-functions
+                           )]"/>
+    <xsl:variable name="non-block-field-begin-ids" select="$non-block-field-begins/@xml:id" as="xs:string*"/>
+    <xsl:variable name="non-block-field-ends" as="element(w:fldChar)*" 
+      select="$field-ends[@linkend = $non-block-field-begin-ids]"/>
+    <xsl:variable name="block-begins" as="element(w:fldChar)*"
+      select="$field-begins[key('docx2hub:instrText-by-start-id', @xml:id)/@docx2hub:field-function-name = $docx2hub:block-field-functions]"/>
+    <xsl:variable name="lookaround-count" as="xs:double*">
+      <xsl:for-each select="$non-block-field-begins">
+        <xsl:variable name="c" as="element(w:fldChar)?"
+          select="key('docx2hub:linking-item-by-id', @xml:id)[@w:fldCharType = 'end']"/>
+        <xsl:sequence select="xs:double(count(ancestor::w:p/following-sibling::*[$c >> .]))"/>
+      </xsl:for-each>
+    </xsl:variable>
+    
+    <xsl:variable name="max-lookaround-count" as="xs:integer" select="xs:integer((max($lookaround-count), 0)[1])"/>
+    <xsl:if test="$debug = 'yes'">
+      <xsl:message select="'Number of lookaround paragraphs for inline field functions: ', $max-lookaround-count"/>
+    </xsl:if>
     <xsl:next-match>
+      <!-- Pre-calculating all these params for large documents with many field functions, such as prEN_16815 -->
       <xsl:with-param name="field-begins" select="$field-begins" tunnel="yes"/>
       <xsl:with-param name="field-ends" select="$field-ends" tunnel="yes"/>
+      <xsl:with-param name="non-block-field-begin-ids" select="$non-block-field-begin-ids" tunnel="yes"/>
+      <xsl:with-param name="non-block-field-begins" select="$non-block-field-begins" tunnel="yes"/>
+      <xsl:with-param name="non-block-field-ends" select="$non-block-field-ends" tunnel="yes"/>
+      <xsl:with-param name="block-begins" select="$block-begins" tunnel="yes"/>
+      <xsl:with-param name="block-begin-ids" select="$block-begins/@xml:id" as="xs:string*" tunnel="yes"/>
+      <xsl:with-param name="lookaround-count" select="$max-lookaround-count" tunnel="yes"/>
     </xsl:next-match>
   </xsl:template>
   
-  <xsl:function name="docx2hub:field-function" as="xs:string+">
-    <!-- $result[1]: field function name, $result[2]: field function args -->
-    <xsl:param name="begin" as="element(w:fldChar)"/>
-    <xsl:variable name="instrText" select="$begin/following::w:instrText[1]" as="element(w:instrText)?"/>
-    <xsl:choose>
-      <xsl:when test="empty($instrText)">
-        <xsl:sequence select="'BROKEN3'"/>
-        <xsl:sequence select="string-join(('(missing or wrongly named w:instrText element)', $begin/following::*[1]), ' ')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="prelim" as="xs:string+">
-          <xsl:analyze-string select="$begin/following::w:instrText[1]" regex="^\s*\\?(\i\c*)\s+">
-            <xsl:matching-substring>
-              <xsl:sequence select="regex-group(1)"/>
-              <xsl:if test="empty(regex-group(1))">
-                <xsl:sequence select="'BROKEN1'"/>
-                <xsl:sequence select="."/>
-              </xsl:if>
-            </xsl:matching-substring>
-            <xsl:non-matching-substring>
-              <!-- use replace to de-escape Words quote escape fldArgs="&#34;\„Fenster offen\“-Erkennung&#34;" -->
-              <!-- use replace to fix wrong applied quotes/ spaces in Word fldArgs="&#34; Very-Low-Cycle-Fatigue, VLCF&#34;" -->
-              <xsl:sequence select="replace(
-                                          normalize-space(replace(
-                                                              replace(
-                                                                      .,
-                                                                      '^(&#34;)\s*(.+)$',
-                                                                      '$1$2'),
-                                                              '\s*(&#34;)$',
-                                                              '$1')),
-                                          '\\([&#x201e;&#x201c;])',
-                                          '$1')"/>
-            </xsl:non-matching-substring>
-          </xsl:analyze-string>
-        </xsl:variable>
-        <xsl:choose>
-          <xsl:when test="count($prelim) = 1 and not(matches($prelim[1], '^\i\c*$'))">
-            <xsl:sequence select="'BROKEN2'"/>
-            <xsl:sequence select="$prelim"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:sequence select="$prelim"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
+  <xsl:key name="docx2hub:instrText-by-start-id" match="w:instrText[@docx2hub:fldChar-start-id]" 
+    use="@docx2hub:fldChar-start-id"/>
 
   <xsl:variable name="docx2hub:block-field-functions" as="xs:string+" 
     select="('ADDRESSBLOCK', 'BIBLIOGRAPHY', 'COMMENTS', 'DATABASE', 'INDEX', 'RD', 'TOA', 'TOC')"/>
@@ -177,8 +161,8 @@
   <xsl:template match="*[w:p]" mode="docx2hub:field-functions">
     <xsl:param name="field-begins" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:param name="field-ends" as="element(w:fldChar)*" tunnel="yes"/>
-    <xsl:variable name="block-begins" as="element(w:fldChar)*"
-      select="$field-begins[docx2hub:field-function(.)[1] = $docx2hub:block-field-functions]"/>
+    <xsl:param name="block-begins" as="element(w:fldChar)*" tunnel="yes"/>
+    <xsl:param name="block-begin-ids" as="xs:string*" tunnel="yes"/>
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
       <!-- Assumption 1: Block field functions are not nested. There may be inline field functions
@@ -187,22 +171,25 @@
       Assumption 2: There is at most only one block field function begin per paragraph.
       Caveat: Since block field functions may be contained in table cells, we should only consider the 
       w:p/w:r/w:fldChars in this context, not arbitrarily deep .//w:fldChars (those in w:tbl/w:tc/w:p). -->
-      <xsl:for-each-group select="*" group-starting-with="w:p[.//w:fldChar/generate-id() = $block-begins/generate-id()]">
+      <xsl:for-each-group select="*" group-starting-with="w:p[w:r/w:fldChar/@xml:id = $block-begin-ids]">
         <xsl:variable name="begin-fldChar-candidates" as="element(w:fldChar)*"
-          select=".//w:fldChar[generate-id() = $block-begins/generate-id()]"/>
+          select="w:r/w:fldChar[@xml:id = $block-begin-ids]"/>
         <xsl:variable name="begin-fldChar" as="element(w:fldChar)?"
           select="($begin-fldChar-candidates)[1]"/>
         <xsl:if test="count($begin-fldChar-candidates) gt 1">
           <xsl:message select="'More than one begin w:fldChar found for ', $block-begins/@xml:id"/>
         </xsl:if>
         <xsl:choose>
-          <xsl:when test="$begin-fldChar">
-            <xsl:variable name="end-fldChar" as="element(w:fldChar)?" select="docx2hub:corresponding-end-fldChar($begin-fldChar)"/>
-            <xsl:variable name="name-and-args" as="xs:string+" select="docx2hub:field-function($begin-fldChar)"/>
+          <xsl:when test="exists($begin-fldChar)">
+            <xsl:variable name="instr-text" as="element(w:instrText)" 
+              select="key('docx2hub:instrText-by-start-id', $begin-fldChar/@xml:id)"/>
+            <xsl:variable name="end-fldChar" as="element(w:fldChar)?" select="$field-ends[@linkend = $begin-fldChar/@xml:id]"/>
+            <xsl:variable name="ffname" as="xs:string" select="$instr-text/@docx2hub:field-function-name"/>
+            <xsl:variable name="ffargs" as="xs:string" select="$instr-text/@docx2hub:field-function-args"/>
             <!-- GI 2010-16-13: It turns out that if the block end field function is at the beginning of a paragraph, then this
     paragraph must be excluded from the block. -->
-            <xsl:variable name="end-p" as="element(w:p)?"
-              select="for $p in current-group()/self::w:p[.//w:fldChar/generate-id() = $end-fldChar/generate-id()]
+            <xsl:variable name="end-p" as="element(w:p)*"
+              select="for $p in current-group()/self::w:p[.//w:fldChar[@w:fldCharType = 'end']/@linkend = $end-fldChar/@linkend]
                       return if (
                                   empty($end-fldChar/ancestor::w:p[1]//w:t intersect $end-fldChar/parent::w:r/preceding::w:t)
                                   and
@@ -213,8 +200,8 @@
             <xsl:for-each-group select="current-group()" group-ending-with="w:p[. is $end-p]">
               <xsl:choose>
                 <xsl:when test="current-group()[last()] is $end-p">
-                  <xsl:element name="{$name-and-args[1]}">
-                    <xsl:attribute name="fldArgs" select="$name-and-args[2]"/>
+                  <xsl:element name="{$ffname}">
+                    <xsl:attribute name="fldArgs" select="$ffargs"/>
                     <xsl:apply-templates select="current-group()" mode="#current">
                       <xsl:with-param name="field-begins" select="$field-begins except $begin-fldChar" tunnel="yes"/>
                       <xsl:with-param name="field-ends" select="$field-ends except $end-fldChar" tunnel="yes"/>
@@ -235,7 +222,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:function name="docx2hub:corresponding-end-fldChar" as="element(w:fldChar)?">
+  <!--<xsl:function name="docx2hub:corresponding-end-fldChar" as="element(w:fldChar)?">
     <xsl:param name="begin" as="element(w:fldChar)"/>
     <xsl:variable name="prelim" as="element(w:fldChar)*"
       select="key('docx2hub:linking-item-by-id', $begin/@xml:id, root($begin))[@w:fldCharType = 'end']"/>
@@ -246,31 +233,51 @@
       <xsl:message terminate="no" select="'No docx2hub:corresponding-end-fldChar() result for ', $begin"/>
     </xsl:if>
     <xsl:sequence select="$prelim[1]"/>
-  </xsl:function>
+  </xsl:function>-->
   
-  <xsl:function name="docx2hub:corresponding-begin-fldChar" as="element(w:fldChar)">
+  <!--<xsl:function name="docx2hub:corresponding-begin-fldChar" as="element(w:fldChar)">
     <xsl:param name="end" as="element(w:fldChar)"/>
     <xsl:sequence select="key('docx2hub:item-by-id', $end/@linkend, root($end))"/>
-  </xsl:function>
+  </xsl:function>-->
+  
+  
 
   <!-- convert inline field functions to elements of the same names -->
   <xsl:template match="w:p | w:hyperlink" mode="docx2hub:field-functions">
-    <xsl:param name="field-begins" as="element(w:fldChar)*" tunnel="yes"/>
-    <xsl:param name="field-ends" as="element(w:fldChar)*" tunnel="yes"/>
+    <xsl:param name="non-block-field-begins" as="element(w:fldChar)*" tunnel="yes"/>
+    <xsl:param name="non-block-field-ends" as="element(w:fldChar)*" tunnel="yes"/>
+    <xsl:param name="lookaround-count" as="xs:integer" tunnel="yes">
+      <!-- Number of elments to look back or ahead from the current paragraph in order to find 
+      inline field functions that span multiple paragraphs (HYPERLINK would be a candidate).
+      This limit has been introduced because it would be too expensive to consider the whole
+      document when looking for field begins or ends that stretch across the current para. -->
+    </xsl:param>
+
+<!--    <xsl:variable name="preceding-field-begins" as="element(w:fldChar)*" select="$non-block-field-begins[. &lt;&lt; current()]"/>
+    <xsl:variable name="following-or-contained-field-ends" as="element(w:fldChar)*" select="$non-block-field-ends[. >> current()]"/>
+    <xsl:variable name="last-in-para" as="element(*)" select="(current()/*[last()]/w:fldChar, current()/*[last()], current())[1]"/>
+    <xsl:variable name="following-field-ends" as="element(w:fldChar)*" select="$non-block-field-ends[. >> $last-in-para]"/>
+    <xsl:variable name="contained-field-begins" as="element(w:fldChar)*" select="$non-block-field-begins intersect .//w:fldChar"/>-->
+
+    <xsl:variable name="preceding-field-begins" as="element(w:fldChar)*" select="preceding-sibling::*[position() le $lookaround-count]//w:fldChar[@w:fldCharType='begin']"/>
+    <xsl:variable name="contained-field-begins" as="element(w:fldChar)*" select=".//w:fldChar[@w:fldCharType='begin']"/>
+    <xsl:variable name="following-field-ends" as="element(w:fldChar)*" select="following-sibling::*[position() le $lookaround-count]//w:fldChar[@w:fldCharType='end']"/>
+    <xsl:variable name="following-or-contained-field-ends" as="element(w:fldChar)*" select=".//w:fldChar[@w:fldCharType='end'] union $following-field-ends"/>
+    <!--<xsl:variable name="last-in-para" as="element(*)" select="(current()/*[last()]/w:fldChar, current()/*[last()], current())[1]"/>-->
+    
+    <xsl:variable name="begins-before-ids" as="xs:string*" 
+      select="$following-or-contained-field-ends[@linkend = $preceding-field-begins/@xml:id]/@linkend"/>
+    <xsl:variable name="ends-after-ids" as="xs:string*" 
+      select="$following-field-ends[@linkend = ($preceding-field-begins | $contained-field-begins)/@xml:id]/@xml:id"/>
     <xsl:variable name="begins-before-para" as="element(w:r)*">
-      <xsl:for-each select="$field-begins[. &lt;&lt; current()]
-                                         [not(docx2hub:field-function(.)[1] = $docx2hub:block-field-functions)]
-                                         [not(docx2hub:corresponding-end-fldChar(.) &lt;&lt; current())]">
+      <xsl:for-each select="key('docx2hub:item-by-id', $begins-before-ids)">
         <w:r>
-          <xsl:sequence select="., following::w:instrText[1]"/>
+          <xsl:sequence select="., key('docx2hub:instrText-by-start-id', @xml:id)"/>
         </w:r>
       </xsl:for-each>
     </xsl:variable>
     <xsl:variable name="ends-after-para" as="element(*)*"
-      select="for $last-in-para in (current()/*[last()]/w:fldChar, current()/*[last()], current())[1]
-              return $field-ends[. &gt;&gt; $last-in-para]
-                                [not(docx2hub:corresponding-begin-fldChar(.) &gt;&gt; $last-in-para)]
-                /.."/>
+      select="key('docx2hub:item-by-id', $ends-after-ids)/.."/>
     <xsl:for-each select="$ends-after-para[not(name() = ('w:r', 'm:r'))]">
       <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_096', 'WRN', 'wml-to-dbk', 
                                              concat('Unexpected field function context ''', name(), ''' with content ''', string(.), ''''))"/>
@@ -290,29 +297,32 @@
   
   <xsl:template name="docx2hub:nest-inline-field-function" as="element(*)*">
     <xsl:param name="para-contents" as="document-node()"/>
+    <xsl:param name="non-block-field-begin-ids" as="xs:string*" tunnel="yes"/>
     <xsl:variable name="innermost-nesting-begins" as="element(w:fldChar)*" 
-      select="for $f in $para-contents/w:r/w:fldChar[@w:fldCharType = 'begin']
-                                                    [not(docx2hub:field-function(.)[1] = $docx2hub:block-field-functions)]
-              return $f[docx2hub:corresponding-end-fldChar(.) 
-                        is 
+      select="for $f in ($para-contents/w:r/w:fldChar[@xml:id = $non-block-field-begin-ids])
+              return $f[@xml:id
+                        =
                         ($para-contents/w:r/w:fldChar[not(@w:fldCharType = 'separate')]
                                                      [. &gt;&gt; $f]
-                        )[1]
+                        )[1]/@linkend
                        ]"/>
     <xsl:choose>
       <xsl:when test="empty($para-contents/*)"/>
       <xsl:when test="exists($innermost-nesting-begins)">
         <xsl:variable name="innermost-nesting-begin" as="element(w:fldChar)" select="$innermost-nesting-begins[1]"/>
         <xsl:variable name="innermost-nesting-end" as="element(w:fldChar)" 
-          select="docx2hub:corresponding-end-fldChar($innermost-nesting-begin)"/>
-        <xsl:variable name="name-and-args" as="xs:string+" select="docx2hub:field-function($innermost-nesting-begin)"/>
+          select="$para-contents/w:r/w:fldChar[@w:fldCharType = 'end'][@linkend =$innermost-nesting-begin/@xml:id]">
+          <!-- don’t try to find it by key – the nodes in $para-contents are copies of the original document nodes --> 
+        </xsl:variable>
+        <xsl:variable name="instr-text" as="element(w:instrText)" select="key('docx2hub:instrText-by-start-id', $innermost-nesting-begin/@xml:id)"/>
+        <xsl:variable name="ffname" as="xs:string" select="$instr-text/@docx2hub:field-function-name"/>
+        <xsl:variable name="ffargs" as="xs:string" select="$instr-text/@docx2hub:field-function-args"/>
         <xsl:call-template name="docx2hub:nest-inline-field-function">
           <xsl:with-param name="para-contents">
             <xsl:document>
               <xsl:sequence select="$para-contents/*[. &lt;&lt; $innermost-nesting-begin/..]"/>
-              <xsl:element name="{upper-case(replace($name-and-args[1], '\\', ''))}" xmlns="">
-                <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms -->
-                <xsl:attribute name="fldArgs" select="$name-and-args[2]"/>
+              <xsl:element name="{replace($ffname, '\\', '')}" xmlns="">
+                <xsl:attribute name="fldArgs" select="$ffargs"/>
                 <xsl:sequence select="$para-contents/*[. &gt;&gt; $innermost-nesting-begin/..]
                                                       [. &lt;&lt; $innermost-nesting-end/..]"/>
               </xsl:element>
@@ -967,6 +977,11 @@
                 <xsl:value-of select="$tokens[2]"/>    
               </keyword>
               </xsl:if>
+          </xsl:when>
+          <xsl:when test="name() = 'IF'">
+            <!-- Ignore silently. Conditionally calculated field function values are sometimes seen in figure or
+            table counters. These are also included as the calculated value in the docx file. Therefore we see
+            no immediate pressure to evaluate these expressions. -->
           </xsl:when>
           <xsl:when test="matches(@fldArgs,'^[\s&#160;]*$')">
             <xsl:apply-templates mode="#current"/>

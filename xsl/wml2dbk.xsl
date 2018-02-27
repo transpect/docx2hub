@@ -133,6 +133,7 @@
     <xsl:if test="$debug = 'yes'">
       <xsl:message select="'Number of lookaround paragraphs for inline field functions: ', $max-lookaround-count"/>
     </xsl:if>
+    <!--<xsl:message select="'CCCCCCCCCCCCC ', count($non-block-field-begins), count($non-block-field-ends)"></xsl:message>-->
     <xsl:next-match>
       <!-- Pre-calculating all these params for large documents with many field functions, such as prEN_16815 -->
       <xsl:with-param name="field-begins" select="$field-begins" tunnel="yes"/>
@@ -314,18 +315,34 @@
           select="$para-contents/w:r/w:fldChar[@w:fldCharType = 'end'][@linkend =$innermost-nesting-begin/@xml:id]">
           <!-- don’t try to find it by key – the nodes in $para-contents are copies of the original document nodes --> 
         </xsl:variable>
-        <xsl:variable name="instr-text" as="element(w:instrText)" select="key('docx2hub:instrText-by-start-id', $innermost-nesting-begin/@xml:id)"/>
-        <xsl:variable name="ffname" as="xs:string" select="$instr-text/@docx2hub:field-function-name"/>
-        <xsl:variable name="ffargs" as="xs:string" select="$instr-text/@docx2hub:field-function-args"/>
+        <xsl:variable name="instr-text" as="element(w:instrText)*" 
+          select="key('docx2hub:instrText-by-start-id', $innermost-nesting-begin/@xml:id)[not(@docx2hub:field-function-error)]"/>
+        <xsl:if test="count($instr-text) gt 1">
+          <xsl:message select="'More than one instrText: '"/>
+          <xsl:for-each select="$instr-text">
+            <xsl:message select="'ID: ', string(@docx2hub:fldChar-start-id), ', Error: ', string(@docx2hub:field-function-error),
+              ', Name: ', string(@docx2hub:field-function-name), ', Args: ', string(@docx2hub:field-function-args)"/>
+          </xsl:for-each>
+        </xsl:if>
+        <xsl:variable name="ffname" as="xs:string" select="$instr-text[1]/@docx2hub:field-function-name"/>
+        <xsl:variable name="ffargs" as="xs:string?" select="$instr-text[1]/@docx2hub:field-function-args"/>
         <xsl:call-template name="docx2hub:nest-inline-field-function">
           <xsl:with-param name="para-contents">
             <xsl:document>
               <xsl:sequence select="$para-contents/*[. &lt;&lt; $innermost-nesting-begin/..]"/>
-              <xsl:element name="{replace($ffname, '\\', '')}" xmlns="">
-                <xsl:attribute name="fldArgs" select="$ffargs"/>
-                <xsl:sequence select="$para-contents/*[. &gt;&gt; $innermost-nesting-begin/..]
-                                                      [. &lt;&lt; $innermost-nesting-end/..]"/>
-              </xsl:element>
+              <xsl:variable name="inner" as="node()*" select="$para-contents/*[. &gt;&gt; $innermost-nesting-begin/..]
+                                                                              [. &lt;&lt; $innermost-nesting-end/..]"/>
+              <xsl:choose>
+                <xsl:when test="exists($ffargs)"><!-- no error -->
+                  <xsl:element name="{replace($ffname, '\\', '')}" xmlns="">
+                    <xsl:attribute name="fldArgs" select="$ffargs"/>
+                    <xsl:sequence select="$inner"/>
+                  </xsl:element>    
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:sequence select="$inner"/>
+                </xsl:otherwise>
+              </xsl:choose>
               <xsl:sequence select="$para-contents/*[. &gt;&gt; $innermost-nesting-end/..]"/>
             </xsl:document>
           </xsl:with-param>

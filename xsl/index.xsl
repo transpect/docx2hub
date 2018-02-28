@@ -16,6 +16,7 @@
   xmlns:tr="http://transpect.io"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
@@ -125,6 +126,29 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="XE[@fldArgs = '&quot;'][m:oMath][every $c in * satisfies $c/self::m:oMath]" 
+    mode="wml-to-dbk" priority="3">
+    <indexterm>
+      <primary sortas="{.}">
+        <xsl:apply-templates mode="#current"/>
+      </primary>
+    </indexterm>
+  </xsl:template>
+  
+  <xsl:template match="XE[@fldArgs][m:oMath]" mode="wml-to-dbk" priority="2.5">
+    <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_051', 'WRN', 'wml-to-dbk', 
+                            concat('Unexpected formula in indexterm (XE) ''', @fldArgs, ' ', ., ''''))"/>
+  </xsl:template>
+  
+  <!--<xsl:template match="XE[@fldArgs][m:oMath]" 
+    mode="wml-to-dbk" priority="2.5">
+    <indexterm>
+      <primary>
+        <xsl:apply-templates mode="#current"/>
+      </primary>
+    </indexterm>
+  </xsl:template>-->
 
   <xsl:template name="indexterm-sub">
     <xsl:param name="pos" as="xs:integer"/>

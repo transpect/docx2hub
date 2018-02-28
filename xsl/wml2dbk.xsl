@@ -186,7 +186,7 @@
               select="key('docx2hub:instrText-by-start-id', $begin-fldChar/@xml:id)"/>
             <xsl:variable name="end-fldChar" as="element(w:fldChar)?" select="$field-ends[@linkend = $begin-fldChar/@xml:id]"/>
             <xsl:variable name="ffname" as="xs:string" select="$instr-text/@docx2hub:field-function-name"/>
-            <xsl:variable name="ffargs" as="xs:string" select="$instr-text/@docx2hub:field-function-args"/>
+            <xsl:variable name="ffargs" as="xs:string?" select="$instr-text/@docx2hub:field-function-args"/>
             <!-- GI 2010-16-13: It turns out that if the block end field function is at the beginning of a paragraph, then this
     paragraph must be excluded from the block. -->
             <xsl:variable name="end-p" as="element(w:p)*"

@@ -34,49 +34,6 @@
                       select="if(matches(@fldArgs, '\\t')) 
                               then replace(@fldArgs, '^.*\\t\s*&quot;(.+?)&quot;(.*$|$)', '$1') 
                               else ()"/>
-        <xsl:variable name="type" as="xs:string?" 
-                    select="if(matches(@fldArgs, '\\f')) 
-                              then replace(@fldArgs, '^.*\\f\s*&quot;?(.+?)&quot;?\s*(\\.*$|$)', '$1')
-                       else if(some $i in tokenize(@fldArgs,':') satisfies matches($i,'Register§§')) 
-                              then replace(tokenize(@fldArgs,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')
-                       else        ()"/>
-        <xsl:variable name="indexterm-attributes" as="attribute()*">
-          <xsl:if test="matches(@fldArgs, '\\i')">
-            <xsl:attribute name="role" select="'hub:pagenum-italic'"/>
-          </xsl:if>
-          <xsl:if test="matches(@fldArgs, '\\b')">
-            <xsl:attribute name="role" select="'hub:pagenum-bold'"/>
-          </xsl:if>
-          <xsl:if test="matches(@fldArgs, '\\s')">
-            <xsl:attribute name="class" select="'startofrange'"/>
-          </xsl:if>
-          <xsl:if test="matches(@fldArgs, '\\e')">
-            <xsl:attribute name="class" select="'endofrange'"/>
-          </xsl:if>
-          <xsl:if test="matches(@fldArgs, '\\r')">
-            <xsl:variable name="id" as="xs:string" 
-              select="tr:rereplace-chars(replace(@fldArgs, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
-            <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)*" 
-              select="key('docx2hub:bookmarkStart-by-name', ($id, upper-case($id)), root($context))"/>
-            <xsl:choose>
-              <xsl:when test="exists($bookmark-start)">
-                <xsl:variable name="start-id" as="attribute(xml:id)">
-                  <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id"/>
-                </xsl:variable>
-                <xsl:variable name="end-id" as="attribute(xml:id)">
-                  <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id">
-                    <xsl:with-param name="end" select="true()"/>
-                  </xsl:apply-templates>
-                </xsl:variable>
-                <xsl:attribute name="linkends" select="$start-id, $end-id" separator=" "/>
-                <!-- Create distinct startofrange/endofrange indexterms at the anchors specified by linkends in the next pass. -->
-              </xsl:when>
-            </xsl:choose>
-          </xsl:if>
-          <xsl:if test="not(empty($type))">
-            <xsl:attribute name="type" select="tr:rereplace-chars($type)"/>
-          </xsl:if>
-        </xsl:variable>
         <xsl:variable name="temporary-term" as="node()*" select="tr:extract-chars(@fldArgs,'\','\\')"/>
         <xsl:variable name="real-term" as="node()*">
           <xsl:for-each-group select="$temporary-term" group-starting-with="*:text[matches(.,'^\\')]">
@@ -99,9 +56,9 @@
         </xsl:variable>
         <xsl:variable name="indexterm">
           <indexterm docx2hub:field-function="yes">
-            <xsl:for-each-group select="$indexterm-attributes" group-by="name()">
-              <xsl:attribute name="{name()}" select="string-join(current-group(), ' ')"/>
-            </xsl:for-each-group>
+            <xsl:call-template name="docx2hub:indexterm-attributes">
+              <xsl:with-param name="xe" select="."/>
+            </xsl:call-template>
             <xsl:for-each select="('primary', 'secondary', 'tertiary')">
               <xsl:call-template name="indexterm-sub">
                 <xsl:with-param name="pos" select="position()"/>
@@ -127,8 +84,62 @@
     </xsl:choose>
   </xsl:template>
   
+  <xsl:template name="docx2hub:indexterm-attributes">
+    <xsl:param name="xe" as="element(XE)"/>
+    <xsl:variable name="type" as="xs:string?" 
+                  select="if(matches($xe/@fldArgs, '\\f')) 
+                          then replace($xe/@fldArgs, '^.*\\f\s*&quot;?(.+?)&quot;?\s*(\\.*$|$)', '$1')
+                          else 
+                            if(some $i in tokenize($xe/@fldArgs,':') satisfies matches($i,'Register§§')) 
+                            then replace(tokenize($xe/@fldArgs,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')
+                            else ()"/>
+    <xsl:variable name="indexterm-attributes" as="attribute()*">
+      <xsl:if test="matches($xe/@fldArgs, '\\i')">
+        <xsl:attribute name="role" select="'hub:pagenum-italic'"/>
+      </xsl:if>
+      <xsl:if test="matches($xe/@fldArgs, '\\b')">
+        <xsl:attribute name="role" select="'hub:pagenum-bold'"/>
+      </xsl:if>
+      <xsl:if test="matches($xe/@fldArgs, '\\s')">
+        <xsl:attribute name="class" select="'startofrange'"/>
+      </xsl:if>
+      <xsl:if test="matches($xe/@fldArgs, '\\e')">
+        <xsl:attribute name="class" select="'endofrange'"/>
+      </xsl:if>
+      <xsl:if test="matches(@fldArgs, '\\r')">
+        <xsl:variable name="id" as="xs:string" 
+          select="tr:rereplace-chars(replace($xe/@fldArgs, '^.*\\r\s*&quot;?\s*(.+?)\s*&quot;?\s*(\\.*$|$)', '$1'))"/>
+        <xsl:variable name="bookmark-start" as="element(w:bookmarkStart)*" 
+          select="key('docx2hub:bookmarkStart-by-name', ($id, upper-case($id)), root($xe))"/>
+        <xsl:choose>
+          <xsl:when test="exists($bookmark-start)">
+            <xsl:variable name="start-id" as="attribute(xml:id)">
+              <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id"/>
+            </xsl:variable>
+            <xsl:variable name="end-id" as="attribute(xml:id)">
+              <xsl:apply-templates select="$bookmark-start/@w:name" mode="bookmark-id">
+                <xsl:with-param name="end" select="true()"/>
+              </xsl:apply-templates>
+            </xsl:variable>
+            <xsl:attribute name="linkends" select="$start-id, $end-id" separator=" "/>
+            <!-- Create distinct startofrange/endofrange indexterms at the anchors specified by linkends in the next pass. -->
+          </xsl:when>
+        </xsl:choose>
+      </xsl:if>
+      <xsl:if test="not(empty($type))">
+        <xsl:attribute name="type" select="tr:rereplace-chars($type)"/>
+      </xsl:if>
+    </xsl:variable>
+    <xsl:for-each-group select="$indexterm-attributes" group-by="name()">
+      <xsl:attribute name="{name()}" select="string-join(current-group(), ' ')"/>
+    </xsl:for-each-group>
+  </xsl:template>
+  
   <xsl:template match="XE[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="2">
-    <indexterm>
+    <indexterm docx2hub:field-function="yes">
+      <xsl:call-template name="docx2hub:indexterm-attributes">
+        <xsl:with-param name="xe" select="."/>
+      </xsl:call-template>
       <primary sortas="{.}">
         <xsl:apply-templates mode="#current"/>
       </primary>

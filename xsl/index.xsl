@@ -22,7 +22,7 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr">
 
-  <xsl:template match="XE[@fldArgs]" mode="wml-to-dbk" priority="2">
+  <xsl:template match="XE[@fldArgs][not(@docx2hub:contains-markup)]" mode="wml-to-dbk" priority="2">
     <xsl:variable name="context" as="element(XE)" select="."/>
     <xsl:apply-templates select="w:r" mode="#current"/>
     <xsl:choose>
@@ -127,8 +127,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="XE[@fldArgs = '&quot;'][m:oMath][every $c in * satisfies $c/self::m:oMath]" 
-    mode="wml-to-dbk" priority="3">
+  <xsl:template match="XE[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="2">
     <indexterm>
       <primary sortas="{.}">
         <xsl:apply-templates mode="#current"/>
@@ -136,10 +135,12 @@
     </indexterm>
   </xsl:template>
   
-  <xsl:template match="XE[@fldArgs][m:oMath]" mode="wml-to-dbk" priority="2.5">
+  <xsl:template match="*[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
     <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_051', 'WRN', 'wml-to-dbk', 
-                            concat('Unexpected formula in indexterm (XE) ''', @fldArgs, ' ', ., ''''))"/>
+                            concat('Unexpected markup in ''', name(), ' ', @fldArgs, ' ', ., ''''))"/>
   </xsl:template>
+  
+  
   
   <!--<xsl:template match="XE[@fldArgs][m:oMath]" 
     mode="wml-to-dbk" priority="2.5">

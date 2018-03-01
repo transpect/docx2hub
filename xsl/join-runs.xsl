@@ -16,6 +16,7 @@
   xmlns:tr="http://transpect.io"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
@@ -518,9 +519,12 @@
                                     satisfies $c/(self::w:instrText | self::w:br 
                                     (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]
                           | self::w:fldSimple (: prEN_16815 :)
+                          | self::m:oMath[preceding-sibling::*[empty(self::m:oMath)][1]/self::w:r[w:instrText]] (: hanser_loeser_omml_index :)
                           | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
         <xsl:choose>
-          <xsl:when test="current-grouping-key() and exists(current-group()/(self::w:r | self::w:fldsimple))">
+          <xsl:when test="current-grouping-key() 
+                          and 
+                          exists(current-group()/(self::w:r | self::w:fldsimple | self::m:oMath))">
             <xsl:variable name="start" as="element(w:fldChar)"
               select="(current-group()/w:instrText)[1]/preceding::w:fldChar[@w:fldCharType = 'begin'][1]"/>
             <w:r>
@@ -529,15 +533,15 @@
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
               <w:instrText xsl:exclude-result-prefixes="#all">
-                <xsl:variable name="instr-text" as="xs:string" 
-                  select="string-join((
-                            current-group()/w:instrText |
-                            current-group()/self::w:fldSimple/@w:instr |
-                            current-group()/self::w:fldSimple/w:r/w:instrText
-                          ), '')"/>
+                <xsl:variable name="instr-text-nodes" as="item()*" 
+                  select="current-group()/w:instrText |
+                          current-group()/self::w:fldSimple/@w:instr |
+                          current-group()/self::w:fldSimple/w:r/w:instrText |
+                          current-group()/self::m:oMath (: may occur in XE :)"/>
+                <xsl:variable name="instr-text" as="xs:string" select="string-join($instr-text-nodes, '')"/>
                 <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
                 <xsl:choose>
-                  <xsl:when test="empty($instr-text)">
+                  <xsl:when test="empty($instr-text-nodes)">
                     <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN3'"/>
                     <xsl:attribute name="docx2hub:field-function-error" select="'missing or wrongly named w:instrText element'"/>
                   </xsl:when>
@@ -582,7 +586,7 @@
                     </xsl:choose>
                   </xsl:otherwise>
                 </xsl:choose>
-                <xsl:value-of select="$instr-text"/>
+                <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compund"/>
               </w:instrText>
             </w:r>
             <xsl:sequence select="current-group()/(self::w:bookmarkStart | self::w:bookmarkEnd)"/>
@@ -594,6 +598,27 @@
       </xsl:for-each-group>
     </xsl:copy>
   </xsl:template>
+  
+  <xsl:template match="* | @*" mode="docx2hub:join-instrText-runs_render-compund">
+    <xsl:value-of select="."/>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[1] | @w:instr[1]" mode="docx2hub:join-instrText-runs_render-compund" priority="1">
+    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;\s*', '')"/>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[last()] | @w:instr[last()]" mode="docx2hub:join-instrText-runs_render-compund" priority="1">
+    <xsl:value-of select="replace(., '\s*&quot;\s*$', '')"/>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[1][last()] | @w:instr[1][last()]" mode="docx2hub:join-instrText-runs_render-compund" priority="1.5">
+    <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;\s*', ''), '\s*&quot;\s*$', '')"/>
+  </xsl:template>
+  
+  <xsl:template match="m:oMath" mode="docx2hub:join-instrText-runs_render-compund" priority="2">
+    <xsl:sequence select="."/>
+  </xsl:template>
+  
 
   <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1">
     <xsl:variable name="prelim" as="document-node(element(*))">

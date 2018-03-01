@@ -336,6 +336,10 @@
                 <xsl:when test="exists($ffargs)"><!-- no error -->
                   <xsl:element name="{replace($ffname, '\\', '')}" xmlns="">
                     <xsl:attribute name="fldArgs" select="$ffargs"/>
+                    <xsl:if test="exists($instr-text[1]/*)">
+                      <xsl:attribute name="docx2hub:contains-markup" select="'yes'"/>
+                      <xsl:sequence select="$instr-text[1]/node()"/>
+                    </xsl:if>
                     <xsl:sequence select="$inner"/>
                   </xsl:element>    
                 </xsl:when>

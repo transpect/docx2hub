@@ -2505,6 +2505,7 @@
                         (matches($string, '^\s') or matches($string, '\s$'))">
             <xsl:attribute name="xml:space" select="'preserve'"/>
           </xsl:if>
+          <xsl:apply-templates select="@*"/>
           <xsl:value-of select="if ($mml-space-handling = 'figure-space') 
                                 then replace($string, ' ', '&#x2007;')
                                 else $string"/>

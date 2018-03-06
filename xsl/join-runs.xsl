@@ -31,6 +31,8 @@
     </xsl:copy>
   </xsl:template>
   
+ <xsl:variable name="footnote-ids" select="//dbk:footnote/@xml:id" as="xs:string*"/>
+
   <xsl:template match="dbk:para[
                          dbk:br[@role eq 'column'][preceding-sibling::node() and following-sibling::node()]
                        ]" mode="docx2hub:join-runs" priority="5">
@@ -105,6 +107,10 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="dbk:footnote/@xml:id" mode="docx2hub:join-runs">
+      <xsl:attribute name="{name()}" select="concat('fn-', index-of($footnote-ids, .))"/>
+  </xsl:template>
+
   <xsl:template match="dbk:phrase[@role='hub:identifier'][ancestor::dbk:footnote[@xreflabel]]" mode="docx2hub:join-runs" priority="+10">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@* | ancestor::dbk:footnote/@xreflabel | node()" mode="#current"/>

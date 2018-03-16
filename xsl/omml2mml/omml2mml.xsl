@@ -13,6 +13,7 @@
   xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:mml="http://www.w3.org/1998/Math/MathML"
   version="2.0" exclude-result-prefixes="m w mml xs">
   <!-- %% Global Definitions -->
+<xsl:output indent="yes"></xsl:output>
 
   <xsl:variable name="alpha-uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" as="xs:string"/>
   <xsl:variable name="alpha-lowercase" select="'abcdefghijklmnopqrstuvwxyz'" as="xs:string"/>
@@ -1343,18 +1344,35 @@
   </xsl:template>
 
   <xsl:template match="m:sPre" mode="omml2mml">
-    <mml:mmultiscripts>
+    <xsl:variable name="expression">
+      <xsl:apply-templates select="m:e" mode="#current"/>
+    </xsl:variable>
+    <xsl:variable name="non-mrow-elements" select="($expression//*[not(self::mml:mrow) and (every $a in ancestor::mml:* satisfies $a/self::mml:mrow)])"/>
+    <xsl:variable name="mmultiscript">
       <mml:mrow>
-        <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
+        <mml:mmultiscripts>
+          <mml:mrow>
+            <xsl:copy-of select="$non-mrow-elements[1]"/>
+          </mml:mrow>
+          <mml:mprescripts/>
+          <mml:mrow>
+            <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
+          </mml:mrow>
+          <mml:mrow>
+            <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
+          </mml:mrow>
+        </mml:mmultiscripts>
+        <xsl:copy-of select="$non-mrow-elements[position() gt 1]"/>
       </mml:mrow>
-      <mml:mprescripts/>
-      <mml:mrow>
-        <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
-      </mml:mrow>
-      <mml:mrow>
-        <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
-      </mml:mrow>
-    </mml:mmultiscripts>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="count($non-mrow-elements) eq 1">
+        <xsl:copy-of select="$mmultiscript/node()/node()"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select="$mmultiscript/node()"/>
+      </xsl:otherwise>
+    </xsl:choose>    
   </xsl:template>
 
   <xsl:template match="m:m" mode="omml2mml">

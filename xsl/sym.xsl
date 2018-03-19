@@ -204,10 +204,12 @@
   <xsl:template name="create-symbol">
     <xsl:param name="tokens" as="xs:string+"/>
     <xsl:param name="context" as="node()"/>
+    <xsl:variable name="font" select="replace($tokens[position()=(index-of($tokens,'\f')+1)], '&quot;', '')" as="xs:string?"/>
     <xsl:choose>
-      <xsl:when test="count(index-of($tokens,'\f'))=1 and index-of($tokens,'\f') &gt; 2">
-        <xsl:variable name="font" select="replace($tokens[position()=(index-of($tokens,'\f')+1)], '&quot;', '')"/>
-        <xsl:variable name="sym" select="$tokens[2]"/>
+      <xsl:when test="count(index-of($tokens,'\f'))=1 and index-of($tokens,'\f') &gt; 1">  
+        <xsl:variable name="sym" select="if(index-of($tokens,'\f') eq 2) 
+                                         then $tokens[1]
+                                         else $tokens[2]" as="xs:string"/>
         <xsl:choose>
           <xsl:when test="$font = $docx2hub:symbol-font-names">
             <xsl:variable name="number" select="if (matches($sym, '^[0-9]+$')) then tr:dec-to-hex(xs:integer($sym)) else 'NaN'"/>
@@ -240,6 +242,8 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  
 
   <xsl:function name="tr:dec-to-hex" as="xs:string">
     <xsl:param name="in" as="xs:integer?"/>

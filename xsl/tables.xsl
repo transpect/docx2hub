@@ -36,6 +36,7 @@
                                              count(w:tblGrid/w:gridCol),
                                              max(for $row in w:tr return count($row/w:tc)) (: fallback if w:tblGrid is missing :) 
                                            )[not(. = 0)][1]"/>
+        <xsl:variable name="table-adhoc-borders" select="w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width))')]"/>
         <xsl:variable name="insideH-width" as="xs:string?" 
           select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
         <xsl:variable name="insideV-width" as="xs:string?" 
@@ -66,6 +67,7 @@
               <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
               <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
               <xsl:with-param name="cell-style" tunnel="yes" as="attribute(role)?" select="$cell-style"/>
+              <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
             </xsl:apply-templates>
           </thead>
         </xsl:if>
@@ -78,6 +80,7 @@
             <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
             <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
             <xsl:with-param name="cell-style" tunnel="yes" as="attribute(role)?" select="$cell-style"/>
+            <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
           </xsl:apply-templates>
         </tbody>
       </tgroup>
@@ -250,6 +253,7 @@
     <xsl:param name="cell-style" as="attribute(role)?" tunnel="yes"/>
     <xsl:param name="col-widths" tunnel="yes" as="xs:integer*"/>
     <xsl:param name="row-overrides" as="attribute(*)*"/>
+    <xsl:param name="table-borders" as="attribute(*)*" tunnel="yes"/>
     <xsl:variable name="pos" select="position()"/>
     <xsl:element name="entry">
 <!--      <xsl:copy-of select="ancestor::w:tbl[1]/w:tblPr/@css:*[not(matches(local-name(), '^(border|background-color|width)'))]"/>-->
@@ -263,6 +267,18 @@
       <xsl:variable name="is-first-row-in-group" select="tr:node-index-of(../../w:tr, ..) = 1" as="xs:boolean"/>
       <xsl:variable name="is-last-row-in-group" select="tr:node-index-of(../../w:tr, ..) = count(../../w:tr)" as="xs:boolean"/>
       <xsl:apply-templates select="$row-overrides, @*" mode="wml-to-dbk">
+        <xsl:with-param name="is-first-cell" select="$is-first-cell" tunnel="yes"/>
+        <xsl:with-param name="is-last-cell" select="$is-last-cell" tunnel="yes"/>
+        <xsl:with-param name="is-first-row-in-group" select="$is-first-row-in-group" tunnel="yes"/>
+        <xsl:with-param name="is-last-row-in-group" select="$is-last-row-in-group" tunnel="yes"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="$table-borders" mode="copy-borders">
+        <xsl:with-param name="is-first-cell" select="$is-first-cell" tunnel="yes"/>
+        <xsl:with-param name="is-last-cell" select="$is-last-cell" tunnel="yes"/>
+        <xsl:with-param name="is-first-row-in-group" select="$is-first-row-in-group" tunnel="yes"/>
+        <xsl:with-param name="is-last-row-in-group" select="$is-last-row-in-group" tunnel="yes"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="@*" mode="wml-to-dbk">
         <xsl:with-param name="is-first-cell" select="$is-first-cell" tunnel="yes"/>
         <xsl:with-param name="is-last-cell" select="$is-last-cell" tunnel="yes"/>
         <xsl:with-param name="is-first-row-in-group" select="$is-first-row-in-group" tunnel="yes"/>
@@ -300,7 +316,7 @@
       <xsl:apply-templates select="*" mode="#current"/>
     </xsl:element>
   </xsl:template>
-
+<!--
   <xsl:template match="@css:border-insideH-style | @css:border-insideH-width | @css:border-insideH-color" mode="wml-to-dbk" priority="10">
     <xsl:param name="is-first-row-in-group" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="is-last-row-in-group" as="xs:boolean?" tunnel="yes"/>
@@ -310,14 +326,52 @@
     <xsl:if test="not($is-last-row-in-group)">
       <xsl:attribute name="{replace(name(), 'insideH', 'bottom')}" select="."/>
     </xsl:if>
-  </xsl:template>
+  </xsl:template>-->
   
+
+  <xsl:template match="@css:border-insideH-style | @css:border-insideH-width | @css:border-insideH-color" mode="wml-to-dbk" priority="10">
+      <xsl:attribute name="{replace(name(), 'insideH', 'top')}" select="."/>
+      <xsl:attribute name="{replace(name(), 'insideH', 'bottom')}" select="."/>
+  </xsl:template>
+
+  <xsl:template match="@*[matches(local-name(), 'border-top')]" mode="copy-borders" priority="10">
+    <xsl:param name="is-first-row-in-group" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="is-last-row-in-group" as="xs:boolean?" tunnel="yes"/>
+    <xsl:if test="$is-first-row-in-group">
+      <xsl:copy/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@*[matches(local-name(), 'border-bottom')]" mode="copy-borders" priority="10">
+    <xsl:param name="is-first-row-in-group" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="is-last-row-in-group" as="xs:boolean?" tunnel="yes"/>
+    <xsl:if test="$is-last-row-in-group">
+      <xsl:copy/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@*[matches(local-name(), 'border-left')]" mode="copy-borders" priority="10">
+    <xsl:param name="is-first-cell" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="is-last-cell" as="xs:boolean?" tunnel="yes"/>
+     <xsl:if test="$is-first-cell">
+      <xsl:copy/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@*[matches(local-name(), 'border-right')]" mode="copy-borders" priority="10">
+    <xsl:param name="is-first-cell" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="is-last-cell" as="xs:boolean?" tunnel="yes"/>
+     <xsl:if test="$is-last-cell">
+      <xsl:copy/>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:function name="docx2hub:linked-cell-style-name" as="xs:string">
     <xsl:param name="table-style-name" as="xs:string"/>
     <xsl:sequence select="concat($table-style-name, '_cell')"/>
   </xsl:function>
-  
-  <xsl:template match="@css:border-insideV-style | @css:border-insideV-width | @css:border-insideV-color" mode="wml-to-dbk" priority="10">
+
+  <!--<xsl:template match="@css:border-insideV-style | @css:border-insideV-width | @css:border-insideV-color" mode="wml-to-dbk" priority="10">
     <xsl:param name="is-first-cell" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="is-last-cell" as="xs:boolean?" tunnel="yes"/>
     <xsl:if test="not($is-first-cell)">
@@ -326,6 +380,11 @@
     <xsl:if test="not($is-last-cell)">
       <xsl:attribute name="{replace(name(), 'insideV', 'right')}" select="."/>
     </xsl:if>
+  </xsl:template>-->
+  
+  <xsl:template match="@css:border-insideV-style | @css:border-insideV-width | @css:border-insideV-color" mode="wml-to-dbk" priority="10">
+      <xsl:attribute name="{replace(name(), 'insideV', 'left')}" select="."/>
+      <xsl:attribute name="{replace(name(), 'insideV', 'right')}" select="."/>
   </xsl:template>
 
   <xsl:template name="cell.align">

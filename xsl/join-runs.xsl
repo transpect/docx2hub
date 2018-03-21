@@ -553,7 +553,7 @@
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">
-                      <xsl:analyze-string select="$instr-text" regex="^\s*\\?(\i\c*)\s+">
+                      <xsl:analyze-string select="$instr-text" regex="^\s*\\?(\i\c*)\s*">
                         <xsl:matching-substring>
                           <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))">
                             <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms -->

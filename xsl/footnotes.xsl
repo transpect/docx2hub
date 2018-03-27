@@ -174,7 +174,9 @@
   <xsl:template match="w:footnote/w:p/dbk:phrase[@role = 'hub:identifier']
                                                 [preceding-sibling::*:phrase[@role = 'hub:identifier']]" 
                 mode="wml-to-dbk">
-    <xsl:apply-templates mode="#current"/>
+    <superscript>
+      <xsl:apply-templates mode="#current"/>  
+    </superscript>
   </xsl:template>
 
   <xsl:template match="w:tab[ancestor::w:footnote | ancestor::w:endnote]" mode="docx2hub:join-instrText-runs">

@@ -230,6 +230,7 @@
     <p:with-option name="mathtype2mml" select="$mathtype2mml"/>
     <p:with-option name="mathtype-source-pi" select="$mathtype-source-pi"/>
     <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>
+    <p:with-option name="apply-changemarkup" select="$apply-changemarkup"/>
     <p:input port="single-tree-schematron">
       <p:pipe step="docx2hub" port="single-tree-schematron"/>
     </p:input>

@@ -104,6 +104,40 @@
       </p:insert>
       
     </p:when>
+    <p:when test="$active = 'check'">
+      <p:output port="result" primary="true">
+        <p:pipe port="result" step="apply-changemarkup-identity"/>
+      </p:output>
+      <p:output port="report" sequence="true">
+        <p:pipe port="result" step="check"/>
+      </p:output>
+      
+      <p:identity name="apply-changemarkup-identity"/>
+      
+      <p:validate-with-schematron assert-valid="false" name="val-sch">
+        <p:input port="schema">
+          <p:pipe port="schematron" step="apply-changemarkup"/>
+        </p:input>
+        <p:input port="parameters"><p:empty/></p:input>
+        <p:with-param name="allow-foreign" select="'true'"/>
+      </p:validate-with-schematron>
+      
+      <p:sink/>
+      
+      <p:add-attribute name="check0" match="/*" 
+        attribute-name="tr:rule-family" attribute-value="docx2hub_changemarkup">
+        <p:input port="source">
+          <p:pipe port="report" step="val-sch"/>
+        </p:input>
+      </p:add-attribute>
+      
+      <p:insert name="check" match="/*" position="first-child">
+        <p:input port="insertion" select="/*/*:title">
+          <p:pipe port="schematron" step="apply-changemarkup"/>
+        </p:input>
+      </p:insert>
+      
+    </p:when>
     <p:otherwise>
       <p:output port="result" primary="true"/>
       <p:output port="report" sequence="true">

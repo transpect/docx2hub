@@ -47,17 +47,12 @@
 
   <xsl:function name="docx2hub:element-is-footnoteref" as="xs:boolean">
     <xsl:param name="el" as="element()"/>
-    <xsl:sequence select="$el/self::*[name() = ('w:r', 'superscript')] 
-                          and
+    <xsl:sequence select="$el/self::*[name() = ('w:r', 'superscript')] and
                           (
-                           (docx2hub:is-footnote-reference-style($el/@role) 
-                            and 
-                            not($el/preceding-sibling::w:r/w:footnoteRef) (: check if there is already a footnote ref 
-                                                                             to prevent multiple dbk:phrase[@role eq 'hub:identifier'] :)
-                           )
-                           or 
-                           $el/w:footnoteRef
-                          )"/>  
+                            docx2hub:is-footnote-reference-style($el/@role)
+                            or 
+                            $el/w:footnoteRef
+                          )"/>
   </xsl:function>
   
   <xsl:template match="w:footnoteReference" mode="wml-to-dbk">
@@ -173,6 +168,13 @@
         </xsl:choose>
       </xsl:for-each-group>
     </xsl:copy>
+  </xsl:template>
+
+  <!-- If there are erroneous identifier phrases in the middle of the paragraph, remove them: -->
+  <xsl:template match="w:footnote/w:p/dbk:phrase[@role = 'hub:identifier']
+                                                [preceding-sibling::*:phrase[@role = 'hub:identifier']]" 
+                mode="wml-to-dbk">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
   <xsl:template match="w:tab[ancestor::w:footnote | ancestor::w:endnote]" mode="docx2hub:join-instrText-runs">

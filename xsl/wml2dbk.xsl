@@ -53,6 +53,7 @@
   <xsl:key name="numbering-by-id" match="w:num" use="@w:numId" />
   <xsl:key name="abstract-numbering-by-id" match="w:abstractNum" use="@w:abstractNumId" />
   <xsl:key name="footnote-by-id" match="w:footnote" use="@w:id" />
+  <xsl:key name="footnoteReference-by-id" match="w:footnoteReference" use="@w:id" />
   <xsl:key name="endnote-by-id" match="w:endnote" use="@w:id" />
   <xsl:key name="comment-by-id" match="w:comment" use="@w:id" />
   <xsl:key name="doc-rel-by-id" match="w:docRels/rel:Relationships/rel:Relationship" use="@Id" />

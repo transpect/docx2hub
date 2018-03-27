@@ -253,19 +253,23 @@
   <xsl:template match="w:footnoteRef" mode="docx2hub:join-instrText-runs">
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
     <xsl:if test="$identifier">
-      <xsl:variable name="footnote-num-format" select="(//w:footnoteReference[@w:id=current()/ancestor::w:footnote/@w:id]/following::w:footnotePr[ancestor::w:p]/w:numFmt/@w:val, /*/w:settings/w:footnotePr/w:numFmt/@w:val)[1]" as="xs:string?"/>
+      <xsl:variable name="fnref" as="element(w:footnoteReference)*"
+        select="key('footnoteReference-by-id', ancestor::w:footnote/@w:id)"/>
+      <xsl:variable name="footnote-num-format" 
+                    select="( $fnref/following::w:footnotePr[ancestor::w:p | ancestor::w:sectPr]/w:numFmt/@w:val,
+                             /*/w:settings/w:footnotePr/w:numFmt/@w:val)[1]" as="xs:string?"/>
       <xsl:variable name="provisional-footnote-number">
-        <xsl:number 
- value="if (//w:footnoteReference[@w:id = current()/ancestor::w:footnote/@w:id]) 
-                 then count(
-                        distinct-values(
-                          //w:footnoteReference[@w:id = current()/ancestor::w:footnote/@w:id][1]/preceding::w:footnoteReference[not(@w:customMarkFollows = ('1','on','true'))]/@w:id
-                        )
-                      ) + 1 
-                 else (count(preceding::w:footnoteRef) + 1)" 
-          format="{if ($footnote-num-format)
-                   then tr:get-numbering-format($footnote-num-format, '') 
-                   else '1'}"/>
+        <xsl:number value="if (exists($fnref)) 
+                           then count(
+                             distinct-values(
+                               $fnref[1]
+                                  /preceding::w:footnoteReference[not(@w:customMarkFollows = ('1','on','true'))]/@w:id
+                             )
+                           ) + 1
+                           else (count(preceding::w:footnoteRef) + 1)" 
+                    format="{if ($footnote-num-format)
+                             then tr:get-numbering-format($footnote-num-format, '') 
+                             else '1'}"/>
       </xsl:variable>
       <xsl:variable name="cardinality" select="if (matches($provisional-footnote-number,'^\*†‡§[0-9]+\*†‡§$'))
                                                then xs:integer(replace($provisional-footnote-number, '^\*†‡§([0-9]+)\*†‡§$', '$1'))

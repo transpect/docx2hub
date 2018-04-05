@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description
+  xmlns:docx2hub="http://transpect.io/docx2hub"
+  xmlns:x="http://www.jenitennison.com/xslt/xspec"
+  stylesheet="../xsl/main.xsl">
+  <x:param name="debug" select="'no'"/>
+  <x:scenario label="Given pt-border-size">
+    <x:scenario label="of 0">
+      <x:call function="docx2hub:pt-border-size">
+        <x:param name="val" select="'0'"/>
+      </x:call>
+      <x:expect label="minimum 0.25pt is returned" select="'0.25pt'"/>
+    </x:scenario>
+    <x:scenario label="of 100">
+      <x:call function="docx2hub:pt-border-size">
+        <x:param name="val" select="'100'"/>
+      </x:call>
+      <x:expect label="maximum 12pt is returned" select="'12pt'"/>
+    </x:scenario>
+    <x:scenario label="of 12">
+      <x:call function="docx2hub:pt-border-size">
+        <x:param name="val" select="'12'"/>
+      </x:call>
+      <x:expect label="1.5pt is returned" select="'1.5pt'"/>
+    </x:scenario>
+  </x:scenario>
+</x:description>

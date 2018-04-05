@@ -1035,7 +1035,7 @@
       <xsl:otherwise>
         <xsl:sequence select="if (matches($val, '%$'))
           then $val
-          else concat(xs:string(xs:integer($val) * 0.125), 'pt')" />
+          else concat(xs:string(max((0.125, xs:integer($val) * 0.125))), 'pt')" />
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>

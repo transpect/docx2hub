@@ -413,7 +413,12 @@
                        | /*/w:footnotes
                        | /*/w:endnotes
                        | mc:AlternateContent
-                       | w:fldChar" mode="wml-to-dbk" priority="-0.25"/>    
+                       | w:fldChar" mode="wml-to-dbk" priority="-0.25"/>
+  
+  <xsl:template match="w:permStart | w:permEnd" mode="wml-to-dbk">
+    <xsl:variable name="tokens" as="xs:string*" select="for $att in @* return concat($att/name(),'=',$att)"/>
+    <xsl:processing-instruction name="tr" select="string-join((name(), $tokens), ' ')"/>
+  </xsl:template>
 
   <xsl:template match="css:rule/w:tblPr" mode="wml-to-dbk">
     <xsl:apply-templates select="@*" mode="#current"/>

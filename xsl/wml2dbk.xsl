@@ -403,6 +403,7 @@
   <xsl:template match="  w:p/w:numPr 
                        | css:rule/w:numPr 
                        | *:style/w:numPr 
+                       | *:phrase/w:numPr
                        | /*/w:numbering 
                        | /*/w:docRels
                        | /*/w:footnoteRels

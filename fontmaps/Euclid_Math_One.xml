@@ -5,6 +5,8 @@
         * -->
   <!-- SPACE -->
   <symbol number="0009" entity="&#x0009;" char="&#x0020;"/>
+  <symbol number="002C" entity="&#x002C;" char="&#x25a1;"/>
+  <symbol number="F02C" entity="&#xF02C;" char="&#x25a1;"/>
   <!-- MATHEMATICAL SCRIPT CAPITAL A -->
   <symbol number="0041" entity="&#x0041;" char="&#x1d49c;"/>
   <!-- MATHEMATICAL SCRIPT CAPITAL C -->

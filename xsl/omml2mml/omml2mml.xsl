@@ -2053,7 +2053,9 @@
     																							 then $context/m:rPr[last()]/m:nor/@m:val 
     																							 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
     																										then 'on' 
-    																										else 'off'"/>
+    																										else if (exists($context/*:t) and (every $t in $context/*:t satisfies $t/self::w:t))
+    																										     then 'on'
+    																										     else 'off'"/>
     					</xsl:call-template>
     				</xsl:otherwise>
     			</xsl:choose>
@@ -2503,6 +2505,7 @@
 
   <xsl:template name="mtext-or-mspace">
     <xsl:param name="string" as="xs:string"/>
+    <xsl:variable name="current" select="current()"/>
     <xsl:choose>
       <xsl:when test="$mml-space-handling = ('mspace')">
         <xsl:analyze-string select="$string" regex="(^\s+|\s+$)">
@@ -2511,6 +2514,7 @@
           </xsl:matching-substring>
           <xsl:non-matching-substring>
             <mml:mtext>
+              <xsl:apply-templates select="$current/@*" mode="#current"/>
               <xsl:value-of select="."/>
             </mml:mtext>
           </xsl:non-matching-substring>
@@ -2621,6 +2625,9 @@
         <!-- Case II: There is an operator at position 1 -->
         <xsl:when test="$fOperAtPos1='1'">
           <mml:mo>
+            <xsl:if test="$context/w:rPr/w:color/@w:val">
+              <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+            </xsl:if>
             <xsl:call-template name="CreateTokenAttributes">
               <xsl:with-param name="scr"/>
               <xsl:with-param name="sty"/>
@@ -2698,6 +2705,9 @@
                                                       then 'mtext' 
                                                       else 'mi'"/>
               <xsl:element name="mml:{$local-name}">
+                <xsl:if test="$context/w:rPr/w:color/@w:val">
+                  <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr" select="$scr"/>
                   <xsl:with-param name="sty" select="$sty"/>
@@ -2719,6 +2729,9 @@
             <!-- Case II: There is an operator at position 1 -->
             <xsl:when test="$fOperAtPos1='1'">
               <mml:mo>
+                <xsl:if test="$context/w:rPr/w:color/@w:val">
+                  <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr"/>
                   <xsl:with-param name="sty"/>
@@ -2745,6 +2758,9 @@
                 </xsl:call-template>
               </xsl:variable>
               <mml:mn>
+                <xsl:if test="$context/w:rPr/w:color/@w:val">
+                  <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr" select="$scr"/>
                   <xsl:with-param name="sty" select="'p'"/>
@@ -3183,6 +3199,9 @@
         <xsl:attribute name="fontstyle">upright</xsl:attribute>
       </xsl:when>
     </xsl:choose>
+    <xsl:if test="w:rPr/w:color/@w:val">
+      <xsl:attribute name="mathcolor" select="w:rPr/w:color/@w:val"/>
+    </xsl:if>
   </xsl:template>
 
   <!-- Templates by le-tex -->

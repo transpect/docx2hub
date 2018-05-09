@@ -765,7 +765,7 @@
       <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] | self::mml:mtext)">
         <xsl:choose>
           <xsl:when test="current-grouping-key() and string-length(string-join(current-group(), '')) gt 1">
-            <xsl:for-each-group select="current-group()" group-adjacent="@mathcolor">
+            <xsl:for-each-group select="current-group()" group-adjacent="if (@mathcolor) then @mathcolor else ''">
               <xsl:choose>
                 <xsl:when test="string-length(string-join(current-group(), '')) gt 1">
                   <xsl:variable name="prelim" as="element(mml:mtext)">

@@ -191,7 +191,7 @@
           <!-- postprocess it; should be margin-right if the table is rtl (§ 17.4.51) --> 
         </prop> 
         <prop name="w:tblLayout" type="passthru"/>
-        <prop name="w:tblLook" />
+        <prop name="w:tblLook" type="passthru"/>
         <prop name="w:tblPrEx" type="passthru"/>
         <prop name="w:tblStyle" type="docx-parastyle"/>
         <prop name="w:tblW" type="passthru" />

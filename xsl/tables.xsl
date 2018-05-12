@@ -23,7 +23,8 @@
 
   <xsl:template match="w:tbl" mode="wml-to-dbk">
     <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
-    <informaltable css:border-collapse="collapse">
+    <informaltable>
+      <xsl:attribute name="css:border-collapse" select="(w:tblPr/@docx2hub:generated-tblCellSpacing/'separate','collapse')[1]"/>
       <xsl:apply-templates select="w:tblPr/@role,
                                    $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')], 
                                    w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')],
@@ -47,14 +48,6 @@
         <xsl:if test="exists($insideV-width) and not($insideV-width = '0pt')">
           <xsl:attribute name="colsep" select="'1'"/>
         </xsl:if>
-        <xsl:variable name="cell-style" as="attribute(role)?">
-          <!-- We could set the condition to false() which means no entry/@role attribute will be created. 
-            Then we’d have to make sense of the linked-style instruction that will be generated 
-            in the table css:rule in any case. -->
-          <xsl:if test="$styledef/w:tblPr/@*[contains(local-name(), 'inside')]">
-            <xsl:attribute name="role" select="docx2hub:linked-cell-style-name($styledef/@name)"/>
-          </xsl:if>
-        </xsl:variable>
         <xsl:apply-templates select="w:tblGrid" mode="colspec"/>
         <xsl:variable name="every-row-is-a-header" as="xs:boolean"
           select="every $tr in w:tr satisfies $tr[docx2hub:is-tableheader-row(.)]"/>
@@ -66,7 +59,6 @@
               <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
               <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
               <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
-              <xsl:with-param name="cell-style" tunnel="yes" as="attribute(role)?" select="$cell-style"/>
               <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
             </xsl:apply-templates>
           </thead>
@@ -79,7 +71,6 @@
             <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
             <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
             <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
-            <xsl:with-param name="cell-style" tunnel="yes" as="attribute(role)?" select="$cell-style"/>
             <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
           </xsl:apply-templates>
         </tbody>
@@ -250,14 +241,12 @@
 
   <xsl:template match="w:tc[not(docx2hub:is-blind-vmerged-cell(.))]" mode="tables">
     <xsl:param name="is-first-row-in-group" as="xs:boolean?" tunnel="yes"/>
-    <xsl:param name="cell-style" as="attribute(role)?" tunnel="yes"/>
     <xsl:param name="col-widths" tunnel="yes" as="xs:integer*"/>
     <xsl:param name="row-overrides" as="attribute(*)*"/>
     <xsl:param name="table-borders" as="attribute(*)*" tunnel="yes"/>
     <xsl:variable name="pos" select="position()"/>
     <xsl:element name="entry">
 <!--      <xsl:copy-of select="ancestor::w:tbl[1]/w:tblPr/@css:*[not(matches(local-name(), '^(border|background-color|width)'))]"/>-->
-      <xsl:sequence select="$cell-style"/>
       <xsl:sequence select="ancestor::w:tr[1]/@css:*[not(matches(local-name(), '^(background-color|(min-)?height|width)'))]"/>
       <xsl:if test="w:p[@css:text-align] and (every $t in w:p satisfies ($t[@css:text-align] and $t/@css:text-align=w:p[1]/@css:text-align))">
         <xsl:sequence select="w:p[1]/@css:text-align"/>  
@@ -365,11 +354,6 @@
       <xsl:copy/>
     </xsl:if>
   </xsl:template>
-
-  <xsl:function name="docx2hub:linked-cell-style-name" as="xs:string">
-    <xsl:param name="table-style-name" as="xs:string"/>
-    <xsl:sequence select="concat($table-style-name, '_cell')"/>
-  </xsl:function>
 
   <!--<xsl:template match="@css:border-insideV-style | @css:border-insideV-width | @css:border-insideV-color" mode="wml-to-dbk" priority="10">
     <xsl:param name="is-first-cell" as="xs:boolean?" tunnel="yes"/>

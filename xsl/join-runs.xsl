@@ -18,12 +18,14 @@
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
   xmlns:css="http://www.w3.org/1996/css"
+  xmlns:calstable="http://docs.oasis-open.org/ns/oasis-exchange/table"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml docx2hub">
+  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml docx2hub calstable">
 
   <!--<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>-->
-
+  <xsl:import href="http://transpect.io/xslt-util/calstable/xsl/functions.xsl"/>
+  
   <xsl:template match="/*" mode="docx2hub:join-runs" priority="-0.2">
     <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
     <xsl:copy>
@@ -806,5 +808,109 @@
       <xsl:apply-templates select="if(*[2]/self::mml:mrow) then *[2]/node() else *[2]" mode="#current"/>
     </mml:mfenced>
   </xsl:template>
+  
+    <!-- resolve border-conflicts -->
+  <xsl:template match="dbk:informaltable[@css:border-collapse = 'separate']" mode="docx2hub:join-runs">
+    <xsl:variable name="curr" select="."/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:for-each select="('left', 'right', 'top', 'bottom')">
+        <xsl:variable name="border-prefix" select="concat('border-', .)"/>
+        <xsl:variable name="table-border-styles" select="$curr/@css:*[matches(local-name(), $border-prefix)]"/>
+        <xsl:choose>
+          <xsl:when test="$table-border-styles">
+            <xsl:apply-templates select="$table-border-styles" mode="#current"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="css:{$border-prefix}-style" select="'none'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+<!--  <xsl:template match="dbk:informaltable[@css:border-collapse = 'collapse']" mode="docx2hub:join-runs">
+    <xsl:variable name="curr" select="." as="element()"/>
+    <xsl:variable name="css-rule" select="//css:rule[@name = $curr/@role]" as="element()*"/>
+    <xsl:variable name="cols" select="dbk:tgroup[1]/@cols" as="xs:decimal"/>
+    <xsl:variable name="colspecs" select="$curr/dbk:tgroup/dbk:colspec"/>
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@* except @css:*[matches(local-name(), '^border-(left|right|top|bottom)')]" mode="#current"/>
+      <xsl:for-each select="('left', 'right', 'top', 'bottom')">
+        <xsl:variable name="border-prefix" select="concat('border-', .)"/>
+        <xsl:variable name="cell-borders" select="
+          (
+            $curr[current() = 'left']//dbk:entry[calstable:in-first-col(., $colspecs)],
+            $curr[current() = 'right']//dbk:entry[calstable:in-last-col(., $colspecs)],
+            $curr[current() = 'top']//dbk:row[1]/dbk:entry,
+            $curr[current() = 'bottom']//dbk:entry[not(calstable:entry-overlaps(., following::dbk:entry[ancestor::node()/generate-id() = $curr/generate-id()], $colspecs))]
+          )/@css:*[matches(local-name(), $border-prefix)]" as="attribute()*">
+        </xsl:variable>
+        <xsl:variable name="cell-border-styles" select="$cell-borders[matches(local-name(), 'style$')]"/>
+        <xsl:variable name="table-border-styles" select="$curr/@css:*[matches(local-name(), $border-prefix)]"/>
+        <xsl:choose>
+          <xsl:when test="count(distinct-values($cell-border-styles)) gt 1">
+            <xsl:attribute name="css:{$border-prefix}-style" select="'none'"/>
+          </xsl:when>
+          <xsl:when test="not('inherit' = $cell-border-styles)">
+            <xsl:apply-templates select="$cell-borders" mode="#current">
+              <xsl:sort/>
+            </xsl:apply-templates>
+          </xsl:when>
+          <xsl:when test="$table-border-styles">
+            <xsl:apply-templates select="$table-border-styles" mode="#current"/>
+          </xsl:when>
+          <xsl:when test="$curr/@role">
+            <xsl:apply-templates select="$css-rule/@css:*[matches(local-name(), $border-prefix)]" mode="#current"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="css:{$border-prefix}-style" select="'none'"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="
+    dbk:informaltable[@css:border-collapse = 'collapse']//dbk:entry" mode="docx2hub:join-runs">
+    <!-\- context will change multiple times, so keep references to nodes which are findable now (but nearly impossible later on) -\->
+    <xsl:variable name="curr" select="." as="element()"/>
+    <xsl:variable name="colspecs" select="ancestor::dbk:tgroup[1]/dbk:colspec" as="element()+"/>
+    <xsl:variable name="table-atts" select="ancestor::dbk:informaltable/@css:*[matches(local-name(), 'border-')]" as="attribute()*"/>
+    <!-\-<xsl:variable name="is-last-row-thead"
+      select="parent::dbk:row/parent::dbk:thead and
+      calstable:entry-overlaps(., (following-sibling::dbk:entry, parent::dbk:row/following-sibling::dbk:row/dbk:entry), $colspecs)"
+      as="xs:boolean"/>
+    <xsl:variable name="last-thead-atts"
+      select="ancestor::node()[3][$is-last-row-thead]/dbk:tbody/dbk:row[1]/dbk:entry/@css:*[matches(local-name(), 'border-top')]"
+      as="attribute()*"/>-\->
+    <xsl:variable name="preceding-entries"
+      select="preceding::dbk:entry[ancestor::dbk:informaltable = current()/ancestor::dbk:informaltable]" as="element()*"
+    />
+    <xsl:variable name="following-entries"
+      select="following::dbk:entry[ancestor::dbk:informaltable = current()/ancestor::dbk:informaltable]" as="element()*"
+    />
+    <xsl:copy copy-namespaces="no">
+      <xsl:apply-templates select="@* except @css:*[matches(local-name(), '^border-(left|right|top|bottom)')]" mode="#current"/>
+      <xsl:for-each select="('left', 'right', 'top', 'bottom')">
+        <xsl:variable name="border-prefix" select="concat('border-', .)" as="xs:string"/>
+        <xsl:variable name="inherit-table-border"
+          select="$curr/@css:*[matches(local-name(), concat($border-prefix, '-style$'))] = 'inherit'" as="xs:boolean"/>
+        <xsl:variable name="cell-border-atts" select="$curr/@css:*[matches(local-name(), $border-prefix)]" as="attribute()*"/>
+        <xsl:variable name="table-border-atts"
+          select="$table-atts[matches(local-name(), $border-prefix)]" as="attribute()*"/>
+        <xsl:apply-templates
+          select="$table-border-atts[$inherit-table-border], $cell-border-atts[not($inherit-table-border and $table-border-atts)]"
+          mode="#current"/>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="@css:*[matches(local-name(), '^border-(left|right|top|bottom)-style$')][. = 'inherit']" mode="docx2hub:join-runs">
+    <xsl:attribute name="{name()}" select="'none'"/>
+  </xsl:template>-->
   
 </xsl:stylesheet>

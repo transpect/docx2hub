@@ -248,6 +248,48 @@
     </p:input>
   </docx2hub:single-tree-enhanced>
   
+  <tr:xslt-mode msg="yes" mode="docx2hub:preprocess-styles" name="preprocess-styles">
+    <p:input port="parameters">
+      <p:pipe step="single-tree-enhanced" port="params"/>
+    </p:input>
+    <p:input port="stylesheet">
+      <p:pipe step="docx2hub" port="xslt"/>
+    </p:input>
+    <p:input port="models">
+      <p:empty/>
+    </p:input>
+    <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/03a')">
+      <p:pipe port="params" step="single-tree-enhanced"/> 
+    </p:with-option>
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+    <p:with-option name="fail-on-error" select="$fail-on-error"/>
+    <p:with-param name="fail-on-error" select="$fail-on-error"/>
+    <p:with-param name="field-vars" select="$field-vars"/>
+    <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
+  </tr:xslt-mode>
+  
+  <tr:xslt-mode msg="yes" mode="docx2hub:resolve-tblBorders" name="resolve-tblBorders">
+    <p:input port="parameters">
+      <p:pipe step="single-tree-enhanced" port="params"/>
+    </p:input>
+    <p:input port="stylesheet">
+      <p:pipe step="docx2hub" port="xslt"/>
+    </p:input>
+    <p:input port="models">
+      <p:empty/>
+    </p:input>
+    <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/03b')">
+      <p:pipe port="params" step="single-tree-enhanced"/> 
+    </p:with-option>
+    <p:with-option name="debug" select="$debug"/>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+    <p:with-option name="fail-on-error" select="$fail-on-error"/>
+    <p:with-param name="fail-on-error" select="$fail-on-error"/>
+    <p:with-param name="field-vars" select="$field-vars"/>
+    <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
+  </tr:xslt-mode>
+  
   <tr:xslt-mode msg="yes" mode="docx2hub:add-props" name="add-props">
     <p:input port="parameters">
       <p:pipe step="single-tree-enhanced" port="params"/>
@@ -258,7 +300,7 @@
     <p:input port="models">
       <p:empty/>
     </p:input>
-    <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/03')">
+    <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/04')">
       <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
     <p:with-option name="debug" select="$debug"/>

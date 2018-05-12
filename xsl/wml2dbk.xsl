@@ -422,7 +422,7 @@
   </xsl:template>
 
   <xsl:template match="css:rule/w:tblPr" mode="wml-to-dbk">
-    <xsl:apply-templates select="@*" mode="#current"/>
+    <xsl:apply-templates select="@*[not(some $pa in ../@*/name() satisfies $pa = name())]" mode="#current"/>
   </xsl:template>
 
   <xsl:template match="dbk:* | css:*" mode="wml-to-dbk" priority="-0.1">
@@ -444,27 +444,6 @@
       </xsl:if>
       <xsl:apply-templates select="@*, w:tblPr, *[not(self::w:tblPr)], $content" mode="#current" />
     </xsl:copy>   
-  </xsl:template>
-  
-  <xsl:template match="css:rule[w:tblPr[@*[contains(local-name(), 'inside')]]]" mode="wml-to-dbk">
-    <xsl:copy>
-      <xsl:attribute name="layout-type" select="'cell'"/>
-      <xsl:attribute name="name" select="docx2hub:linked-cell-style-name(@name)"/>
-      <xsl:apply-templates select="w:tblPr/@*[contains(local-name(), 'inside')]" mode="#current">
-        <xsl:with-param name="is-first-cell" select="false()" tunnel="yes"/>
-        <xsl:with-param name="is-last-cell" select="false()" tunnel="yes"/>
-        <xsl:with-param name="is-first-row-in-group" select="false()" tunnel="yes"/>
-        <xsl:with-param name="is-last-row-in-group" select="false()" tunnel="yes"/>
-      </xsl:apply-templates>
-    </xsl:copy>
-    <!-- Cell style will be generated before processing the table style. Reason: table border properties
-      will have CSS-precedence over cell border properties. We just need to make sure that a table with 
-      no outer borders will explicitly override the cell style borders if they are present. --> 
-    <xsl:next-match>
-      <xsl:with-param name="content" as="element(dbk:linked-style)">
-        <linked-style xmlns="http://docbook.org/ns/docbook" layout-type="cell" name="{docx2hub:linked-cell-style-name(@name)}"/>
-      </xsl:with-param>
-    </xsl:next-match>
   </xsl:template>
 
   <xsl:template match="@srcpath" mode="wml-to-dbk">

@@ -378,11 +378,17 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="w:tc/w:p/w:r[count((@role, ../@role)) = 1]/@*" mode="docx2hub:remove-redundant-run-atts">
-    <xsl:variable name="rule-prop" select="key('style-by-name', (../@role, ../../@role))/@*[name() = current()/name()]"/>
-    <xsl:if test="not(. = $rule-prop)">
-      <xsl:copy/>
-    </xsl:if>
+  <xsl:template match="w:tc/w:p/w:r/@*" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:variable name="self-name" select="name()"/>
+    <xsl:variable name="p-style" select="../../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
+    <xsl:variable name="r-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
+    <xsl:choose>
+      <xsl:when test="exists($r-style) and . = $r-style"/>
+      <xsl:when test="exists($p-style) and . = $p-style"/>
+      <xsl:otherwise>
+        <xsl:copy/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- ================================================================================ -->

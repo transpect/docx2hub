@@ -361,7 +361,7 @@
   
   <xsl:template match="w:r[every $child in * satisfies $child/(self::w:instrText | self::w:fldChar)]" mode="docx2hub:field-functions"/>
   
-    <!-- used to be handled in wml-to-dbk, earlier translation due to problems when used in 
+  <!-- used to be handled in wml-to-dbk, earlier translation due to problems when used in 
        fieldfunctions  -->
   <xsl:template match="w:r[w:noBreakHyphen[following-sibling::w:instrText]]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:copy>
@@ -376,6 +376,13 @@
       <xsl:value-of select="'&#x2d;'"/>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="w:tc/w:p/w:r[count((@role, ../@role)) = 1]/@*" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:variable name="rule-prop" select="key('style-by-name', (../@role, ../../@role))/@*[name() = current()/name()]"/>
+    <xsl:if test="not(. = $rule-prop)">
+      <xsl:copy/>
+    </xsl:if>
   </xsl:template>
 
   <!-- ================================================================================ -->

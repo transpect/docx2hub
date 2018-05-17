@@ -45,6 +45,23 @@
     </rule>
   </pattern>
   
+  <pattern id="text-in-unnamed-field-function">
+    <rule context="w:r[.//w:t[normalize-space()]]
+                      [preceding-sibling::*[1]
+                         /self::w:r[count(*) = 1]
+                                   [w:fldChar[@w:fldCharType = 'separate']]
+                                   
+                      ][preceding-sibling::*[2]
+                        /self::w:r[count(*) = 1]
+                                  [w:fldChar[@w:fldCharType = 'begin']]
+                      ]">
+      <report id="field_function_text" role="warning" test="true()">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        Hier steht Text, welche in einer fremdartigen Feldfunktion steht und ggf. nicht dargestellt werden sollte. Textstelle: <xsl:value-of select=".//w:t[normalize-space()]"/>
+      </report>
+    </rule>
+  </pattern>
+  
   <pattern id="drawing">
     <rule context="*:inline">
       <report id="scaled_image" role="warning" test="*:extent[@cx != parent::*/a:graphic//a:ext/@cx] or *:extent[@cy != parent::*/a:graphic//a:ext/@cy]">

@@ -134,16 +134,16 @@
             <xsl:when test="$lk[4] and $lk[3] and $pos[1] eq $pos[3] and $pos[2] eq $pos[4]">
               <xsl:sequence select="'seCell', 'lastRow', 'lastCol'"/>
             </xsl:when>
-            <xsl:when test="$lk[2] and $pos[1] eq 1">
-              <xsl:sequence select="'firstCol'"/>
-            </xsl:when>
             <xsl:when test="$lk[1] and $pos[2] eq 1">
               <xsl:sequence select="'firstRow'"/>
             </xsl:when>
-            <xsl:when test="$lk[3] and $pos[1] eq $pos[3]">
+            <xsl:when test="$lk[2] and $pos[1] eq 1">
+              <xsl:sequence select="'firstCol'"/>
+            </xsl:when>
+            <xsl:when test="$lk[3] and $pos[2] eq $pos[4]">
               <xsl:sequence select="'lastRow'"/>
             </xsl:when>
-            <xsl:when test="$lk[4] and $pos[2] eq $pos[4]">
+            <xsl:when test="$lk[4] and $pos[1] eq $pos[3]">
               <xsl:sequence select="'lastCol'"/>
             </xsl:when>
             <!-- TODO: H/V-banding props -->

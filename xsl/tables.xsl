@@ -24,10 +24,13 @@
   <xsl:template match="w:tbl" mode="wml-to-dbk">
     <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
     <informaltable>
-      <xsl:attribute name="css:border-collapse" select="(w:tblPr/@docx2hub:generated-tblCellSpacing/'separate','collapse')[1]"/>
+      <xsl:variable name="collapse" select="(w:tblPr/@docx2hub:generated-tblCellSpacing/'separate','collapse')[1]" as="xs:string"/>
+      <xsl:attribute name="css:border-collapse" select="$collapse"/>
       <xsl:apply-templates select="w:tblPr/@role,
-                                   $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')], 
-                                   w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')],
+                                   (
+                                    $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')], 
+                                    w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')]
+                                   )[$collapse = 'separate'],
                                    $styledef/w:tblPr/w:tblW, 
                                    w:tblPr/w:tblW,
                                    @srcpath, 

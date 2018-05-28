@@ -77,6 +77,7 @@
     <p:pipe port="report" step="join-runs"/>
     <p:pipe port="result" step="check-result"/>
     <p:pipe port="result" step="rename-errorPI2svrl-reports"/>
+    <p:pipe port="report" step="check-tables"/>
   </p:output>
   <p:output port="schema" sequence="true">
     <p:pipe port="result" step="decorate-field-functions-schematron"/>
@@ -86,6 +87,7 @@
   <p:output port="zip-manifest">
     <p:pipe port="zip-manifest" step="single-tree-enhanced"/>
   </p:output>
+
 
 
   <p:option name="docx" required="true">
@@ -187,6 +189,10 @@
     <p:documentation>Use filename that is passed on from http request response instead of 
     possible filename read from URL in tr:file-uri (for example when using Gdocs URLs:
     https://docs.google.com/document/d/1Z5eYyjLoRhB24HYZ-d-wQKAFD3QDWZUsQH4cKHs2eiM/export?format=docx)</p:documentation>
+  </p:option>
+  <p:option name="check-tables" required="false" select="'no'">
+    <p:documentation>If this option is set to 'yes' all tables are normalized with calstable and checked against 
+    schematron</p:documentation>
   </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
@@ -509,6 +515,98 @@
   </tr:errorPI2svrl>
   
   <p:sink/>
+  
+  <!--  table normalization -->
+  <p:choose name="check-tables">
+    <p:when test="$check-tables='yes'">
+      <p:output port="normalized-tables">
+        <p:pipe port="result" step="normalize-tables"/>
+      </p:output>
+      
+      <p:output port="report">
+        <p:pipe port="result" step="sch_tables"/>
+      </p:output>
+      
+      <p:xslt name="normalize-tables">
+        <p:input port="source">
+          <p:pipe port="result" step="join-runs"/>
+        </p:input>
+        <p:input port="stylesheet">
+          <p:inline>
+            <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+              xmlns:calstable="http://docs.oasis-open.org/ns/oasis-exchange/table"
+              version="2.0">
+              
+              <xsl:import href="http://transpect.io/xslt-util/calstable/xsl/normalize.xsl"/>
+              
+              <xsl:template match="node() | @*" >
+                <xsl:copy>
+                  <xsl:apply-templates select="@*, node()"/>
+                </xsl:copy>
+              </xsl:template>
+              
+              <xsl:template match="*[*:row]">
+                <xsl:sequence select="calstable:check-normalized(
+                                          calstable:normalize(.), 
+                                          'no'
+                                          )"/>
+              </xsl:template>
+              
+            </xsl:stylesheet>
+          </p:inline>
+        </p:input>
+        <p:input port="parameters">
+          <p:pipe step="single-tree-enhanced" port="params"/>
+        </p:input>
+      </p:xslt>
+      
+      <p:validate-with-schematron assert-valid="false" name="sch_tables0">
+        <p:input port="schema">
+          <p:document href="http://transpect.io/xslt-util/calstable/sch/sch_tables.sch.xml"/>
+        </p:input>
+        <p:input port="parameters"><p:empty/></p:input>
+        <p:with-param name="allow-foreign" select="'true'"/>
+      </p:validate-with-schematron>
+      
+      <p:sink/>
+      
+      <p:add-attribute match="/*" 
+        attribute-name="tr:step-name" attribute-value="docx2hub">
+        <p:input port="source">
+          <p:pipe port="report" step="sch_tables0"/>
+        </p:input>
+      </p:add-attribute>
+      
+      <p:add-attribute name="sch_tables1" match="/*" 
+        attribute-name="tr:rule-family" attribute-value="docx2hub_tables">
+      </p:add-attribute>
+      
+      <p:insert name="sch_tables" match="/*" position="first-child">
+        <p:input port="insertion" select="/*/*:title">
+          <p:document href="http://transpect.io/xslt-util/calstable/sch/sch_tables.sch.xml"/>
+        </p:input>
+      </p:insert>
+      
+      
+    </p:when>
+    
+    <p:otherwise>
+        <p:output port="normalized-tables">
+        <p:pipe port="result" step="identity"/>
+      </p:output>
+      
+      <p:output port="report">
+        <p:empty/>
+      </p:output>
+      
+      <p:identity name="identity">
+        <p:input port="source">
+          <p:pipe port="result" step="join-runs"/>
+        </p:input>
+      </p:identity>
+      
+    </p:otherwise>
+  </p:choose>
   
   <p:for-each name="rename-errorPI2svrl-reports">
     <p:output port="result" primary="true"/>

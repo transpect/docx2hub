@@ -25,12 +25,24 @@
     <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
     <informaltable>
       <xsl:variable name="collapse" select="(w:tblPr/@docx2hub:generated-tblCellSpacing/'separate','collapse')[1]" as="xs:string"/>
+      <xsl:variable name="outer-border-set" select="
+        empty(w:tr[1]/w:tc/w:tcPr/w:top[matches(@w:val, 'nil')][1]),
+        empty(w:tr/w:tc[last()]/w:tcPr/w:right[matches(@w:val, 'nil')][1]),
+        empty(w:tr[last()]/w:tc/w:tcPr/w:bottom[matches(@w:val, 'nil')][1]),
+        empty(w:tr/w:tc[1]/w:tcPr/w:left[matches(@w:val, 'nil')][1])
+      " as="xs:boolean+"/>
       <xsl:attribute name="css:border-collapse" select="$collapse"/>
       <xsl:apply-templates select="w:tblPr/@role,
                                    (
                                     $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')], 
                                     w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')]
-                                   )[$collapse = 'separate'],
+                                   )[$collapse = 'separate' or (matches(., 'background-color|margin-(left|right)|text-align')) or
+                                    (
+                                      (matches(name(), 'top') and $outer-border-set[1])
+                                      or (matches(name(), 'right') and $outer-border-set[2])
+                                      or (matches(name(), 'bottom') and $outer-border-set[3])
+                                      or (matches(name(), 'left') and $outer-border-set[4])
+                                    )],
                                    $styledef/w:tblPr/w:tblW, 
                                    w:tblPr/w:tblW,
                                    @srcpath, 

@@ -26,10 +26,10 @@
     <informaltable>
       <xsl:variable name="collapse" select="(w:tblPr/@docx2hub:generated-tblCellSpacing/'separate','collapse')[1]" as="xs:string"/>
       <xsl:variable name="outer-border-set" select="
-        empty(w:tr[1]/w:tc/w:tcPr/w:top[matches(@w:val, 'nil')][1]),
-        empty(w:tr/w:tc[last()]/w:tcPr/w:right[matches(@w:val, 'nil')][1]),
-        empty(w:tr[last()]/w:tc/w:tcPr/w:bottom[matches(@w:val, 'nil')][1]),
-        empty(w:tr/w:tc[1]/w:tcPr/w:left[matches(@w:val, 'nil')][1])
+        empty(w:tr[1]/w:tc/w:tcPr/w:top[matches(@w:val, 'nil|none')][1]),
+        empty(w:tr/w:tc[last()]/w:tcPr/w:right[matches(@w:val, 'nil|none')][1]),
+        empty(w:tr[last()]/w:tc/w:tcPr/w:bottom[matches(@w:val, 'nil|none')][1]),
+        empty(w:tr/w:tc[1]/w:tcPr/w:left[matches(@w:val, 'nil|none')][1])
       " as="xs:boolean+"/>
       <xsl:attribute name="css:border-collapse" select="$collapse"/>
       <xsl:apply-templates select="w:tblPr/@role,

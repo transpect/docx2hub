@@ -537,7 +537,7 @@ it, but not when an ilvl=2 heading precedes it.
     <xsl:choose>
       <xsl:when test="$format = ('lowerLetter','lower-letter')">a</xsl:when>
       <xsl:when test="$format = ('upperLetter','upper-letter')">A</xsl:when>
-      <xsl:when test="$format = 'decimal'">1</xsl:when>
+      <xsl:when test="$format = ('decimal', 'ordinal')">1</xsl:when>
       <xsl:when test="$format = 'decimalZero'">01</xsl:when>
       <xsl:when test="$format = ('lowerRoman','lower-roman')">i</xsl:when>
       <xsl:when test="$format = ('upperRoman','upper-roman')">I</xsl:when>

@@ -302,7 +302,7 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="w:rPr[not(ancestor::m:oMath)] | w:pPr" mode="docx2hub:add-props" priority="2">
+  <xsl:template match="w:rPr[not(ancestor::m:oMath)] | w:pPr | m:oMathParaPr" mode="docx2hub:add-props" priority="2">
     <xsl:apply-templates select="*" mode="#current" />
   </xsl:template>
   
@@ -481,6 +481,7 @@
                        | w:spacing/@* 
                        | v:shape/@* 
                        | wp:extent/@*
+                       | m:oMathParaPr/*
                        " 
     mode="docx2hub:add-props">
     <xsl:variable name="prop" select="key('docx2hub:prop', docx2hub:propkey(.), $docx2hub:propmap)" />
@@ -1142,6 +1143,7 @@
   <xsl:template match="* | @*" mode="docx2hub:props2atts">
     <xsl:variable name="content" as="node()*">
       <xsl:apply-templates select="docx2hub:style-link" mode="#current" />
+      <xsl:apply-templates select="m:oMathPara/docx2hub:attribute[not(@name = ../docx2hub:remove-attribute/@name)]" mode="#current" />
       <xsl:apply-templates select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]" mode="#current" />
       <xsl:apply-templates select="docx2hub:color-percentage[not(@name = following-sibling::docx2hub:remove-attribute/@name)]" mode="#current" />
       <xsl:variable name="remaining-tabs" as="element(dbk:tab)*">

@@ -48,12 +48,12 @@
             <m:f>
               <m:num>
                 <m:r>
-                  <w:t xml:space="preserve">a</w:t>
+                  <m:t xml:space="preserve">a</m:t>
                 </m:r>
               </m:num>
               <m:den>
                 <m:r>
-                  <w:t xml:space="preserve">b</w:t>
+                  <m:t xml:space="preserve">b</m:t>
                 </m:r>
               </m:den>
             </m:f>
@@ -91,17 +91,17 @@
           </m:sup>
           <m:e>
             <m:r>
-              <w:t xml:space="preserve">a</w:t>
+              <m:t xml:space="preserve">a</m:t>
             </m:r>
             <m:f>
               <m:num>
                 <m:r>
-                  <w:t xml:space="preserve">b</w:t>
+                  <m:t xml:space="preserve">b</m:t>
                 </m:r>
               </m:num>
               <m:den>
                 <m:r>
-                  <w:t xml:space="preserve">c</w:t>
+                  <m:t xml:space="preserve">c</m:t>
                 </m:r>
               </m:den>
             </m:f>
@@ -131,5 +131,59 @@
         </mml:mrow>
       </x:expect>
     </x:scenario>
+  </x:scenario>
+  <x:scenario label="Given m:nor">
+    <x:context mode="omml2mml">
+      <m:r>
+         <m:rPr>
+            <m:nor/>
+         </m:rPr>
+         <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+            <w:lang w:val="de-DE"/>
+         </w:rPr>
+         <m:t>ß</m:t>
+      </m:r>
+      <m:r>
+         <m:rPr>
+            <m:nor/>
+         </m:rPr>
+         <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+            <w:b/>
+            <w:lang w:val="de-DE"/>
+         </w:rPr>
+         <m:t>ß</m:t>
+      </m:r>
+      <m:r>
+         <m:rPr>
+            <m:nor/>
+         </m:rPr>
+         <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+            <w:i/>
+            <w:lang w:val="de-DE"/>
+         </w:rPr>
+         <m:t>ß</m:t>
+      </m:r>
+      <m:r>
+         <m:rPr>
+            <m:nor/>
+         </m:rPr>
+         <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+            <w:b/>
+            <w:i/>
+            <w:lang w:val="de-DE"/>
+         </w:rPr>
+         <m:t>ß</m:t>
+      </m:r>
+    </x:context>
+    <x:expect label="w:rPr/(w:i, w:b) are translated to mathvariant">
+      <mml:mtext>ß</mml:mtext>
+      <mml:mtext mathvariant="bold">ß</mml:mtext>
+      <mml:mtext mathvariant="italic">ß</mml:mtext>
+      <mml:mtext mathvariant="bold-italic">ß</mml:mtext>
+    </x:expect>
   </x:scenario>
 </x:description>

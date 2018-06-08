@@ -51,9 +51,8 @@
 
   <xsl:key name="d2s:gd-by-name" match="a:gd" use="@name"/>
   
-  <xsl:template match="mc:AlternateContent[mc:Choice//a:graphic/a:graphicData]" mode="docx2hub:add-props">
+  <xsl:template match="mc:AlternateContent[mc:Choice/w:drawing/wp:anchor/a:graphic/a:graphicData]" mode="docx2hub:add-props">
     <xsl:variable name="element-name" select="if(parent::w:r|parent::w:p) then 'phrase' else 'sidebar'" as="xs:string"/>
-    <xsl:message select="'SSSSSSSSSSSSss ', system-property('xsl:product-version'), system-property('xsl:product-name')"/>
     <xsl:apply-templates select="mc:Choice//a:graphic" mode="d2s:default"/>
   </xsl:template>
   

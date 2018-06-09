@@ -154,7 +154,7 @@
 
     <p:sink name="sink1"/>
 
-    <p:xslt name="zip-manifest">
+    <p:xslt name="zip-manifest" cx:depends-on="document">
       <p:input port="source">
         <p:pipe port="result" step="unzip"/>
       </p:input>

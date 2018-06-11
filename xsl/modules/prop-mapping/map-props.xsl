@@ -217,16 +217,16 @@
   <xsl:template name="docx2hub:hub-1.1-styles">
     <xsl:param name="contexts" as="element(*)+"/>
     <css:rules>
-      <xsl:apply-templates select="key('docx2hub:style', distinct-values($contexts//w:pStyle/@w:val))
+      <xsl:apply-templates select="key('docx2hub:style', distinct-values($contexts//w:pStyle/@w:val))[@w:type='paragraph']
         union
-        key('docx2hub:style', key('docx2hub:style', distinct-values($contexts//w:rStyle/@w:val))/w:link/@w:val)" 
+        key('docx2hub:style', key('docx2hub:style', distinct-values($contexts//w:rStyle/@w:val))/w:link/@w:val)[@w:type='paragraph']" 
         mode="#current">
         <xsl:sort select="@w:styleId" />
       </xsl:apply-templates>
-      <xsl:apply-templates select="key('docx2hub:style', distinct-values($contexts//w:rStyle/@w:val))" mode="#current">
+      <xsl:apply-templates select="key('docx2hub:style', distinct-values($contexts//w:rStyle/@w:val))[@w:type='character']" mode="#current">
         <xsl:sort select="@w:styleId" />
       </xsl:apply-templates>
-      <xsl:apply-templates select="key('docx2hub:style', distinct-values($contexts//w:tblStyle/@w:val))" mode="#current">
+      <xsl:apply-templates select="key('docx2hub:style', distinct-values($contexts//w:tblStyle/@w:val))[@w:type='table']" mode="#current">
         <xsl:sort select="@w:styleId" />
       </xsl:apply-templates>
     </css:rules>

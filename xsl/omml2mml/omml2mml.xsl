@@ -2003,9 +2003,7 @@
                   </xsl:if>
                   <mml:mi><!-- no mathvariant="normal": multichar mi should be rendered upright by default anyway -->
                     <xsl:for-each select="$context">
-                      <xsl:call-template name="checkDirectFormatting">
-                        <xsl:with-param name="is-mi" select="true()"/>
-                      </xsl:call-template>
+                      <xsl:call-template name="checkDirectFormatting"/>
                     </xsl:for-each>
                     <xsl:value-of select="$space-stripped"/>
                   </mml:mi>
@@ -3182,22 +3180,23 @@
 
 
   <xsl:template name="checkDirectFormatting">
-    <xsl:param name="is-mi" select="false()" as="xs:boolean"/>
     <xsl:if test="w:rPr/w:rFonts/@w:ascii and not(w:rPr/w:rFonts/@w:ascii='Cambria Math')">
       <xsl:attribute name="fontfamily" select="w:rPr/w:rFonts/@w:ascii"/>
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="w:rPr/w:b[not(@w:val='0')] and w:rPr/w:i[not(@w:val='0')]">
-        <xsl:attribute name="mathvariant">bold-italic</xsl:attribute>
-      </xsl:when>
-      <xsl:when test="w:rPr/w:i[not(@w:val='0')]">
-        <xsl:attribute name="mathvariant">italic</xsl:attribute>
-      </xsl:when>
       <xsl:when test="w:rPr/w:b[not(@w:val='0')]">
-        <xsl:attribute name="mathvariant">bold</xsl:attribute>
+        <xsl:attribute name="fontweight">bold</xsl:attribute>
       </xsl:when>
-      <xsl:when test="$is-mi">
-        <xsl:attribute name="mathvariant">normal</xsl:attribute>
+      <xsl:when test="w:rPr/w:b[@w:val='0']">
+        <xsl:attribute name="fontweight">normal</xsl:attribute>
+      </xsl:when>
+    </xsl:choose>
+    <xsl:choose>
+      <xsl:when test="w:rPr/w:i[not(@w:val='0')]">
+        <xsl:attribute name="fontstyle">italic</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="w:rPr/w:i[@w:val='0']">
+        <xsl:attribute name="fontstyle">upright</xsl:attribute>
       </xsl:when>
     </xsl:choose>
     <xsl:if test="w:rPr/w:color/@w:val">

@@ -764,7 +764,7 @@
   <xsl:template match="mml:*[not(ancestor::*[ends-with(name(), 'equation')]/@role eq 'mtef')][mml:mi]" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] | self::mml:mtext[not(@mathvariant) or @mathvariant eq 'normal'])">
+      <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] | self::mml:mtext)">
         <xsl:choose>
           <xsl:when test="current-grouping-key() and string-length(string-join(current-group(), '')) gt 1">
             <xsl:for-each-group select="current-group()" group-adjacent="if (@mathcolor) then @mathcolor else ''">

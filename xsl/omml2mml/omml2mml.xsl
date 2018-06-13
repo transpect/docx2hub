@@ -2761,6 +2761,10 @@
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
                 </xsl:if>
+                <xsl:if test="$context/m:rPr/m:sty/@m:val[matches(., 'b')]">
+                  <!-- Word won't render italic numbers -->
+                  <xsl:attribute name="mathvariant" select="'bold'"/>
+                </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr" select="$scr"/>
                   <xsl:with-param name="sty" select="'p'"/>

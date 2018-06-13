@@ -48,12 +48,12 @@
             <m:f>
               <m:num>
                 <m:r>
-                  <w:t xml:space="preserve">a</w:t>
+                  <m:t xml:space="preserve">a</m:t>
                 </m:r>
               </m:num>
               <m:den>
                 <m:r>
-                  <w:t xml:space="preserve">b</w:t>
+                  <m:t xml:space="preserve">b</m:t>
                 </m:r>
               </m:den>
             </m:f>
@@ -91,17 +91,17 @@
           </m:sup>
           <m:e>
             <m:r>
-              <w:t xml:space="preserve">a</w:t>
+              <m:t xml:space="preserve">a</m:t>
             </m:r>
             <m:f>
               <m:num>
                 <m:r>
-                  <w:t xml:space="preserve">b</w:t>
+                  <m:t xml:space="preserve">b</m:t>
                 </m:r>
               </m:num>
               <m:den>
                 <m:r>
-                  <w:t xml:space="preserve">c</w:t>
+                  <m:t xml:space="preserve">c</m:t>
                 </m:r>
               </m:den>
             </m:f>
@@ -130,6 +130,25 @@
           </mml:mfrac>
         </mml:mrow>
       </x:expect>
+    </x:scenario>
+  </x:scenario>
+  <x:scenario label="Given m:t with m:sty/@m:val='b'">
+    <x:scenario label="and a number">
+      <x:context mode="omml2mml">
+      <m:r xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+        xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+        <m:rPr>
+          <m:sty m:val="b"/>
+        </m:rPr>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+        </w:rPr>
+        <m:t>0,8</m:t>
+      </m:r>
+    </x:context>
+    <x:expect label="bold mml:mn is generated">
+      <mn xmlns="http://www.w3.org/1998/Math/MathML" mathvariant="bold">0,8</mn>
+    </x:expect>
     </x:scenario>
   </x:scenario>
 </x:description>

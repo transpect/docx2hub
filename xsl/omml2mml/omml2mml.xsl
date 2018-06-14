@@ -2566,6 +2566,7 @@
     <xsl:param name="sty"/>
     <xsl:param name="scr"/>
     <xsl:param name="nor"/>
+    <xsl:param name="first-call" select="true()" as="xs:boolean"/>
     
     <xsl:variable name="sRepNumWith0">
       <xsl:call-template name="SReplaceNumWithZero">
@@ -2624,6 +2625,9 @@
 
         <!-- Case II: There is an operator at position 1 -->
         <xsl:when test="$fOperAtPos1='1'">
+          <xsl:if test="$first-call and $context/m:rPr/m:aln">
+            <mml:malignmark/>
+          </xsl:if>
           <mml:mo>
             <xsl:if test="$context/w:rPr/w:color/@w:val">
               <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
@@ -2644,6 +2648,7 @@
             <xsl:with-param name="scr" select="$scr"/>
             <xsl:with-param name="sty" select="$sty"/>
             <xsl:with-param name="nor" select="$nor"/>
+            <xsl:with-param name="first-call" select="false()"/>
           </xsl:call-template>
         </xsl:when>
 
@@ -2723,11 +2728,15 @@
                 <xsl:with-param name="scr" select="$scr"/>
                 <xsl:with-param name="sty" select="$sty"/>
                 <xsl:with-param name="nor" select="$nor"/>
+                <xsl:with-param name="first-call" select="false()"/>
               </xsl:call-template>
             </xsl:when>
     
             <!-- Case II: There is an operator at position 1 -->
             <xsl:when test="$fOperAtPos1='1'">
+              <xsl:if test="$first-call and $context/m:rPr/m:aln">
+                <mml:malignmark/>
+              </xsl:if>
               <mml:mo>
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
@@ -2746,6 +2755,7 @@
                 <xsl:with-param name="scr" select="$scr"/>
                 <xsl:with-param name="sty" select="$sty"/>
                 <xsl:with-param name="nor" select="$nor"/>
+                <xsl:with-param name="first-call" select="false()"/>
               </xsl:call-template>
             </xsl:when>
     
@@ -2779,10 +2789,10 @@
                 <xsl:with-param name="scr" select="$scr"/>
                 <xsl:with-param name="sty" select="$sty"/>
                 <xsl:with-param name="nor" select="$nor"/>
+                <xsl:with-param name="first-call" select="false()"/>
               </xsl:call-template>
             </xsl:otherwise>
           </xsl:choose>
-          
         </xsl:otherwise>
       </xsl:choose>
     </xsl:if>

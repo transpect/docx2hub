@@ -2626,7 +2626,7 @@
         <!-- Case II: There is an operator at position 1 -->
         <xsl:when test="$fOperAtPos1='1'">
           <xsl:if test="$first-call and $context/m:rPr/m:aln">
-            <mml:malignmark/>
+            <mml:maligngroup/>
           </xsl:if>
           <mml:mo>
             <xsl:if test="$context/w:rPr/w:color/@w:val">
@@ -2735,7 +2735,7 @@
             <!-- Case II: There is an operator at position 1 -->
             <xsl:when test="$fOperAtPos1='1'">
               <xsl:if test="$first-call and $context/m:rPr/m:aln">
-                <mml:malignmark/>
+                <mml:maligngroup/>
               </xsl:if>
               <mml:mo>
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
@@ -3250,6 +3250,14 @@
       <xsl:apply-templates select="@* except @xpath" mode="#current"/>
       <xsl:apply-templates select="node()" mode="#current"/>
     </mml:math>
+  </xsl:template>
+  
+  <xsl:template match="m:oMathPara/m:oMath[.//m:aln or ..//w:br]" mode="omml2mml">
+    <mml:mtr>
+      <mml:mtd>
+        <xsl:apply-templates select="node()" mode="#current"/>
+      </mml:mtd>
+    </mml:mtr>
   </xsl:template>
   
   <xsl:function name="mml:replace-combining-chars" as="xs:string?">

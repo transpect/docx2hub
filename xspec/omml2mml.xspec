@@ -162,8 +162,8 @@
         <m:t>=1-</m:t>
       </m:r>
     </x:context>
-    <x:expect label="m:alignmark is generated only on first operator in run">
-      <mml:malignmark/>
+    <x:expect label="m:aligngroup is generated only on first operator in run">
+      <mml:maligngroup/>
       <mml:mo>=</mml:mo>
       <mml:mn>1</mml:mn>
       <mml:mo>-</mml:mo>

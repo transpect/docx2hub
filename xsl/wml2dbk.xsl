@@ -1351,6 +1351,18 @@
       </xsl:apply-templates>
     </equation>
   </xsl:template>
+  
+  <xsl:template match="m:oMathPara[.//m:aln or .//w:br]" mode="wml-to-dbk">
+    <equation role="omml">
+      <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
+      <mml:math display="block">
+        <xsl:apply-templates select="m:oMath/@*" mode="omml2mml"/>
+        <mml:mtable>
+          <xsl:apply-templates select="node()" mode="omml2mml"/>
+        </mml:mtable>
+      </mml:math>
+    </equation>
+  </xsl:template>
 
   <xsl:template match="m:oMath" mode="wml-to-dbk">
     <inlineequation role="omml">

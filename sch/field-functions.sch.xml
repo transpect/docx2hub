@@ -58,7 +58,7 @@
   
   <pattern id="unsupported">
     <rule context="w:instrText">
-      <assert test="matches(., '^\s*(AUTOTEXT|SEQ|STYLEREF|REF|EQ|eq|FORMCHECKBOX|HYPERLINK|INCLUDEPICTURE|PAGEREF|PRINT|SET|SYMBOL|TOC|XE|xe)\s+')" 
+      <assert test="matches(., '^\s*(AUTOTEXT|SEQ|STYLEREF|REF|EQ|eq|FORMCHECKBOX|HYPERLINK|INCLUDEPICTURE|PAGEREF|PRINT|SET|SYMBOL|TOC|XE|xe|NUMPAGES|MERGEFORMAT)\s+')" 
         role="warning" id="unsupported_field_function" diagnostics="unsupported_field_function_de">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, ../@srcpath), '')"/></span>
         <span class="category">docx</span>

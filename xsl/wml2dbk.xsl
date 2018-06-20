@@ -1003,6 +1003,10 @@
             table counters. These are also included as the calculated value in the docx file. Therefore we see
             no immediate pressure to evaluate these expressions. -->
           </xsl:when>
+         <xsl:when test="name() = 'NUMPAGES'">
+            <!-- Ignore silently like Conditionally calculated field function above. 
+            	Prospectively we could add a phrase for that to create a field again in docx for a better roundtripping -->
+          </xsl:when>
           <xsl:when test="matches(@fldArgs,'^[\s&#160;]*$')">
             <xsl:apply-templates mode="#current"/>
           </xsl:when>

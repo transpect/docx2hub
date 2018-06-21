@@ -2626,7 +2626,7 @@
         <!-- Case II: There is an operator at position 1 -->
         <xsl:when test="$fOperAtPos1='1'">
           <xsl:if test="$first-call and $context/m:rPr/m:aln">
-            <mml:maligngroup/>
+            <mml:maligngroup columnalign="left"/>
           </xsl:if>
           <mml:mo>
             <xsl:if test="$context/w:rPr/w:color/@w:val">
@@ -2735,7 +2735,7 @@
             <!-- Case II: There is an operator at position 1 -->
             <xsl:when test="$fOperAtPos1='1'">
               <xsl:if test="$first-call and $context/m:rPr/m:aln">
-                <mml:maligngroup/>
+                <mml:maligngroup columnalign="left"/>
               </xsl:if>
               <mml:mo>
                 <xsl:if test="$context/w:rPr/w:color/@w:val">

@@ -163,7 +163,7 @@
       </m:r>
     </x:context>
     <x:expect label="m:aligngroup is generated only on first operator in run">
-      <mml:maligngroup/>
+      <mml:maligngroup columnalign="left"/>
       <mml:mo>=</mml:mo>
       <mml:mn>1</mml:mn>
       <mml:mo>-</mml:mo>

@@ -497,6 +497,18 @@
     <xsl:sequence select="$raw-output" />
   </xsl:template>
   
+  <xsl:template match="w:tcW[@w:type = 'pct']/@w:w" mode="docx2hub:add-props">
+    <xsl:variable name="pct-to-dxa" as="element()">
+      <xsl:variable name="tbl-w" select="../../../../../w:tblPr/w:tblW/@w:w" as="xs:decimal"/>
+      <xsl:variable name="tc-pct" select="if(matches(., '%'))
+        then replace(., '%', '')
+        else . div 5000" as="xs:double"/>
+      <xsl:variable name="tc-dxa" select="$tbl-w * $tc-pct" as="xs:double"/>
+      <w:tcW w:type="dxa" w:w="{round-half-to-even($tc-dxa)}"/>
+    </xsl:variable>
+    <xsl:apply-templates select="$pct-to-dxa" mode="#current"/>
+  </xsl:template>
+  
   <xsl:template match="w:tblPr/w:jc" mode="docx2hub:add-props">
     <xsl:variable name="tbl-ind" as="node()*">
       <xsl:if test="exists(parent::w:tblPr/w:tblInd)">

@@ -33,7 +33,7 @@
   <xsl:variable name="docx2hub:symbol-font-names" as="xs:string+" 
     select="('ArialMT+1', 'Math1', 'MT Extra', 'Symbol', 'TimesNewRomanPSMT+1', 'Wingdings', 'Wingdings 2', 
              'Wingdings 3', 'Webdings', 'Euclid Math One', 'Euclid Math Two', 'Euclid Extra', 'Euclid Fraktur', 
-             'Monotype Sorts', $custom-font-names)"/>
+             'Monotype Sorts', 'ZWAdobeF', $custom-font-names)"/>
 
   <xsl:variable name="docx2hub:symbol-replacement-rfonts" as="element(w:rFonts)">
     <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math"/>

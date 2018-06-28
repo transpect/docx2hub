@@ -173,9 +173,23 @@
       </xsl:variable>
       <xsl:variable name="processed-text" select="string-join($processed, '')" as="xs:string"/>
       <xsl:if test="$processed-text">
-        <xsl:element name="{$elt}">
+        <!--<xsl:element name="{$elt}">
           <xsl:attribute name="sortas" 
             select="normalize-space(replace(tr:rm-last-quot(tokenize($real-term-text,':')[not(matches(.,'Register§§'))][$pos]),'^&quot;',''))"/>
+          <xsl:sequence select="$processed"/>
+        </xsl:element>-->
+        <xsl:variable name="sortkey" as="xs:string?">
+          <xsl:analyze-string select="tokenize($real-term-text,':')[not(matches(.,'Register§§'))][$pos]" 
+                              regex="^&quot;?\s*(.+?)(;.+?)?\s*&quot;?$">
+            <xsl:matching-substring>
+              <xsl:sequence select="replace(regex-group(2), '^;', '')"/>
+            </xsl:matching-substring>
+          </xsl:analyze-string>
+        </xsl:variable>
+        <xsl:element name="{$elt}">
+          <xsl:if test="$sortkey">
+            <xsl:attribute name="sortas" select="$sortkey"/>
+          </xsl:if>
           <xsl:sequence select="$processed"/>
         </xsl:element>
       </xsl:if>
@@ -183,26 +197,13 @@
   </xsl:template>
 
   <xsl:template match="text()[matches(., '^\s*[xX][eE]\s*&quot;.*$')]" mode="index-processing" priority="10">
-    <xsl:choose>
-      <xsl:when test="matches(., '\s*[xX][eE]\s*&quot;(.*)&quot;\s*$')">
-        <xsl:value-of select="replace(., '^\s*[xX][eE]\s*&quot;(.*)&quot;\s*$', '$1')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="replace(., '^\s*[xX][eE]\s*&quot;(.*)$', '$1')"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:value-of select="replace(., '^\s*[xX][eE]\s*&quot;(.*)&quot;?\s*$', '$1')"/>
   </xsl:template>
   
   <xsl:template match="text()[matches(., '^\s*[xX][eE]\s*$')]" mode="index-processing"/>
 
   <xsl:template match="text()[matches(.,'^\s*&quot;[^\s]+')]" mode="index-processing" priority="+1">
-    <xsl:value-of select="if(matches(., '^\s*&quot;(.*)&quot;\s*$')) 
-                          then replace(., '^\s*&quot;(.*)&quot;\s*$', '$1')
-                          else replace(., '^\s*&quot;(.*)$', '$1')"/>
-  </xsl:template>
-
-  <xsl:template match="text()[matches(.,'&quot;\s*$')]" mode="index-processing">
-    <xsl:value-of select="tr:rm-last-quot(.)"/>
+    <xsl:value-of select="replace(., '^\s*&quot;(.*)&quot;?\s*$', '$1')"/>
   </xsl:template>
   
   <xsl:function name="tr:primary-secondary-tertiary-number" as="xs:integer?">
@@ -231,14 +232,15 @@
         </xsl:choose>
       </xsl:for-each-group>
     </xsl:variable>
-    <xsl:variable name="processed-text" as="xs:string" select="string-join($processed, '')"/>
+    <xsl:variable name="processed-text" as="xs:string" 
+                  select="replace(string-join($processed, ''), '^(.+?)(;.*)?$', '$1')"/>
     <xsl:if test="normalize-space($processed-text)">
       <xsl:copy>
         <xsl:apply-templates select="@* except @sortas" mode="#current"/>
         <xsl:if test="not(@sortas = $processed-text)">
           <xsl:sequence select="@sortas"/>
         </xsl:if>
-        <xsl:sequence select="$processed"/>
+        <xsl:sequence select="$processed-text"/>
       </xsl:copy>
     </xsl:if>
   </xsl:template>
@@ -246,11 +248,6 @@
   <xsl:template match="*:text | text()" mode="index-processing-2">
     <xsl:value-of select="tr:rereplace-chars(.)"/>
   </xsl:template>
-  
-  <xsl:function name="tr:rm-last-quot">
-    <xsl:param name="context"/>
-    <xsl:value-of select="replace($context, '&quot;\s*$', '')"/>
-  </xsl:function>
   
   <xsl:function name="tr:rereplace-chars">
     <xsl:param name="context"/>

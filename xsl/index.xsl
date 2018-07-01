@@ -197,13 +197,13 @@
   </xsl:template>
 
   <xsl:template match="text()[matches(., '^\s*[xX][eE]\s*&quot;.*$')]" mode="index-processing" priority="10">
-    <xsl:value-of select="replace(., '^\s*[xX][eE]\s*&quot;(.*)&quot;?\s*$', '$1')"/>
+    <xsl:value-of select="replace(., '^\s*[xX][eE]\s*&quot;(.*?)&quot;?\s*$', '$1')"/>
   </xsl:template>
   
   <xsl:template match="text()[matches(., '^\s*[xX][eE]\s*$')]" mode="index-processing"/>
 
   <xsl:template match="text()[matches(.,'^\s*&quot;[^\s]+')]" mode="index-processing" priority="+1">
-    <xsl:value-of select="replace(., '^\s*&quot;(.*)&quot;?\s*$', '$1')"/>
+    <xsl:value-of select="replace(., '^\s*&quot;(.*?)&quot;?\s*$', '$1')"/>
   </xsl:template>
   
   <xsl:function name="tr:primary-secondary-tertiary-number" as="xs:integer?">

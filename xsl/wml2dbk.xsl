@@ -612,8 +612,7 @@
 
   <!-- footer (w:ftr) -->
   <xsl:template match="w:ftr[$convert-footer]" mode="wml-to-dbk">
-    <xsl:message select="'[WARNING] $convert-footer is DEPRECATED: use p:option 
-                          or xsl:param $include-header-and-footer instead.'"/>
+    <xsl:message select="'[WARNING] $convert-footer is DEPRECATED: use p:option or xsl:param $include-header-and-footer instead.'"/>
     <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
 

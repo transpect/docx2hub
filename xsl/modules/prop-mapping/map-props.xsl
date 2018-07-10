@@ -184,27 +184,13 @@
                                     [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/header',
                                               'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer')
                                      and @Target eq $header-footer-basename]/@Id"/>
-              <div role="{replace(key('docx2hub:header-footer-ref-by-id', $header-footer-id)/local-name(), '^(.+)Reference$', 'docx2hub:$1')}" 
+              <div role="docx2hub:{current-grouping-key()}" 
                    condition="{key('docx2hub:header-footer-ref-by-id', $header-footer-id)/@w:type}">
                 <xsl:apply-templates mode="docx2hub:add-props"/>
               </div>
             </xsl:for-each>        
           </div>
         </xsl:for-each-group>
-        
-        
-        <!--<xsl:for-each select="/w:root/w:header/w:hdr|/w:root/w:footer/w:ftr">
-          <xsl:variable name="header-footer-basename" select="replace(@xml:base, '^.+/(.+)$', '$1')"/>
-          <xsl:variable name="header-footer-id" 
-                        select="/w:root/w:docRels/rel:Relationships/rel:Relationship
-                                [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/header',
-                                          'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer')
-                                 and @Target eq $header-footer-basename]/@Id" as="attribute(Id)"/>
-          <div role="{replace(key('docx2hub:header-footer-ref-by-id', $header-footer-id)/local-name(), '^(.+)Reference$', 'docx2hub:$1')}" 
-               condition="{key('docx2hub:header-footer-ref-by-id', $header-footer-id)/@w:type}">
-            <xsl:apply-templates mode="docx2hub:add-props"/>
-          </div>
-        </xsl:for-each>-->
       </xsl:if>
       <xsl:apply-templates select="../../w:numbering" mode="#current"/>
       <xsl:sequence select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>

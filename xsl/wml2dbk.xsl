@@ -38,7 +38,7 @@
   <xsl:param name="hub-version" select="'1.0'" as="xs:string"/>
   <xsl:param name="discard-alternate-choices" select="'yes'" as="xs:string"/>
   <xsl:param name="include-header-and-footer" select="'no'" as="xs:string"/>
-  <xsl:param name="convert-footer" select="true()" as="xs:boolean"/>
+  <xsl:param name="convert-footer" select="false()" as="xs:boolean"/>
   <xsl:param name="mathtype2mml" select="'no'" as="xs:string?"/>
   <xsl:param name="charmap-policy" select="'unicode'" as="xs:string">
     <!-- Values: unicode or xs:string. For xs:string, mapping attribute in the fashion @char-{xs:string} must exist in the symbols file -->

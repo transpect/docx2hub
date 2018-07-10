@@ -30,6 +30,7 @@
   <xsl:key name="docx2hub:style" match="w:style" use="@w:styleId" />
   <xsl:key name="docx2hub:style-by-role" match="css:rule | dbk:style" use="if ($hub-version eq '1.0') then @role else @name" />
   <xsl:key name="docx2hub:font-by-name" match="w:font[@w:name]" use="@w:name"/>
+  <xsl:key name="docx2hub:header-footer-ref-by-id" match="w:headerReference|w:footerReference" use="@r:id"/>
   
   <xsl:template match="/" mode="docx2hub:add-props">
     <xsl:apply-templates select="w:root/w:document/w:body" mode="#current" />
@@ -154,17 +155,57 @@
           <xsl:when test="$hub-version eq '1.0'">
             <xsl:call-template name="docx2hub:hub-1.0-styles">
               <xsl:with-param name="version" select="$hub-version" tunnel="yes"/>
-              <xsl:with-param name="contexts" select="., /w:root/w:footnotes, /w:root/w:endnotes"/>
+              <xsl:with-param name="contexts" select="., 
+                                                      /w:root/w:footnotes,
+                                                      /w:root/w:endnotes"/>
             </xsl:call-template>
           </xsl:when>
           <xsl:otherwise>
             <xsl:call-template name="docx2hub:hub-1.1-styles">
               <xsl:with-param name="version" select="$hub-version" tunnel="yes"/>
-              <xsl:with-param name="contexts" select="., /w:root/w:footnotes, /w:root/w:endnotes, /w:root/w:footer/w:ftr[$convert-footer]"/>
+              <xsl:with-param name="contexts" select="., 
+                                                      /w:root/w:header,
+                                                      /w:root/w:footer,
+                                                      /w:root/w:footnotes, 
+                                                      /w:root/w:endnotes, 
+                                                      /w:root/w:footer/w:ftr[$convert-footer]"/>
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
       </info>
+      <xsl:if test="$include-header-and-footer eq 'yes'">
+        <xsl:for-each-group select="/w:root/w:header/w:hdr|/w:root/w:footer/w:ftr" group-by="parent::*/local-name()">
+          <div role="docx2hub:{current-grouping-key()}-spec">
+            <xsl:for-each select="current-group()">
+              <xsl:variable name="header-footer-basename" as="xs:string"
+                            select="replace(@xml:base, '^.+/(.+)$', '$1')"/>
+              <xsl:variable name="header-footer-id" as="attribute(Id)"
+                            select="/w:root/w:docRels/rel:Relationships/rel:Relationship
+                                    [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/header',
+                                              'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer')
+                                     and @Target eq $header-footer-basename]/@Id"/>
+              <div role="{replace(key('docx2hub:header-footer-ref-by-id', $header-footer-id)/local-name(), '^(.+)Reference$', 'docx2hub:$1')}" 
+                   condition="{key('docx2hub:header-footer-ref-by-id', $header-footer-id)/@w:type}">
+                <xsl:apply-templates mode="docx2hub:add-props"/>
+              </div>
+            </xsl:for-each>        
+          </div>
+        </xsl:for-each-group>
+        
+        
+        <!--<xsl:for-each select="/w:root/w:header/w:hdr|/w:root/w:footer/w:ftr">
+          <xsl:variable name="header-footer-basename" select="replace(@xml:base, '^.+/(.+)$', '$1')"/>
+          <xsl:variable name="header-footer-id" 
+                        select="/w:root/w:docRels/rel:Relationships/rel:Relationship
+                                [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/header',
+                                          'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer')
+                                 and @Target eq $header-footer-basename]/@Id" as="attribute(Id)"/>
+          <div role="{replace(key('docx2hub:header-footer-ref-by-id', $header-footer-id)/local-name(), '^(.+)Reference$', 'docx2hub:$1')}" 
+               condition="{key('docx2hub:header-footer-ref-by-id', $header-footer-id)/@w:type}">
+            <xsl:apply-templates mode="docx2hub:add-props"/>
+          </div>
+        </xsl:for-each>-->
+      </xsl:if>
       <xsl:apply-templates select="../../w:numbering" mode="#current"/>
       <xsl:sequence select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>
       <xsl:apply-templates select="../../w:comments, ../../w:footnotes, ../../w:endnotes" mode="#current"/>

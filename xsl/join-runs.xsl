@@ -830,6 +830,10 @@
     </xsl:copy>
   </xsl:template>
   
+  <!-- remove empty paras in headers and footers -->
+  
+  <xsl:template match="dbk:div[@role = ('docx2hub:header', 'docx2hub:footer')]/dbk:para[not(node())]" mode="docx2hub:join-runs"/>
+  
 <!--  <xsl:template match="dbk:informaltable[@css:border-collapse = 'collapse']" mode="docx2hub:join-runs">
     <xsl:variable name="curr" select="." as="element()"/>
     <xsl:variable name="css-rule" select="//css:rule[@name = $curr/@role]" as="element()*"/>

@@ -195,7 +195,7 @@
     schematron</p:documentation>
   </p:option>
   <p:option name="include-header-and-footer" required="false" select="'no'">
-    <p:documentation>Whether include the header and footer as bibliomixed. Permitted values: yes|no</p:documentation>
+    <p:documentation>Whether to include headers and footers as div at the beginning of the document. Permitted values: yes|no</p:documentation>
   </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>

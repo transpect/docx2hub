@@ -647,7 +647,7 @@
   <xsl:template match="w:bookmarkStart/@w:name" 
     mode="bookmark-id" as="attribute(xml:id)">
     <xsl:param name="end" select="false()"/>
-    <xsl:variable name="normalized-string" as="xs:string" select="docx2hub:normalize-name-for-id(.)"/>
+    <xsl:variable name="normalized-string" as="xs:string?" select="docx2hub:normalize-name-for-id(.)"/>
     <xsl:attribute name="xml:id" 
       select="  replace(
                   replace(

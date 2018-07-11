@@ -161,6 +161,22 @@
     </xsl:next-match>
   </xsl:template>
 
+  <xsl:template match="w:tbl[empty(.//(w:tblPrEx | w:tblPr)/w:tblCellSpacing[matches(@w:w, '[1-9]')])]/w:tblPr"
+    mode="docx2hub:resolve-tblBorders">
+    <!-- if tblCellSpacing is 0, its sufficient to apply borders on cells only -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node() except w:tblBorders" mode="#current"/>
+      <xsl:variable name="tblBorder" select="w:tblBorders/*" as="node()*"/>
+      <w:tblBorders>
+        <xsl:for-each select="'top', 'left', 'bottom', 'right'">
+          <xsl:element name="w:{.}">
+            <xsl:attribute name="w:val" select="'nil'"/>
+          </xsl:element>
+        </xsl:for-each>
+      </w:tblBorders>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template mode="docx2hub:resolve-tblBorders"
     match="w:tbl/w:tr/w:tc/w:tcPr[empty(ancestor::*/(w:tblPrEx|w:tblPr)/w:tblCellSpacing[matches(@w:w, '[1-9]')])]">
     <xsl:param name="tr-pos" tunnel="yes"/>

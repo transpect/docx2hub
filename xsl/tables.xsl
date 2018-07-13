@@ -45,6 +45,7 @@
                                     )],
                                    $styledef/w:tblPr/w:tblW, 
                                    w:tblPr/w:tblW,
+                                   w:tblPr/@css:table-layout,
                                    @srcpath, 
                                    @css:orientation" mode="#current"/>
       <tgroup>

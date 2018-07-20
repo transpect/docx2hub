@@ -3210,7 +3210,7 @@
         <xsl:attribute name="fontstyle">italic</xsl:attribute>
       </xsl:when>
       <xsl:when test="w:rPr/w:i[@w:val='0']">
-        <xsl:attribute name="fontstyle">upright</xsl:attribute>
+        <xsl:attribute name="fontstyle">normal</xsl:attribute>
       </xsl:when>
     </xsl:choose>
     <xsl:if test="w:rPr/w:color/@w:val">

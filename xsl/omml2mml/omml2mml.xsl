@@ -9,11 +9,16 @@
 
  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:mml="http://www.w3.org/1998/Math/MathML"
-  version="2.0" exclude-result-prefixes="m w mml xs">
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" 
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
+  xmlns:dbk="http://docbook.org/ns/docbook"
+  version="2.0" 
+  exclude-result-prefixes="m w mml xs">
+  
   <!-- %% Global Definitions -->
-<xsl:output indent="yes"></xsl:output>
+  <xsl:output indent="yes"/>
 
   <xsl:variable name="alpha-uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" as="xs:string"/>
   <xsl:variable name="alpha-lowercase" select="'abcdefghijklmnopqrstuvwxyz'" as="xs:string"/>
@@ -1307,12 +1312,6 @@
     </mml:menclose>
   </xsl:template>
 
-  <!-- das muss weg!
-	  <xsl:template match="*">
-		    <xsl:apply-templates select="*"/>
-	  </xsl:template>
-          -->
-
   <xsl:template match="m:acc" mode="omml2mml">
     <mml:mover>
       <xsl:attribute name="accent">true</xsl:attribute>
@@ -1335,10 +1334,10 @@
         <xsl:with-param name="scr" select="m:e[1]/*/m:rPr[last()]/m:scr/@m:val"/>
         <xsl:with-param name="sty" select="m:e[1]/*/m:rPr[last()]/m:sty/@m:val"/>
         <xsl:with-param name="nor" select="if (m:e[1]/*/m:rPr[last()]/m:nor/@m:val) 
-																					 then m:e[1]/*/m:rPr[last()]/m:nor/@m:val 
-																					 else if (count(m:e[1]/*/m:rPr[last()]/m:nor) gt 0) 
-																					 			then 'on' 
-																					 			else 'off'"/>
+                                           then m:e[1]/*/m:rPr[last()]/m:nor/@m:val 
+                                           else if (count(m:e[1]/*/m:rPr[last()]/m:nor) gt 0) 
+                                                then 'on' 
+                                                else 'off'"/>
       </xsl:call-template>
     </mml:mover>
   </xsl:template>
@@ -1981,7 +1980,9 @@
     <xsl:param name="text-nodes" as="node()*"/><!-- already a result of transforming *:/text() and w:sym in mode="wml-to-dbk" -->
     <xsl:param name="context" as="element(*)?"/>
     <xsl:choose>
-      <xsl:when test="some $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym)">
+      <xsl:when test="some $c in $context/* 
+                      satisfies ($c/self::*:t
+                                |$c/self::w:sym)">
         <xsl:for-each select="$text-nodes">
           <xsl:choose>
             <!-- letex comment and PI for an unmapped w:sym -->
@@ -2035,31 +2036,37 @@
   <xsl:template name="m:preliminary-mtext2">
     <xsl:param name="text-nodes" as="node()*"/><!-- already a result of transforming *:/text() and w:sym in mode="wml-to-dbk" -->
     <xsl:param name="context" as="element(*)?"/>
+    
     <xsl:choose>
-      <xsl:when test="some $c in $context/* satisfies ($c/self::*:t | $c/self::w:sym)">
+      <xsl:when test="some $c in $context/* satisfies ($c/self::*:t 
+                                                      |$c/self::w:sym
+                                                      |$c/self::w:footnoteReference
+                                                      )">
         <xsl:for-each select="$text-nodes">
-    			<xsl:choose>
-    				<!-- letex comment and PI for an unmapped w:sym -->
-    				<xsl:when test="self::processing-instruction() or self::comment()">
-    					<xsl:sequence select="."/>
-    				</xsl:when>
-    				<xsl:otherwise>
-    					<xsl:call-template name="ParseMt">
-    						<xsl:with-param name="context" select="$context"/>
-    						<xsl:with-param name="sToParse" select="."/>
-    						<xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
-    						<xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
-    						<xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
-    																							 then $context/m:rPr[last()]/m:nor/@m:val 
-    																							 else if (count($context/m:rPr[last()]/m:nor) gt 0) 
-    																										then 'on' 
-    																										else if (exists($context/*:t) and (every $t in $context/*:t satisfies $t/self::w:t))
-    																										     then 'on'
-    																										     else 'off'"/>
-    					</xsl:call-template>
-    				</xsl:otherwise>
-    			</xsl:choose>
-    		</xsl:for-each>
+          <xsl:choose>
+            <!-- letex comment and PI for an unmapped w:sym -->
+            <xsl:when test="self::processing-instruction() 
+                            or self::comment()
+                            or self::dbk:footnote">
+              <xsl:sequence select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name="ParseMt">
+                <xsl:with-param name="context" select="$context"/>
+                <xsl:with-param name="sToParse" select="."/>
+                <xsl:with-param name="scr" select="$context/m:rPr[last()]/m:scr/@m:val"/>
+                <xsl:with-param name="sty" select="$context/m:rPr[last()]/m:sty/@m:val"/>
+                <xsl:with-param name="nor" select="if ($context/m:rPr[last()]/m:nor/@m:val) 
+                                                   then $context/m:rPr[last()]/m:nor/@m:val 
+                                                   else if (count($context/m:rPr[last()]/m:nor) gt 0) 
+                                                        then 'on' 
+                                                        else if (exists($context/*:t) and (every $t in $context/*:t satisfies $t/self::w:t))
+                                                             then 'on'
+                                                             else 'off'"/>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
       </xsl:when>
       <xsl:otherwise>
         <xsl:apply-templates select="$context/* except $context/*:rPr" mode="#current"/>
@@ -2074,16 +2081,18 @@
          in docx.
     -->
     <xsl:variable name="sLowerCaseNor"
-      select="translate(child::m:rPr[last()]/m:nor/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
+                  select="translate(child::m:rPr[last()]/m:nor/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
     <xsl:variable name="sLowerCaseLit"
-      select="translate(child::m:rPr[child::m:lit][last()]/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
+                  select="translate(child::m:rPr[child::m:lit][last()]/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
     <xsl:variable name="fNor" select="if($sLowerCaseNor='off' or count(child::m:rPr[last()]/m:nor) = 0) then 0 else 1" as="xs:integer"/>
     <xsl:variable name="fLit" select="if(not(child::m:rPr[child::m:lit][last()]) or $sLowerCaseLit='off') then 0 else 1" as="xs:integer"/>
     <xsl:variable name="fSub" select="if(number(w:rPr/w:position/@w:val) lt 0) then 1 else 0" as="xs:integer"/>
     <xsl:variable name="fSup" select="if(number(w:rPr/w:position/@w:val) gt 0) then 1 else 0" as="xs:integer"/>
     <xsl:variable name="context" as="element(m:r)" select="."/>
     <xsl:variable name="text-nodes" as="node()*">
-      <xsl:apply-templates select=".//*:t/text() | .//w:sym" mode="wml-to-dbk"/>
+      <xsl:apply-templates select=".//*:t/text()
+                                  |.//w:sym
+                                  |.//w:footnoteReference" mode="wml-to-dbk"/>
     </xsl:variable>
     <xsl:choose>
       <xsl:when test="$fSub=1 or $fSup=1">
@@ -2153,7 +2162,12 @@
             </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:variable name="context" as="element(*)?" select="(.//*:t | .//w:sym | .//w:br)[1]/.."/>
+            <xsl:variable name="context" as="element(*)?" select="(.//*:t 
+                                                                  |.//w:sym
+                                                                  |.//w:br
+                                                                  |.//w:footnoteReference
+                                                                  )[1]/..
+                                                                  "/>
             <xsl:choose>
               <xsl:when test="$fLit=1">
                 <mml:maction actiontype="lit">
@@ -2567,7 +2581,6 @@
     <xsl:param name="scr"/>
     <xsl:param name="nor"/>
     <xsl:param name="first-call" select="true()" as="xs:boolean"/>
-    
     <xsl:variable name="sRepNumWith0">
       <xsl:call-template name="SReplaceNumWithZero">
         <xsl:with-param name="sToParse" select="$sToParse"/>

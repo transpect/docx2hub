@@ -566,7 +566,20 @@
   <!-- paragraphs (w:p) -->
 
   <xsl:variable name="docx2hub:allowed-para-element-names" as="xs:string+"
-    select="('w:r', 'w:pPr', 'w:bookmarkStart', 'w:bookmarkEnd', 'w:smartTag', 'w:commentRangeStart', 'w:commentRangeEnd', 'w:proofErr', 'w:hyperlink', 'w:del', 'w:ins', 'w:fldSimple', 'm:oMathPara', 'm:oMath')" />
+                select="('w:r', 
+                         'w:pPr', 
+                         'w:bookmarkStart', 
+                         'w:bookmarkEnd', 
+                         'w:smartTag', 
+                         'w:commentRangeStart', 
+                         'w:commentRangeEnd', 
+                         'w:proofErr', 
+                         'w:hyperlink', 
+                         'w:del', 
+                         'w:ins', 
+                         'w:fldSimple', 
+                         'm:oMathPara', 
+                         'm:oMath')" />
 
   <xsl:template match="w:p" mode="wml-to-dbk">
     <xsl:element name="para">

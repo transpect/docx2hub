@@ -59,7 +59,9 @@
     <footnote>
       <xsl:variable name="id" select="@w:id"/>
       <xsl:attribute name="xml:id" select="string-join(('fn', $id), '-')"/>
-      <xsl:variable name="xreflabel" select="if (@w:customMarkFollows=('1','on','true')) then following-sibling::w:t[1]/text() else ''" as="xs:string?"/>
+      <xsl:variable name="xreflabel" select="if (@w:customMarkFollows=('1','on','true')) 
+                                             then following-sibling::w:t[1]/text() 
+                                             else ''" as="xs:string?"/>
       <xsl:if test="not($xreflabel = '')">
         <xsl:attribute name="xreflabel" select="$xreflabel"/>
       </xsl:if>

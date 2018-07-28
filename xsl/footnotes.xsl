@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xsl:stylesheet version="2.0"
-
-  xmlns:xsl		= "http://www.w3.org/1999/XSL/Transform"
-  xmlns:fn              = "http://www.w3.org/2005/xpath-functions"
-  xmlns:xs		= "http://www.w3.org/2001/XMLSchema"
-  xmlns:w		= "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-  xmlns:word200x	= "http://schemas.microsoft.com/office/word/2003/wordml"
-  xmlns:v		= "urn:schemas-microsoft-com:vml" 
-  xmlns:dbk		= "http://docbook.org/ns/docbook"
-  xmlns:wx		= "http://schemas.microsoft.com/office/word/2003/auxHint"
-  xmlns:o		= "urn:schemas-microsoft-com:office:office"
-  xmlns:pkg		= "http://schemas.microsoft.com/office/2006/xmlPackage"
-  xmlns:r		= "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-  xmlns:rel		= "http://schemas.openxmlformats.org/package/2006/relationships"
-  xmlns:exsl		= 'http://exslt.org/common'
-  xmlns:saxon		= "http://saxon.sf.net/"
-  xmlns:mml             = "http://www.w3.org/1998/Math/MathML"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:word200x="http://schemas.microsoft.com/office/word/2003/wordml"
+  xmlns:v="urn:schemas-microsoft-com:vml" 
+  xmlns:dbk="http://docbook.org/ns/docbook"
+  xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage"
+  xmlns:r= "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+  xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
+  xmlns:exsl="http://exslt.org/common"
+  xmlns:saxon="http://saxon.sf.net/"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:css="http://www.w3.org/1996/css"
-  xmlns:docx2hub ="http://transpect.io/docx2hub"
+  xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:tr="http://transpect.io"
+  version="2.0"
   xmlns="http://docbook.org/ns/docbook"
-  exclude-result-prefixes = "fn xs w word200x v dbk wx o pkg r rel exsl saxon mml css docx2hub tr"
-  >
+  exclude-result-prefixes = "fn xs w word200x v dbk wx o pkg r rel exsl saxon mml css docx2hub tr">
 
   <!-- We don’t need to include MS Word localized style names if we trust it to
     always use 'footnote reference' as the native name -->
   <xsl:variable name="footnote-reference-styles" as="xs:string+"
-    select="('Funotenanker', 'FootnoteAnchor', (: LibreOffice de/en :)
-             'FootnoteReference', 'Funotenzeichen' (: MS Word en/de :))"/>
+                select="('Funotenanker', 
+                         'FootnoteAnchor',   (: LibreOffice de/en :)
+                         'FootnoteReference', 
+                         'Funotenzeichen'    (: MS Word en/de :))"/>
   
   <xsl:function name="docx2hub:is-footnote-reference-style" as="xs:boolean">
     <xsl:param name="style" as="attribute(role)?"/>

@@ -15,7 +15,7 @@
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:dbk="http://docbook.org/ns/docbook"
   version="2.0" 
-  exclude-result-prefixes="m w mml xs">
+  exclude-result-prefixes="m w mml xs dbk">
   
   <!-- %% Global Definitions -->
   <xsl:output indent="yes"/>

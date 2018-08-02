@@ -60,7 +60,6 @@
                          [if (matches(., '%\d')) then not(../../w:numFmt/@w:val = 'decimal') else true()]
                        " mode="wml-to-dbk" priority="1.5">
     <!-- priority = 1.5 because of priority = 1 ("default for attributes") in wml2dbk.xsl -->
-    
  
     <xsl:variable name="font" select="if (self::w:sym) 
                                       then @w:font
@@ -88,44 +87,41 @@
     <xsl:variable name="font_map" as="document-node(element(symbols))?" select="docx2hub:font-map($font)"/>
     <xsl:variable name="text" as="node()">
       <xsl:choose>
-        <xsl:when test="if (self::w:sym) then $font_map/symbols/symbol[@number = $number] else $font_map/symbols/symbol[@entity = $number]">
-          <xsl:choose>
-            <xsl:when test="if (self::w:sym) 
-                            then $font_map/symbols/symbol[@number = $number]/@char = '&#x000a;' 
-                            else $font_map/symbols/symbol[@entity = $number]/@char = '&#x000a;'">
-              <br/>
-            </xsl:when>
-            <xsl:otherwise>
-              <text mapped="true">
-                <xsl:value-of select="if (self::w:sym) 
-                                      then ($font_map/symbols/symbol[@number = $number]/@*[name() = (concat('char-', $charmap-policy))],
-                                            $font_map/symbols/symbol[@number = $number]/@char)[1]
-                                      else ($font_map/symbols/symbol[@entity = $number]/@*[name() = (concat('char-', $charmap-policy))], 
-                                            $font_map/symbols/symbol[@entity = $number]/@char)[1]"/>
-              </text>
-            </xsl:otherwise>
-          </xsl:choose>
+        <xsl:when test="if (self::w:sym) 
+                        then $font_map/symbols/symbol[@number = $number]/@char = '&#x000a;' 
+                        else $font_map/symbols/symbol[@entity = $number]/@char = '&#x000a;'">
+          <br/>
+        </xsl:when>
+        <xsl:when test="if (self::w:sym) 
+                        then $font_map/symbols/symbol[@number = $number] 
+                        else $font_map/symbols/symbol[@entity = $number]">
+          <text mapped="true">
+            <xsl:value-of select="if (self::w:sym) 
+                                  then ($font_map/symbols/symbol[@number = $number]/@*[name() = (concat('char-', $charmap-policy))],
+                                        $font_map/symbols/symbol[@number = $number]/@char)[1]
+                                  else ($font_map/symbols/symbol[@entity = $number]/@*[name() = (concat('char-', $charmap-policy))], 
+                                        $font_map/symbols/symbol[@entity = $number]/@char)[1]"/>
+          </text>
+        </xsl:when>
+        <xsl:when test="self::w:sym">
+          <xsl:call-template name="create-replacement">
+            <xsl:with-param name="font" select="$font"/>
+            <xsl:with-param name="number" select="$number"/>
+          </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:choose>
-            <xsl:when test="self::w:sym">
-              <xsl:call-template name="create-replacement">
-                <xsl:with-param name="font" select="$font"/>
-                <xsl:with-param name="number" select="$number"/>
-              </xsl:call-template>
-            </xsl:when>
-            <xsl:otherwise>
-              <text>
-                <xsl:value-of select="$number"/>
-                <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
-                                        concat('Could not map char ', string-to-codepoints($number), ' in font ', $font, ' (message c)'))"/>
-              </text>
-            </xsl:otherwise>
-          </xsl:choose>
+          <text>
+            <xsl:value-of select="$number"/>
+            <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
+                                                   concat('Could not map char ', 
+                                                          string-join(string-to-codepoints($number), ', '), 
+                                                          ' in font ', $font, ' (message c)'
+                                                          )
+                                                   )"/>
+          </text>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-
     <xsl:choose>
       <xsl:when test="$text[self::text]">
         <xsl:sequence select="$text/node()"/>

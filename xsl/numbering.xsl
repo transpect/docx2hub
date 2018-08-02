@@ -249,7 +249,6 @@ it, but not when an ilvl=2 heading precedes it.
   <xsl:function name="tr:insert-numbering" as="item()*">
     <xsl:param name="context" as="element(w:p)"/>
     <!-- Do we process lvlOverrides? -->
-    
     <xsl:variable name="lvl" select="tr:get-lvl-of-numbering($context)" as="element(w:lvl)?"/>
     <xsl:choose>
       <xsl:when test="exists($lvl)">
@@ -417,12 +416,10 @@ it, but not when an ilvl=2 heading precedes it.
     <xsl:param name="lvl" as="element(w:lvl)"/>
     
     <xsl:variable name="abstract-num-id" select="xs:double($lvl/ancestor::w:abstractNum/@w:abstractNumId)" as="xs:double"/>
-    <xsl:variable name="lvl-to-use" select="if (exists(tr:get-lvl-override($context)/w:lvl)) 
-                                            then tr:get-lvl-override($context)/w:lvl 
-                                            else $lvl"/>
+    <xsl:variable name="lvl-to-use" select="(tr:get-lvl-override($context)/w:lvl, $lvl)[1]" as="element(w:lvl)"/>
     <xsl:variable name="ilvl" select="xs:double($lvl-to-use/@w:ilvl)"/>
     
-    <xsl:variable name="resolve-symbol-encoding">
+    <xsl:variable name="resolve-symbol-encoding" as="element()">
       <element>
         <xsl:apply-templates select="$lvl-to-use/w:lvlText/@w:val" mode="wml-to-dbk"/>
       </element>

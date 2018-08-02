@@ -76,8 +76,7 @@
     saxon:suppress-indentation="entry para title term link"
     cdata-section-elements=''
     />
-  
 
-<xsl:variable name="root" as="document-node()" select="/"/>
+  <xsl:variable name="root" as="document-node()" select="/"/>
 
 </xsl:stylesheet>

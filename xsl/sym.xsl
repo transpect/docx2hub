@@ -60,7 +60,7 @@
                          [if (matches(., '%\d')) then not(../../w:numFmt/@w:val = 'decimal') else true()]
                        " mode="wml-to-dbk" priority="1.5">
     <!-- priority = 1.5 because of priority = 1 ("default for attributes") in wml2dbk.xsl -->
- 
+
     <xsl:variable name="font" select="if (self::w:sym) 
                                       then @w:font
                                       else
@@ -91,6 +91,11 @@
                         then $font_map/symbols/symbol[@number = $number]/@char = '&#x000a;' 
                         else $font_map/symbols/symbol[@entity = $number]/@char = '&#x000a;'">
           <br/>
+        </xsl:when>
+        <xsl:when test="name() eq 'w:val' and matches(., '^%\d')">
+          <text>
+            <xsl:value-of select="replace($number, '^%\d', '')"/>
+          </text>
         </xsl:when>
         <xsl:when test="if (self::w:sym) 
                         then $font_map/symbols/symbol[@number = $number] 
@@ -241,8 +246,6 @@
     </xsl:choose>
   </xsl:template>
   
-  
-
   <xsl:function name="tr:dec-to-hex" as="xs:string">
     <xsl:param name="in" as="xs:integer?"/>
     <xsl:sequence select="if (not($in) or ($in eq 0)) 
@@ -254,6 +257,5 @@
                             substring('0123456789abcdef', ($in mod 16) + 1, 1)
                           )"/>
   </xsl:function>
-
 
 </xsl:stylesheet>

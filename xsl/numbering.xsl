@@ -277,18 +277,11 @@ it, but not when an ilvl=2 heading precedes it.
             <xsl:with-param name="context" select="$context" tunnel="yes"/>
           </xsl:apply-templates>
         </xsl:variable>
-        <xsl:variable name="immediate-first" as="attribute(*)*">
-          <xsl:choose>
-            <xsl:when test="$context/w:numPr">
-              <xsl:sequence select="$style-atts[name() = $pPr-from-numPr/name()], $pPr-from-numPr"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <!-- the declaration priorities within $pPr (taking into account style inheritance) should have
-                been sorted out when calculating $pPr during prop mapping -->
-              <xsl:sequence select="$pPr-from-numPr, $style-atts[name() = $pPr-from-numPr/name()]"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
+        <!-- the declaration priorities within $pPr (taking into account style inheritance) should have
+             been sorted out when calculating $pPr during prop mapping -->
+        <xsl:variable name="immediate-first" as="attribute(*)*" 
+                      select="if($context/w:numPr) then ($style-atts[name() = $pPr-from-numPr/name()], $pPr-from-numPr)
+                              else ($pPr-from-numPr, $style-atts[name() = $pPr-from-numPr/name()])"/>
         <xsl:sequence select="$immediate-first, $ad-hoc-atts[name() = $pPr-from-numPr/name()]"/>
         <xsl:apply-templates select="$context/dbk:tabs" mode="wml-to-dbk"/>
         <phrase role="hub:identifier">

@@ -528,8 +528,8 @@
     <xsl:variable name="pct-to-dxa" as="element()">
       <xsl:variable name="tbl-w" select="../../../../../w:tblPr/w:tblW/@w:w" as="xs:decimal"/>
       <xsl:variable name="tc-pct" select="if(matches(., '%'))
-        then replace(., '%', '')
-        else . div 5000" as="xs:double"/>
+        then xs:double(replace(., '%', ''))
+        else xs:double(.) div 5000" as="xs:double"/>
       <xsl:variable name="tc-dxa" select="$tbl-w * $tc-pct" as="xs:double"/>
       <w:tcW w:type="dxa" w:w="{round-half-to-even($tc-dxa)}"/>
     </xsl:variable>

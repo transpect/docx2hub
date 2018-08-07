@@ -1394,9 +1394,13 @@
   
   <xsl:template match="w:object[mml:math]" mode="wml-to-dbk">
     <inlineequation role="mtef">
+      <xsl:attribute name="condition" select="mml:math/@class"/>
       <xsl:apply-templates select="mml:math" mode="mathml"/>
     </inlineequation>
   </xsl:template>
+
+  <!-- we used @class just as placeholder, the value was moved to inlineequation/@condition -->
+  <xsl:template match="mml:math/@class" mode="mathml"/>
   
   <!-- inlineequation? remove block display setting! -->
   <xsl:template match="w:object/mml:math/@display[. eq 'block']" mode="mathml"/>

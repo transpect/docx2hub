@@ -181,6 +181,7 @@
                       <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
                     </p:input>
                   </p:insert>
+                  <p:add-attribute attribute-name="class" attribute-value="wmf" match="mml:math"/>
                 </p:when>
                 <p:otherwise>
                   <!-- since $active is not 'wmf', c:errors will trigger other conversion but not be compared to those results -->
@@ -215,6 +216,7 @@
                       <p:inline><wrap-mml><?tr M2M_210 MathML equation source:ole?></wrap-mml></p:inline>
                     </p:input>
                   </p:insert>
+                  <p:add-attribute attribute-name="class" attribute-value="ole" match="mml:math"/>
                 </p:when>
                 <p:otherwise>
                   <p:identity>

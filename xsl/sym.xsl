@@ -119,7 +119,7 @@
             <xsl:value-of select="$number"/>
             <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
                                                    concat('Could not map char ', 
-                                                          string-join(string-to-codepoints($number), ', '), 
+                                                          string-join(xs:string(string-to-codepoints($number)), ', '), 
                                                           ' in font ', $font, ' (message c)'
                                                           )
                                                    )"/>

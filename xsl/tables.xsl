@@ -260,7 +260,6 @@
     <xsl:param name="col-widths" tunnel="yes" as="xs:integer*"/>
     <xsl:param name="row-overrides" as="attribute(*)*"/>
     <xsl:param name="table-borders" as="attribute(*)*" tunnel="yes"/>
-    <xsl:variable name="pos" select="position()"/>
     <xsl:element name="entry">
 <!--      <xsl:copy-of select="ancestor::w:tbl[1]/w:tblPr/@css:*[not(matches(local-name(), '^(border|background-color|width)'))]"/>-->
       <xsl:sequence select="ancestor::w:tr[1]/@css:*[not(matches(local-name(), '^(background-color|(min-)?height|width)'))]"/>
@@ -298,7 +297,13 @@
         <xsl:value-of select="if (empty($morerows)) then 0 else $morerows"/>
       </xsl:variable>
       <xsl:if test="$morerows-value gt 0">
-        <xsl:apply-templates select="ancestor::w:tr[1]/following-sibling::w:tr[position() = $morerows-value]/w:tc[position() = $pos]/@css:*[matches(name(),'border\-bottom\-')]" mode="wml-to-dbk">
+        <xsl:variable name="pos" select="docx2hub:get-tc-grid-position(ancestor::w:tr[1], .)"/>
+        <xsl:variable name="bottom-border-row"
+          select="ancestor::w:tr[1]/following-sibling::w:tr[position() = $morerows-value]" as="element(w:tr)"/>
+        <xsl:variable name="bottom-border-cell"
+          select="docx2hub:get-tc-by-grid-position($bottom-border-row, $pos)"
+          as="element(w:tc)"/>
+        <xsl:apply-templates select="$bottom-border-cell/@css:*[matches(name(), 'border\-bottom\-')]" mode="wml-to-dbk">
           <xsl:with-param name="is-first-cell" select="$is-first-cell" tunnel="yes"/>
           <xsl:with-param name="is-last-cell" select="$is-last-cell" tunnel="yes"/>
           <xsl:with-param name="is-first-row-in-group" select="$is-first-row-in-group" tunnel="yes"/>
@@ -321,6 +326,33 @@
       <xsl:apply-templates select="*" mode="#current"/>
     </xsl:element>
   </xsl:template>
+  
+  <xsl:function name="docx2hub:get-tc-grid-position" as="xs:integer">
+    <xsl:param name="row" as="element(w:tr)"/>
+    <xsl:param name="cell" as="element(w:tc)"/>
+    <xsl:variable name="id" select="generate-id($cell)"/>
+    <xsl:variable name="preceding-tc" select="$row/w:tc[generate-id() = $id]/preceding-sibling::w:tc" as="node()*"/>
+    <xsl:sequence select="
+      1 +
+      xs:integer(sum($preceding-tc/w:tcPr/w:gridSpan/@w:val))
+      +
+      count($preceding-tc[not(w:tcPr/w:gridSpan)])
+    "/>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:get-tc-by-grid-position" as="element(w:tc)">
+    <xsl:param name="row" as="element(w:tr)"/>
+    <xsl:param name="position" as="xs:integer"/>
+    <!--
+      example:
+      | a | a | a | b | c1 |
+      | d | d | e | b | c2 |
+      | f | g | e | h | i  |
+      for position 5 (c1), we need to return c2
+      => account for preceding grid spans (like d)
+    -->
+    <xsl:sequence select="$row/w:tc[docx2hub:get-tc-grid-position($row, .) = $position]"/>
+  </xsl:function>
 <!--
   <xsl:template match="@css:border-insideH-style | @css:border-insideH-width | @css:border-insideH-color" mode="wml-to-dbk" priority="10">
     <xsl:param name="is-first-row-in-group" as="xs:boolean?" tunnel="yes"/>

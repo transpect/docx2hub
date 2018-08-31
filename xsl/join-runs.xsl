@@ -263,7 +263,7 @@
   
   <xsl:template name="docx2hub:following_pagebreak-elements-to-attributes">
     <xsl:variable name="following" as="element(dbk:para)?" select="following-sibling::*[1][@docx2hub:removable]"/>
-    <xsl:variable name="page-break-atts" as="attribute(*)?">
+    <xsl:variable name="page-break-atts" as="attribute(*)*">
       <xsl:apply-templates select="$following//dbk:br[@role[not(. eq 'textWrapping')]]
                                                      [dbk:same-scope(., $following)]" 
         mode="docx2hub:join-runs-br-attr"/>  
@@ -277,7 +277,7 @@
   
   <xsl:template name="docx2hub:preceding_pagebreak-elements-to-attributes">
     <xsl:variable name="preceding" as="element(dbk:para)?" select="preceding-sibling::*[1][@docx2hub:removable]"/>
-    <xsl:variable name="page-break-atts" as="attribute(*)?">
+    <xsl:variable name="page-break-atts" as="attribute(*)*">
       <xsl:apply-templates select="$preceding//dbk:br[@role[not(. eq 'textWrapping')]]
                                                      [dbk:same-scope(., $preceding)]" 
         mode="docx2hub:join-runs-br-attr"/>  

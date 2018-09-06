@@ -54,7 +54,12 @@
                             $el/w:footnoteRef
                           )"/>
   </xsl:function>
-  
+
+  <xsl:template match="w:continuationSeparator" mode="wml-to-dbk">
+    <!-- preliminary mapping for 30078588.docx, https://mantis.le-tex.de/mantis/view.php?id=23991
+      It creates a horizontal line in the content in Word. We’ll just have an empty para in Hub for now. --> 
+  </xsl:template>
+
   <xsl:template match="w:footnoteReference" mode="wml-to-dbk">
     <footnote>
       <xsl:variable name="id" select="@w:id"/>

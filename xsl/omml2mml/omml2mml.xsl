@@ -1982,6 +1982,7 @@
     <xsl:choose>
       <xsl:when test="some $c in $context/* 
                       satisfies ($c/self::*:t
+                                |$c/self::w:noBreakHyphen
                                 |$c/self::w:sym)">
         <xsl:for-each select="$text-nodes">
           <xsl:choose>
@@ -2040,6 +2041,7 @@
     <xsl:choose>
       <xsl:when test="some $c in $context/* satisfies ($c/self::*:t 
                                                       |$c/self::w:sym
+                                                      |$c/self::w:noBreakHyphen
                                                       |$c/self::w:footnoteReference
                                                       )">
         <xsl:for-each select="$text-nodes">
@@ -2092,6 +2094,7 @@
     <xsl:variable name="text-nodes" as="node()*">
       <xsl:apply-templates select=".//*:t/text()
                                   |.//w:sym
+                                  |.//w:noBreakHyphen
                                   |.//w:footnoteReference" mode="wml-to-dbk"/>
     </xsl:variable>
     <xsl:choose>
@@ -2165,6 +2168,7 @@
             <xsl:variable name="context" as="element(*)?" select="(.//*:t 
                                                                   |.//w:sym
                                                                   |.//w:br
+                                                                  |.//w:noBreakHyphen
                                                                   |.//w:footnoteReference
                                                                   )[1]/..
                                                                   "/>

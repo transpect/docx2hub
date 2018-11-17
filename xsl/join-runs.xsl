@@ -542,10 +542,10 @@
               </xsl:if>
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:variable name="instr-text-nodes" as="item()*" 
-                  select="current-group()/w:instrText |
-                          current-group()/self::w:fldSimple/@w:instr |
-                          current-group()/self::w:fldSimple/w:r/w:instrText |
-                          current-group()/self::m:oMath (: may occur in XE :)"/>
+                  select="current-group()/(w:instrText 
+                                           | self::w:fldSimple/@w:instr 
+                                           | self::w:fldSimple/w:r/w:instrText
+                                           | self::m:oMath (: may occur in XE :))"/>
                 <xsl:variable name="instr-text" as="xs:string" select="string-join($instr-text-nodes, '')"/>
                 <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
                 <xsl:choose>
@@ -623,8 +623,12 @@
     <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;\s*', ''), '\s*&quot;\s*$', '')"/>
   </xsl:template>
   
-  <xsl:template match="m:oMath" mode="docx2hub:join-instrText-runs_render-compund" priority="2">
+  <xsl:template match="m:oMath | *:superscript | *:subscript" mode="docx2hub:join-instrText-runs_render-compund" priority="2">
     <xsl:sequence select="."/>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[dbk:subscript | dbk:superscript]" mode="docx2hub:join-instrText-runs_render-compund" priority="2">
+    <xsl:sequence select="node()"/>
   </xsl:template>
   
 

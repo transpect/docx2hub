@@ -1211,14 +1211,33 @@
           <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
         </xsl:copy>
       </xsl:when>
-      <!-- do not wrap field function elements in subscript or superscript-->
+      <!-- do not wrap field function elements in subscript or superscript.
+      Exception: instrText will be wrapped (see next xsl:when) when it isn’t the first instrText after a 'begin' fldChar.
+      There may be sub/superscripts in index terms. However, sometimes even the field function name (XE for index terms)
+      is lowered or raised. This leads to errors when processing it. -->
       <xsl:when test="docx2hub:wrap/@element = ('superscript', 'subscript') 
                       and
-                      (exists(w:fldChar | w:instrText))
+                      (exists(w:fldChar | w:instrText[current()/preceding-sibling::*[1]/self::w:r/w:fldChar[@w:fldCharType = 'begin']] ))
                       and
-                      (every $i in * satisfies $i[self::w:fldChar or self::w:instrText or self::docx2hub:*])">
+                      (every $i in * satisfies $i[self::w:fldChar (:or self::w:instrText:) or self::docx2hub:*])">
         <xsl:copy>
           <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
+        </xsl:copy>
+      </xsl:when>
+      <!-- Deal with sub/sup in index terms: -->
+      <xsl:when test="docx2hub:wrap/@element = ('superscript', 'subscript') 
+                      and
+                      (exists(w:instrText))
+                      and
+                      (every $i in * satisfies exists($i/(self::w:instrText | self::docx2hub:*)))">
+        <xsl:copy>
+          <xsl:apply-templates select="docx2hub:attribute" mode="#current"/>
+          <xsl:for-each select="w:instrText">
+            <xsl:copy>
+              <xsl:copy-of select="@*"><!-- @xml:space --></xsl:copy-of>
+              <xsl:sequence select="docx2hub:wrap((../@srcpath, node()), (../docx2hub:wrap))" />
+            </xsl:copy>
+          </xsl:for-each>
         </xsl:copy>
       </xsl:when>
       <xsl:when test="exists(docx2hub:wrap) and exists(self::css:rule | self::dbk:style)">

@@ -894,7 +894,8 @@
   <!-- Field functions -->
 
   <xsl:template match="REF[@fldArgs]" mode="wml-to-dbk" priority="2">
-    <xsl:variable name="linkend" select="replace(@fldArgs, '^([_A-Za-z\d]+)(.*)$', '$1')" as="xs:string"/>
+    <xsl:variable name="linkend" select="replace(@fldArgs, '^([_A-Za-z\d\.-]+)(.*)$', '$1')" as="xs:string"/>
+    <xsl:variable name="switches" select="tokenize(@fldArgs,'\s+\\')[string-length(.)=1]" as="xs:string *"/>
     <xsl:choose>
     <!-- Unwrap, don’t link, a REF like this: 
     <REF xmlns="" fldArgs="DINDOKYEAR \* CHARFORMAT \* MERGEFORMAT">
@@ -915,6 +916,9 @@
       </xsl:when>
       <xsl:otherwise>
         <link linkend="{$linkend}">
+          <xsl:if test="$switches[.='t']">
+            <xsl:attribute name="xrefstyle" select="'numbering-only'"/>
+          </xsl:if>
           <xsl:apply-templates mode="#current"/>
         </link>    
       </xsl:otherwise>

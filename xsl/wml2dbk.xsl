@@ -1034,8 +1034,8 @@
           <xsl:when test="matches(@fldArgs,'^[\s&#160;]*$')">
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
-          <xsl:when test="name() = 'PRINT'">
-            <xsl:processing-instruction name="PRINT" select="string-join($tokens, ' ')"/>
+          <xsl:when test="name() = ('PRINT', 'MACROBUTTON')">
+            <xsl:processing-instruction name="{name()}" select="string-join($tokens, ' ')"/>
           </xsl:when>
           <xsl:when test="name() = 'AUTOTEXT'">
             <xsl:call-template name="signal-error" xmlns="">

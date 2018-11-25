@@ -78,6 +78,9 @@
           <xsl:when test="current-grouping-key() eq ''">
             <xsl:apply-templates select="current-group()" mode="#current"/>
           </xsl:when>
+          <xsl:when test="current-grouping-key() eq 'phrase___role__=__docx2hub:EQ'">
+            <xsl:apply-templates select="current-group()" mode="#current"/>
+          </xsl:when>
           <xsl:otherwise>
             <xsl:copy copy-namespaces="no">
               <xsl:apply-templates select="@role, @* except (@srcpath, @role)" mode="#current"/>
@@ -126,6 +129,47 @@
 
   <xsl:key name="docx2hub:linking-item-by-id" match="*[@linkend | @linkends]" use="@linkend, tokenize(@linkends, '\s+')"/>
   <xsl:key name="docx2hub:item-by-id" match="*[@xml:id]" use="@xml:id"/>
+
+
+  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']" mode="docx2hub:join-runs" priority="10">
+    <xsl:choose>
+      <xsl:when test="exists(ancestor::dbk:phrase[@role = 'docx2hub:EQ'])">
+        <xsl:next-match/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:copy-of select="@role"/>
+          <xsl:next-match/>
+        </xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ'][*[1]/self::dbk:frac]" mode="docx2hub:join-runs" priority="5">
+    <phrase role="docx2hub:EQ-frac">
+      <phrase role="docx2hub:EQ-numerator">
+        <xsl:apply-templates select="node()[following-sibling::dbk:sep]" mode="#current"/>
+      </phrase>
+      <phrase role="docx2hub:EQ-denominator">
+        <xsl:apply-templates select="node()[preceding-sibling::dbk:sep]" mode="#current"/>
+      </phrase>
+    </phrase>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ'][*[1]/self::dbk:root]" mode="docx2hub:join-runs" priority="5">
+    <phrase role="docx2hub:EQ-root">
+      <phrase role="docx2hub:EQ-order">
+        <xsl:apply-templates select="node()[following-sibling::dbk:sep]" mode="#current"/>
+      </phrase>
+      <phrase role="docx2hub:EQ-radicand">
+        <xsl:apply-templates select="node()[preceding-sibling::dbk:sep]" mode="#current"/>
+      </phrase>
+    </phrase>
+  </xsl:template>
+  
+  <xsl:template match="dbk:root | dbk:frac | dbk:open-delim | dbk:close-delim | dbk:sep" mode="docx2hub:join-runs"/>
+
+
 
   <!-- collateral: deflate an adjacent start/end anchor pair to a single anchor --> 
   <xsl:template match="dbk:anchor[
@@ -516,11 +560,74 @@
   
   <xsl:template match="*:keyword[matches(@role,'^fieldVar_')]" mode="docx2hub:join-runs"/>
   
-  <!-- This mode has to run before docx2hub:field-functions --> 
+  <!-- This mode has to run before docx2hub:field-functions -->
+  
+  <xsl:template match="/dbk:hub" mode="docx2hub:join-instrText-runs">
+    <!-- This is a newly introduced nesting that largely has the same effect as the existing 
+      docx2hub:nest-field-functions nesting ~200 lines down. It solved the issue that instrText
+      after a nested inline field function referred to the wrong begin fldChar. 
+      It is probably a good idea to try to combine nesting and instrText merging. 
+      This could save us an XSLT pass.
+      -->
+    <xsl:variable name="nested-fldChars" as="document-node(element(dbk:nested-fldChars))">
+      <xsl:document>
+        <nested-fldChars>
+          <xsl:sequence select="tr:nest-fldChars(.//w:fldChar | .//w:instrText, 0)"/>  
+        </nested-fldChars>
+      </xsl:document>
+    </xsl:variable>
+    <xsl:next-match>
+      <xsl:with-param name="nested-fldChars" select="$nested-fldChars" tunnel="yes"/>
+    </xsl:next-match>
+  </xsl:template>
+  
+  <xsl:function name="tr:nest-fldChars" as="element(*)*">
+    <xsl:param name="input" as="element(*)*"/><!-- w:fldChar, w:instrText or dbk:fldCharGroup -->
+    <xsl:param name="depth" as="xs:integer"/><!-- pass 0 when invoking the function from outside the function -->
+    <xsl:choose>
+      <xsl:when test="exists($input/self::w:fldChar)">
+        <xsl:variable name="nest" as="element(*)*">
+          <xsl:for-each-group select="$input" group-starting-with="w:fldChar[@w:fldCharType = 'begin']">
+            <xsl:for-each-group select="current-group()" group-ending-with="w:fldChar[@w:fldCharType = 'end']">
+              <xsl:choose>
+                <xsl:when test="exists(current-group()/self::w:fldChar[@w:fldCharType = 'begin'])
+                                and
+                                exists(current-group()/self::w:fldChar[@w:fldCharType = 'end'])">
+                  <fldCharGroup begin="{current-group()/self::w:fldChar[@w:fldCharType = 'begin']/@xml:id}"
+                                end="{current-group()/self::w:fldChar[@w:fldCharType = 'end']/@xml:id}">
+                    <xsl:sequence select="current-group()"/>
+                  </fldCharGroup>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:sequence select="current-group()"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each-group>
+          </xsl:for-each-group>  
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="$depth ge 20">
+            <xsl:message terminate="yes">
+              <xsl:text>Non-balanced (or too deeply nested) field char nesting detected in mode docx2hub:join-instrText-runs: </xsl:text>
+              <xsl:sequence select="$nest"/>
+            </xsl:message>
+          </xsl:when>
+          <xsl:when test="exists($nest/self::w:fldChar)">
+            <xsl:sequence select="tr:nest-fldChars($nest, $depth + 1)"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:sequence select="$nest"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:function>
+  
   <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs">
+    <xsl:param name="nested-fldChars" as="document-node(element(dbk:nested-fldChars))" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="node()" 
+      <xsl:for-each-group select="*" 
         group-adjacent="exists(
                           self::w:r[w:instrText]
                                    [every $c in * 
@@ -533,13 +640,22 @@
           <xsl:when test="current-grouping-key() 
                           and 
                           exists(current-group()/(self::w:r | self::w:fldsimple | self::m:oMath))">
-            <xsl:variable name="start" as="element(w:fldChar)"
-              select="(current-group()/w:instrText)[1]/preceding::w:fldChar[@w:fldCharType = 'begin'][1]"/>
+            <!-- They can be nested, so don’t just pick the first begin when looking back -->
+            <xsl:variable name="mode-root" as="document-node(element(dbk:hub))" select="root()"/>
+            <xsl:variable name="fldCharGroup" as="element(dbk:fldCharGroup)"
+              select="(
+                        $nested-fldChars//dbk:fldCharGroup[key('docx2hub:item-by-id', @begin, $mode-root) &lt;&lt; current()]
+                                                          [key('docx2hub:item-by-id', @end, $mode-root) &gt;&gt; current()]
+                      )[last()]"/>
+            <xsl:variable name="start" as="element(w:fldChar)" 
+              select="key('docx2hub:item-by-id', $fldCharGroup/@begin, $mode-root)"/>
             <w:r>
               <xsl:apply-templates select="current-group()/self::w:r/(@* except @srcpath)" mode="#current"/>
               <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
+              <xsl:variable name="preceding-begin" as="element(w:fldChar)"
+                select="(current-group()/w:instrText)[1]/preceding::w:fldChar[@w:fldCharType = 'begin'][1]"/>
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:variable name="instr-text-nodes" as="item()*" 
                   select="current-group()/(w:instrText 
@@ -552,6 +668,10 @@
                   <xsl:when test="empty($instr-text-nodes)">
                     <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN3'"/>
                     <xsl:attribute name="docx2hub:field-function-error" select="'missing or wrongly named w:instrText element'"/>
+                  </xsl:when>
+                  <xsl:when test="not($start/@xml:id = $preceding-begin/@xml:id)">
+                    <xsl:attribute name="docx2hub:field-function-continuation-for" select="$start/@xml:id"/>
+                    <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compund"/>
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">

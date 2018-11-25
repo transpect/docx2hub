@@ -342,7 +342,7 @@
                       <xsl:attribute name="docx2hub:contains-markup" select="'yes'"/>
                       <xsl:sequence select="$instr-text[1]/node()"/>
                     </xsl:if>
-                    <xsl:sequence select="$inner"/>
+                    <xsl:sequence select="$inner, $instr-text[position() gt 1]/node()"/>
                   </xsl:element>    
                 </xsl:when>
                 <xsl:otherwise>
@@ -962,7 +962,12 @@
               <xsl:with-param name="context" select="."/>
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="name() = ('EQ','eq','FORMCHECKBOX')">
+          <xsl:when test="name() = ('EQ','eq')">
+            <phrase role="docx2hub:EQ">
+              <xsl:apply-templates select="@fldArgs, node()" mode="#current"/>
+            </phrase>
+          </xsl:when>
+          <xsl:when test="name() = ('FORMCHECKBOX')">
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
           <xsl:when test="name() = 'INCLUDEPICTURE'">
@@ -1152,6 +1157,49 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+
+  <xsl:template match="EQ[@docx2hub:contains-markup]/@fldArgs 
+                     | eq[@docx2hub:contains-markup]/@fldArgs" mode="wml-to-dbk" priority="5"/>
+
+  <xsl:template match="EQ[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="2">
+    <phrase role="docx2hub:EQ">
+      <xsl:apply-templates select="@fldArgs, node()" mode="#current"/>
+    </phrase>
+  </xsl:template>
+
+  <xsl:template match="EQ[empty(@docx2hub:contains-markup)]/@fldArgs 
+                     | EQ/text() 
+                     | eq[empty(@docx2hub:contains-markup)]/@fldArgs 
+                     | eq/text()" mode="wml-to-dbk" priority="5">
+    <xsl:analyze-string select="tr:EQ-string-to-unicode(replace(., '^\s*EQ\s+', '', 'i'))" regex="(\\\p{{Lu}}|[\(\);])">
+      <xsl:matching-substring>
+        <xsl:choose>
+          <xsl:when test=". = '('">
+            <open-delim/>
+          </xsl:when>
+          <xsl:when test=". = ')'">
+            <close-delim/>
+          </xsl:when>
+          <xsl:when test=". = ';'">
+            <sep/>
+          </xsl:when>
+          <xsl:when test=". = '\F'">
+            <frac/>
+          </xsl:when>
+          <xsl:when test=". = '\R'">
+            <root/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:message select="'Unknown EQ markup: ', ."/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <xsl:value-of select="."/>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
+  </xsl:template>
+  
 
   <xsl:function name="tr:get-listnum-numfmt" as="xs:string">
     <xsl:param name="level"/>

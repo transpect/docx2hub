@@ -246,7 +246,25 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
+  <xsl:function name="tr:EQ-string-to-unicode" as="xs:string">
+    <xsl:param name="input" as="xs:string"/>
+    <xsl:variable name="letters" as="xs:string*">
+      <xsl:for-each select="string-to-codepoints($input)">
+        <xsl:choose>
+          <xsl:when test=". ge 61472 and . le 61659">
+            <!-- between F020 and F0FF -->
+            <xsl:sequence select="string(key('symbol-by-number', upper-case(tr:dec-to-hex(.)), $symbol-font-map)/@char)"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:sequence select="codepoints-to-string(.)"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:sequence select="string-join($letters, '')"/>
+  </xsl:function>
+
   <xsl:function name="tr:dec-to-hex" as="xs:string">
     <xsl:param name="in" as="xs:integer?"/>
     <xsl:sequence select="if (not($in) or ($in eq 0)) 

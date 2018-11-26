@@ -130,45 +130,180 @@
   <xsl:key name="docx2hub:linking-item-by-id" match="*[@linkend | @linkends]" use="@linkend, tokenize(@linkends, '\s+')"/>
   <xsl:key name="docx2hub:item-by-id" match="*[@xml:id]" use="@xml:id"/>
 
-
+  <!-- Postprocess EQ field functions -->
   <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']" mode="docx2hub:join-runs" priority="10">
     <xsl:choose>
       <xsl:when test="exists(ancestor::dbk:phrase[@role = 'docx2hub:EQ'])">
         <xsl:next-match/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:copy>
-          <xsl:copy-of select="@role"/>
-          <xsl:next-match/>
-        </xsl:copy>
+        <inlineequation role="EQ">
+          <mml:math>
+            <xsl:next-match/>
+          </mml:math>
+        </inlineequation>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
   <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ'][*[1]/self::dbk:frac]" mode="docx2hub:join-runs" priority="5">
-    <phrase role="docx2hub:EQ-frac">
-      <phrase role="docx2hub:EQ-numerator">
-        <xsl:apply-templates select="node()[following-sibling::dbk:sep]" mode="#current"/>
-      </phrase>
-      <phrase role="docx2hub:EQ-denominator">
-        <xsl:apply-templates select="node()[preceding-sibling::dbk:sep]" mode="#current"/>
-      </phrase>
-    </phrase>
+    <mml:mfrac>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()[following-sibling::dbk:sep]"/>
+      </xsl:call-template>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()[preceding-sibling::dbk:sep]"/>
+      </xsl:call-template>
+    </mml:mfrac>
   </xsl:template>
-  
+
+  <xsl:template name="docx2hub:EQ-mrow">
+    <xsl:param name="nodes" as="node()*"/>
+    <xsl:variable name="prelim" as="node()*">
+      <xsl:apply-templates select="$nodes" mode="#current"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="count($prelim/self::*) = 1">
+        <xsl:sequence select="$prelim"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <mml:mrow>
+          <xsl:sequence select="$prelim"/>
+        </mml:mrow>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ'][*[1]/self::dbk:root]" mode="docx2hub:join-runs" priority="5">
-    <phrase role="docx2hub:EQ-root">
-      <phrase role="docx2hub:EQ-order">
-        <xsl:apply-templates select="node()[following-sibling::dbk:sep]" mode="#current"/>
-      </phrase>
-      <phrase role="docx2hub:EQ-radicand">
-        <xsl:apply-templates select="node()[preceding-sibling::dbk:sep]" mode="#current"/>
-      </phrase>
-    </phrase>
+    <xsl:choose>
+      <xsl:when test="exists(node()[empty(self::dbk:open-delim | self::dbk:root)][following-sibling::dbk:sep])">
+        <mml:mroot>
+          <xsl:call-template name="docx2hub:EQ-mrow">
+            <xsl:with-param name="nodes" select="node()[preceding-sibling::dbk:sep]"/>
+          </xsl:call-template>
+          <xsl:call-template name="docx2hub:EQ-mrow">
+            <xsl:with-param name="nodes" select="node()[following-sibling::dbk:sep]"/>
+          </xsl:call-template>
+        </mml:mroot>
+      </xsl:when>
+      <xsl:otherwise>
+        <mml:msqrt>
+          <xsl:call-template name="docx2hub:EQ-mrow">
+            <xsl:with-param name="nodes" select="node()[preceding-sibling::dbk:sep]"/>
+          </xsl:call-template>
+        </mml:msqrt>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="dbk:root | dbk:frac | dbk:open-delim | dbk:close-delim | dbk:sep" mode="docx2hub:join-runs"/>
 
+  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']//dbk:superscript" mode="docx2hub:join-runs">
+    <mml:msup>
+      <mml:mrow/>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()"/>
+      </xsl:call-template>
+    </mml:msup>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']//dbk:subscript" mode="docx2hub:join-runs">
+    <mml:msub>
+      <mml:mrow/>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()"/>
+      </xsl:call-template>
+    </mml:msub>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']//text()" mode="docx2hub:join-runs">
+    <xsl:variable name="prelim" as="document-node()">
+      <xsl:document>
+        <xsl:analyze-string select="." flags="x"
+          regex="({$docx2hub:functions-names-regex}|
+                  kg|mg|mmol|
+                  \p{{L}}|[\d,.]+|\p{{S}}|\p{{P}}|-|\s+)">
+          <xsl:matching-substring>
+            <xsl:choose>
+              <xsl:when test="matches(., '^\p{L}{2,}$')">
+                <mml:mi>
+                  <xsl:value-of select="."/>
+                </mml:mi>
+              </xsl:when>
+              <xsl:when test="matches(., '[\d,.]+')">
+                <mml:mn>
+                  <xsl:value-of select="."/>
+                </mml:mn>
+              </xsl:when>
+              <xsl:when test="matches(., '\s+')">
+                <mml:mspace width="{string-length(.) * 0.25}em"/>
+              </xsl:when>
+              <xsl:when test=". = '-'">
+                <mml:mo>
+                  <xsl:value-of select="'&#x2212;'"/>
+                </mml:mo>
+              </xsl:when>
+              <xsl:when test="matches(., '[\p{S}\p{P}]')">
+                <mml:mo>
+                  <xsl:value-of select="."/>
+                </mml:mo>
+              </xsl:when>
+              <xsl:when test="matches(., '\p{L}')">
+                <mml:mi>
+                  <xsl:value-of select="."/>
+                </mml:mi>
+              </xsl:when>
+              <xsl:otherwise>
+                <mml:mtext>
+                  <xsl:value-of select="."/>
+                </mml:mtext>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:matching-substring>
+        </xsl:analyze-string>
+      </xsl:document>
+    </xsl:variable>
+    <xsl:sequence select="$prelim/(* except mml:mspace[following-sibling::*[1]/self::mml:mo
+                                                       | preceding-sibling::*[1]/self::mml:mo])"/>
+  </xsl:template>
+
+  <!-- copied and renamed from https://github.com/transpect/mml2tex/trunk/xsl/function-names.xsl -->
+  <xsl:variable name="docx2hub:function-names" as="xs:string+" 
+                select="('arccos',
+                         'arcsin',
+                         'arctan',
+                         'arg',
+                         'cos',
+                         'cosh',
+                         'cot',
+                         'coth',
+                         'csc',
+                         'deg',
+                         'det',
+                         'dim',
+                         'exp',
+                         'gcd',
+                         'hom',
+                         'inf',
+                         'ker', 
+                         'lg',
+                         'lim', 
+                         'liminf', 
+                         'limsup', 
+                         'ln', 
+                         'log', 
+                         'max', 
+                         'min', 
+                         'Pr', 
+                         'sec', 
+                         'sin',
+                         'sinh', 
+                         'sup', 
+                         'tan', 
+                         'tanh'
+                         )"/>
+  
+  <xsl:variable name="docx2hub:functions-names-regex" select="concat('(', string-join($docx2hub:function-names, '|'), ')')" as="xs:string"/>
 
 
   <!-- collateral: deflate an adjacent start/end anchor pair to a single anchor --> 
@@ -640,8 +775,8 @@
           <xsl:when test="current-grouping-key() 
                           and 
                           exists(current-group()/(self::w:r | self::w:fldsimple | self::m:oMath))">
-            <!-- They can be nested, so don’t just pick the first begin when looking back -->
-            <xsl:variable name="mode-root" as="document-node(element(dbk:hub))" select="root()"/>
+            <!-- Typically /dbk:hub, but sometimes also /dbk:p or /w:p -->
+            <xsl:variable name="mode-root" as="document-node(element(*))" select="root()"/>
             <xsl:variable name="fldCharGroup" as="element(dbk:fldCharGroup)"
               select="(
                         $nested-fldChars//dbk:fldCharGroup[key('docx2hub:item-by-id', @begin, $mode-root) &lt;&lt; current()]

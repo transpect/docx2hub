@@ -806,7 +806,6 @@
                   </xsl:when>
                   <xsl:when test="not($start/@xml:id = $preceding-begin/@xml:id)">
                     <xsl:attribute name="docx2hub:field-function-continuation-for" select="$start/@xml:id"/>
-                    <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compund"/>
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">

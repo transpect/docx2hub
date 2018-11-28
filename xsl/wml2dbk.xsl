@@ -1022,11 +1022,6 @@
               </keyword>
               </xsl:if>
           </xsl:when>
-          <xsl:when test="name() = 'IF'">
-            <!-- Ignore silently. Conditionally calculated field function values are sometimes seen in figure or
-            table counters. These are also included as the calculated value in the docx file. Therefore we see
-            no immediate pressure to evaluate these expressions. -->
-          </xsl:when>
          <xsl:when test="name() = 'NUMPAGES'">
             <!-- Ignore silently like Conditionally calculated field function above. 
             	Prospectively we could add a phrase for that to create a field again in docx for a better roundtripping -->
@@ -1034,7 +1029,10 @@
           <xsl:when test="matches(@fldArgs,'^[\s&#160;]*$')">
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
-          <xsl:when test="name() = ('PRINT', 'MACROBUTTON')">
+          <xsl:when test="name() = ('IF', 'PRINT', 'MACROBUTTON')">
+            <!-- Conditionally calculated field function values are sometimes seen in figure or
+            table counters. These are also included as the calculated value in the docx file. Therefore we see
+            no immediate pressure to evaluate these expressions. -->
             <xsl:processing-instruction name="{name()}" select="string-join($tokens, ' ')"/>
           </xsl:when>
           <xsl:when test="name() = 'AUTOTEXT'">

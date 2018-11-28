@@ -730,6 +730,10 @@
                                 exists(current-group()/self::w:fldChar[@w:fldCharType = 'end'])">
                   <fldCharGroup begin="{current-group()/self::w:fldChar[@w:fldCharType = 'begin']/@xml:id}"
                                 end="{current-group()/self::w:fldChar[@w:fldCharType = 'end']/@xml:id}">
+                    <xsl:if test="exists(current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id)">
+                      <xsl:attribute name="separate" 
+                        select="current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id"/>
+                    </xsl:if>
                     <xsl:sequence select="current-group()"/>
                   </fldCharGroup>
                 </xsl:when>
@@ -780,7 +784,10 @@
             <xsl:variable name="fldCharGroup" as="element(dbk:fldCharGroup)"
               select="(
                         $nested-fldChars//dbk:fldCharGroup[key('docx2hub:item-by-id', @begin, $mode-root) &lt;&lt; current()]
-                                                          [key('docx2hub:item-by-id', @end, $mode-root) &gt;&gt; current()]
+                                                          [key('docx2hub:item-by-id', @end, $mode-root) &gt;&gt; current()
+                                                           and not(
+                                                            key('docx2hub:item-by-id', @separate, $mode-root) &lt;&lt; current()
+                                                           )]
                       )[last()]"/>
             <xsl:variable name="start" as="element(w:fldChar)" 
               select="key('docx2hub:item-by-id', $fldCharGroup/@begin, $mode-root)"/>

@@ -786,6 +786,7 @@
                         $nested-fldChars//dbk:fldCharGroup[key('docx2hub:item-by-id', @begin, $mode-root) &lt;&lt; current()]
                                                           [key('docx2hub:item-by-id', @end, $mode-root) &gt;&gt; current()
                                                            and not(
+                                                            (: DIN_EN_ISO_21563_tr_13035449.docx :)
                                                             key('docx2hub:item-by-id', @separate, $mode-root) &lt;&lt; current()
                                                            )]
                       )[last()]"/>

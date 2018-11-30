@@ -939,7 +939,7 @@
   
   <xsl:variable name="mail-regex" as="xs:string" select="'^[-a-zA-Z0-9.!#$~_]+@[-a-zA-Z0-9]+\.[a-zA-Z0-9]+$'"/>
   
-  <xsl:template match="*[@fldArgs]" mode="wml-to-dbk tables">
+  <xsl:template match="*[@fldArgs]" mode="wml-to-dbk tables" name="docx2hub:default-field-function-handler">
     <xsl:variable name="tokens" as="xs:string*">
       <xsl:analyze-string select="(@fldArgs, ' ')[ . ne ''][1]" regex="&quot;(.*?)&quot;">
         <xsl:matching-substring>
@@ -1156,6 +1156,10 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="PRINT[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
+    <xsl:call-template name="docx2hub:default-field-function-handler"/>
+  </xsl:template>
+  
   <xsl:template match="EQ[@docx2hub:contains-markup]/@fldArgs 
                      | eq[@docx2hub:contains-markup]/@fldArgs" mode="wml-to-dbk" priority="5"/>
 

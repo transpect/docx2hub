@@ -294,7 +294,7 @@ it, but not when an ilvl=2 heading precedes it.
           </xsl:if>
           <xsl:value-of select="tr:get-identifier($context,$lvl)"/>
         </phrase>
-        <tab/>
+        <tab role="docx2hub:generated"/>
       </xsl:when>
       <xsl:otherwise>
         <!--KW 11.6.13: mode hart reingeschrieben wegen null pointer exception-->

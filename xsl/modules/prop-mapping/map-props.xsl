@@ -186,7 +186,7 @@
                                      and @Target eq $header-footer-basename]/@Id"/>
               <div role="docx2hub:{current-grouping-key()}" 
                    condition="{key('docx2hub:header-footer-ref-by-id', $header-footer-id)/@w:type}">
-                <xsl:apply-templates mode="docx2hub:add-props"/>
+                <xsl:apply-templates mode="#current"/>
               </div>
             </xsl:for-each>        
           </div>
@@ -198,6 +198,11 @@
       <xsl:apply-templates mode="#current"/>
       <xsl:apply-templates select="../../w:footer/w:ftr[$convert-footer]" mode="#current"/>
     </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[matches(., 'ADDIN CITAVI', 'si')]" mode="insert-xpath">
+    <!-- Citavi plugin data may create a ginormous amount of unintelligible gibberish --> 
+    <w:instrText>ADDIN CITAVI ignored</w:instrText>
   </xsl:template>
   
   <xsl:template match="customProps:property" mode="docx2hub:add-props">

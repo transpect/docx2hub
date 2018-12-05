@@ -1156,6 +1156,26 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="MACROBUTTON[starts-with(@fldArgs, 'MTPlaceRef')]" mode="wml-to-dbk" priority="1.5">
+    <!-- MathType equation numbers, for ex. 
+<MACROBUTTON xmlns="" fldArgs="MTPlaceRef \* MERGEFORMAT"><SEQ fldArgs="MTEqn \h \* MERGEFORMAT"
+    /><w:bookmarkStart xmlns="http://docbook.org/ns/docbook" w:id="37" w:name="ZEqnNum377305"
+    /><SEQ fldArgs="MTChap \c \* Arabic \* MERGEFORMAT"/><SEQ
+    fldArgs="MTEqn \c \* Arabic \* MERGEFORMAT"/><w:bookmarkEnd
+    xmlns="http://docbook.org/ns/docbook" w:id="37"/>(2.21)</MACROBUTTON> -->      
+    <phrase role="hub:equation-number">
+      <xsl:apply-templates mode="#current"/>  
+    </phrase>
+  </xsl:template>
+  
+  <xsl:template match="GOTOBUTTON[REF]
+                                 [count(node()) = 1]
+                                 [tokenize(@fldArgs, '\s+\\')[1] = tokenize(REF/@fldArgs, '\s+\\')[1]]" 
+    mode="wml-to-dbk" priority="1.5">
+    <!-- Otherwise, duplicate nested links -->
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
   <xsl:template match="PRINT[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
     <xsl:call-template name="docx2hub:default-field-function-handler"/>
   </xsl:template>
@@ -1503,6 +1523,14 @@
   <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]" mode="wml-to-dbk tables">
     <xsl:element name="blockquote">
       <xsl:attribute name="role" select="if (w:sdtPr/w:citation) then 'hub:citation' else w:sdtPr/w:alias/@w:val"/>
+      <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:template match="w:sdt[starts-with(w:sdtPr/w:tag/@w:val, 'CitaviPlaceholder')]" 
+    mode="wml-to-dbk tables" priority="1">
+    <xsl:element name="phrase">
+      <xsl:attribute name="role" select="'hub:citation'"/>
       <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
     </xsl:element>
   </xsl:template>

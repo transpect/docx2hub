@@ -1016,6 +1016,7 @@
                 normalize-space(
                   string-join(
                     $para//text()[dbk:same-scope(., $para)]
+                                 [empty(ancestor::dbk:phrase[@role = 'hub:equation-number'])]
                                  [namespace-uri(..) ne 'http://www.w3.org/1998/Math/MathML'],
                     ''
                   )

@@ -119,7 +119,7 @@
       <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
       
       <p:viewport
-        match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and (starts-with(@ProgID, 'Equation') or (matches($active, 'ole') and matches($active, 'try-all')))]]"
+        match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]]"
         name="mathtype2mml-viewport">
         <p:variable name="rel-wmf-id" select="w:object/v:shape/v:imagedata/@r:id"
           xmlns:v="urn:schemas-microsoft-com:vml"/>
@@ -365,7 +365,7 @@
             </p:choose>
 
             <p:identity name="chosen-mml"/>
-            <p:insert match="o:OLEObject[@Type eq 'Embed' and (starts-with(@ProgID, 'Equation') or (matches($active, 'ole') and matches($active, 'try-all')))]" position="after">
+            <p:insert match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" position="after">
               <p:input port="source">
                 <p:pipe port="current" step="mathtype2mml-viewport"/>
               </p:input>
@@ -374,7 +374,7 @@
               </p:input>
             </p:insert>
             
-            <p:delete match="o:OLEObject[@Type eq 'Embed' and (starts-with(@ProgID, 'Equation') or (matches($active, 'ole') and matches($active, 'try-all')))]"/>
+            <p:delete match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"/>
             
             <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-ole-id">
               <p:with-option name="attribute-value" select="$rel-ole-id"/>

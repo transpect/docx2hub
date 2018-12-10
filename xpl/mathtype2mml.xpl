@@ -119,7 +119,7 @@
       <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
       
       <p:viewport
-        match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]]"
+        match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and (starts-with(@ProgID, 'Equation') or (matches($active, 'ole') and matches($active, 'try-all')))]]"
         name="mathtype2mml-viewport">
         <p:variable name="rel-wmf-id" select="w:object/v:shape/v:imagedata/@r:id"
           xmlns:v="urn:schemas-microsoft-com:vml"/>

@@ -365,7 +365,7 @@
             </p:choose>
 
             <p:identity name="chosen-mml"/>
-            <p:insert match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]" position="after">
+            <p:insert match="o:OLEObject[@Type eq 'Embed' and (starts-with(@ProgID, 'Equation') or (matches($active, 'ole') and matches($active, 'try-all')))]" position="after">
               <p:input port="source">
                 <p:pipe port="current" step="mathtype2mml-viewport"/>
               </p:input>
@@ -374,7 +374,7 @@
               </p:input>
             </p:insert>
             
-            <p:delete match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"/>
+            <p:delete match="o:OLEObject[@Type eq 'Embed' and (starts-with(@ProgID, 'Equation') or (matches($active, 'ole') and matches($active, 'try-all')))]"/>
             
             <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-ole-id">
               <p:with-option name="attribute-value" select="$rel-ole-id"/>

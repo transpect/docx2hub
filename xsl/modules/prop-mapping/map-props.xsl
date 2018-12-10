@@ -200,7 +200,7 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="w:instrText[matches(., 'ADDIN CITAVI', 'si')]" mode="insert-xpath">
+  <xsl:template match="w:instrText[matches(., 'ADDIN CITAVI', 'si')]" mode="docx2hub:add-props">
     <!-- Citavi plugin data may create a ginormous amount of unintelligible gibberish --> 
     <w:instrText>ADDIN CITAVI ignored</w:instrText>
   </xsl:template>

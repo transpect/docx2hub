@@ -85,6 +85,7 @@
       </xsl:call-template>
     </xsl:if>
     <xsl:variable name="number" select="if (self::w:sym) then @w:char else xs:string(.)"/>
+    <xsl:variable name="context" select="." as="item()"/>
     <xsl:variable name="font_map" as="document-node(element(symbols))?" select="docx2hub:font-map($font)"/>
     <xsl:variable name="text" as="node()">
       <xsl:choose>
@@ -96,6 +97,13 @@
         <xsl:when test="name() eq 'w:val' and matches(., '^%\d')">
           <text>
             <xsl:value-of select="replace($number, '^%\d', '')"/>
+          </text>
+        </xsl:when>
+        <xsl:when test="name() eq 'w:val' and matches(., '^[&#xF000;-&#xF0FF;]%\d$')">
+          <!-- https://mantis.le-tex.de/mantis/view.php?id=24633 -->
+          <text mapped="true">
+            <xsl:value-of select="($font_map/symbols/symbol[@entity = replace($number, '%\d', '')]/@*[name() = (concat('char-', $charmap-policy))], 
+                                   $font_map/symbols/symbol[@entity = replace($number, '%\d', '')]/@char)[1]"/>
           </text>
         </xsl:when>
         <xsl:when test="if (self::w:sym) 
@@ -116,6 +124,7 @@
           </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
+          <xsl:message select="'WARNING: Spurious numbering text ', $number, ' in ', $context"/>
           <text>
             <xsl:value-of select="$number"/>
             <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 

@@ -761,7 +761,9 @@
       </xsl:when>
     </xsl:choose>
   </xsl:function>
-  
+
+  <!-- Indexterm processing should happen after symbol processing.
+    Now this mode needs to have a collection() input including fontmaps and an XML catalog, too. -->
   <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs">
     <xsl:param name="nested-fldChars" as="document-node(element(dbk:nested-fldChars))" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">
@@ -774,11 +776,13 @@
                                     (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]
                           | self::w:fldSimple (: prEN_16815 :)
                           | self::m:oMath[preceding-sibling::*[empty(self::m:oMath)][1]/self::w:r[w:instrText]] (: hanser_loeser_omml_index :)
+                          | self::w:r[w:sym][count(*) = 1]
+                          | self::*:superscript | self::*:subscript
                           | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
         <xsl:choose>
           <xsl:when test="current-grouping-key() 
                           and 
-                          exists(current-group()/(self::w:r | self::w:fldsimple | self::m:oMath))">
+                          exists(current-group()/(self::w:r[w:instrText] | self::w:fldsimple | self::m:oMath))">
             <!-- Typically /dbk:hub, but sometimes also /dbk:p or /w:p -->
             <xsl:variable name="mode-root" as="document-node(element(*))" select="root()"/>
             <xsl:variable name="fldCharGroup" as="element(dbk:fldCharGroup)"
@@ -804,8 +808,13 @@
                   select="current-group()/(w:instrText 
                                            | self::w:fldSimple/@w:instr 
                                            | self::w:fldSimple/w:r/w:instrText
-                                           | self::m:oMath (: may occur in XE :))"/>
-                <xsl:variable name="instr-text" as="xs:string" select="string-join($instr-text-nodes, '')"/>
+                                           | w:sym[parent::w:r]
+                                           | self::*:superscript | self::*:subscript
+                                           | self::m:oMath (: may occur in XE :))
+                                          [. >> $preceding-begin]"/>
+                <xsl:variable name="instr-text" as="node()*">
+                  <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound1"/>
+                </xsl:variable>
                 <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
                 <xsl:choose>
                   <xsl:when test="empty($instr-text-nodes)">
@@ -817,7 +826,7 @@
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">
-                      <xsl:analyze-string select="$instr-text" regex="^\s*\\?(\i\c*)\s*">
+                      <xsl:analyze-string select="string-join($instr-text, '')" regex="^\s*\\?(\i\c*)\s*">
                         <xsl:matching-substring>
                           <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))">
                             <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms -->
@@ -856,7 +865,7 @@
                     </xsl:choose>
                   </xsl:otherwise>
                 </xsl:choose>
-                <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compund"/>
+                <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2"/>
               </w:instrText>
             </w:r>
             <xsl:sequence select="current-group()/(self::w:bookmarkStart | self::w:bookmarkEnd)"/>
@@ -869,29 +878,41 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="* | @*" mode="docx2hub:join-instrText-runs_render-compund">
+  <xsl:template match="* | @*" mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2">
     <xsl:value-of select="."/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[1] | @w:instr[1]" mode="docx2hub:join-instrText-runs_render-compund" priority="1">
+  <xsl:template match="w:sym" mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2" priority="1">
+    <xsl:apply-templates select="." mode="wml-to-dbk"/>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[1] | @w:instr[1]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
     <xsl:value-of select="replace(., '^\s*\w+\s+&quot;\s*', '')"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[last()] | @w:instr[last()]" mode="docx2hub:join-instrText-runs_render-compund" priority="1">
+  <xsl:template match="w:instrText[last()] | @w:instr[last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
     <xsl:value-of select="replace(., '\s*&quot;\s*$', '')"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[1][last()] | @w:instr[1][last()]" mode="docx2hub:join-instrText-runs_render-compund" priority="1.5">
+  <xsl:template match="w:instrText[1][last()] | @w:instr[1][last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
     <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;\s*', ''), '\s*&quot;\s*$', '')"/>
   </xsl:template>
   
-  <xsl:template match="m:oMath | *:superscript | *:subscript" mode="docx2hub:join-instrText-runs_render-compund" priority="2">
+  <xsl:template match="m:oMath" mode="docx2hub:join-instrText-runs_render-compound2" priority="2">
     <xsl:sequence select="."/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[dbk:subscript | dbk:superscript]" mode="docx2hub:join-instrText-runs_render-compund" priority="2">
-    <xsl:sequence select="node()"/>
+  <xsl:template match="*:superscript | *:subscript" mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2"
+    priority="2">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
   </xsl:template>
+  
+  <!--<xsl:template match="w:instrText[dbk:subscript | dbk:superscript]" 
+    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2" priority="2">
+    <xsl:sequence select="node()"/>
+  </xsl:template>-->
   
 
   <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1">

@@ -186,7 +186,8 @@ it, but not when an ilvl=2 heading precedes it.
       select="key('docx2hub:num-abstract', $context/@docx2hub:num-abstract, root($context))
                 [empty($any-resetter) or (. &gt;&gt; $last-resetter)]
                 [. &lt;&lt; $context]
-                [@docx2hub:num-ilvl &gt; $context/@docx2hub:num-ilvl]"/>
+                [@docx2hub:num-ilvl &gt; $context/@docx2hub:num-ilvl]
+                [$context/@docx2hub:num-ilvl &lt;= @docx2hub:num-restart-after-ilvl]"/>
     <xsl:if test="exists($ilvl)">
       <xsl:variable name="counter-name" as="xs:string" select="concat('docx2hub:num-counter-ilvl', $ilvl)"/>
       <xsl:variable name="counter" as="attribute(*)*">
@@ -493,12 +494,10 @@ it, but not when an ilvl=2 heading precedes it.
               <xsl:if test="empty($level-counter)">
                 <xsl:message select="'Empty level counter for', $pattern-ilvl, ':', $context"/>
               </xsl:if>
-              <xsl:variable name="pattern-lvl" as="element(w:lvl)?" 
-                select="$lvl/ancestor::w:abstractNum/w:lvl[@w:ilvl = $pattern-ilvl]"/>
               <xsl:variable name="provisional-number">
-              <xsl:number value="($level-counter, 9999)[1]"
-                          format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
-            </xsl:variable>
+                <xsl:number value="($level-counter, 9999)[1]"
+                            format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
+              </xsl:variable>
               <xsl:variable name="cardinality" select="if (matches($provisional-number,'^\*†‡§[0-9]+\*†‡§$')) then xs:integer(replace($provisional-number, '^\*†‡§([0-9]+)\*†‡§$', '$1')) else 0"/>
               <xsl:value-of select="if (matches($provisional-number,'^\*†‡§[0-9]+\*†‡§$')) 
                                     then string-join((for $i 

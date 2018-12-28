@@ -187,7 +187,9 @@ it, but not when an ilvl=2 heading precedes it.
                 [empty($any-resetter) or (. &gt;&gt; $last-resetter)]
                 [. &lt;&lt; $context]
                 [@docx2hub:num-ilvl &gt; $context/@docx2hub:num-ilvl]
-                [$context/@docx2hub:num-ilvl &lt;= @docx2hub:num-restart-after-ilvl]"/>
+                [not(some $i 
+                     in (key('docx2hub:num-abstract', $context/@docx2hub:num-abstract, root($context))[empty($any-resetter) or (. &gt;&gt; $last-resetter)][@docx2hub:num-ilvl &lt; $context/@docx2hub:num-ilvl]) 
+                     satisfies (. &gt;&gt; $i))]"/>
     <xsl:if test="exists($ilvl)">
       <xsl:variable name="counter-name" as="xs:string" select="concat('docx2hub:num-counter-ilvl', $ilvl)"/>
       <xsl:variable name="counter" as="attribute(*)*">

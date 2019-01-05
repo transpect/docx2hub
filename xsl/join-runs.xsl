@@ -812,6 +812,8 @@
                                            | self::*:superscript | self::*:subscript
                                            | self::m:oMath (: may occur in XE :))
                                           [. >> $preceding-begin]"/>
+                <!-- docx2hub:join-instrText-runs_render-compound1 is for rendering the instrText as text for attributes,
+                     docx2hub:join-instrText-runs_render-compound1 is for rendering it with markup -->
                 <xsl:variable name="instr-text" as="node()*">
                   <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound1"/>
                 </xsl:variable>
@@ -882,20 +884,34 @@
     <xsl:value-of select="."/>
   </xsl:template>
   
+  <xsl:template match="w:instrText" mode="docx2hub:join-instrText-runs_render-compound2" priority="2">
+    <xsl:apply-templates select="if (@xml:space = 'preserve' or exists(text()[normalize-space()]))
+                                 then node()
+                                 else *" mode="#current"/>
+  </xsl:template>
+  
   <xsl:template match="w:sym" mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2" priority="1">
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[1] | @w:instr[1]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
+  <xsl:template match="w:instrText[1]/node()[1][self::text()] | @w:instr[1]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
     <xsl:value-of select="replace(., '^\s*\w+\s+&quot;\s*', '')"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[last()] | @w:instr[last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
+  <xsl:template match="w:instrText[last()]/node()[last()][self::text()] | @w:instr[last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
     <xsl:value-of select="replace(., '\s*&quot;\s*$', '')"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[1][last()] | @w:instr[1][last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
+  <xsl:template match="w:instrText[1][last()][empty(*)]/text() | @w:instr[1][last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
     <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;\s*', ''), '\s*&quot;\s*$', '')"/>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[*]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
+    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;\s*', '')"/>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText[*]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
+    <xsl:value-of select="replace(., '\s*&quot;\s*$', '')"/>
   </xsl:template>
   
   <xsl:template match="m:oMath" mode="docx2hub:join-instrText-runs_render-compound2" priority="2">

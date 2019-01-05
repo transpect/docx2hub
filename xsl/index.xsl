@@ -140,10 +140,42 @@
       <xsl:call-template name="docx2hub:indexterm-attributes">
         <xsl:with-param name="xe" select="."/>
       </xsl:call-template>
-      <primary sortas="{.}">
-        <xsl:apply-templates mode="#current"/>
-      </primary>
+      <xsl:variable name="primary-etc" as="document-node()">
+        <xsl:document>
+          <xsl:apply-templates mode="#current"/>
+        </xsl:document>
+      </xsl:variable>
+      <xsl:for-each-group select="$primary-etc/node()" group-starting-with="dbk:sep">
+        <xsl:variable name="pos" as="xs:integer" select="position()"/>
+        <xsl:element name="{$primary-secondary-etc[$pos]}">
+          <xsl:variable name="sortkey-sep" select="current-group()/self::dbk:sortkey[1]" as="element(dbk:sortkey)?"/>
+          <xsl:variable name="sortas" as="node()*" select="current-group()[. >> $sortkey-sep]"/>
+          <xsl:variable name="term" as="node()*" select="current-group()[not(self::dbk:sep)][not(. >> $sortkey-sep)]"/>
+          <xsl:if test="exists(current-group()/self::* | $sortas)">
+            <xsl:attribute name="sortas" select="string-join(if (exists($sortas)) then $sortas else current-group(), '')"/>
+          </xsl:if>
+          <xsl:sequence select="$term"/>
+        </xsl:element>
+      </xsl:for-each-group>
     </indexterm>
+  </xsl:template>
+  
+  <xsl:template match="XE[@docx2hub:contains-markup]/text()" mode="wml-to-dbk">
+    <xsl:analyze-string select="." regex="[:;]">
+      <xsl:matching-substring>
+        <xsl:choose>
+          <xsl:when test=". = ':'">
+            <sep/>
+          </xsl:when>
+          <xsl:otherwise>
+            <sortkey>;</sortkey>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <xsl:value-of select="."/>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
   </xsl:template>
   
   <xsl:template match="*[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
@@ -206,9 +238,11 @@
     <xsl:value-of select="replace(., '^\s*&quot;(.*?)&quot;?\s*$', '$1')"/>
   </xsl:template>
   
+  <xsl:variable name="primary-secondary-etc" as="xs:string+" select="('primary', 'secondary', 'tertiary', 'quaternary')"/>
+  
   <xsl:function name="tr:primary-secondary-tertiary-number" as="xs:integer?">
     <xsl:param name="name" as="xs:string"/>
-    <xsl:sequence select="index-of(('primary', 'secondary', 'tertiary'), $name)"/>
+    <xsl:sequence select="index-of($primary-secondary-etc, $name)"/>
   </xsl:function>
   
   <xsl:template match="dbk:primary | dbk:secondary | dbk:tertiary" mode="index-processing-1" priority="1">

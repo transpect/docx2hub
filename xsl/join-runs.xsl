@@ -806,8 +806,9 @@
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:variable name="instr-text-nodes" as="item()*" 
                   select="current-group()/(w:instrText 
-                                           | self::w:fldSimple/@w:instr 
-                                           | self::w:fldSimple/w:r/w:instrText
+                                           (:| self::w:fldSimple/@w:instr 
+                                           | self::w:fldSimple/w:r/w:instrText:)
+                                           | self::w:fldSimple
                                            | w:sym[parent::w:r]
                                            | self::*:superscript | self::*:subscript
                                            | self::m:oMath (: may occur in XE :))
@@ -884,34 +885,74 @@
     <xsl:value-of select="."/>
   </xsl:template>
   
+  <xsl:template match="w:fldSimple" 
+    mode="docx2hub:join-instrText-runs_render-compound2" priority="3">
+    <!-- this should be covered by $instr-text-nodes in the long template above, but apparently it isn’t -->
+<!--    <xsl:message select="'!!!!!!!!!!!!!!!!!!!!!!!'"></xsl:message>-->
+    <xsl:copy copy-namespaces="no">
+      <xsl:copy-of select="@w:instr"/>
+      <xsl:analyze-string select="@w:instr" regex="^\s*(\w+)(\s+(.+?))?\s*$">
+        <xsl:matching-substring>
+          <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))"/>
+          <xsl:if test="exists(regex-group(2))">
+            <xsl:attribute name="docx2hub:field-function-args" select="normalize-space(regex-group(2))"/>
+          </xsl:if>
+        </xsl:matching-substring>
+      </xsl:analyze-string>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="w:fldSimple[matches(@w:instr, $w:fldSimple-REF-regex)]" 
+    mode="docx2hub:join-instrText-runs_render-compound2_" priority="3">
+    <xsl:copy-of select="."/>
+<!--    <xsl:message select="'222222222222222'"></xsl:message>-->
+  </xsl:template>
+  
+  <xsl:template match="w:fldSimple" mode="docx2hub:join-instrText-runs_render-compound1" priority="3">
+    <xsl:value-of select="@w:instr, ." separator=""/>
+<!--    <xsl:message select="'11111111111111111111111'"></xsl:message>-->
+  </xsl:template>
+  
+  <xsl:template match="dbk:instrAtt" mode="wml-to-dbk">
+    <xsl:processing-instruction name="instrAtt" select="."></xsl:processing-instruction>
+  </xsl:template>
+  
   <xsl:template match="w:instrText" mode="docx2hub:join-instrText-runs_render-compound2" priority="2">
+<!--    <xsl:comment select="'AAAAAAAAAAAa'"></xsl:comment>-->
     <xsl:apply-templates select="if (@xml:space = 'preserve' or exists(text()[normalize-space()]))
                                  then node()
                                  else *" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="w:sym" mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2" priority="1">
+  <xsl:template match="w:sym" 
+    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2" priority="1">
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[1]/node()[1][self::text()] | @w:instr[1]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;\s*', '')"/>
+  <xsl:template match="w:instrText[1]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
+<!--    <xsl:comment select="'aaaaaaaaaaaaaaaaa'"></xsl:comment>-->
+    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[last()]/node()[last()][self::text()] | @w:instr[last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-    <xsl:value-of select="replace(., '\s*&quot;\s*$', '')"/>
+  <xsl:template match="w:instrText[last()]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
+<!--    <xsl:comment select="'bbbbbbbbbbbbbbbbb'"></xsl:comment>-->
+    <xsl:value-of select="replace(., '[\s&quot;]+$', '')"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[1][last()][empty(*)]/text() | @w:instr[1][last()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;\s*', ''), '\s*&quot;\s*$', '')"/>
+  <xsl:template match="w:instrText[1][last()][empty(*)]/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
+<!--    <xsl:comment select="'cccccccccccccccccc'"></xsl:comment>-->
+    <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;?\s*', ''), '[\s&quot;]+$', '')"/>
   </xsl:template>
   
   <xsl:template match="w:instrText[*]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;\s*', '')"/>
+<!--    <xsl:comment select="'ddddddddddddddd'"></xsl:comment>-->
+    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
   </xsl:template>
   
   <xsl:template match="w:instrText[*]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:value-of select="replace(., '\s*&quot;\s*$', '')"/>
+<!--    <xsl:comment select="'eeeeeeeeeeeeeeeeeee'"></xsl:comment>-->
+    <xsl:value-of select="replace(., '[\s&quot;]+$', '')"/>
   </xsl:template>
   
   <xsl:template match="m:oMath" mode="docx2hub:join-instrText-runs_render-compound2" priority="2">

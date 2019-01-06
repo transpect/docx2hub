@@ -370,6 +370,13 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="w:fldSimple[@docx2hub:field-function-name]" mode="docx2hub:field-functions">
+    <xsl:element name="{@docx2hub:field-function-name}" xmlns="">
+      <xsl:attribute name="fldArgs" select="@docx2hub:field-function-args"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
   <!-- change to normal hyphen when used in fieldfunction &#x2d;-->
   <xsl:template match="w:instrText[ancestor::w:r[w:noBreakHyphen[following-sibling::w:instrText]]]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:copy>
@@ -1029,7 +1036,7 @@
           <xsl:when test="matches(@fldArgs,'^[\s&#160;]*$')">
             <xsl:apply-templates mode="#current"/>
           </xsl:when>
-          <xsl:when test="name() = ('IF', 'PRINT', 'MACROBUTTON')">
+          <xsl:when test="name() = ('IF', 'PRINT', 'MACROBUTTON', 'GOTOBUTTON')">
             <!-- Conditionally calculated field function values are sometimes seen in figure or
             table counters. These are also included as the calculated value in the docx file. Therefore we see
             no immediate pressure to evaluate these expressions. -->
@@ -1171,12 +1178,22 @@
   <xsl:template match="GOTOBUTTON[REF]
                                  [count(node()) = 1]
                                  [tokenize(@fldArgs, '\s+\\')[1] = tokenize(REF/@fldArgs, '\s+\\')[1]]" 
-    mode="wml-to-dbk" priority="1.5">
+    mode="wml-to-dbk" priority="2">
     <!-- Otherwise, duplicate nested links -->
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
+  
+  <xsl:template match="GOTOBUTTON[REF]
+                                 [count(node()) = 2](: text node with combined field function args, and REF :)
+                                 [tokenize(., '\s+\\')[1] = tokenize(REF/@fldArgs, '\s+\\')[1]]
+                                 [tokenize(@fldArgs, '\s+\\')[1] = tokenize(REF/@fldArgs, '\s+\\')[1]]" 
+    mode="wml-to-dbk" priority="2">
+    <!-- http://svn.le-tex.de/svn/ltxbase/word2tex/trunk/testset/mantis-18038.docx -->
+    <xsl:apply-templates select="REF" mode="#current"/>
+  </xsl:template>
 
-  <xsl:template match="PRINT[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
+  <xsl:template match="*[name() = ('PRINT', 'GOTOBUTTON', 'MACROBUTTON')][@docx2hub:contains-markup]" 
+    mode="wml-to-dbk" priority="1.5">
     <xsl:call-template name="docx2hub:default-field-function-handler"/>
   </xsl:template>
   
@@ -1370,10 +1387,13 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="w:fldSimple[
-                         matches(@w:instr, '^\s*REF\s(_[A-Za-z]+\d+)\s?.+\\h.+$')
-                       ]" mode="wml-to-dbk" priority="1">
-    <xsl:variable name="linkend" select="replace(@w:instr, '^\s*REF\s(_[A-Za-z]+\d+)\s?.+$', '$1', 'i')" as="xs:string"/>
+  <xsl:variable name="w:fldSimple-REF-regex" as="xs:string" select="'^\s*REF\s(_?[A-Za-z]+\d+)\s?.+$'"/>
+<!--  <xsl:variable name="w:fldSimple-REF-regex" as="xs:string" select="'^\s*REF\s(_[A-Za-z]+\d+)\s?.+\\h.+$'"/>
+  Remove the \h (creates a hyperlink) restriction so that also non-hyperlinked references may be generated.
+  Example: MathType equations in http://svn.le-tex.de/svn/ltxbase/word2tex/trunk/testset/mantis-18038.docx -->
+
+  <xsl:template match="w:fldSimple[matches(@w:instr, $w:fldSimple-REF-regex)]" mode="wml-to-dbk" priority="1">
+    <xsl:variable name="linkend" select="replace(@w:instr, $w:fldSimple-REF-regex, '$1', 'i')" as="xs:string"/>
     <link linkend="{$linkend}">
       <xsl:apply-templates mode="#current"/>
     </link>

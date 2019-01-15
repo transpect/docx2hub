@@ -6,6 +6,7 @@
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
   xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+  xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   exclude-result-prefixes="xs" 
@@ -24,7 +25,8 @@
                                         [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject', 
                                                   'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image')]                                                 
                                         [@Id = ($former-ole-objects, $former-image-wmf-objects)]
-                                        [rel:find-rel-element-by-ref(., collection()[2]/w:root)]">
+                                        [rel:find-rel-element-by-ref(., collection()[2]/w:root)]
+                                        [not(rel:find-rel-element-by-non-mml-ref(., collection()[2]/w:root))]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:attribute name="remove" select="'yes'"/>
@@ -41,6 +43,12 @@
          else if($rel/ancestor::*[2]/name() eq 'w:commentRels')  then $root/w:comments//mml:math[(@docx2hub:rel-wmf-id, @docx2hub:rel-ole-id) = $rel/@Id]
                                  else ()"/>
     <xsl:sequence select="exists($rel-element)"/>
+  </xsl:function>
+  
+  <xsl:function name="rel:find-rel-element-by-non-mml-ref" as="xs:boolean">
+    <xsl:param name="rel" as="element(rel:Relationship)"/>
+    <xsl:param name="root" as="element(w:root)"/>
+    <xsl:sequence select="exists($root/w:*//v:imagedata[@r:id = $rel/@Id])"/>
   </xsl:function>
 
   <xsl:template match="*|@*">

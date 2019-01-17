@@ -151,8 +151,8 @@
           <xsl:variable name="sortkey-sep" select="current-group()/self::dbk:sortkey[1]" as="element(dbk:sortkey)?"/>
           <xsl:variable name="sortas" as="node()*" select="current-group()[. >> $sortkey-sep]"/>
           <xsl:variable name="term" as="node()*" select="current-group()[not(self::dbk:sep)][not(. >> $sortkey-sep)]"/>
-          <xsl:if test="exists(current-group()/self::* | $sortas)">
-            <xsl:attribute name="sortas" select="string-join(if (exists($sortas)) then $sortas else current-group(), '')"/>
+          <xsl:if test="exists($sortas)">
+            <xsl:attribute name="sortas" select="$sortas"/>
           </xsl:if>
           <xsl:sequence select="$term"/>
         </xsl:element>

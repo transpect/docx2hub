@@ -173,6 +173,7 @@
                       <p:pipe port="custom-font-maps" step="mathtype2mml"/>
                     </p:input>
                     <p:with-option name="href" select="$equation-wmf-href"/>
+                    <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
                     <p:with-option name="debug" select="$debug"/>
                     <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                   </tr:mathtype2mml>
@@ -208,6 +209,7 @@
                       <p:pipe port="custom-font-maps" step="mathtype2mml"/>
                     </p:input>
                     <p:with-option name="href" select="$equation-ole-href"/>
+                    <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
                     <p:with-option name="debug" select="$debug"/>
                     <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                   </tr:mathtype2mml>
@@ -452,6 +454,7 @@
                       <p:pipe port="custom-font-maps" step="mathtype2mml"/>
                     </p:input>
                     <p:with-option name="href" select="$image-wmf-href"/>
+                    <p:with-option name="mml-space-handling" select="$mml-space-handling"/>
                     <p:with-option name="debug" select="$debug"/>
                     <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                   </tr:mathtype2mml>

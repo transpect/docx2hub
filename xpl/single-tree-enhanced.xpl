@@ -124,7 +124,7 @@
     <p:with-option name="active" select="$mathtype2mml"/>
     <p:with-option name="word-container-cleanup" select="$mathtype2mml-cleanup"/>
     <p:with-option name="sources" select="$mathtype2mml"/>
-    <p:with-option name="source-pi" select="$mathtype-source-pi"/>
+    <p:with-option name="mathtype-source-pi" select="$mathtype-source-pi"/>
     <p:input port="params">
       <p:pipe step="single-tree" port="params"/>
     </p:input>

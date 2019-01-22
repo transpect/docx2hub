@@ -74,7 +74,7 @@
   <p:option name="sources" required="false" select="$mathtype2mml">
     <p:documentation>see documentation for 'active' in docx2hub</p:documentation>
   </p:option>
-  <p:option name="source-pi" required="false" select="'no'"/>
+  <p:option name="mathtype-source-pi" required="false" select="'no'"/>
   <p:option name="mml-space-handling" select="'mspace'">
     <p:documentation>see corresponding documentation for docx2hub</p:documentation>
   </p:option>
@@ -483,7 +483,7 @@
           </p:otherwise>
         </p:choose>
         <p:choose>
-          <p:when test="$source-pi = 'no'">
+          <p:when test="$mathtype-source-pi = 'no'">
             <p:delete match="processing-instruction()[matches(., 'M2M_21[01]')]"/>
           </p:when>
           <p:otherwise>

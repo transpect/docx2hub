@@ -39,15 +39,24 @@
     </xsl:document>
   </xsl:variable>
 
-  <xsl:variable name="d2s:pageWidth-fallback" select="xs:integer((//w:pgSz/@w:w)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:pageHeight-fallback" select="xs:integer((//w:pgSz/@w:h)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginTop-fallback" select="xs:integer((//w:pgMar/@w:top)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginBottom-fallback" select="xs:integer((//w:pgMar/@w:bottom)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginLeft-fallback" select="xs:integer((//w:pgMar/@w:left)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginRight-fallback" select="xs:integer((//w:pgMar/@w:right)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:SatzspWidth-fallback" select="$d2s:pageWidth-fallback - $d2s:marginRight-fallback - $d2s:marginLeft-fallback" as="xs:integer"/>
-  <xsl:variable name="d2s:SatzspHeight-fallback" select="$d2s:pageHeight-fallback - $d2s:marginTop-fallback - $d2s:marginBottom-fallback" as="xs:integer"/>
-  <xsl:variable name="d2s:linePitch-fallback" select="xs:integer((//w:docGrid/@w:linePitch)[1] * 635)"/>
+  <xsl:variable name="d2s:pageWidth-fallback" as="xs:integer"
+                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:pgSz/@w:w * 635)"/>
+  <xsl:variable name="d2s:pageHeight-fallback" as="xs:integer"
+                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:pgSz/@w:h * 635)"/>
+  <xsl:variable name="d2s:marginTop-fallback" as="xs:integer"
+                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:pgMar/@w:top * 635)"/>
+  <xsl:variable name="d2s:marginBottom-fallback" as="xs:integer" 
+                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:pgMar/@w:bottom * 635)"/>
+  <xsl:variable name="d2s:marginLeft-fallback" as="xs:integer"
+                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:pgMar/@w:left * 635)"/>
+  <xsl:variable name="d2s:marginRight-fallback" as="xs:integer"
+                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:pgMar/@w:right * 635)"/>
+  <xsl:variable name="d2s:SatzspWidth-fallback" as="xs:integer"
+                select="$d2s:pageWidth-fallback - $d2s:marginRight-fallback - $d2s:marginLeft-fallback"/>
+  <xsl:variable name="d2s:SatzspHeight-fallback" as="xs:integer"
+                select="$d2s:pageHeight-fallback - $d2s:marginTop-fallback - $d2s:marginBottom-fallback"/>
+  <xsl:variable name="d2s:linePitch-fallback" as="xs:integer?"
+                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:docGrid/@w:linePitch * 635)"/>
   
   <xsl:variable name="d2s:sec-layout-map-fallback" as="map(xs:string, xs:integer?)">
     <xsl:map>
@@ -63,8 +72,8 @@
     </xsl:map>
   </xsl:variable>
   
-  <xsl:variable name="d2s:deg2rad" select="math:pi() div 10800000"/>
-  <xsl:variable name="d2s:emu2dpt" as="xs:double" select="72 div 914400"/>
+  <xsl:variable name="d2s:deg2rad" select="math:pi() div 10800000" as="xs:double"/>
+  <xsl:variable name="d2s:emu2dpt" select="72 div 914400" as="xs:double"/>
 
   <xsl:key name="d2s:gd-by-name" match="a:gd" use="@name"/>  
   

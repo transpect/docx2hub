@@ -39,23 +39,71 @@
     </xsl:document>
   </xsl:variable>
 
-  <xsl:variable name="d2s:pageWidth" select="xs:integer((//w:pgSz/@w:w)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:pageHeight" select="xs:integer((//w:pgSz/@w:h)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginTop" select="xs:integer((//w:pgMar/@w:top)[1] * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginBottom" select="xs:integer(//w:pgMar/@w:bottom * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginLeft" select="xs:integer(//w:pgMar/@w:left * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginRight" select="xs:integer(//w:pgMar/@w:right * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:SatzspWidth" select="$d2s:pageWidth - $d2s:marginRight - $d2s:marginLeft" as="xs:integer"/>
-  <xsl:variable name="d2s:SatzspHeight" select="$d2s:pageHeight - $d2s:marginTop - $d2s:marginBottom" as="xs:integer"/>
-  <xsl:variable name="d2s:linePitch" select="xs:integer(//w:docGrid/@w:linePitch * 635)"/>
+  <xsl:variable name="d2s:pageWidth-fallback" select="xs:integer((//w:pgSz/@w:w)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:pageHeight-fallback" select="xs:integer((//w:pgSz/@w:h)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:marginTop-fallback" select="xs:integer((//w:pgMar/@w:top)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:marginBottom-fallback" select="xs:integer((//w:pgMar/@w:bottom)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:marginLeft-fallback" select="xs:integer((//w:pgMar/@w:left)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:marginRight-fallback" select="xs:integer((//w:pgMar/@w:right)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:SatzspWidth-fallback" select="$d2s:pageWidth-fallback - $d2s:marginRight-fallback - $d2s:marginLeft-fallback" as="xs:integer"/>
+  <xsl:variable name="d2s:SatzspHeight-fallback" select="$d2s:pageHeight-fallback - $d2s:marginTop-fallback - $d2s:marginBottom-fallback" as="xs:integer"/>
+  <xsl:variable name="d2s:linePitch-fallback" select="xs:integer((//w:docGrid/@w:linePitch)[1] * 635)"/>
+  
+  <xsl:variable name="d2s:sec-layout-map-fallback" as="map(xs:string, xs:integer?)">
+    <xsl:map>
+      <xsl:map-entry key="'pageWidth'" select="$d2s:pageWidth-fallback"/>
+      <xsl:map-entry key="'pageHeight'" select="$d2s:pageHeight-fallback"/>
+      <xsl:map-entry key="'marginTop'" select="$d2s:marginTop-fallback"/>
+      <xsl:map-entry key="'marginBottom'" select="$d2s:marginBottom-fallback"/>
+      <xsl:map-entry key="'marginLeft'" select="$d2s:marginLeft-fallback"/>
+      <xsl:map-entry key="'marginRight'" select="$d2s:marginRight-fallback"/>
+      <xsl:map-entry key="'SatzspWidth'" select="$d2s:pageWidth-fallback - $d2s:marginRight-fallback - $d2s:marginLeft-fallback"/>
+      <xsl:map-entry key="'SatzspHeight'" select="$d2s:pageHeight-fallback - $d2s:marginTop-fallback - $d2s:marginBottom-fallback"/>
+      <xsl:map-entry key="'linePitch'" select="$d2s:linePitch-fallback"/>        
+    </xsl:map>
+  </xsl:variable>
+  
   <xsl:variable name="d2s:deg2rad" select="math:pi() div 10800000"/>
   <xsl:variable name="d2s:emu2dpt" as="xs:double" select="72 div 914400"/>
 
-  <xsl:key name="d2s:gd-by-name" match="a:gd" use="@name"/>
+  <xsl:key name="d2s:gd-by-name" match="a:gd" use="@name"/>  
+  
+  <xsl:template match="w:sectPr" mode="docx2hub:add-props">
+    <xsl:variable name="pageWidth"    select="xs:integer(w:pgSz/@w:w * 635)" as="xs:integer"/>
+    <xsl:variable name="pageHeight"   select="xs:integer(w:pgSz/@w:h * 635)" as="xs:integer"/>
+    <xsl:variable name="marginTop"    select="xs:integer(w:pgMar/@w:top * 635)" as="xs:integer"/>
+    <xsl:variable name="marginBottom" select="xs:integer(w:pgMar/@w:bottom * 635)" as="xs:integer"/>
+    <xsl:variable name="marginLeft"   select="xs:integer(w:pgMar/@w:left * 635)" as="xs:integer"/>
+    <xsl:variable name="marginRight"  select="xs:integer(w:pgMar/@w:right * 635)" as="xs:integer"/>
+    <xsl:variable name="linePitch"    select="xs:integer(w:docGrid/@w:linePitch * 635)"/>
+    <xsl:variable name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)">
+      <xsl:map>
+        <xsl:map-entry key="'pageWidth'"    select="$pageWidth"/>
+        <xsl:map-entry key="'pageHeight'"   select="$pageHeight"/>
+        <xsl:map-entry key="'marginTop'"    select="$marginTop"/>
+        <xsl:map-entry key="'marginBottom'" select="$marginBottom"/>
+        <xsl:map-entry key="'marginLeft'"   select="$marginLeft"/>
+        <xsl:map-entry key="'marginRight'"  select="$marginRight"/>
+        <xsl:map-entry key="'SatzspWidth'"  select="$pageWidth - $marginRight - $marginLeft"/>
+        <xsl:map-entry key="'SatzspHeight'" select="$pageHeight - $marginTop - $marginBottom"/>
+        <xsl:map-entry key="'linePitch'"    select="$linePitch"/>        
+      </xsl:map>
+    </xsl:variable>
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node()" mode="#current">
+        <xsl:with-param name="d2s:sec-layout-map" select="$d2s:sec-layout-map" 
+                        as="map(xs:string, xs:integer?)" tunnel="yes"/>  
+      </xsl:apply-templates>
+    </xsl:copy>
+  </xsl:template>
   
   <xsl:template match="mc:AlternateContent[mc:Choice/w:drawing/wp:anchor/a:graphic/a:graphicData]" mode="docx2hub:add-props">
+    <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)?" tunnel="yes"/>
     <xsl:variable name="element-name" select="if(parent::w:r|parent::w:p) then 'phrase' else 'sidebar'" as="xs:string"/>
-    <xsl:apply-templates select="mc:Choice//a:graphic" mode="d2s:default"/>
+    <xsl:apply-templates select="mc:Choice//a:graphic" mode="d2s:default">
+      <xsl:with-param name="d2s:sec-layout-map" select="($d2s:sec-layout-map, $d2s:sec-layout-map-fallback)[1]" 
+                      as="map(xs:string, xs:integer?)" tunnel="yes"/>
+    </xsl:apply-templates>
   </xsl:template>
   
   <xsl:template match="svg:svg" mode="wml-to-dbk" xmlns="http://docbook.org/ns/docbook">
@@ -65,17 +113,24 @@
   </xsl:template>
   
   <xsl:template match="*[a:graphicData]" mode="d2s:default">
+    <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)" tunnel="yes"/>
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <xsl:variable name="result" as="element(*)*">
-        <xsl:apply-templates select="a:graphicData" mode="#current"/>
+        <xsl:apply-templates select="a:graphicData" mode="#current">
+          <xsl:with-param name="d2s:sec-layout-map" select="$d2s:sec-layout-map" 
+                          as="map(xs:string, xs:integer?)" tunnel="yes"/>
+        </xsl:apply-templates>
       </xsl:variable>
       <xsl:call-template name="viewBox">
-        <xsl:with-param name="result" select="$result"/>
+        <xsl:with-param name="result" select="$result" as="element(*)*"/>
+        <xsl:with-param name="d2s:sec-layout-map" select="$d2s:sec-layout-map" 
+                        as="map(xs:string, xs:integer?)" tunnel="yes"/>
       </xsl:call-template>
       <title>drawingml2svg</title>
       <g fill="none" stroke="black">
-        <rect width="{$d2s:pageWidth * $d2s:emu2dpt}" height="{$d2s:pageHeight * $d2s:emu2dpt}" x="0" y="0"
-          fill="#bee0cd"/>
+        <rect width="{$d2s:sec-layout-map('pageWidth') * $d2s:emu2dpt}" 
+              height="{$d2s:sec-layout-map('pageHeight') * $d2s:emu2dpt}" 
+              x="0" y="0" fill="#bee0cd"/>
         <xsl:apply-templates select="$result" mode="d2s:cleanup"/>
       </g>
     </svg>
@@ -86,10 +141,13 @@ TEMPLATES
 <!-- Determine ViewBox and port -->
   <xsl:template name="viewBox">
     <xsl:param name="result" as="element(*)*"/>
+    <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)" tunnel="yes"/>
     <xsl:variable name="width" as="xs:double"
-      select="($d2s:pageWidth - min($result/@d2s:min-x) - ($d2s:pageWidth - max($result/@d2s:max-x))) * $d2s:emu2dpt"/>
+                  select="  ($d2s:sec-layout-map('pageWidth') - min($result/@d2s:min-x) 
+                          - ($d2s:sec-layout-map('pageWidth') - max($result/@d2s:max-x) )) * $d2s:emu2dpt"/>
     <xsl:variable name="height" as="xs:double"
-      select="($d2s:pageHeight - min($result/@d2s:min-y) - ($d2s:pageHeight - max($result/@d2s:max-y))) * $d2s:emu2dpt"/>
+                  select="  ($d2s:sec-layout-map('pageHeight') - min($result/@d2s:min-y) 
+                          - ($d2s:sec-layout-map('pageHeight') - max($result/@d2s:max-y) )) * $d2s:emu2dpt"/>
     <xsl:attribute name="width" separator=" ">
       <xsl:sequence select="$width"/>
     </xsl:attribute>
@@ -109,6 +167,7 @@ TEMPLATES
  
 <!--Generate shapes -->
   <xsl:template match="a:graphicData" mode="d2s:default">
+    <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)" tunnel="yes"/>
     <xsl:variable name="this" as="document-node(element(a:graphicData))">
       <xsl:document>
         <xsl:copy-of select="."/>
@@ -146,7 +205,7 @@ TEMPLATES
     <xsl:variable name="align-x" as="xs:string?"
       select="(../../wp:positionH/wp:align[normalize-space()], ../../wp:positionH/wp:posOffset, '')[1]"/>
     <xsl:variable name="c-x" select="wps:wsp/wps:spPr/a:xfrm/a:ext/@cx" as="xs:integer"/>
-    <xsl:variable name="position-x" select="d2s:pos-x($relativeFrom-x, $align-x, $c-x)" as="xs:integer"/>
+    <xsl:variable name="position-x" select="d2s:pos-x($relativeFrom-x, $align-x, $c-x, $d2s:sec-layout-map)" as="xs:integer"/>
     <xsl:variable name="center-x" select="$c-x idiv 2 + $position-x" as="xs:integer"/>
     <!--Y Koordinaten-->
     <xsl:variable name="relativeFrom-y" select="../../wp:positionV/@relativeFrom" as="xs:string"/>
@@ -154,8 +213,8 @@ TEMPLATES
       select="(../../wp:positionV/wp:align[normalize-space()], ../../wp:positionV/wp:posOffset, '')[1]"/>
     <xsl:variable name="c-y" select=".//@cy" as="xs:integer"/>
     <xsl:message select="'aaaaaaaaaaaa ', $align-y"></xsl:message>
-    <xsl:variable name="position-y" select="d2s:pos-y($relativeFrom-y, $align-y, $c-y, $p-before)"
-      as="xs:integer"/>
+    <xsl:variable name="position-y" select="d2s:pos-y($relativeFrom-y, $align-y, $c-y, $p-before, $d2s:sec-layout-map)"
+                  as="xs:integer"/>
     <xsl:variable name="center-y" select="$c-y idiv 2 + $position-y" as="xs:integer"/>
     <!--Extremwerte-->
     <xsl:variable name="max-local-x"
@@ -478,20 +537,21 @@ TEMPLATES
 
     <!--Positionierung von Elementen-->
     <xsl:function name="d2s:pos-x" as="xs:integer">
-        <xsl:param name="relativeFrom" as="xs:string"/>
-        <xsl:param name="align" as="xs:anyAtomicType"/>
-        <xsl:param name="cx" as="xs:integer"/>
+      <xsl:param name="relativeFrom" as="xs:string"/>
+      <xsl:param name="align" as="xs:anyAtomicType"/>
+      <xsl:param name="cx" as="xs:integer"/>
+      <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer)"/>
         <xsl:choose>
             <xsl:when test="$relativeFrom = 'page'">
                 <xsl:choose>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="($d2s:pageWidth idiv 2) - ($cx idiv 2)"/>
+                      <xsl:sequence select="($d2s:sec-layout-map('pageWidth') idiv 2) - ($cx idiv 2)"/>
                     </xsl:when>
                     <xsl:when test="$align = 'left'">
                         <xsl:sequence select="0"/>
                     </xsl:when>
                     <xsl:when test="$align = 'right'">
-                        <xsl:sequence select="$d2s:pageWidth - $cx"/>
+                      <xsl:sequence select="$d2s:sec-layout-map('pageWidth') - $cx"/>
                     </xsl:when>
                     <xsl:when test="$align = 'inside'">
                         <xsl:sequence select="533400"/>
@@ -513,13 +573,13 @@ TEMPLATES
             <xsl:when test="$relativeFrom = 'margin'">
               <xsl:choose>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="($d2s:SatzspWidth idiv 2) + $d2s:marginLeft - ($cx idiv 2)"/>
+                      <xsl:sequence select="($d2s:sec-layout-map('SatzspWidth') idiv 2) + $d2s:sec-layout-map('marginLeft') - ($cx idiv 2)"/>
                     </xsl:when>
                     <xsl:when test="$align = 'right'">
-                        <xsl:sequence select="$d2s:pageWidth - $d2s:marginRight - $cx"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageWidth') - $d2s:sec-layout-map('marginRight') - $cx"/>
                     </xsl:when>
                     <xsl:when test="$align = 'left'">
-                        <xsl:sequence select="$d2s:marginLeft"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('marginLeft')"/>
                     </xsl:when>
                     <xsl:when test="$align = 'inside'">
                         <xsl:message select="'align inside wird behandelt wie left, nur relevant wenn buchlayout'"/>
@@ -531,7 +591,7 @@ TEMPLATES
                         <xsl:message select="'align', $align, 'horizontal relativeFrom', $relativeFrom, 'nicht definiert'"/>
                     </xsl:when>
                     <xsl:when test="matches($align, '\d')">
-                        <xsl:sequence select="$d2s:marginLeft + xs:integer($align)"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('marginLeft') + xs:integer($align)"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:message select="'X: align angabe relativeFrom margin nicht zulässig '"/>
@@ -542,13 +602,13 @@ TEMPLATES
             <xsl:when test="$relativeFrom = 'leftMargin'">
                 <xsl:choose>
                     <xsl:when test="$align = 'right'">
-                        <xsl:sequence select="$d2s:marginLeft - $cx"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('marginLeft') - $cx"/>
                     </xsl:when>
                     <xsl:when test="$align = 'left'">
                         <xsl:sequence select="0"/>
                     </xsl:when>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="($d2s:marginLeft idiv 2) - ($cx idiv 2)"/>
+                        <xsl:sequence select="($d2s:sec-layout-map('marginLeft') idiv 2) - ($cx idiv 2)"/>
                     </xsl:when>
                     <xsl:when test="matches($align, '\d')">
                         <xsl:sequence select="xs:integer($align)"/>
@@ -562,17 +622,17 @@ TEMPLATES
             <xsl:when test="$relativeFrom = 'rightMargin'">
                 <xsl:choose>
                     <xsl:when test="$align = 'right'">
-                        <xsl:sequence select="$d2s:pageWidth - $cx"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageWidth') - $cx"/>
                     </xsl:when>
                     <xsl:when test="$align = 'left'">
-                        <xsl:sequence select="$d2s:pageWidth - $d2s:marginRight"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageWidth') - $d2s:sec-layout-map('marginRight')"/>
                     </xsl:when>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="$d2s:pageWidth - ($d2s:marginRight idiv 2) - ($cx idiv 2)"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageWidth') - ($d2s:sec-layout-map('marginRight') idiv 2) - ($cx idiv 2)"/>
                     </xsl:when>
                     <xsl:when test="matches($align, '\d')">
                         
-                        <xsl:sequence select="$d2s:pageWidth - $d2s:marginRight + xs:integer($align)"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageWidth') - $d2s:sec-layout-map('marginRight') + xs:integer($align)"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:sequence select="533400"/>
@@ -631,16 +691,16 @@ TEMPLATES
                 <xsl:message select="'@relativeFrom column wird derzeit so behandelt wie @relativeFrom margin. Unterschied gibt es nur wenn es mehrere Spalten gibt'"/>
                 <xsl:choose>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="($d2s:SatzspWidth idiv 2) + $d2s:marginLeft - ($cx idiv 2)"/>
+                        <xsl:sequence select="($d2s:sec-layout-map('SatzspWidth') idiv 2) + $d2s:sec-layout-map('marginLeft') - ($cx idiv 2)"/>
                     </xsl:when>
                     <xsl:when test="$align = 'right'">
-                        <xsl:sequence select="$d2s:pageWidth - $d2s:marginRight - $cx"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageWidth') - $d2s:sec-layout-map('marginRight') - $cx"/>
                     </xsl:when>
                     <xsl:when test="$align = 'left'">
-                        <xsl:sequence select="$d2s:marginLeft"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('marginLeft')"/>
                     </xsl:when>
                     <xsl:when test="matches($align, '\d')">
-                        <xsl:sequence select="$d2s:marginLeft + xs:integer($align)"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('marginLeft') + xs:integer($align)"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:message select="'X: align angabe relativeFrom column nicht zulässig '"/>
@@ -680,21 +740,22 @@ TEMPLATES
     </xsl:function>
 
     <xsl:function name="d2s:pos-y" as="xs:integer">
-        <xsl:param name="relativeFrom" as="xs:string"/>
-        <xsl:param name="align" as="xs:anyAtomicType"/>
-        <xsl:param name="cy" as="xs:integer"/>
-        <xsl:param name="pBefore" as="xs:integer"/>
+      <xsl:param name="relativeFrom" as="xs:string"/>
+      <xsl:param name="align" as="xs:anyAtomicType"/>
+      <xsl:param name="cy" as="xs:integer"/>
+      <xsl:param name="pBefore" as="xs:integer"/>
+      <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer)"/>
       <xsl:choose>
             <xsl:when test="$relativeFrom = 'page'">
                 <xsl:choose>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="(($d2s:pageHeight idiv 2) - ($cy idiv 2))"/>
+                        <xsl:sequence select="(($d2s:sec-layout-map('pageHeight') idiv 2) - ($cy idiv 2))"/>
                     </xsl:when>
                     <xsl:when test="$align = 'top'">
                         <xsl:sequence select="0"/>
                     </xsl:when>
                     <xsl:when test="$align = 'bottom'">
-                        <xsl:sequence select="$d2s:pageHeight - $cy"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageHeight') - $cy"/>
                     </xsl:when>
                     <xsl:when test="$align = 'inside'">
                         <xsl:sequence select="533400"/>
@@ -716,13 +777,13 @@ TEMPLATES
             <xsl:when test="$relativeFrom = 'margin'">
                 <xsl:choose>
                     <xsl:when test="$align = 'top'">
-                        <xsl:sequence select="$d2s:marginTop"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('marginTop')"/>
                     </xsl:when>
                     <xsl:when test="$align = 'bottom'">
-                        <xsl:sequence select="$d2s:pageHeight - $d2s:marginBottom - $cy"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageHeight') - $d2s:sec-layout-map('marginBottom') - $cy"/>
                     </xsl:when>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="($d2s:SatzspHeight idiv 2) - ($cy idiv 2) + $d2s:marginTop"/>
+                        <xsl:sequence select="($d2s:sec-layout-map('SatzspHeight') idiv 2) - ($cy idiv 2) + $d2s:sec-layout-map('marginTop')"/>
                     </xsl:when>
                     <xsl:when test="$align = 'inside'">
                         <xsl:sequence select="533400"/>
@@ -733,7 +794,7 @@ TEMPLATES
                         <xsl:message select="'align', $align, 'vertikal relativeFrom', $relativeFrom, 'nicht definiert'"/>
                     </xsl:when>
                     <xsl:when test="matches($align, '^\d+$')">
-                        <xsl:sequence select="xs:integer($align) + $d2s:marginTop"/>
+                        <xsl:sequence select="xs:integer($align) + $d2s:sec-layout-map('marginTop')"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:message select="'Y: align angabe relativeFrom page nicht zulässig'"/>
@@ -808,7 +869,7 @@ TEMPLATES
             <xsl:when test="$relativeFrom = 'topMargin'">
                 <xsl:choose>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="($d2s:marginTop idiv 2) - ($cy idiv 2)"/>
+                        <xsl:sequence select="($d2s:sec-layout-map('marginTop') idiv 2) - ($cy idiv 2)"/>
                     </xsl:when>
                     <xsl:when test="$align = 'inside'">
                         <xsl:sequence select="533400"/>
@@ -822,7 +883,7 @@ TEMPLATES
                         <xsl:sequence select="0"/>
                     </xsl:when>
                     <xsl:when test="$align = 'bottom'">
-                        <xsl:sequence select="$d2s:marginTop - $cy"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('marginTop') - $cy"/>
                     </xsl:when>
                     <xsl:when test="matches($align, '\d')">
                         <xsl:sequence select="xs:integer($align)"/>
@@ -836,7 +897,7 @@ TEMPLATES
             <xsl:when test="$relativeFrom = 'bottomMargin'">
                 <xsl:choose>
                     <xsl:when test="$align = 'center'">
-                        <xsl:sequence select="$d2s:pageHeight - ($d2s:marginBottom idiv 2) - ($cy idiv 2)"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageHeight') - ($d2s:sec-layout-map('marginBottom') idiv 2) - ($cy idiv 2)"/>
                     </xsl:when>
                     <xsl:when test="$align = 'inside'">
                         <xsl:sequence select="533400"/>
@@ -847,13 +908,13 @@ TEMPLATES
                         <xsl:message select="'align', $align, 'vertikal relativeFrom', $relativeFrom, 'nicht definiert'"/>
                     </xsl:when>
                     <xsl:when test="$align = 'top'">
-                        <xsl:sequence select="$d2s:pageHeight - $d2s:marginBottom"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageHeight') - $d2s:sec-layout-map('marginBottom')"/>
                     </xsl:when>
                     <xsl:when test="$align = 'bottom'">
-                        <xsl:sequence select="$d2s:pageHeight - $cy"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageHeight') - $cy"/>
                     </xsl:when>
                     <xsl:when test="matches($align, '\d')">
-                        <xsl:sequence select="$d2s:pageHeight - $d2s:marginBottom + xs:integer($align)"/>
+                        <xsl:sequence select="$d2s:sec-layout-map('pageHeight') - $d2s:sec-layout-map('marginBottom') + xs:integer($align)"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:sequence select="533400"/>
@@ -864,7 +925,7 @@ TEMPLATES
             <xsl:when test="$relativeFrom = 'paragraph'">
                 <xsl:choose>
                     <xsl:when test="matches($align, '\d')">
-                         <xsl:sequence select="xs:integer($align) + $d2s:marginTop + ($pBefore * $d2s:linePitch) "/>
+                      <xsl:sequence select="xs:integer($align) + $d2s:sec-layout-map('marginTop') + ($pBefore * $d2s:sec-layout-map('linePitch')) "/>
                         <xsl:message select="'align', $align, 'vertikal relativeFrom', $relativeFrom, 'nicht definiert'"/>
                     </xsl:when>
                     <xsl:otherwise>

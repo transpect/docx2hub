@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="http://www.w3.org/2000/svg"
-    xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:docx2hub="http://transpect.io/docx2hub"
-    xmlns:math="http://www.w3.org/2005/xpath-functions/math"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:math="http://www.w3.org/2005/xpath-functions/math"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:svg="http://www.w3.org/2000/svg"
   xmlns:v="urn:schemas-microsoft-com:vml"
-    xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
-    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-    xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
-    xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
-    xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
-    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:d2s="http://transpect.io/drawingml2svg"
-    exclude-result-prefixes="a d2s docx2hub mc math v w w14 wp wpg wps xs" version="3.0">
-    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" standalone="no"
-        doctype-public="-//W3C//DTD SVG 1.1/EN"
-        doctype-system="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"/>
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+  xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
+  xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:d2s="http://transpect.io/drawingml2svg"
+  exclude-result-prefixes="a d2s docx2hub mc math v w w14 wp wpg wps xs" 
+  version="3.0">
+  
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" standalone="no"
+              doctype-public="-//W3C//DTD SVG 1.1/EN"
+              doctype-system="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"/>
 
   <xsl:variable name="d2s:presetShapeDefinitions" as="document-node(element(presetShapeDefinitions))"
-    select="doc('presetShapeDefinitions.xml')"/>
+                select="doc('presetShapeDefinitions.xml')"/>
     
   <xsl:variable name="d2s:constants" as="document-node(element(a:constants))">
     <xsl:document>
@@ -37,9 +39,9 @@
     </xsl:document>
   </xsl:variable>
 
-  <xsl:variable name="d2s:pageWidth" select="xs:integer(//w:pgSz/@w:w * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:pageHeight" select="xs:integer(//w:pgSz/@w:h * 635)" as="xs:integer"/>
-  <xsl:variable name="d2s:marginTop" select="xs:integer(//w:pgMar/@w:top * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:pageWidth" select="xs:integer((//w:pgSz/@w:w)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:pageHeight" select="xs:integer((//w:pgSz/@w:h)[1] * 635)" as="xs:integer"/>
+  <xsl:variable name="d2s:marginTop" select="xs:integer((//w:pgMar/@w:top)[1] * 635)" as="xs:integer"/>
   <xsl:variable name="d2s:marginBottom" select="xs:integer(//w:pgMar/@w:bottom * 635)" as="xs:integer"/>
   <xsl:variable name="d2s:marginLeft" select="xs:integer(//w:pgMar/@w:left * 635)" as="xs:integer"/>
   <xsl:variable name="d2s:marginRight" select="xs:integer(//w:pgMar/@w:right * 635)" as="xs:integer"/>

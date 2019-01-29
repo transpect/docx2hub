@@ -10,7 +10,6 @@
   version="2.0">
 
   <xsl:template match="CITAVI_JSON" mode="wml-to-dbk">
-    <xsl:param name="processed-citavi-jsons" as="document-node()?" tunnel="yes"/>
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
@@ -100,12 +99,16 @@
   
   <xsl:template match="fn:map[@key = 'ParentReference'][count(*) = 1][fn:string[@key = '$ref']]" 
     mode="citavi" priority="1">
-    <xsl:comment>redirect to <xsl:value-of select="@key, fn:string[@key = '$ref']"/></xsl:comment>
+    <xsl:if test="$debug = 'yes'">
+      <xsl:comment>redirect to <xsl:value-of select="@key, fn:string[@key = '$ref']"/></xsl:comment>
+    </xsl:if>
     <xsl:call-template name="docx2hub:citavi-redirect"/>
   </xsl:template>
   
   <xsl:template match="fn:map[@key = 'ParentReference']" mode="citavi">
-    <xsl:comment select="@key, fn:string[@key = '$id']"/>
+    <xsl:if test="$debug = 'yes'">
+      <xsl:comment select="@key, fn:string[@key = '$id']"/>
+    </xsl:if>
     <xsl:call-template name="citavi-reference"/>
   </xsl:template>
   
@@ -173,7 +176,9 @@
   
   <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map[fn:string[@key = '$ref']]" 
     mode="citavi" priority="1">
-    <xsl:comment>redirect to <xsl:value-of select="../@key, fn:string[@key = '$ref']"/></xsl:comment>
+    <xsl:if test="$debug = 'yes'">
+      <xsl:comment>redirect to <xsl:value-of select="../@key, fn:string[@key = '$ref']"/></xsl:comment>
+    </xsl:if>
     <xsl:call-template name="docx2hub:citavi-redirect">
       <xsl:with-param name="id-family" as="xs:string" select="'person'"/>
     </xsl:call-template>
@@ -191,7 +196,9 @@
 
   <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map" mode="citavi">
     <xsl:param name="person-group-name" as="xs:string?" select="../@key"/>
-    <xsl:comment select="../@key, fn:string[@key = '$id']"/>
+    <xsl:if test="$debug = 'yes'">
+      <xsl:comment select="../@key, fn:string[@key = '$id']"/>
+    </xsl:if>/
     <xsl:choose>
       <xsl:when test="$person-group-name = ('Authors', 'Editors')">
         <xsl:element name="{lower-case(replace($person-group-name, 's$', ''))}">
@@ -302,23 +309,4 @@
     </address>
   </xsl:template>
   
-<!--<xsl:function name="docx2hub:getConfVar" as="xs:string">
-    <xsl:param name="conf" as="element()"/>
-    <xsl:param name="varName" as="xs:string"/>
-    <xsl:sequence select="
-      if (exists($conf/variable[@name=$varName]))
-      then $conf/variable[@name=$varName]/@value
-      else (
-        error(QName('docx2hub', 'r01'),
-          concat('Entry ',$varName,' is missing in environment configuration')
-        )
-      )
-      "/>
-  </xsl:function>
-  <xsl:template name="test">
-    <xsl:variable name="hurz" as="element()">
-      <hurz/>
-    </xsl:variable>
-    <xsl:sequence select="docx2hub:getConfVar($hurz, 'foo')"/>
-  </xsl:template>
---></xsl:stylesheet>
+</xsl:stylesheet>

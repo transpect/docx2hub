@@ -1383,6 +1383,7 @@
     <xsl:document>
       <tr:field-functions>
         <tr:field-function name="BIBLIOGRAPHY" element="div" role="hub:bibliography"/>
+        <tr:field-function name="CITATION"><!-- not implemented yet --></tr:field-function>
         <tr:field-function name="CITAVI_XML"/>
         <tr:field-function name="CITAVI_JSON"/>
         <tr:field-function name="INDEX" element="div" role="hub:index"/>
@@ -1571,6 +1572,10 @@
                            [ancestor::w:tbl]" mode="docx2hub:field-functions">
     <xsl:message select="'eeeee'"></xsl:message>
     <xsl:apply-templates select="node()" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="w:sdt" mode="wml-to-dbk" priority="-1">
+    <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
   </xsl:template>
   
   <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]

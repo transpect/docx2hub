@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:w= "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:dbk="http://docbook.org/ns/docbook"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -16,7 +17,7 @@
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0" 
-  exclude-result-prefixes = "w xs dbk r rel tr m mc docx2hub v wp">
+  exclude-result-prefixes = "w xs dbk fn r rel tr m mc docx2hub v wp">
 
   <!-- ================================================================================ -->
   <!-- IMPORT OF OTHER STYLESHEETS -->
@@ -127,7 +128,11 @@
       <xsl:for-each select="$non-block-field-begins">
         <xsl:variable name="c" as="element(w:fldChar)?"
           select="key('docx2hub:linking-item-by-id', @xml:id)[@w:fldCharType = 'end']"/>
-        <xsl:sequence select="xs:double(count(ancestor::w:p/following-sibling::*[$c >> .]))"/>
+        <xsl:variable name="distance" as="xs:double" select="xs:double(count(ancestor::w:p/following-sibling::*[$c >> .]))"/>
+        <xsl:if test="$distance gt 10">
+          <xsl:message select="'Large lookaround distance', $distance, 'due to', ancestor::w:p"/>
+        </xsl:if>
+        <xsl:sequence select="$distance"/>
       </xsl:for-each>
     </xsl:variable>
     
@@ -153,7 +158,7 @@
     use="@docx2hub:fldChar-start-id"/>
 
   <xsl:variable name="docx2hub:block-field-functions" as="xs:string+" 
-    select="('ADDRESSBLOCK', 'BIBLIOGRAPHY', 'COMMENTS', 'DATABASE', 'INDEX', 'RD', 'TOA', 'TOC')"/>
+    select="('ADDRESSBLOCK', 'BIBLIOGRAPHY', 'CITAVI_XML', 'COMMENTS', 'DATABASE', 'INDEX', 'RD', 'TOA', 'TOC')"/>
   
   <xsl:variable name="docx2hub:hybrid-field-functions" as="xs:string+" 
     select="('IF')"/>
@@ -246,7 +251,7 @@
   
 
   <!-- convert inline field functions to elements of the same names -->
-  <xsl:template match="w:p | w:hyperlink" mode="docx2hub:field-functions">
+  <xsl:template match="w:p | w:hyperlink | w:sdtContent[w:r/w:instrText]" mode="docx2hub:field-functions">
     <xsl:param name="non-block-field-begins" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:param name="non-block-field-ends" as="element(w:fldChar)*" tunnel="yes"/>
     <xsl:param name="lookaround-count" as="xs:integer" tunnel="yes">
@@ -319,7 +324,7 @@
         </xsl:variable>
         <xsl:variable name="instr-text" as="element(w:instrText)*" 
           select="key('docx2hub:instrText-by-start-id', $innermost-nesting-begin/@xml:id)[not(@docx2hub:field-function-error)]"/>
-        <xsl:if test="count($instr-text) gt 1">
+        <xsl:if test="empty($instr-text[matches(@docx2hub:field-function-name, 'MACROBUTTON|GOTOBUTTON')]) and count($instr-text) gt 1">
           <xsl:message select="'More than one instrText: '"/>
           <xsl:for-each select="$instr-text">
             <xsl:message select="'ID: ', string(@docx2hub:fldChar-start-id), ', Error: ', string(@docx2hub:field-function-error),
@@ -565,10 +570,30 @@
 
 
   <xsl:template match="/dbk:*" mode="wml-to-dbk">
+    <xsl:variable name="citavi-refs" as="document-node()?">
+      <xsl:call-template name="docx2hub:citavi-json-to-xml"/>
+    </xsl:variable>
     <xsl:copy>
-      <xsl:apply-templates select="@*, *" mode="#current"/>
+      <xsl:apply-templates select="@*, *" mode="#current">
+        <xsl:with-param name="citavi-refs" as="document-node()?" select="$citavi-refs" tunnel="yes"/>
+      </xsl:apply-templates>
+      <xsl:variable name="citavi-bib" as="element(dbk:biblioentry)*">
+        <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-jsons/fn:map/fn:array/fn:map/fn:map[@key = 'Reference']"
+          group-by="fn:string[@key = 'Id']">
+          <xsl:apply-templates select="." mode="citavi"/>
+        </xsl:for-each-group>
+      </xsl:variable>
+      <xsl:if test="exists($citavi-bib)">
+        <bibliography role="Citavi">
+          <xsl:sequence select="$citavi-bib"/>
+        </bibliography>
+      </xsl:if>
+      <xsl:if test="$debug = 'yes'">
+        <xsl:sequence select="$citavi-refs/*"/>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
+  
   
   <!-- paragraphs (w:p) -->
 
@@ -1191,6 +1216,11 @@
     <!-- http://svn.le-tex.de/svn/ltxbase/word2tex/trunk/testset/mantis-18038.docx -->
     <xsl:apply-templates select="REF" mode="#current"/>
   </xsl:template>
+  
+  <xsl:template match="GOTOBUTTON/REF[tokenize(@fldArgs, '\s+\\')[1] = tokenize(../@fldArgs, '\s+\\')[1]]
+                                     [empty(node())]" 
+    mode="wml-to-dbk" priority="2"/>
+  
 
   <xsl:template match="*[name() = ('PRINT', 'GOTOBUTTON', 'MACROBUTTON')][@docx2hub:contains-markup]" 
     mode="wml-to-dbk" priority="1.5">
@@ -1353,6 +1383,8 @@
     <xsl:document>
       <tr:field-functions>
         <tr:field-function name="BIBLIOGRAPHY" element="div" role="hub:bibliography"/>
+        <tr:field-function name="CITAVI_XML"/>
+        <tr:field-function name="CITAVI_JSON"/>
         <tr:field-function name="INDEX" element="div" role="hub:index"/>
         <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="GOTOBUTTON" element="link" attrib="linkend" value="1"/>
@@ -1537,27 +1569,31 @@
   
   <xsl:template match="w:tc[ancestor::w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]]
                            [ancestor::w:tbl]" mode="docx2hub:field-functions">
+    <xsl:message select="'eeeee'"></xsl:message>
     <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]" mode="wml-to-dbk tables">
+  <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]
+                            [empty(.//*:CITAVI_XML)]" mode="wml-to-dbk tables">
     <xsl:element name="blockquote">
       <xsl:attribute name="role" select="if (w:sdtPr/w:citation) then 'hub:citation' else w:sdtPr/w:alias/@w:val"/>
       <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="w:sdt[starts-with(w:sdtPr/w:tag/@w:val, 'CitaviPlaceholder')]" 
-    mode="wml-to-dbk tables" priority="1">
-    <xsl:element name="phrase">
-      <xsl:attribute name="role" select="'hub:citation'"/>
-      <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
-    </xsl:element>
+  <xsl:template match="CITAVI_JSON" mode="wml-to-dbk tables" 
+    use-when="xs:decimal(system-property('xsl:version')) lt 3.0">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
-  
-  <xsl:template match="w:sdt" mode="wml-to-dbk" priority="-1">
-    <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
+
+  <xsl:template match="CITAVI_XML" mode="wml-to-dbk tables"
+    use-when="xs:decimal(system-property('xsl:version')) lt 3.0">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
+
+  <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) lt 3.0"/>
+
+
   
   <!-- The following template removes indentation if the document.xml was processed 
     earlier with libxml without indent flag.  If you miss breaks, it's dead certain 

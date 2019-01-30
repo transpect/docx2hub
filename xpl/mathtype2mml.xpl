@@ -61,18 +61,20 @@
   
   <p:option name="debug" required="false" select="'no'"/>
   <p:option name="debug-dir-uri" required="false" select="'file:/tmp/debug'"/>
-  <p:option name="active" required="false" select="'yes'">
+  <p:option name="active" required="false" select="$mathtype2mml">
     <p:documentation>see corresponding documentation for docx2hub.
     Additionally append '+try-all-pict-wmf' to try conversion
     of all referenced '*.wmf' files in word/media/
-    Example for ole/wmf and wmf pictures: ole+wmf+try-all-pict-wmf</p:documentation>
+    Example for ole/wmf and wmf pictures: ole+wmf+try-all-pict-wmf
+    'no' to deactivate</p:documentation>
   </p:option>
   <p:option name="word-container-cleanup" required="false" select="'yes'">
     <p:documentation>'yes': the files in media and/or embeddings directory
     and the Relationship elements of the replaced formulas are removed too.</p:documentation>
   </p:option>
   <p:option name="sources" required="false" select="$mathtype2mml">
-    <p:documentation>see documentation for 'active' in docx2hub</p:documentation>
+    <p:documentation>see documentation for 'active' in docx2hub
+    This option is not used!</p:documentation>
   </p:option>
   <p:option name="mathtype-source-pi" required="false" select="'no'"/>
   <p:option name="mml-space-handling" select="'mspace'">
@@ -107,7 +109,7 @@
   </p:identity>
 
   <p:choose name="convert-mathtype2mml">
-    <p:when test="not($active eq 'no')">
+    <p:when test="not($active = 'no')">
       <p:output port="result" primary="true"/>
       <p:output port="zip-manifest">
         <p:pipe port="result" step="remove-converted-objects-from-zip-manifest"/>
@@ -117,7 +119,9 @@
         <p:pipe port="result" step="extract-errors"/>
       </p:output>
       <p:variable name="basename" select="replace(/w:root/@local-href, '^.+/(.+)\.do[ct][mx]$', '$1')"/>
-      
+      <!--<cx:message>
+        <p:with-option name="message" select="'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ', $active"></p:with-option>
+      </cx:message>-->
       <p:viewport
         match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]]"
         name="mathtype2mml-viewport">
@@ -166,7 +170,7 @@
             <p:group name="convert-wmf">
               <p:output port="result"/>
               <p:choose>
-                <p:when test="matches($active, 'wmf')">
+                <p:when test="contains($active, 'wmf')">
                   <tr:mathtype2mml>
                     <p:input port="additional-font-maps">
                       <p:pipe port="result" step="docx2hub-font-maps"/>

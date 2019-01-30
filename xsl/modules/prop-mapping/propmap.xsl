@@ -52,6 +52,7 @@
         <prop name="w:bidi" type="docx-boolean-prop" target-name="css:direction" default="ltr" active="rtl"/>
         <prop name="w:caps" type="docx-boolean-prop" target-name="css:text-transform" active="uppercase"/>
         <prop name="w:cantSplit" type="docx-boolean-prop" target-name="css:break-inside" active="avoid"/>
+        <prop name="w:cnfStyle" implement="maybe later" />
         <prop name="w:color" type="docx-color" target-name="css:color"/>
         <prop name="w:contextualSpacing" implement="maybe later"/><!-- collapsible spacing between same-style paras, boolean prop. §17.3.1.9 -->
         <prop name="w:dstrike">

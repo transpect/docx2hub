@@ -5,17 +5,42 @@
   xmlns:dbk="http://docbook.org/ns/docbook"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:docx2hub="http://transpect.io/docx2hub"
-  exclude-result-prefixes="dbk docx2hub xs fn xlink"
+  xmlns:w= "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  exclude-result-prefixes="dbk docx2hub xs fn xlink w"
   xmlns="http://docbook.org/ns/docbook"
-  version="2.0">
+  version="3.0">
 
-  <xsl:template match="CITAVI_JSON" mode="wml-to-dbk">
-    <xsl:apply-templates mode="#current"/>
+  
+  <xsl:template match="CITAVI_JSON" mode="wml-to-dbk tables" 
+    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <biblioref>
+      <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk"/>
+      <xsl:comment select="."/>
+    </biblioref>
   </xsl:template>
   
-  <xsl:template match="CITAVI_XML" mode="wml-to-dbk"/>
+  <xsl:template match="w:sdt[.//*:CITAVI_XML]" mode="wml-to-dbk tables" priority="2" 
+    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+  </xsl:template>
+  
 
-  <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) lt 3.0"/>
+  <xsl:template match="w:sdtPr/w:tag/@w:val[starts-with(., 'CitaviPlaceholder')]" mode="wml-to-dbk">
+    <xsl:param name="citavi-refs" as="document-node()?" tunnel="yes"/>
+    <xsl:if test="exists($citavi-refs/docx2hub:citavi-jsons)">
+      <xsl:variable name="cited-refs" as="element(fn:map)*" 
+        select="key('docx2hub:by-citavi-placeholder', ., $citavi-refs)/fn:array[@key = 'Entries']/fn:map/fn:map[@key = 'Reference']"/>
+      <xsl:attribute name="linkends" separator=" " 
+        select="for $cid in $cited-refs/fn:string[@key = 'Id'] return '_' || $cid" />
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:key name="docx2hub:by-citavi-placeholder" match="fn:map[fn:string[@key = 'Tag']]" 
+    use="string(fn:string[@key = 'Tag'])"/>
+  
+  <xsl:template match="w:sdt[w:sdtPr/w:tag/@w:val[starts-with(., 'CitaviPlaceholder')]]" mode="wml-to-dbk tables">
+    <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
+  </xsl:template>
+
 
   <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
     <xsl:document>
@@ -67,7 +92,7 @@
       select="fn:map[@key = 'Periodical'][fn:string[@key = ('Name', 'StandardAbbreviation', 'Issn')]]"/>
     <biblioset>
       <xsl:sequence select="$reference-type"/>
-      <xsl:apply-templates select="fn:string[@key = 'LanguageCode']" mode="#current"/>
+      <xsl:apply-templates select="fn:string[@key = ('LanguageCode', 'OnlineAddress')]" mode="#current"/>
       <xsl:variable name="authorgroup" as="node()*">
         <xsl:apply-templates
           select="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map" mode="#current"/>
@@ -86,8 +111,8 @@
           <xsl:sequence select="$publisher"/>
         </publisher>
       </xsl:if>
-      <xsl:apply-templates select="fn:string[@key = ('Doi', 'Edition', 'Isbn', 'PageRange', 'Title', 'Year',
-                                                     'Date', 'Number', 'Volume', 'OnlineAddress', 'Volume')]" mode="#current"/>
+      <xsl:apply-templates select="fn:string[@key = ('Doi', 'Edition', 'Isbn', 'PageRange', 'Title', 'Year', 'Language',
+                                                     'Date', 'Number', 'Volume', 'Volume')]" mode="#current"/>
     </biblioset>
 
   </xsl:template>
@@ -173,6 +198,14 @@
     <xsl:attribute name="xml:lang" select="string(.)"/>
   </xsl:template>
   
+  <xsl:template match="fn:string[@key = 'Language']" mode="citavi">
+    <language xmlns="http://purl.org/dc/terms/">
+      <xsl:value-of select="."/>
+    </language>
+    <!--<bibliomisc role="language">
+      <xsl:value-of select="."/>
+    </bibliomisc>-->
+  </xsl:template>
   
   <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map[fn:string[@key = '$ref']]" 
     mode="citavi" priority="1">
@@ -198,17 +231,17 @@
     <xsl:param name="person-group-name" as="xs:string?" select="../@key"/>
     <xsl:if test="$debug = 'yes'">
       <xsl:comment select="../@key, fn:string[@key = '$id']"/>
-    </xsl:if>/
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="$person-group-name = ('Authors', 'Editors')">
         <xsl:element name="{lower-case(replace($person-group-name, 's$', ''))}">
           <xsl:call-template name="docx2hub:citavi-personname"/>
-        </xsl:element>        
+        </xsl:element>
       </xsl:when>
       <xsl:otherwise>
         <othercredit role="collaborator">
           <xsl:call-template name="docx2hub:citavi-personname"/>
-        </othercredit>    
+        </othercredit>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -246,16 +279,16 @@
     </othername>
   </xsl:template>
     
-  <xsl:template match="fn:string[@key = ('Edition', 'Title', 'Date')]" mode="citavi">
+  <xsl:template match="fn:string[@key = ('Edition', 'Title')]" mode="citavi">
     <xsl:element name="{lower-case(@key)}">
       <xsl:value-of select="."/>
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = ('Year')]" mode="citavi">
-    <date>
+  <xsl:template match="fn:string[@key = ('Year', 'Date')]" mode="citavi">
+    <pubdate role="{lower-case(@key)}">
       <xsl:value-of select="."/>
-    </date>
+    </pubdate>
   </xsl:template>
   
   <xsl:template match="fn:string[@key = ('Number')]" mode="citavi">
@@ -277,9 +310,7 @@
   </xsl:template>
   
   <xsl:template match="fn:string[@key = 'OnlineAddress']" mode="citavi">
-    <extendedlink>
-      <link xlink:href="{.}"/>
-    </extendedlink>
+    <xsl:attribute name="xlink:href" select="."/>
   </xsl:template>
   
   <xsl:template match="fn:string[@key = 'PageRange']" mode="citavi">

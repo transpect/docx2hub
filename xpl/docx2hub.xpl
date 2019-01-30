@@ -119,7 +119,9 @@
   <p:option name="field-vars" select="'no'"/>
   <p:option name="extract-dir" select="''">
     <p:documentation>Directory (OS path, not file: URL) to which the file will be unzipped. If option is empty string, will be
-      '.tmp' appended to OS file path.</p:documentation>
+      '.tmp' appended to OS file path.
+    Will be available as extract-dir-uri in the c:param-set document that comes out of single-tree-enhanced on the
+    params port.</p:documentation>
   </p:option>
   <p:option name="create-svg" required="false" select="'no'">
     <p:documentation>Whether Office Open Drawing ML should be mapped to SVG</p:documentation>
@@ -386,6 +388,55 @@
     <p:with-option name="hub-version" select="$hub-version"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
   </tr:xslt-mode>
+
+  <p:viewport match="w:instrText[starts-with(@docx2hub:field-function-name, 'CITAVI')]" name="citavi-viewport">
+    <p:documentation>Since there seems to be no other means in XProc 1.0 (with Saxon HE that does not support the
+      EXPath binary module) to decode base64, we will store these contents to JSON files and read them later using 
+      XPath 3.1 json-doc(). The same for CITAVI.BIBLIOGRAPHY which apparently is base64-encoded XML.</p:documentation>
+    <p:output port="result" primary="true">
+      <p:pipe port="result" step="new-Citavi-field-code"/>
+    </p:output>
+    <p:variable name="pos" select="p:iteration-position()"/>
+    <p:variable name="filetype" select="lower-case(replace(/*/@docx2hub:field-function-name, 'CITAVI_', ''))"/>
+    <p:variable name="filename" 
+      select="concat(/c:param-set/c:param[@name='extract-dir-uri']/@value, 'Citavi/Citavi_', $pos, '.', $filetype)">
+      <p:pipe port="params" step="single-tree-enhanced"/>
+    </p:variable>
+    <p:add-attribute attribute-name="docx2hub:field-function-args" match="/*" name="new-Citavi-field-code">
+      <p:with-option name="attribute-value" select="$filename"/>
+    </p:add-attribute>
+    <p:sink name="citavi-sink1"/>
+    <p:add-attribute match="/*" name="add-citavi-content-type" attribute-name="content-type">
+      <p:input port="source">
+        <p:inline><c:data encoding="base64">dummy</c:data></p:inline>
+      </p:input>      
+      <p:with-option name="attribute-value" select="concat('application/', $filetype)"/>
+    </p:add-attribute>
+    <p:string-replace match="/c:data/text()" name="citavi-base64-to-c_data">
+      <p:with-option name="replace" select="concat('''', /*/@docx2hub:field-function-args, '''')">
+        <p:pipe port="current" step="citavi-viewport"/>
+      </p:with-option>
+    </p:string-replace>
+    <p:store cx:decode="true" name="store-citavi-file">
+      <p:with-option name="href" select="$filename"/>
+    </p:store>
+  </p:viewport>
+  
+  <p:choose>
+    <p:when test="exists(.//w:instrText[starts-with(@docx2hub:field-function-name, 'CITAVI')])">
+      <tr:store-debug>
+        <p:with-option name="pipeline-step"
+          select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/09-citavi-viewport')">
+          <p:pipe port="params" step="single-tree-enhanced"/>
+        </p:with-option>
+        <p:with-option name="active" select="$debug"/>
+        <p:with-option name="base-uri" select="$debug-dir-uri"/>
+      </tr:store-debug>
+    </p:when>
+    <p:otherwise>
+      <p:identity/>
+    </p:otherwise>
+  </p:choose>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:field-functions" name="field-functions">
     <p:input port="parameters">

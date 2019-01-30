@@ -243,9 +243,11 @@ it, but not when an ilvl=2 heading precedes it.
         </xsl:choose>
       </xsl:variable>
       <xsl:sequence select="$counter"/>
-      <xsl:attribute name="docx2hub:num-debug-last-same-signature-p" select="normalize-space($last-same-signature)"/>
-      <xsl:attribute name="docx2hub:num-debug-last-resetter-p" select="normalize-space($last-resetter)"/>
-      <xsl:attribute name="docx2hub:num-debug-initial-sub-item" select="exists($initial-sub-item)"/>
+      <xsl:if test="$debug = 'yes'">
+        <xsl:attribute name="docx2hub:num-debug-last-same-signature-p" select="normalize-space($last-same-signature)"/>
+        <xsl:attribute name="docx2hub:num-debug-last-resetter-p" select="normalize-space($last-resetter)"/>
+        <xsl:attribute name="docx2hub:num-debug-initial-sub-item" select="exists($initial-sub-item)"/>
+      </xsl:if>
     </xsl:if>
   </xsl:function>
 

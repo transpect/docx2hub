@@ -4,6 +4,7 @@
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+  xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:rel="http://schemas.openxmlformats.org/package/2006/relationships"
@@ -39,6 +40,8 @@
       <xsl:with-param name="image-id" select="@r:embed"/>
     </xsl:call-template>
   </xsl:template>
+  
+  <xsl:template match="pic:blipFill | a:srcRect" mode="wml-to-dbk"/>
   
   <!-- parent v:shape is processed in vml mode, see objects.xsl -->
   <xsl:template match="v:imagedata" mode="vml">

@@ -33,7 +33,11 @@
     </xsl:copy>
   </xsl:template>
   
- <xsl:variable name="footnote-ids" select="//dbk:footnote/@xml:id" as="xs:string*"/>
+  <xsl:variable name="footnote-ids" select="//dbk:footnote/@xml:id" as="xs:string*"/>
+
+  <xsl:template match="docx2hub:citavi-jsons" mode="docx2hub:join-runs"/>
+
+  <xsl:template match="dbk:bibliography[@role = 'Citavi']//comment()" mode="docx2hub:join-runs"/>
 
   <xsl:template match="dbk:para[
                          dbk:br[@role eq 'column'][preceding-sibling::node() and following-sibling::node()]
@@ -818,6 +822,7 @@
                 <xsl:variable name="instr-text" as="node()*">
                   <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound1"/>
                 </xsl:variable>
+                <xsl:variable name="instr-text-string" as="xs:string" select="string-join($instr-text, '')"/>
                 <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
                 <xsl:choose>
                   <xsl:when test="empty($instr-text-nodes)">
@@ -826,10 +831,21 @@
                   </xsl:when>
                   <xsl:when test="not($start/@xml:id = $preceding-begin/@xml:id)">
                     <xsl:attribute name="docx2hub:field-function-continuation-for" select="$start/@xml:id"/>
+                    <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2"/>
+                  </xsl:when>
+                  <xsl:when test="matches($instr-text-string, '^ADDIN\s+CitaviPlaceholder', 's')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_JSON'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" 
+                      select="replace($instr-text-string, '^ADDIN\s+CitaviPlaceholder\{(.+)\}$', '$1', 's')"/>
+                  </xsl:when>
+                  <xsl:when test="matches($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY', 's')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_XML'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" 
+                      select="replace($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY\s+', '', 's')"/>
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">
-                      <xsl:analyze-string select="string-join($instr-text, '')" regex="^\s*\\?(\i\c*)\s*">
+                      <xsl:analyze-string select="$instr-text-string" regex="^\s*\\?(\i\c*)\s*">
                         <xsl:matching-substring>
                           <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))">
                             <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms -->
@@ -864,11 +880,11 @@
                       </xsl:when>
                       <xsl:otherwise>
                         <xsl:sequence select="$prelim"/>
+                        <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2"/>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:otherwise>
                 </xsl:choose>
-                <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2"/>
               </w:instrText>
             </w:r>
             <xsl:sequence select="current-group()/(self::w:bookmarkStart | self::w:bookmarkEnd)"/>

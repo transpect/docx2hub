@@ -32,6 +32,7 @@
   <xsl:import href="modules/preprocess-styles/preprocess-styles.xsl"/>
   <xsl:import href="join-runs.xsl"/>
   <xsl:import href="drawingml2svg.xsl" use-when="xs:decimal(system-property('xsl:version')) ge 3.0"/>
+  <xsl:import href="reference-managers.xsl" use-when="xs:decimal(system-property('xsl:version')) ge 3.0"/>
   
   <xsl:import href="http://transpect.io/xslt-util/xslt-based-catalog-resolver/xsl/resolve-uri-by-catalog.xsl"/>
   <xsl:param name="cat:missing-next-catalogs-warning" as="xs:string" select="'no'"/>

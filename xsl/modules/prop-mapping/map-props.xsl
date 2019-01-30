@@ -200,11 +200,6 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="w:instrText[matches(., 'ADDIN CITAVI', 'si')]" mode="docx2hub:add-props">
-    <!-- Citavi plugin data may create a ginormous amount of unintelligible gibberish --> 
-    <w:instrText>ADDIN CITAVI ignored</w:instrText>
-  </xsl:template>
-  
   <xsl:template match="customProps:property" mode="docx2hub:add-props">
     <keyword role="{@name}">
       <xsl:value-of select="*"/>

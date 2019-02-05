@@ -2649,6 +2649,9 @@
             <xsl:if test="$context/w:rPr/w:color/@w:val">
               <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
             </xsl:if>
+            <xsl:if test="$context/w:rPr/w:sz/@w:val">
+              <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
+            </xsl:if>
             <xsl:call-template name="CreateTokenAttributes">
               <xsl:with-param name="scr"/>
               <xsl:with-param name="sty"/>
@@ -2730,6 +2733,9 @@
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
                 </xsl:if>
+                <xsl:if test="$context/w:rPr/w:sz/@w:val">
+                  <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
+                </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr" select="$scr"/>
                   <xsl:with-param name="sty" select="$sty"/>
@@ -2757,6 +2763,9 @@
               <mml:mo>
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                </xsl:if>
+                <xsl:if test="$context/w:rPr/w:sz/@w:val">
+                  <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
                 </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr"/>
@@ -2787,6 +2796,9 @@
               <mml:mn>
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                </xsl:if>
+                <xsl:if test="$context/w:rPr/w:sz/@w:val">
+                  <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
                 </xsl:if>
                 <xsl:if test="$context/m:rPr/m:sty/@m:val[matches(., 'b')]">
                   <!-- Word won't render italic numbers -->
@@ -3232,6 +3244,9 @@
     </xsl:choose>
     <xsl:if test="w:rPr/w:color/@w:val">
       <xsl:attribute name="mathcolor" select="w:rPr/w:color/@w:val"/>
+    </xsl:if>
+    <xsl:if test="w:rPr/w:sz/@w:val">
+      <xsl:attribute name="mathsize" select="concat(number(w:rPr/w:sz/@w:val) div 2,'pt')"/>
     </xsl:if>
   </xsl:template>
 

@@ -711,7 +711,28 @@
     <xsl:variable name="nested-fldChars" as="document-node(element(dbk:nested-fldChars))">
       <xsl:document>
         <nested-fldChars>
-          <xsl:sequence select="tr:nest-fldChars(.//w:fldChar | .//w:instrText, 0)"/>  
+          <xsl:variable name="labeled-fldChars"  as="element()*">
+            <xsl:for-each select=".//w:fldChar | .//w:instrText">
+              <xsl:variable name="count-preceding-begin" as="xs:integer" select="count(preceding::w:fldChar[@w:fldCharType = 'begin'])"/>
+              <xsl:variable name="count-preceding-end" as="xs:integer" select="count(preceding::w:fldChar[@w:fldCharType = 'end'])"/>
+              <xsl:variable name="self-non-begin" as="xs:integer" select="count((self::w:instrText, self::w:fldChar[@w:fldCharType = ('separate', 'end')]))"/>
+              <xsl:copy>
+                <xsl:sequence select="@*"/>
+                <xsl:attribute name="docx2hub:fldChar-level" select="
+                  $count-preceding-begin
+                  - $count-preceding-end
+                  - $self-non-begin"/>
+                <xsl:sequence select="node()"/>
+              </xsl:copy>
+            </xsl:for-each>
+          </xsl:variable>
+          <xsl:if test="not(xs:integer($labeled-fldChars[last()]/@docx2hub:fldChar-level) eq 0)">
+            <xsl:message terminate="yes">
+              <xsl:text>Non-balanced field char nesting detected in mode docx2hub:join-instrText-runs. "level" of last fldChar should be 0, but is: </xsl:text>
+              <xsl:value-of select="$labeled-fldChars[last()]/@docx2hub:fldChar-level"/>
+            </xsl:message>
+          </xsl:if>
+          <xsl:sequence select="tr:nest-fldChars($labeled-fldChars, 0)"/>  
         </nested-fldChars>
       </xsl:document>
     </xsl:variable>
@@ -720,51 +741,90 @@
     </xsl:next-match>
   </xsl:template>
   
+  <xsl:function name="tr:nest-fldChars-unlabeled" as="element(*)*">
+    <xsl:param name="input" as="element(*)*"/><!-- w:fldChar, w:instrText or dbk:fldCharGroup -->
+    <xsl:param name="depth" as="xs:integer"/><!-- pass 0 when invoking the function from outside the function -->
+    <xsl:variable name="nest" as="element(*)*">
+      <xsl:for-each-group select="$input" group-starting-with="w:fldChar[@w:fldCharType = 'begin']">
+        <xsl:for-each-group select="current-group()" group-ending-with="w:fldChar[@w:fldCharType = 'end']">
+          <xsl:choose>
+            <xsl:when test="exists(current-group()/self::w:fldChar[@w:fldCharType = 'begin'])
+              and
+              exists(current-group()/self::w:fldChar[@w:fldCharType = 'end'])">
+              <fldCharGroup begin="{current-group()/self::w:fldChar[@w:fldCharType = 'begin']/@xml:id}"
+                end="{current-group()/self::w:fldChar[@w:fldCharType = 'end']/@xml:id}">
+                <xsl:if test="exists(current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id)">
+                  <xsl:attribute name="separate" 
+                    select="current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id"/>
+                </xsl:if>
+                <xsl:sequence select="current-group()"/>
+              </fldCharGroup>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:sequence select="current-group()"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each-group>
+      </xsl:for-each-group>  
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="$depth ge 20">
+        <xsl:message terminate="yes">
+          <xsl:text>Non-balanced (or too deeply nested) field char nesting detected in mode docx2hub:join-instrText-runs: </xsl:text>
+          <xsl:sequence select="$nest"/>
+        </xsl:message>
+      </xsl:when>
+      <xsl:when test="exists($nest/self::w:fldChar)">
+        <xsl:sequence select="tr:nest-fldChars-unlabeled($nest, $depth + 1)"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="$nest"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="tr:same-level" as="xs:boolean">
+    <xsl:param name="fldChar" as="element()"/>
+    <xsl:param name="depth" as="xs:integer"/>
+    <xsl:sequence select="xs:integer($fldChar/@docx2hub:fldChar-level) eq $depth"/>
+  </xsl:function>
+  
+  <xsl:function name="tr:nest-fldChars-labeled" as="element(*)*">
+    <xsl:param name="input" as="element(*)*"/><!-- w:fldChar, w:instrText or dbk:fldCharGroup -->
+    <xsl:param name="depth" as="xs:integer"/><!-- pass 0 when invoking the function from outside the function -->
+    <xsl:for-each-group select="$input[xs:integer(@docx2hub:fldChar-level) ge $depth]" group-by="tr:same-level(., $depth)" >
+      <xsl:for-each-group select="current-group()" group-ending-with="w:fldChar[@w:fldCharType = 'end'][tr:same-level(., $depth)]">
+        <xsl:variable name="cur-level" select="current-group()[tr:same-level(.,$depth)]" as="node()*"/>
+        <xsl:if test="exists($cur-level/self::w:fldChar[@w:fldCharType = 'begin'])
+          and
+          exists($cur-level/self::w:fldChar[@w:fldCharType = 'end'])">
+          <fldCharGroup
+            begin="{current-group()/self::w:fldChar[@w:fldCharType = 'begin']/@xml:id}"
+            end="{current-group()/self::w:fldChar[@w:fldCharType = 'end']/@xml:id}">
+            <xsl:if test="exists(current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id)">
+              <xsl:attribute name="separate" 
+                select="current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id"/>
+            </xsl:if>
+          </fldCharGroup>
+        </xsl:if>
+        <xsl:sequence select="tr:nest-fldChars(current-group() except $cur-level, $depth + 1)"/>
+      </xsl:for-each-group>
+    </xsl:for-each-group>
+  </xsl:function>
+  
   <xsl:function name="tr:nest-fldChars" as="element(*)*">
     <xsl:param name="input" as="element(*)*"/><!-- w:fldChar, w:instrText or dbk:fldCharGroup -->
     <xsl:param name="depth" as="xs:integer"/><!-- pass 0 when invoking the function from outside the function -->
     <xsl:choose>
-      <xsl:when test="exists($input/self::w:fldChar)">
-        <xsl:variable name="nest" as="element(*)*">
-          <xsl:for-each-group select="$input" group-starting-with="w:fldChar[@w:fldCharType = 'begin']">
-            <xsl:for-each-group select="current-group()" group-ending-with="w:fldChar[@w:fldCharType = 'end']">
-              <xsl:choose>
-                <xsl:when test="exists(current-group()/self::w:fldChar[@w:fldCharType = 'begin'])
-                                and
-                                exists(current-group()/self::w:fldChar[@w:fldCharType = 'end'])">
-                  <fldCharGroup begin="{current-group()/self::w:fldChar[@w:fldCharType = 'begin']/@xml:id}"
-                                end="{current-group()/self::w:fldChar[@w:fldCharType = 'end']/@xml:id}">
-                    <xsl:if test="exists(current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id)">
-                      <xsl:attribute name="separate" 
-                        select="current-group()/self::w:fldChar[@w:fldCharType = 'separate']/@xml:id"/>
-                    </xsl:if>
-                    <xsl:sequence select="current-group()"/>
-                  </fldCharGroup>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:sequence select="current-group()"/>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:for-each-group>
-          </xsl:for-each-group>  
-        </xsl:variable>
-        <xsl:choose>
-          <xsl:when test="$depth ge 20">
-            <xsl:message terminate="yes">
-              <xsl:text>Non-balanced (or too deeply nested) field char nesting detected in mode docx2hub:join-instrText-runs: </xsl:text>
-              <xsl:sequence select="$nest"/>
-            </xsl:message>
-          </xsl:when>
-          <xsl:when test="exists($nest/self::w:fldChar)">
-            <xsl:sequence select="tr:nest-fldChars($nest, $depth + 1)"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:sequence select="$nest"/>
-          </xsl:otherwise>
-        </xsl:choose>
+      <xsl:when test="empty($input/self::w:fldChar)"/>
+      <xsl:when test="exists($input/self::w:fldChar/@docx2hub:fldChar-level)">
+        <xsl:sequence select="tr:nest-fldChars-labeled($input, $depth)"/>
       </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="tr:nest-fldChars-unlabeled($input, $depth)"/>
+      </xsl:otherwise>
     </xsl:choose>
-  </xsl:function>
+  </xsl:function>  
 
   <!-- Indexterm processing should happen after symbol processing.
     Now this mode needs to have a collection() input including fontmaps and an XML catalog, too. -->

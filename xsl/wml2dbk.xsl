@@ -946,6 +946,10 @@
       <xsl:when test="key('docx2hub:bookmarkStart-by-name', ($linkend, upper-case($linkend)))/ancestor::SET">
         <xsl:apply-templates mode="#current"/>
       </xsl:when>
+      <!-- REF that is nested in another REF is ignored by Word. So do we.-->
+      <xsl:when test="parent::REF[@fldArgs]">
+        <xsl:apply-templates mode="#current"/>
+      </xsl:when>
       <xsl:otherwise>
         <link linkend="{$linkend}">
           <xsl:if test="$switches[.='t']">

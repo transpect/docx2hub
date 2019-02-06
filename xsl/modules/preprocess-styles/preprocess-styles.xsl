@@ -134,7 +134,7 @@
             <xsl:when test="$lk[4] and $lk[3] and $pos[1] eq $pos[3] and $pos[2] eq $pos[4]">
               <xsl:sequence select="'seCell', 'lastRow', 'lastCol'"/>
             </xsl:when>
-            <xsl:when test="$lk[1] and $pos[2] eq 1">
+            <xsl:when test="$lk[1] and ($pos[2] eq 1 or count((../preceding-sibling::w:tr/w:trPr/w:tblHeader, ../w:trPr/w:tblHeader)) eq $tr-pos)">
               <xsl:sequence select="'firstRow'"/>
             </xsl:when>
             <xsl:when test="$lk[2] and $pos[1] eq 1">

@@ -726,7 +726,7 @@
               </xsl:copy>
             </xsl:for-each>
           </xsl:variable>
-          <xsl:if test="not(xs:integer($labeled-fldChars[last()]/@docx2hub:fldChar-level) eq 0)">
+          <xsl:if test="exists($labeled-fldChars) and not(xs:integer($labeled-fldChars[last()]/@docx2hub:fldChar-level) eq 0)">
             <xsl:message terminate="yes">
               <xsl:text>Non-balanced field char nesting detected in mode docx2hub:join-instrText-runs. "level" of last fldChar should be 0, but is: </xsl:text>
               <xsl:value-of select="$labeled-fldChars[last()]/@docx2hub:fldChar-level"/>

@@ -16,7 +16,7 @@
   </p:documentation>
 
   <p:input port="docx2hub-xslt">
-    <p:document href="main.xsl"/>
+    <p:document href="../xsl/main.xsl"/>
   </p:input>
   <p:input port="source" primary="true">
     <p:documentation>This is to prevent a default readable port connecting to this step’s xslt port.</p:documentation>

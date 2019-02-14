@@ -1027,7 +1027,9 @@
                                          then replace(tokenize(@fldArgs, ' ')[matches(.,'^&#x22;.*&#x22;$')][1],'&#x22;','') 
                                          else if (matches(@fldArgs,'&#x22;.*&#x22;')) 
                                               then tokenize(@fldArgs,'&#x22;')[2] 
-                                              else tokenize(@fldArgs, ' ')[2]}"/>
+                                              else tokenize(@fldArgs, ' ')[2]}">
+                      <xsl:apply-templates select=".//@css:width | .//@css:height" mode="#current"/>
+                    </imagedata>
                   </imageobject>
                 </mediaobject>
               </xsl:otherwise>

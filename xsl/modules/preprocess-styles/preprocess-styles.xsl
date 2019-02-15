@@ -311,4 +311,6 @@
     <xsl:sequence select="empty($prop/@w:val) or $prop/@w:val = ('1', 'true')"/>
   </xsl:function>
   
+  <xsl:template match="w:r[count(child::*)=1][w:rPr]" mode="docx2hub:preprocess-styles"/>
+  
 </xsl:stylesheet>

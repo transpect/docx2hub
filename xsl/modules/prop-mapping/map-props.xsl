@@ -1049,14 +1049,14 @@
         <xsl:message>empty argument for docx2hub:pt-length, defaulting to zero. </xsl:message>
         <xsl:sequence select="'0'"/>
       </xsl:when>
-      <xsl:when test="not($val castable as xs:integer)">
-        <xsl:message>argument '<xsl:value-of select="$val"/>' for docx2hub:pt-length not castable as xs:integer, defaulting to zero. </xsl:message>
+      <xsl:when test="not($val castable as xs:double)">
+        <xsl:message>argument '<xsl:value-of select="$val"/>' for docx2hub:pt-length not castable as xs:double, defaulting to zero. </xsl:message>
         <xsl:sequence select="'0'"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="if (matches($val, '%$'))
           then $val
-          else concat(xs:string(xs:integer($val) * 0.05), 'pt')" />
+          else concat(xs:string(round(xs:double($val)) * 0.05), 'pt')" />
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>

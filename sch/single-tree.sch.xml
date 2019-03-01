@@ -71,4 +71,13 @@
     </rule>
   </pattern>
   
+  <pattern id="omath-formula">
+    <rule context="m:oMath">
+      <report id="mml_in_omml" role="fatal-error" test="descendant::o:OLEObject">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        Hier wurde eine MathType-Formel in einer Word-Formel gefunden. Bitte ersetzen Sie die MathType-Formel.
+      </report>
+    </rule>
+  </pattern>
+  
 </schema>

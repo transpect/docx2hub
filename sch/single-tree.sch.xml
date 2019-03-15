@@ -80,4 +80,13 @@
     </rule>
   </pattern>
   
+  <pattern id="update-field-function">
+    <rule context="*:fldSimple | *:fldChar">
+      <report id="update_field_function" role="warning" test="@w:dirty and not(preceding::*[self::*:fldSimple or self::*:fldChar][@w:dirty])">
+        <span class="srcpath">BC_orphans</span>
+        In diesem Dokument wurden die Feldfunktionen nicht aktualisiert. Um eine korrekte Konvertierung zu gewährleisten, aktualisieren Sie bitte die Feldfunktionen vor der Konvertierung.
+      </report>
+    </rule>
+  </pattern>
+  
 </schema>

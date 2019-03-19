@@ -396,9 +396,18 @@
     <xsl:variable name="p-style" select="../../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
     <xsl:variable name="r-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
     <xsl:choose>
-      <xsl:when test="exists($r-style) and . = $r-style"/>
-      <xsl:when test="exists($p-style) and . = $p-style"/>
+      <xsl:when test="exists($r-style) and . = $r-style">
+        <!-- inherit from run-style -->
+      </xsl:when>
+      <xsl:when test="exists($p-style) and . = $p-style and exists($r-style) and not(. = $r-style)">
+        <!-- style would be the same like para, but different from run -->
+        <xsl:copy/>
+      </xsl:when>
+      <xsl:when test="exists($p-style) and . = $p-style">
+        <!-- inherit from para-style -->
+      </xsl:when>
       <xsl:otherwise>
+        <!-- cant inherit -->
         <xsl:copy/>
       </xsl:otherwise>
     </xsl:choose>

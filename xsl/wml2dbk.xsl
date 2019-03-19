@@ -391,7 +391,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="w:tc/w:p/w:r/@*" mode="docx2hub:remove-redundant-run-atts">
+  <xsl:template match="w:p/w:r/@*" mode="docx2hub:remove-redundant-run-atts">
     <xsl:variable name="self-name" select="name()"/>
     <xsl:variable name="p-style" select="../../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
     <xsl:variable name="r-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>

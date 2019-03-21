@@ -3,6 +3,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:docx2hub="http://transpect.io/docx2hub"
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
   exclude-result-prefixes="xsl xs docx2hub"
   version="2.0">
   

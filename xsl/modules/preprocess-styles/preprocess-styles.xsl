@@ -69,7 +69,7 @@
         <xsl:when test="not(node()) and @*">
           <!-- copy flat prop from style1 -->
           <xsl:element name="{name()}">
-            <xsl:sequence select="$style2[concat(local-name(), @w:type) = $ptype]/@*, @*"/>
+            <xsl:sequence select="$style2[concat(local-name(), @w:type) = $ptype]/@*[docx2hub:is-non-inheritable-attribute(.)], @*"/>
           </xsl:element>
         </xsl:when>
         <xsl:otherwise>
@@ -96,6 +96,11 @@
         </xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:is-non-inheritable-attribute" as="xs:boolean">
+    <xsl:param name="attribute" as="attribute()"/>
+    <xsl:sequence select="local-name() = ('hanging')"/>
   </xsl:function>
 
   <xsl:template match="w:tbl/w:tr" mode="docx2hub:resolve-tblBorders">

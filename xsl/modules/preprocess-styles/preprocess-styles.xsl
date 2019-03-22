@@ -100,7 +100,7 @@
   
   <xsl:function name="docx2hub:is-non-inheritable-attribute" as="xs:boolean">
     <xsl:param name="attribute" as="attribute()"/>
-    <xsl:sequence select="local-name() = ('hanging')"/>
+    <xsl:sequence select="$attribute/local-name() = ('hanging')"/>
   </xsl:function>
 
   <xsl:template match="w:tbl/w:tr" mode="docx2hub:resolve-tblBorders">

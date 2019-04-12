@@ -868,24 +868,27 @@
               <xsl:variable name="preceding-begin" as="element(w:fldChar)"
                 select="(current-group()/w:instrText)[1]/preceding::w:fldChar[@w:fldCharType = 'begin'][1]"/>
               <w:instrText xsl:exclude-result-prefixes="#all">
-                <xsl:variable name="instr-text-nodes" as="item()*" 
-                  select="current-group()/(w:instrText 
-                                           (:| self::w:fldSimple/@w:instr 
-                                           | self::w:fldSimple/w:r/w:instrText:)
-                                           | self::w:fldSimple
-                                           | w:sym[parent::w:r]
-                                           | self::*:superscript | self::*:subscript
-                                           | self::m:oMath (: may occur in XE :))
-                                          [. >> $preceding-begin]"/>
+                <xsl:variable name="instr-text-nodes" as="document-node()">
+                  <xsl:document>
+                    <xsl:sequence select="current-group()/(w:instrText 
+                                                           (:| self::w:fldSimple/@w:instr 
+                                                           | self::w:fldSimple/w:r/w:instrText:)
+                                                           | self::w:fldSimple
+                                                           | w:sym[parent::w:r]
+                                                           | self::*:superscript | self::*:subscript
+                                                           | self::m:oMath (: may occur in XE :))
+                                                          [. >> $preceding-begin]"/>
+                  </xsl:document>
+                </xsl:variable> 
                 <!-- docx2hub:join-instrText-runs_render-compound1 is for rendering the instrText as text for attributes,
-                     docx2hub:join-instrText-runs_render-compound1 is for rendering it with markup -->
+                     docx2hub:join-instrText-runs_render-compound2 is for rendering it with markup -->
                 <xsl:variable name="instr-text" as="node()*">
                   <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound1"/>
                 </xsl:variable>
                 <xsl:variable name="instr-text-string" as="xs:string" select="string-join($instr-text, '')"/>
                 <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
                 <xsl:choose>
-                  <xsl:when test="empty($instr-text-nodes)">
+                  <xsl:when test="empty($instr-text-nodes/node())">
                     <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN3'"/>
                     <xsl:attribute name="docx2hub:field-function-error" select="'missing or wrongly named w:instrText element'"/>
                   </xsl:when>
@@ -957,10 +960,18 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="* | @*" mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2">
+  <xsl:template match="* | @*" mode="docx2hub:join-instrText-runs_render-compound1">
     <xsl:value-of select="."/>
   </xsl:template>
   
+  <xsl:template match="*" mode="docx2hub:join-instrText-runs_render-compound2">
+    <xsl:value-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="@*" mode="docx2hub:join-instrText-runs_render-compound2">
+    <xsl:copy/>
+  </xsl:template>
+
   <xsl:template match="w:fldSimple" 
     mode="docx2hub:join-instrText-runs_render-compound2" priority="3">
     <!-- this should be covered by $instr-text-nodes in the long template above, but apparently it isn’t -->
@@ -1007,27 +1018,39 @@
   </xsl:template>
   
   <xsl:template match="w:instrText[1]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-<!--    <xsl:comment select="'aaaaaaaaaaaaaaaaa'"></xsl:comment>-->
     <xsl:value-of select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
   </xsl:template>
   
+  <!-- special case when the instr text namec is in one w:r and the " is in the next: -->
+  <xsl:template match="w:instrText[not(position() = last())][matches(., '^\s*&quot;\s*$')][1]/node()[1][self::text()]" 
+    mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6">
+  </xsl:template>
+  <xsl:template match="w:instrText[not(position() = last())]
+                                  [normalize-space()]
+                                  [1]
+                                  [not(contains(., '&quot;'))]
+                              /node()[1][self::text()]" 
+    mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6"/>
+  <xsl:template match="w:instrText[not(position() = last())]
+                                  [not(normalize-space())]
+                                  [not(@xml:space = 'preserve')]
+                                  [1]
+                              /node()[1][self::text()]" 
+    mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6"/>
+  
   <xsl:template match="w:instrText[last()]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-<!--    <xsl:comment select="'bbbbbbbbbbbbbbbbb'"></xsl:comment>-->
     <xsl:value-of select="replace(., '[\s&quot;]+$', '')"/>
   </xsl:template>
   
   <xsl:template match="w:instrText[1][last()][empty(*)]/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-<!--    <xsl:comment select="'cccccccccccccccccc'"></xsl:comment>-->
     <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;?\s*', ''), '[\s&quot;]+$', '')"/>
   </xsl:template>
   
   <xsl:template match="w:instrText[*]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-<!--    <xsl:comment select="'ddddddddddddddd'"></xsl:comment>-->
     <xsl:value-of select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
   </xsl:template>
   
   <xsl:template match="w:instrText[*]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-<!--    <xsl:comment select="'eeeeeeeeeeeeeeeeeee'"></xsl:comment>-->
     <xsl:value-of select="replace(., '[\s&quot;]+$', '')"/>
   </xsl:template>
   

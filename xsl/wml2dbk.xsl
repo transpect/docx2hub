@@ -412,6 +412,20 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="w:p/@*" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:variable name="self-name" select="name()"/>
+    <xsl:variable name="p-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
+    <xsl:choose>
+      <xsl:when test="exists($p-style) and . = $p-style">
+        <!-- inherit from para-style -->
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- cant inherit -->
+        <xsl:copy/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
   <!-- ================================================================================ -->
   <!-- Mode: wml-to-dbk -->

@@ -269,7 +269,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="w:tc/w:p/w:r" mode="docx2hub:resolve-tblBorders">
+  <xsl:template match="w:p/w:r" mode="docx2hub:resolve-tblBorders">
     <xsl:param name="tblsty" tunnel="yes" as="element()*"/>
     <xsl:variable name="self" select="."/>
     <xsl:copy>

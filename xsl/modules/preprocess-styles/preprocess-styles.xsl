@@ -14,7 +14,7 @@
       not(w:compatSetting[@w:name = 'differentiateMultirowTableHeaders'][@w:val = (1, 'true')])
     )) satisfies not($b)" as="xs:boolean"/>
   
-  <xsl:template match="w:styles/w:style" exclude-result-prefixes="#all" mode="docx2hub:preprocess-styles">
+  <xsl:template match="w:styles/w:style[@w:type = 'table']" exclude-result-prefixes="#all" mode="docx2hub:preprocess-styles">
     <!-- (w:style)* -->
     <xsl:variable name="self" select="."/>
     <xsl:variable name="doc-styles" select=".."/>
@@ -269,7 +269,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="w:p/w:r" mode="docx2hub:resolve-tblBorders">
+  <xsl:template match="w:tc/w:p/w:r" mode="docx2hub:resolve-tblBorders">
     <xsl:param name="tblsty" tunnel="yes" as="element()*"/>
     <xsl:variable name="self" select="."/>
     <xsl:copy>

@@ -19,9 +19,14 @@
   <xsl:template match="w:drawing[descendant::a:blip]" mode="wml-to-dbk">
     <mediaobject>
       <xsl:apply-templates select="@srcpath" mode="#current"/>
-      <xsl:if test=".//wp:docPr/@*[name() = ('descr', 'title')][. ne '']">
+      <xsl:if test=".//wp:docPr/@title[. ne '']">
+        <info>
+          <xsl:value-of select=".//wp:docPr/@title[. ne '']"/>
+        </info>
+      </xsl:if>
+      <xsl:if test=".//wp:docPr/@descr[. ne '']">
         <alt>
-          <xsl:value-of select="(.//wp:docPr/@*[name() = ('descr', 'title')][. ne ''])[1]"/>
+          <xsl:value-of select=".//wp:docPr/@descr[. ne '']"/>
         </alt>
       </xsl:if>
       <xsl:apply-templates select="descendant::a:blip" mode="wml-to-dbk"/>

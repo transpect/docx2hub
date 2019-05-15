@@ -50,7 +50,7 @@
         <prop name="w:bCs" />
         <prop name="w:bdr" type="docx-bdr" />
         <prop name="w:bidi" type="docx-boolean-prop" target-name="css:direction" default="ltr" active="rtl"/>
-        <prop name="w:caps" type="docx-boolean-prop" target-name="css:text-transform" active="uppercase"/>
+        <prop name="w:caps" type="docx-boolean-prop" target-name="css:text-transform" default="normal" active="uppercase"/>
         <prop name="w:cantSplit" type="docx-boolean-prop" target-name="css:break-inside" active="avoid"/>
         <prop name="w:cnfStyle" implement="maybe later" />
         <prop name="w:color" type="docx-color" target-name="css:color"/>

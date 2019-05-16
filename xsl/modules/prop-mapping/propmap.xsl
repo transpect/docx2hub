@@ -46,11 +46,11 @@
       	<prop name="w:autoRedefine"/>
         <prop name="w:autoSpaceDE" />
         <prop name="w:autoSpaceDN" />
-        <prop name="w:b" type="docx-boolean-prop" target-name="css:font-weight" default="normal" active="bold"/>
+        <prop name="w:b" type="docx-toggle-prop" target-name="css:font-weight" default="normal" active="bold"/>
         <prop name="w:bCs" />
         <prop name="w:bdr" type="docx-bdr" />
         <prop name="w:bidi" type="docx-boolean-prop" target-name="css:direction" default="ltr" active="rtl"/>
-        <prop name="w:caps" type="docx-boolean-prop" target-name="css:text-transform" default="normal" active="uppercase"/>
+        <prop name="w:caps" type="docx-toggle-prop" target-name="css:text-transform" active="uppercase" default="none"/>
         <prop name="w:cantSplit" type="docx-boolean-prop" target-name="css:break-inside" active="avoid"/>
         <prop name="w:cnfStyle" implement="maybe later" />
         <prop name="w:color" type="docx-color" target-name="css:color"/>
@@ -67,7 +67,7 @@
         <prop name="wp:extent/@cy" target-name="css:height" type="docx-image-size-attr"/>
         <prop name="w:gridSpan" /><!-- will be calculated by tables.xsl -->
         <prop name="w:highlight" type="docx-color" target-name="css:background-color"/>
-        <prop name="w:i" type="docx-boolean-prop" target-name="css:font-style" default="normal" active="italic"/>
+        <prop name="w:i" type="docx-toggle-prop" target-name="css:font-style" default="normal" active="italic"/>
         <prop name="w:iCs" />
         <prop name="w:ind/@w:left" type="docx-length-attr" target-name="css:margin-left" />
         <prop name="w:ind/@w:right" type="docx-length-attr" target-name="css:margin-right" />
@@ -150,10 +150,10 @@
         </prop>
         <!--<prop name="w:sectPr" />--><!-- provisional -->
         <prop name="w:semiHidden" />
-        <prop name="w:shadow" type="docx-boolean-prop" target-name="css:text-shadow" default="none" active="1pt 1pt"/>
+        <prop name="w:shadow" type="docx-toggle-prop" target-name="css:text-shadow" default="none" active="1pt 1pt"/>
         <prop name="w14:shadow" implement="maybe later"/>
         <prop name="w:shd" type="docx-shd" />
-        <prop name="w:smallCaps" type="docx-boolean-prop" target-name="css:font-variant" default="normal" active="small-caps"/>
+        <prop name="w:smallCaps" type="docx-toggle-prop" target-name="css:font-variant" default="normal" active="small-caps"/>
       	<prop name="w:snapToGrid" />
       	<prop name="w:spacing/@w:after" type="docx-length-attr" target-name="css:margin-bottom" />
         <prop name="w:spacing/@w:before" type="docx-length-attr" target-name="css:margin-top" />
@@ -164,10 +164,8 @@
           <!-- GI 2016-11-08: Although contemporary browsers implement letter-spacing like this docx
           property, they really shouldn’t. https://twitter.com/gimsieke/status/796107927916605440 -->
         </prop>
-        <prop name="w:strike" target-name="css:text-decoration-line">
-          <val eq="true" target-value="line-through"/>
-          <val eq="false" />
-        </prop>
+        <prop name="w:strike" type="docx-toggle-prop" target-name="css:text-decoration-line" 
+          active="line-through" default="none"/>
         <!--<prop name="w:stri-->
         <prop name="w:suppressAutoHyphens" type="docx-boolean-prop" target-name="css:hyphens" default="auto" active="manual"/>
         <prop name="w:suppressLineNumbers" implement="maybe later"/>
@@ -259,7 +257,7 @@
           <val match="center" target-name="css:vertical-align" target-value="middle"/>
           <val match="top" target-name="css:vertical-align" target-value="top"/>
         </prop>
-        <prop name="w:vanish" type="docx-boolean-prop" target-name="css:display" default="inherit" active="none"/>
+        <prop name="w:vanish" type="docx-toggle-prop" target-name="css:display" default="inherit" active="none"/>
       	<prop name="w:vertAlign" type="docx-position" /><!-- superscript etc. -->
         <prop name="w:vMerge" />
       	<prop name="w:w" type="docx-font-stretch" target-name="css:font-stretch"/>

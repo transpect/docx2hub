@@ -36,7 +36,7 @@
   <xsl:variable name="debug-dir" select="concat(replace($base-dir, '^(.+/)(.+?/)$', '$1'), 'debug')"/>
   <!-- Links that probably have been inserted by Word without user content: -->
   <xsl:param name="unwrap-tooltip-links" select="'no'" as="xs:string?"/>
-  <xsl:param name="hub-version" select="'1.0'" as="xs:string"/>
+  <xsl:param name="hub-version" select="'1.2'" as="xs:string"/>
   <xsl:param name="discard-alternate-choices" select="'yes'" as="xs:string"/>
   <xsl:param name="include-header-and-footer" select="'no'" as="xs:string"/>
   <xsl:param name="convert-footer" select="false()" as="xs:boolean"/>

@@ -1381,7 +1381,6 @@
         </xsl:call-template>
       </xsl:for-each>
     </xsl:variable>
-    <!--<xsl:message select="'LLLLLLLLLLLLLLLLLLLLLLL ',$toggles"></xsl:message>-->
     <xsl:next-match>
       <xsl:with-param name="toggles" as="attribute(*)*" select="$toggles" tunnel="yes"/>
     </xsl:next-match>
@@ -1391,37 +1390,10 @@
     select="('css:font-weight', 'css:font-style', 'css:font-variant', 'css:text-shadow', 'css:text-transform',
              'css:text-decoration-line', 'css:display')"/>
   
-  <xsl:template match="w:r[w:t = 'rw']" mode="docx2hub:remove-redundant-run-atts" priority="30">
-    <xsl:variable name="context" as="element(*)" select="."/>
-    <xsl:variable name="prop-name" as="xs:string" select="'css:font-weight'"/>
-    <xsl:variable name="r" as="element(*)?" select="$context/self::w:r"/>
-    <!-- probably also need to consider alternating table row formatting? Has this already been expanded to w:tr level? -->
-    <xsl:variable name="p" as="element(*)?" select="if ($context/(self::w:tbl | self::w:tr)) then . 
-                                                    else $context/ancestor-or-self::w:p"/>
-    <xsl:variable name="t" as="element(*)?" select="$context/ancestor-or-self::w:tbl"/>
-    <xsl:variable name="r-prop" as="attribute(*)*" 
-      select="((key('docx2hub:style-by-role', $r/@role, root($context)), $r)/@*[name() = $prop-name])"/><!-- last in doc order: ad-hoc prop -->
-    <xsl:variable name="p-prop" as="attribute(*)*" 
-      select="((key('docx2hub:style-by-role', $p/@role, root($context)), $p)/@*[name() = $prop-name])"/>
-    <xsl:variable name="t-prop" as="attribute(*)*" 
-      select="((key('docx2hub:style-by-role', $t/@role, root($context)), $t)/@*[name() = $prop-name])"/>
-    <!-- TODO: need to consider num props, too! -->
-    <xsl:variable name="toggle" select="(($t-prop, $p-prop, $r-prop)[starts-with(., 'toggle(')])[1]" as="attribute(*)?"/>
-    <xsl:message select="'PPPPPPPPPPPPPPPP ', docx2hub:toggle-prop('bold', 'normal', 
-                                       ($t-prop, $p-prop, $r-prop),
-                                       'normal'),
-                                       docx2hub:toggle-prop('bold', 'normal', 
-                                       ($t-prop, $p-prop),
-                                       'normal'),
-                                       docx2hub:toggle-prop('bold', 'normal', 
-                                       ($t-prop),
-                                       'normal'),
-                                       docx2hub:toggle-prop('bold', 'normal', 
-                                       (),
-                                       'normal')"/>
-    <xsl:message select="'r ', $r-prop, ' ::: ',key('docx2hub:style-by-role', $r/@role, root($context))/@*, ' :: ', $r/@*"></xsl:message>
-<!--    <xsl:message select="'p ', $p-prop"></xsl:message>-->
-    <xsl:next-match/>
+  <xsl:template match="css:rule//@*[name() = $docx2hub:toggle-prop-names]" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:variable name="active" as="xs:string" select="replace(., '^toggle\((.+?),(.+?)\)$', '$1')"/>
+    <!-- Is this still true if, for ex., document defaults have css:text-weight="bold"? --> 
+    <xsl:attribute name="{name()}" select="$active"/>
   </xsl:template>
   
   <xsl:template name="docx2hub:toggle-prop">
@@ -1446,11 +1418,20 @@
         <xsl:variable name="active" as="xs:string" select="replace($toggle, '^toggle\((.+?),(.+?)\)$', '$1')"/>
         <xsl:variable name="default" as="xs:string" select="replace($toggle, '^toggle\((.+?),(.+?)\)$', '$2')"/>
         <!-- need to look up the actual doc default: -->
-        <xsl:variable name="doc-default" as="xs:string" select="$default"/>    
-        <xsl:attribute name="{$prop-name}" 
+        <xsl:variable name="doc-default" as="xs:string" select="$default"/>
+        <xsl:variable name="calculated" as="xs:string"
           select="docx2hub:toggle-prop($active, $default, 
                                        ($t-prop, $p-prop, $r-prop),
                                        $doc-default)"/>
+        <xsl:variable name="by-rule" as="xs:string?">
+          <xsl:apply-templates select="key('style-by-name', $context/@role, root($context))/@*[name() = $prop-name]" mode="#current"/>
+        </xsl:variable>
+        <!--<xsl:if test="$context/w:t[. = 'rw']">
+          <xsl:message select="'CCCCCCCCCCCCCC',$calculated, $by-rule"></xsl:message>
+        </xsl:if>-->
+        <xsl:if test="not($calculated = $by-rule)">
+          <xsl:attribute name="{$prop-name}" select="$calculated"/> 
+        </xsl:if>
       </xsl:when>
       <xsl:otherwise>
         <!-- nothing? -->
@@ -1496,7 +1477,7 @@
       <xsl:variable name="tr-style" select="key('docx2hub:style-by-role', $tr/@role, $root)[1]" as="element(css:rule)?"/>
       <xsl:variable name="tc" as="element(w:tc)?" select="ancestor::w:tc[1]"/>
       <xsl:variable name="tc-style" select="key('docx2hub:style-by-role', $tc/@role, $root)[1]" as="element(css:rule)?"/>
-      <xsl:for-each select="$toggles">
+      <!--<xsl:for-each select="$toggles">
         <xsl:variable name="most-specific" as="attribute(*)?"
           select="(
                     (($tbl-style, $tbl)/@*[name() = current()/name()])[last()],
@@ -1511,7 +1492,7 @@
             <xsl:attribute name="boo" select="'far'"></xsl:attribute>
           </xsl:if>
         </xsl:if>
-      </xsl:for-each>
+      </xsl:for-each>-->
       <xsl:variable name="numId" as="element(w:numId)?" 
         select="(w:numPr/w:numId, $style/w:numPr/w:numId)[1]"/>
       <xsl:variable name="ilvl" as="xs:integer" 
@@ -1525,14 +1506,28 @@
       <xsl:if test="$css:orientation">
         <xsl:attribute name="css:orientation" select="$css:orientation"/>
       </xsl:if>
-      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="@*[not(name() = $docx2hub:toggle-prop-names)]" mode="#current"/>
+      <xsl:sequence select="$toggles"/>
       <xsl:apply-templates select="$numId" mode="docx2hub:abstractNum">
         <xsl:with-param name="ilvl" select="$ilvl"/>
       </xsl:apply-templates>
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
   </xsl:template>
-  
+
+  <xsl:template match="w:r" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:param name="toggles" as="attribute(*)*" tunnel="yes"/>
+    <!--<xsl:if test="w:t[.='Nat']">
+      <xsl:message select="'TTTTTTTTTTTTT',$toggles"></xsl:message>
+    </xsl:if>-->
+    <xsl:copy>
+      <xsl:apply-templates select="@*[not(name() = $docx2hub:toggle-prop-names)]" mode="#current"/>
+      <xsl:sequence select="$toggles"/>
+      <xsl:apply-templates mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
+
   <xsl:template match="w:tbl" mode="docx2hub:remove-redundant-run-atts">      
     <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
     <!-- to do: toggle att handling if applicable -->

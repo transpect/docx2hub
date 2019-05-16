@@ -281,7 +281,7 @@
     <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
   </tr:xslt-mode>-->
   
-  <!--<tr:xslt-mode msg="yes" mode="docx2hub:resolve-tblBorders" name="resolve-tblBorders">
+  <tr:xslt-mode msg="yes" mode="docx2hub:resolve-tblBorders" name="resolve-tblBorders">
     <p:input port="parameters">
       <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
@@ -300,7 +300,7 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="field-vars" select="$field-vars"/>
     <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
-  </tr:xslt-mode>-->
+  </tr:xslt-mode>
   
   <tr:xslt-mode msg="yes" mode="docx2hub:add-props" name="add-props">
     <p:input port="parameters">

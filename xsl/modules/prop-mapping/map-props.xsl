@@ -1402,7 +1402,7 @@
     <xsl:param name="prop-name" as="xs:string"/>
     <xsl:variable name="r" as="element(*)?" select="$context/self::w:r"/>
     <!-- probably also need to consider alternating table row formatting? Has this already been expanded to w:tr level? -->
-    <xsl:variable name="p" as="element(*)?" select="if ($context/(self::w:tbl | self::w:tr)) then . 
+    <xsl:variable name="p" as="element(*)?" select="if ($context/(self::w:tbl | self::w:tr)) then () (:. was a string, which leads to error:) 
                                                     else $context/ancestor-or-self::w:p"/>
     <xsl:variable name="t" as="element(*)?" select="$context/ancestor-or-self::w:tbl"/>
     <xsl:variable name="r-prop" as="attribute(*)*" 

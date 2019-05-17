@@ -17,7 +17,9 @@
   <xsl:template match="w:tbl" mode="docx2hub:resolve-tblBorders">
     <xsl:variable name="based-on-chain" as="node()*"
       select="reverse(
-        docx2hub:based-on-chain(//w:style[@w:styleId = current()/w:tblPr/w:tblStyle/@w:val])/node()
+          docx2hub:based-on-chain(
+            //w:style[@w:styleId = current()/w:tblPr/w:tblStyle/@w:val]
+          )/node()
         )"/>
     <xsl:next-match>
       <xsl:with-param name="tblSty" as="node()*" tunnel="yes"
@@ -40,49 +42,11 @@
     <xsl:variable name="pos" select="$tc-pos, $tr-pos, ../count(w:tc), ../../count(w:tr)" as="xs:decimal+">
       <!-- values are: tc-pos, tr-pos, last-tc, last-tr -->
     </xsl:variable>
-    <xsl:variable name="tblStylePr-name" as="xs:string*">
-      <xsl:variable name="lk" as="xs:boolean+"
-      select="
-      ((../../w:tblPr/w:tblLook, ../w:tblPrEx/w:tblBorders)/@w:firstRow)[1] = (1, 'true'),
-      ((../../w:tblPr/w:tblLook, ../w:tblPrEx/w:tblBorders)/@w:firstColumn)[1] = (1, 'true'),
-      ((../../w:tblPr/w:tblLook, ../w:tblPrEx/w:tblBorders)/@w:lastRow)[1] = (1, 'true'),
-      ((../../w:tblPr/w:tblLook, ../w:tblPrEx/w:tblBorders)/@w:lastColumn)[1] = (1, 'true')"/>
-      <xsl:variable name="possible-suffixes" as="xs:string*">
-        <xsl:choose>
-          <xsl:when test="$lk[2] and $lk[1] and $pos[1] eq 1 and $pos[2] eq 1">
-            <xsl:sequence select="'nwCell', 'firstRow', 'firstCol'"/>
-          </xsl:when>
-          <xsl:when test="$lk[2] and $lk[3] and $pos[1] eq 1 and $pos[2] eq $pos[4]">
-            <xsl:sequence select="'swCell', 'lastRow', 'firstCol'"/>
-          </xsl:when>
-          <xsl:when test="$lk[4] and $lk[1] and $pos[1] eq $pos[3] and $pos[2] eq 1">
-            <xsl:sequence select="'neCell', 'firstRow', 'lastCol'"/>
-          </xsl:when>
-          <xsl:when test="$lk[4] and $lk[3] and $pos[1] eq $pos[3] and $pos[2] eq $pos[4]">
-            <xsl:sequence select="'seCell', 'lastRow', 'lastCol'"/>
-          </xsl:when>
-          <xsl:when test="$lk[1] and ($pos[2] eq 1 or count((../preceding-sibling::w:tr/w:trPr/w:tblHeader, ../w:trPr/w:tblHeader)) eq $tr-pos)">
-            <xsl:sequence select="'firstRow'"/>
-          </xsl:when>
-          <xsl:when test="$lk[2] and $pos[1] eq 1">
-            <xsl:sequence select="'firstCol'"/>
-          </xsl:when>
-          <xsl:when test="$lk[3] and $pos[2] eq $pos[4]">
-            <xsl:sequence select="'lastRow'"/>
-          </xsl:when>
-          <xsl:when test="$lk[4] and $pos[1] eq $pos[3]">
-            <xsl:sequence select="'lastCol'"/>
-          </xsl:when>
-          <!-- TODO: H/V-banding props -->
-          <xsl:otherwise/>
-        </xsl:choose>
-      </xsl:variable>
-      <xsl:sequence select="$tblSty/w:tblStylePr/@w:type[. = $possible-suffixes]"/>
-    </xsl:variable>
     <xsl:next-match>
       <xsl:with-param name="tc-pos" select="$tc-pos" tunnel="yes"/>
       <xsl:with-param name="tblsty" select="$tblSty" tunnel="yes"/>
-      <xsl:with-param name="tblStylePr-name" select="$tblStylePr-name" tunnel="yes"/>
+      <xsl:with-param name="tblStylePr-name" tunnel="yes"
+                      select="docx2hub:active-cnf-style-name(w:tcPr/w:cnfStyle)"/>
     </xsl:next-match>
   </xsl:template>
 
@@ -194,4 +158,33 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:function name="docx2hub:active-cnf-style-name" as="xs:string*">
+    <xsl:param name="cnfStyle" as="element(w:cnfStyle)?"/>
+    <xsl:choose>
+      <xsl:when test="$cnfStyle/@w:firstRowFirstColumn = ('1', 'yes')">
+        <xsl:sequence select="'nwCell'"/>
+      </xsl:when>
+      <xsl:when test="$cnfStyle/@w:lastRowFirstColumn = ('1', 'yes')">
+        <xsl:sequence select="'swCell'"/>
+      </xsl:when>
+      <xsl:when test="$cnfStyle/@w:firstRowLastColumn = ('1', 'yes')">
+        <xsl:sequence select="'neCell'"/>
+      </xsl:when>
+      <xsl:when test="$cnfStyle/@w:lastRowLastColumn = ('1', 'yes')">
+        <xsl:sequence select="'seCell'"/>
+      </xsl:when>
+      <!-- TODO: H/V-banding props -->
+      <xsl:otherwise>
+        <xsl:for-each select="
+          ($cnfStyle/(
+          @w:firstRow, @w:FirstColumn,
+          @w:lastRow, @w:LastColumn
+          )[. = ('1', 'yes')])[1]">
+          <xsl:sequence select="replace(., 'umn$', '')"/>
+          <!-- 'firstColumn' to 'firstCol' -->
+        </xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+
 </xsl:stylesheet>

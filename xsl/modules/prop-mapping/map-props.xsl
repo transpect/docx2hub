@@ -1349,10 +1349,11 @@
                          xs:string($att) eq xs:string(current())
                        )]" mode="docx2hub:remove-redundant-run-atts" />
 
-  <xsl:template match="w:r[*]
+  <!-- commented in order to keep italics in index terms -->
+  <!--<xsl:template match="w:r[*]
                           [every $c in * satisfies ($c/(self::w:instrText | self::w:fldChar))]
                           /@*[matches(name(), '^(css:|xml:lang)')]" mode="docx2hub:remove-redundant-run-atts" 
-                priority="10"/>
+                priority="10"/>-->
   
   <!-- collateral: denote numbering resets -->
   <xsl:template match="w:p" mode="docx2hub:remove-redundant-run-atts">

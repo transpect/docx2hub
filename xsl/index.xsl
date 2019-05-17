@@ -56,6 +56,7 @@
         </xsl:variable>
         <xsl:variable name="indexterm">
           <indexterm docx2hub:field-function="yes">
+            <xsl:copy-of select="@css:*"/>
             <xsl:call-template name="docx2hub:indexterm-attributes">
               <xsl:with-param name="xe" select="."/>
             </xsl:call-template>

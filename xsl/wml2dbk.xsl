@@ -596,8 +596,7 @@
   </xsl:function>
   
   <!-- changes in this commit: because of vr_SB_525-12345_NESTOR-Testdaten-01 ($most-frequent-lang) -->
-  <xsl:template match="w:p[empty(@role)] | w:r[empty(@role)][empty(ancestor::w:p[1]/@role)]" 
-    mode="docx2hub:join-instrText-runs">
+  <xsl:template match="w:p | w:r" mode="docx2hub:join-instrText-runs">
     <xsl:copy>
       <xsl:call-template name="docx2hub:adjust-lang"/>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
@@ -606,8 +605,26 @@
   
   <xsl:template name="docx2hub:adjust-lang">
     <xsl:param name="most-frequent-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:if test="not($most-frequent-lang = ancestor-or-self::*[@xml:lang]/@xml:lang)">
-      <xsl:copy-of select="ancestor-or-self::*[@xml:lang]/@xml:lang"/>
+    <xsl:choose>
+      <xsl:when test="empty(@role | ancestor::w:p[1]/@role)
+                      and
+                      not($most-frequent-lang = ancestor-or-self::*[@xml:lang][1]/@xml:lang)">
+        <xsl:copy-of select="ancestor-or-self::*[@xml:lang][1]/@xml:lang"/>
+      </xsl:when>
+      <xsl:when test="every $run in w:r[w:t[matches(., '\w')]]
+                      satisfies (($run/@xml:lang, key('docx2hub:style-by-role', $run/@role))[1] = $most-frequent-lang)">
+        <xsl:attribute name="xml:lang" select="$most-frequent-lang"/>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="@css:font-stretch[.='normal']" mode="docx2hub:join-instrText-runs">
+    <!-- <w:w w:val="98"/> is an override, but it will be mapped to 'normal'. Unless this is different
+      from the style’s font-stretch property, remove this property -->
+    <!-- assuming they are only on w:r, not also on w:p -->
+    <xsl:variable name="rule" as="element(css:rule)?" select="key('docx2hub:style-by-role', ../@role)"/>
+    <xsl:if test="exists($rule/@css:font-stretch[not(.='normal')])">
+      <xsl:next-match/>
     </xsl:if>
   </xsl:template>
 

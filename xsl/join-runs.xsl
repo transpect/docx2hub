@@ -71,15 +71,14 @@
     <xsl:if test="self::dbk:para and .//dbk:sidebar">
       <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>
     </xsl:if>
-    <xsl:copy copy-namespaces="no">
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:variable name="processed-pagebreak-elements" as="item()*">
+    <xsl:variable name="prelim" as="node()*">
+            <xsl:variable name="processed-pagebreak-elements" as="item()*">
         <xsl:call-template name="docx2hub:pagebreak-elements-to-attributes"/>  
       </xsl:variable>
       <xsl:sequence select="$processed-pagebreak-elements/self::attribute(), $processed-pagebreak-elements/self::dbk:anchor"/>
       <xsl:for-each-group select="node()" group-adjacent="tr:signature(.)">
         <xsl:choose>
-          <xsl:when test="current-grouping-key() eq ''">
+          <xsl:when test="current-grouping-key() = ('', 'phrase')">
             <xsl:apply-templates select="current-group()" mode="#current"/>
           </xsl:when>
           <xsl:when test="current-grouping-key() eq 'phrase___role__=__docx2hub:EQ'">
@@ -101,9 +100,31 @@
         </xsl:choose>
       </xsl:for-each-group>
       <xsl:sequence select="$processed-pagebreak-elements/self::dbk:anchors-to-the-end/dbk:anchor"/>
-    </xsl:copy>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="self::dbk:phrase[empty(@*)]">
+        <xsl:sequence select="$prelim"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy copy-namespaces="no">
+          <xsl:apply-templates select="@*" mode="#current"/>
+          <xsl:sequence select="$prelim"/>
+        </xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
+    
   </xsl:template>
-
+  
+  <!-- changes in this commit: because of vr_SB_525-12345_NESTOR-Testdaten-01 ($most-frequent-lang) -->
+  <xsl:template match="dbk:phrase[empty(@*)]" mode="docx2hub:join-runs" priority="2">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <!-- this is for the aforementioned file, in order to eliminate redundant @xml:lang on footnote paras
+    with the same @xml:lang as their containing para -->
+  <xsl:template match="dbk:para[empty(@role)][@xml:lang = ancestor::*[@xml:lang][1]/self::dbk:para[empty(@role)]/@xml:lang]/@xml:lang" 
+    mode="docx2hub:join-runs"/>
+  
   <xsl:template match="*" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@role, @* except @role, node()" mode="#current"/>
@@ -831,6 +852,7 @@
   <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs">
     <xsl:param name="nested-fldChars" as="document-node(element(dbk:nested-fldChars))" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">
+      <xsl:call-template name="docx2hub:adjust-lang"/>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="*" 
         group-adjacent="exists(

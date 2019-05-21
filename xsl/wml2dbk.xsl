@@ -572,7 +572,9 @@
       <xsl:if test="exists($most-frequent-lang)">
         <xsl:attribute name="xml:lang" select="$most-frequent-lang"/>
       </xsl:if>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates mode="#current">
+        <xsl:with-param name="most-frequent-lang" select="$most-frequent-lang" as="xs:string?" tunnel="yes"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
   
@@ -592,6 +594,22 @@
     <xsl:variable name="closest" select="$text/ancestor::*[@xml:lang | @role[key('style-by-name', ., $text)/@xml:lang]][1]" as="element(*)?"/>
     <xsl:sequence select="($closest/@xml:lang, key('style-by-name', $closest/@role, root($text))/@xml:lang)[1]"/>
   </xsl:function>
+  
+  <!-- changes in this commit: because of vr_SB_525-12345_NESTOR-Testdaten-01 ($most-frequent-lang) -->
+  <xsl:template match="w:p[empty(@role)] | w:r[empty(@role)][empty(ancestor::w:p[1]/@role)]" 
+    mode="docx2hub:join-instrText-runs">
+    <xsl:copy>
+      <xsl:call-template name="docx2hub:adjust-lang"/>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template name="docx2hub:adjust-lang">
+    <xsl:param name="most-frequent-lang" as="xs:string?" tunnel="yes"/>
+    <xsl:if test="not($most-frequent-lang = ancestor-or-self::*[@xml:lang]/@xml:lang)">
+      <xsl:copy-of select="ancestor-or-self::*[@xml:lang]/@xml:lang"/>
+    </xsl:if>
+  </xsl:template>
 
 
   <xsl:template match="/dbk:*" mode="wml-to-dbk">

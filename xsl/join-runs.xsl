@@ -116,7 +116,7 @@
   </xsl:template>
   
   <!-- changes in this commit: because of vr_SB_525-12345_NESTOR-Testdaten-01 ($most-frequent-lang) -->
-  <xsl:template match="dbk:phrase[empty(@*)]" mode="docx2hub:join-runs" priority="2">
+  <xsl:template match="dbk:phrase[empty(@* except @srcpath)]" mode="docx2hub:join-runs" priority="2">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   

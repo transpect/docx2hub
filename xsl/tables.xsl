@@ -142,6 +142,11 @@
   
   <xsl:template match="w:tblGrid/w:gridCol" mode="colspec">
     <xsl:variable name="pos" select="index-of(for $elt in ../* return generate-id($elt), generate-id())" as="xs:integer"/>
+    <xsl:variable name="relative-table-width" as="xs:string?" 
+      select="if (every $type in parent::*/following-sibling::w:tr/descendant::w:tcW/@w:type satisfies ($type eq 'pct')) 
+              then 'percent' else ''"/>
+    <xsl:variable name="colwidth-sum" as="xs:double" select="sum(parent::*/w:gridCol/@w:w)"/>
+    <xsl:variable name="current-width" as="xs:integer" select="xs:integer(@w:w)"/>
     <colspec>
       <xsl:attribute name="colnum">
         <xsl:value-of select="$pos"/>
@@ -150,7 +155,15 @@
         <xsl:value-of select="concat('col', $pos)"/>
       </xsl:attribute>
       <xsl:if test="@w:w != ''">
-        <xsl:attribute name="colwidth" select="docx2hub:twips2mm(@w:w)"/>
+        <xsl:choose>
+          <xsl:when test="$relative-table-width eq 'percent'">
+            <xsl:attribute name="colwidth" 
+              select="concat(format-number(round(10000 * $current-width div $colwidth-sum) * 0.01, '#.00'), '%')"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="colwidth" select="docx2hub:twips2mm(@w:w)"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:if>
     </colspec>
   </xsl:template>

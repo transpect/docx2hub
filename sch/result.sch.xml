@@ -37,14 +37,16 @@
   </pattern>
 
   <pattern id="docx_unbalanced_table_columns_pattern">
-    <rule context="//dbk:informaltable[count(dbk:tgroup/dbk:colspec) gt max(dbk:tgroup/*/dbk:row/count(dbk:entry))]">
+    <let name="max_calc_colnum"
+      value="max(for $r in dbk:tgroup/*/dbk:row return (count($r/*:entry[not(@namest or @nameend)]) + sum(for $span in $r/dbk:entry[@namest and @nameend] return 1 + xs:integer(substring-after($span/@nameend, 'col')) - xs:integer(substring-after($span/@namest, 'col')))))"/>
+    <rule context="//dbk:informaltable[count(dbk:tgroup/dbk:colspec) gt $max_calc_colnum]">
       <report test="true()" id="docx_unbalanced_table_columns" diagnostics="docx_unbalanced_table_columns_de" role="warning">
         <span class="srcpath"><xsl:value-of select="concat($base-dir, @srcpath)"/></span>
         <span class="category">docx</span>
         <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Unbalanced table columns</span>
         There are more columns defined than actually needed. The number of defined columns is <xsl:value-of
-          select="count(*:tgroup/*:colspec)"/> and the number of maximal used is <xsl:value-of
-          select="max(*:tgroup/*/*:row/count(*:entry))"/>.
+          select="count(dbk:tgroup/dbk:colspec)"/> and the number of maximal used is <xsl:value-of
+          select="$max_calc_colnum"/>.
         <br xmlns="http://www.w3.org/1999/xhtml"/>
         Please check if some or all table cells can be merged or renewed. Try to solve column spans.
         Otherwise the table will stay in xml in the current state: more columns defined than needed.
@@ -70,7 +72,7 @@
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml"></span>
       Es sind mehr Tabellenspalten definiert als tatsächlich gebraucht werden. Definierte Spalten sind <xsl:value-of
           select="count(*:tgroup/*:colspec)"/> vorhanden. Die Anzahl an maximal benötigter Spalten ist <xsl:value-of
-          select="max(*:tgroup/*/*:row/count(*:entry))"/>.
+          select="$max_calc_colnum"/>.
         <br xmlns="http://www.w3.org/1999/xhtml"/>
         Bitte prüfen, ob Tabellenzellen zusammengeführt oder erneuert werden können.
         Andernfalls verbleibt die Tabelle XML-seitig im aktuellen Stand: mehr Tabellenspalten definiert als benötigt werden. 

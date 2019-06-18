@@ -131,7 +131,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="dbk:footnote[@xreflabel]" mode="docx2hub:join-runs">
+  <xsl:template match="dbk:footnote[@xreflabel][descendant::dbk:phrase[@role='hub:identifier']]" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@* except @xreflabel | node()" mode="#current"/>
     </xsl:copy>

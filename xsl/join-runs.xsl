@@ -858,7 +858,7 @@
         group-adjacent="exists(
                           self::w:r[w:instrText]
                                    [every $c in * 
-                                    satisfies $c/(self::w:instrText | self::w:br 
+                                    satisfies $c/(self::w:instrText | self::w:br | self::w:softHyphen
                                     (: w:br appeared in comments in 12181_2015_0024_Manuscript.docm :))]
                           | self::w:fldSimple (: prEN_16815 :)
                           | self::m:oMath[preceding-sibling::*[empty(self::m:oMath)][1]/self::w:r[w:instrText]] (: hanser_loeser_omml_index :)

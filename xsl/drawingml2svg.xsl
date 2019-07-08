@@ -77,7 +77,7 @@
 
   <xsl:key name="d2s:gd-by-name" match="a:gd" use="@name"/>  
   
-  <xsl:template match="w:sectPr" mode="docx2hub:add-props">
+  <xsl:template match="w:sectPr[$create-svg]" mode="docx2hub:add-props">
     <xsl:variable name="pageWidth"    select="xs:integer(w:pgSz/@w:w * 635)" as="xs:integer"/>
     <xsl:variable name="pageHeight"   select="xs:integer(w:pgSz/@w:h * 635)" as="xs:integer"/>
     <xsl:variable name="marginTop"    select="xs:integer(w:pgMar/@w:top * 635)" as="xs:integer"/>
@@ -213,14 +213,16 @@ TEMPLATES
     <xsl:variable name="relativeFrom-x" select="../../wp:positionH/@relativeFrom" as="xs:string"/>
     <xsl:variable name="align-x" as="xs:string?"
       select="(../../wp:positionH/wp:align[normalize-space()], ../../wp:positionH/wp:posOffset, '')[1]"/>
-    <xsl:variable name="c-x" select="wps:wsp/wps:spPr/a:xfrm/a:ext/@cx" as="xs:integer"/>
+    <!-- inserted zero as default value below, but needs to be checked -->
+    <xsl:variable name="c-x" select="(wps:wsp/wps:spPr/a:xfrm/a:ext/@cx, 0)[1]" as="xs:integer"/>
     <xsl:variable name="position-x" select="d2s:pos-x($relativeFrom-x, $align-x, $c-x, $d2s:sec-layout-map)" as="xs:integer"/>
     <xsl:variable name="center-x" select="$c-x idiv 2 + $position-x" as="xs:integer"/>
     <!--Y Koordinaten-->
     <xsl:variable name="relativeFrom-y" select="../../wp:positionV/@relativeFrom" as="xs:string"/>
     <xsl:variable name="align-y" as="xs:string?"
       select="(../../wp:positionV/wp:align[normalize-space()], ../../wp:positionV/wp:posOffset, '')[1]"/>
-    <xsl:variable name="c-y" select=".//@cy" as="xs:integer"/>
+    <!-- please check the variable below -->
+    <xsl:variable name="c-y" select="(.//@cy)[1]" as="xs:integer"/>
     <xsl:message select="'aaaaaaaaaaaa ', $align-y"></xsl:message>
     <xsl:variable name="position-y" select="d2s:pos-y($relativeFrom-y, $align-y, $c-y, $p-before, $d2s:sec-layout-map)"
                   as="xs:integer"/>
@@ -697,7 +699,8 @@ TEMPLATES
                 </xsl:choose>
             </xsl:when>
             <xsl:when test="$relativeFrom = 'column'">
-                <xsl:message select="'@relativeFrom column wird derzeit so behandelt wie @relativeFrom margin. Unterschied gibt es nur wenn es mehrere Spalten gibt'"/>
+                <!--<xsl:message select="'@relativeFrom column wird derzeit so behandelt wie @relativeFrom margin. 
+Unterschied gibt es nur wenn es mehrere Spalten gibt'"/>-->
                 <xsl:choose>
                     <xsl:when test="$align = 'center'">
                         <xsl:sequence select="($d2s:sec-layout-map('SatzspWidth') idiv 2) + $d2s:sec-layout-map('marginLeft') - ($cx idiv 2)"/>

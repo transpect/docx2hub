@@ -30,6 +30,8 @@
   version="2.0">
   
   <xsl:param name="srcpaths-on-runs" as="xs:string" select="'yes'"/>
+  <!-- insert-default-settings: add default lang and font or only add srcpaths atts in mode insert-xpath -->
+  <xsl:param name="insert-default-settings" as="xs:string" select="'yes'"/>
 
   <xsl:function name="docx2hub:srcpath" as="xs:string">
     <xsl:param name="elt" as="element(*)?"/>
@@ -116,7 +118,6 @@
   </xsl:template>
   
   <xsl:template match="/w:document" mode="insert-xpath" as="document-node(element(w:root))" priority="2">
-    <xsl:variable name="container-base-uri" select="replace($base-dir, 'word/$', '')" as="xs:string"/>
     <xsl:variable name="docRels-uri" as="xs:anyURI"
       select="if (doc-available(resolve-uri(concat($base-dir,'_rels/document2.xml.rels'))))
                   then resolve-uri(concat($base-dir,'_rels/document2.xml.rels'))
@@ -128,20 +129,7 @@
         <xsl:attribute name="local-href" select="$local-href"/>
         <xsl:variable name="containerRels" as="document-node(element(rel:Relationships))"
           select="document(resolve-uri(replace($base-dir, '[^/]+/?$', '_rels/.rels')))"/>
-        <xsl:variable name="docRels" as="document-node(element(rel:Relationships))"
-          select="document($docRels-uri)"/>
-        <!-- At the moment, we only need themes for default font resolution that takes place
-             in the current mode. Therefore, we don’t include the theme documents below  
-             /w:root yet. We rather pass them as a tunneled variable. -->
-        <xsl:variable name="themes" as="document-node(element(a:theme))*"
-          select="for $t in $docRels/rel:Relationships/rel:Relationship[@Type eq 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme']/@Target
-                  return 
-                    if(doc-available(resolve-uri(concat($container-base-uri, $t)))) 
-                    then document(resolve-uri(concat($container-base-uri, $t)))
-                    else document(resolve-uri($t, $base-dir))"/>
-        <xsl:apply-templates select="document(resolve-uri('styles.xml', $base-dir))/w:styles" mode="#current">
-          <xsl:with-param name="themes" select="$themes" tunnel="yes"/>
-        </xsl:apply-templates>
+        <xsl:apply-templates select="document(resolve-uri('styles.xml', $base-dir))/w:styles" mode="#current"/>
         <xsl:if test="doc-available(resolve-uri('numbering.xml', $base-dir))">
           <xsl:apply-templates select="document(resolve-uri('numbering.xml', $base-dir))/w:numbering" mode="#current"/>
         </xsl:if>
@@ -234,9 +222,9 @@
     </xsl:document>
   </xsl:template>
 
-  <xsl:template match="  w:document | w:numbering | w:endnotes | w:footnotes 
+  <xsl:template match="  w:document | w:numbering | w:endnotes | w:footnotes
                        | w:settings | w:fonts | rel:Relationships | w:comments
-                       | extendedProps:Properties
+                       | w:styles | extendedProps:Properties
                        | ct:Types | w:hdr | w:ftr | *:Properties | cp:coreProperties" mode="insert-xpath">
     <xsl:copy>
       <xsl:attribute name="xml:base" select="base-uri()" />
@@ -244,116 +232,4 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- theme support incomplete … -->
-  <xsl:function name="tr:theme-font" as="xs:string">
-    <xsl:param name="rFonts" as="element(w:rFonts)?"/>
-    <xsl:param name="themes" as="document-node(element(a:theme))*"/>
-    <xsl:choose>
-      <xsl:when test="not($themes | $rFonts)">
-        <xsl:sequence select="'Arial'"/>
-      </xsl:when>
-      <xsl:when test="$rFonts/@w:asciiTheme">
-        <!-- minor font is for the bulk text (major is for the headings).
-             Spec sez dat w:asciiTheme has precedence over w:ascii (I don’t find it now, and it wasn’t all clear there) -->
-        <xsl:sequence select="($themes/a:theme/a:themeElements/a:fontScheme/a:minorFont/a:latin/@typeface)[1]"/>
-      </xsl:when>
-      <xsl:when test="not($rFonts/@w:ascii)">
-        <xsl:sequence select="'Arial'"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="$rFonts/@w:ascii"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:function>
-
-  <xsl:template match="/w:styles" mode="insert-xpath">
-    <xsl:param name="themes" as="document-node(element(a:theme))*" tunnel="yes"/>
-    <xsl:copy>
-      <xsl:attribute name="xml:base" select="base-uri()" />
-      <!-- Font des Standardtextes -->
-      <xsl:variable name="normal" as="element(w:style)?"
-        select="(
-                  w:style[@w:type = 'paragraph'][@w:default = '1'],
-                  w:style[w:name[@w:val = 'Normal']]
-                )[1]"  />
-      <xsl:variable name="default-font" as="xs:string"
-        select="if ($normal/w:rPr/w:rFonts/@w:ascii)
-                then $normal/w:rPr/w:rFonts/@w:ascii
-                else tr:theme-font(
-                      (
-                        w:docDefaults/w:rPrDefault/w:rPr/w:rFonts,
-                        w:docDefaults/w:rPrDefault/w:rFonts
-                      )[1], $themes)" />
-      <!-- Font-size des Standardtextes -->
-      <xsl:variable name="default-font-size" as="xs:string"
-        select="if ($normal/w:rPr/w:sz/@w:val)
-                then ($normal/w:rPr/w:sz/@w:val)[1]
-                else '20'" />
-      <xsl:variable name="default-lang" as="xs:string?"
-        select="if ($normal/w:rPr/w:lang/@w:val)
-                then $normal/w:rPr/w:lang/@w:val
-                else (
-                        w:docDefaults/w:rPrDefault/w:rPr/w:lang/@w:val,
-                        w:docDefaults/w:rPrDefault/w:lang/@w:val
-                      )[1]" />
-      <xsl:if test="exists($default-lang)">
-        <xsl:attribute name="xml:lang" select="$default-lang"/>
-      </xsl:if>
-      <xsl:apply-templates select="@*, * except w:latentStyles" mode="#current" >
-        <xsl:with-param name="default-font" select="$default-font" tunnel="yes"/>
-        <xsl:with-param name="default-font-size" select="$default-font-size" tunnel="yes"/>
-        <xsl:with-param name="default-lang" select="$default-lang" tunnel="yes"/>
-      </xsl:apply-templates>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="w:style[@w:type = 'paragraph']
-                              [not(w:basedOn)]/w:rPr" mode="insert-xpath">
-    <xsl:param name="default-font" as="xs:string?" tunnel="yes"/>
-    <xsl:param name="default-font-size" as="xs:string" tunnel="yes"/>
-    <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:copy>
-      <xsl:apply-templates select="@*, *" mode="#current"/>
-      <xsl:if test="not(w:sz) and $default-font-size">
-        <w:sz w:val="{$default-font-size}"/>
-      </xsl:if>
-      <xsl:if test="not(w:rFonts) and $default-font">
-        <w:rFonts w:ascii="{$default-font}"/>
-      </xsl:if>
-      <xsl:if test="not(w:lang) and $default-lang">
-        <w:lang w:val="{$default-lang}"/>
-      </xsl:if>
-    </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="w:style[@w:type = 'paragraph']
-                              [not(w:basedOn)]/w:rPr/w:lang[not(@w:val)]" mode="insert-xpath">
-    <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:copy>
-      <xsl:attribute name="w:val" select="$default-lang"/>
-      <xsl:sequence select="@*"/>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="w:style[@w:type = 'paragraph']
-                              [not(w:basedOn)]
-                              [empty(w:rPr)]" mode="insert-xpath">
-    <xsl:param name="default-font" as="xs:string?" tunnel="yes"/>
-    <xsl:param name="default-font-size" as="xs:string" tunnel="yes"/>
-    <xsl:param name="default-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-      <w:rPr>
-        <xsl:if test="$default-font-size">
-          <w:sz w:val="{$default-font-size}"/>
-        </xsl:if>
-        <xsl:if test="$default-font">
-          <w:rFonts w:ascii="{$default-font}"/>
-        </xsl:if>
-        <xsl:if test="$default-lang">
-          <w:lang w:val="{$default-lang}"/>
-        </xsl:if>
-      </w:rPr>
-    </xsl:copy>
-  </xsl:template>
 </xsl:stylesheet>

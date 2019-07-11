@@ -199,6 +199,10 @@
   <p:option name="include-header-and-footer" required="false" select="'no'">
     <p:documentation>Whether to include headers and footers as div at the beginning of the document. Permitted values: yes|no</p:documentation>
   </p:option>
+  <p:option name="insert-document-defaults" required="false" select="'yes'">
+    <p:documentation>Insert default attributes (i.e. document language and font names). Permitted values: yes|no</p:documentation>
+  </p:option>
+
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -243,6 +247,7 @@
     <p:with-option name="mathtype-source-pi" select="$mathtype-source-pi"/>
     <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>
     <p:with-option name="apply-changemarkup" select="$apply-changemarkup"/>
+    <p:with-option name="insert-document-defaults" select="$insert-document-defaults"/>
     <p:input port="single-tree-schematron">
       <p:pipe step="docx2hub" port="single-tree-schematron"/>
     </p:input>

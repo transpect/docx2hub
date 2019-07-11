@@ -78,6 +78,7 @@
   <p:option name="mathtype2mml-cleanup" required="false" select="'yes'"/>
   <p:option name="apply-changemarkup" required="false" select="'yes'"/>
   <p:option name="use-filename-from-http-response" required="false" select="'no'"/>
+  <p:option name="insert-document-defaults" required="false" select="'yes'"/>
 
   <p:import href="single-tree.xpl"/>
   <p:import href="apply-changemarkup.xpl"/>
@@ -96,6 +97,7 @@
     <p:with-option name="no-srcpaths-for-text-runs-threshold" select="$no-srcpaths-for-text-runs-threshold"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
     <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>
+    <p:with-option name="insert-document-defaults" select="$insert-document-defaults"/>
     <p:input port="schematron">
       <p:pipe step="single-tree-enhanced" port="single-tree-schematron"/>
     </p:input>

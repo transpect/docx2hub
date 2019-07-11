@@ -72,6 +72,9 @@
     possible filename read from URL in tr:file-uri (for example when using Gdocs URLs:
     https://docs.google.com/document/d/1Z5eYyjLoRhB24HYZ-d-wQKAFD3QDWZUsQH4cKHs2eiM/export?format=docx)</p:documentation>
   </p:option>
+  <p:option name="insert-document-defaults" select="'yes'">
+    <p:documentation>Insert default attributes (i.e. document language and font names). Permitted values: yes|no</p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
 
@@ -268,6 +271,30 @@
         <p:pipe step="document" port="result"/>
       </p:with-param>
     </tr:xslt-mode>
+    
+    <p:choose>
+      <p:when test="$insert-document-defaults = 'yes'">
+        <tr:xslt-mode msg="yes" mode="insert-doc-defaults" name="insert-doc-defaults">
+          <p:input port="parameters">
+            <p:pipe step="params" port="result"/>
+          </p:input>
+          <p:input port="stylesheet">
+            <p:pipe step="single-tree" port="xslt"/>
+          </p:input>
+          <p:input port="models">
+            <p:empty/>
+          </p:input>
+          <p:with-option name="prefix" select="concat('docx2hub/', $basename, '/01a')"/>
+          <p:with-option name="debug" select="$debug"/>
+          <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
+          <p:with-option name="fail-on-error" select="$fail-on-error"/>
+          <p:with-param name="fail-on-error" select="$fail-on-error"/>
+        </tr:xslt-mode>
+      </p:when>
+      <p:otherwise>
+        <p:identity/>
+      </p:otherwise>
+    </p:choose>
 
     <p:add-attribute attribute-name="xml:base" match="/*" name="add-xml-base-attr">
       <p:with-option name="attribute-value" select="/c:files/@xml:base">

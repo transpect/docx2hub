@@ -28,6 +28,7 @@
 
   <xsl:import href="wml2dbk.xsl"/>
   <xsl:import href="insert-xpath.xsl"/>
+  <xsl:import href="insert-doc-defaults.xsl"/>
   <xsl:import href="modules/prop-mapping/map-props.xsl"/>
   <xsl:import href="modules/preprocess-styles/preprocess-styles.xsl"/>
   <xsl:import href="join-runs.xsl"/>
@@ -79,5 +80,6 @@
     />
 
   <xsl:variable name="root" as="document-node()" select="/"/>
+  <xsl:variable name="container-base-uri" select="replace($base-dir, 'word/$', '')" as="xs:string"/>
 
 </xsl:stylesheet>

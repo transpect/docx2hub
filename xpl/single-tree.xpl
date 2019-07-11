@@ -289,6 +289,9 @@
           <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
           <p:with-option name="fail-on-error" select="$fail-on-error"/>
           <p:with-param name="fail-on-error" select="$fail-on-error"/>
+          <p:with-param name="base-dir" select="replace(base-uri(), '[^/]+$', '')">
+            <p:pipe step="document" port="result"/>
+          </p:with-param>
         </tr:xslt-mode>
       </p:when>
       <p:otherwise>

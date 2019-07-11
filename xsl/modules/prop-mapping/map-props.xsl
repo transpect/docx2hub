@@ -407,9 +407,10 @@
   <!-- § 17.3.1.29: this is only for the paragraph mark's formatting: -->
   <xsl:template match="w:pPr/w:rPr" mode="docx2hub:add-props" priority="2.5" />
 
-  <xsl:template match="w:tblPr | w:tblPrEx" mode="docx2hub:add-props" priority="2">
+  <xsl:template mode="docx2hub:add-props" priority="2"
+    match="w:tblPr | w:tblStylePr | w:tblPrEx">
     <xsl:copy>
-      <xsl:apply-templates select="*" mode="#current" />
+      <xsl:apply-templates select="./self::w:tblStylePr/@w:type, *" mode="#current" />
     </xsl:copy>
   </xsl:template>
   
@@ -493,6 +494,7 @@
                        | w:pBdr/* 
                        | w:pPr/* 
                        | w:tblPr/*[not(self::w:jc)]
+                       | w:tblStylePr/*[not(self::w:jc)]
                        | w:tcBorders/* 
                        | w:tblBorders/*
                        | w:tcPr/*
@@ -1314,7 +1316,7 @@
                                                                    not(self::w:fldSimple) and 
                                                                    not(self::w:hyperlink)]]]" mode="docx2hub:props2atts"/>
   
-  <xsl:template match="docx2hub:attribute[@name = 'css:text-decoration-line']" mode="docx2hub:props2atts">
+  <xsl:template match="docx2hub:attribute[@name = 'css:text-decoration-line'][text()]" mode="docx2hub:props2atts">
     <xsl:variable name="all-atts" select="preceding-sibling::docx2hub:attribute[@name = current()/@name], ."
       as="element(docx2hub:attribute)+"/>
     <xsl:variable name="tokenized" select="for $a in $all-atts return tokenize($a, '\s+')" as="xs:string+"/>
@@ -1372,12 +1374,14 @@
   
   <!-- what about list marker formatting? -->
   <xsl:template match="w:r | w:p | w:tbl" mode="docx2hub:remove-redundant-run-atts" priority="20">
+    <xsl:param name="p-toggles" as="attribute(*)*"/>
     <xsl:variable name="toggles" as="attribute(*)*">
       <xsl:variable name="context" as="element(*)" select="."/>
       <xsl:for-each select="$docx2hub:toggle-prop-names">
         <xsl:call-template name="docx2hub:toggle-prop">
           <xsl:with-param name="context" select="$context"/>
           <xsl:with-param name="prop-name" select="."/>
+          <xsl:with-param name="p-toggle" select="$p-toggles[name() = current()]"/>
         </xsl:call-template>
       </xsl:for-each>
     </xsl:variable>
@@ -1390,7 +1394,10 @@
     select="('css:font-weight', 'css:font-style', 'css:font-variant', 'css:text-shadow', 'css:text-transform',
              'css:text-decoration-line', 'css:display')"/>
   
-  <xsl:template match="css:rule//@*[name() = $docx2hub:toggle-prop-names]" mode="docx2hub:remove-redundant-run-atts">
+  <xsl:template match="
+    css:rule//@*[name() = $docx2hub:toggle-prop-names] |
+    w:lvl//@*[name() = $docx2hub:toggle-prop-names]
+    " mode="docx2hub:remove-redundant-run-atts">
     <xsl:variable name="active" as="xs:string" select="replace(., '^toggle\((.+?),(.+?)\)$', '$1')"/>
     <!-- Is this still true if, for ex., document defaults have css:text-weight="bold"? --> 
     <xsl:attribute name="{name()}" select="$active"/>
@@ -1400,19 +1407,45 @@
     <!-- call this after all style attributes have been calculated on a content element --> 
     <xsl:param name="context" as="element(*)"/><!-- w:r, w:p, w:tr?, w:tbl -->
     <xsl:param name="prop-name" as="xs:string"/>
+    <xsl:param name="p-toggle" as="attribute(*)?"/>
+    <xsl:variable name="banding-name" as="xs:string?">
+      <xsl:variable name="orig-name" select="$context/ancestor::w:tc/w:tcPr/w:cnfStyle/@w:*[. = ('1', 'true')]/local-name()"/>
+      <xsl:choose>
+        <xsl:when test="$orig-name = 'lastRow'">lastRow</xsl:when>
+        <xsl:when test="$orig-name = 'firstRow'">firstRow</xsl:when>
+        <xsl:when test="$orig-name = 'oddHBand'">band1Horz</xsl:when>
+        <xsl:when test="$orig-name = 'oddVBand'">band1Vert</xsl:when>
+        <xsl:when test="$orig-name = 'evenHBand'">band2Horz</xsl:when>
+        <xsl:when test="$orig-name = 'evenVBand'">band2Vert</xsl:when>
+        <xsl:when test="$orig-name = 'lastColumn'">lastCol</xsl:when>
+        <xsl:when test="$orig-name = 'firstColumn'">firstCol</xsl:when>
+        <xsl:when test="$orig-name = 'lastRowLastColumn'">seCell</xsl:when>
+        <xsl:when test="$orig-name = 'lastRowFirstColumn'">swCell</xsl:when>
+        <xsl:when test="$orig-name = 'firstRowLastColumn'">neCell</xsl:when>
+        <xsl:when test="$orig-name = 'firstRowFirstColumn'">nwCell</xsl:when>
+        <xsl:otherwise/>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="r" as="element(*)?" select="$context/self::w:r"/>
-    <!-- probably also need to consider alternating table row formatting? Has this already been expanded to w:tr level? -->
-    <xsl:variable name="p" as="element(*)?" select="if ($context/(self::w:tbl | self::w:tr)) then () (:. was a string, which leads to error:) 
-                                                    else $context/ancestor-or-self::w:p"/>
+    <xsl:variable name="p" as="element(*)?" select="if ($context/(self::w:tbl | self::w:tr)) then () (: do not apply style from an outer para :) 
+                                                    else ($context/ancestor-or-self::w:p)[1]"/>
     <xsl:variable name="t" as="element(*)?" select="$context/ancestor-or-self::w:tbl"/>
     <xsl:variable name="r-prop" as="attribute(*)*" 
       select="((key('docx2hub:style-by-role', $r/@role, root($context)), $r)/@*[name() = $prop-name])"/><!-- last in doc order: ad-hoc prop -->
     <xsl:variable name="p-prop" as="attribute(*)*" 
       select="((key('docx2hub:style-by-role', $p/@role, root($context)), $p)/@*[name() = $prop-name])"/>
+    <xsl:variable name="t-rule" as="element(*)?"
+      select="key('docx2hub:style-by-role', $t/w:tblPr/@role, root($context))"/>
     <xsl:variable name="t-prop" as="attribute(*)*" 
-      select="((key('docx2hub:style-by-role', $t/@role, root($context)), $t)/@*[name() = $prop-name])"/>
+      select="($t-rule/w:tblStylePr[@w:type = $banding-name]/@*[name() = $prop-name])[1]"/>
     <!-- TODO: need to consider num props, too! -->
-    <xsl:variable name="toggle" select="(($t-prop, $p-prop, $r-prop)[starts-with(., 'toggle(')])[1]" as="attribute(*)?"/>
+    <xsl:variable name="toggle" select="(($context/@*[name() = $prop-name], $t-prop, $p-prop, $r-prop)[starts-with(., 'toggle(')])[1]" as="attribute(*)?"/>
+    <xsl:variable name="by-r-rule" as="xs:string?">
+      <xsl:apply-templates select="key('style-by-name', $context/@role, root($context))/@*[name() = $prop-name]" mode="#current"/>
+    </xsl:variable>
+    <xsl:variable name="by-p-rule" as="xs:string?">
+      <xsl:apply-templates select="$p-prop" mode="#current"/>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="exists($toggle)">
         <xsl:variable name="active" as="xs:string" select="replace($toggle, '^toggle\((.+?),(.+?)\)$', '$1')"/>
@@ -1423,15 +1456,30 @@
           select="docx2hub:toggle-prop($active, $default, 
                                        ($t-prop, $p-prop, $r-prop),
                                        $doc-default)"/>
-        <xsl:variable name="by-rule" as="xs:string?">
-          <xsl:apply-templates select="key('style-by-name', $context/@role, root($context))/@*[name() = $prop-name]" mode="#current"/>
-        </xsl:variable>
+        <!-- TODO: keep table rules (with banding), and consider them too -->
         <!--<xsl:if test="$context/w:t[. = 'rw']">
           <xsl:message select="'CCCCCCCCCCCCCC',$calculated, $by-rule"></xsl:message>
         </xsl:if>-->
-        <xsl:if test="not($calculated = $by-rule)">
-          <xsl:attribute name="{$prop-name}" select="$calculated"/> 
+        <xsl:if test="
+          exists($by-r-rule) and not($calculated = $by-r-rule)
+          or empty($by-r-rule) and 
+            (
+              (exists($p) and exists($p-toggle) and not($calculated = $p-toggle))
+              or not($calculated = $by-p-rule)
+            )">
+          <xsl:attribute name="{$prop-name}" select="$calculated"/>
         </xsl:if>
+      </xsl:when>
+      <xsl:when test="
+        $prop-name = ('css:text-decoration-line', 'css:text-shadow') and
+        (some $p in ($p-prop, $r-prop) satisfies $p = ('underline', '1px 0px')) and
+          (exists($by-r-rule) and not($r-prop = $by-r-rule)
+            or empty($by-r-rule) and
+            (
+              (exists($p) and exists($p-toggle) and not($p-prop = $p-toggle))
+              or not($p-prop = $by-p-rule)
+            ))">
+          <xsl:attribute name="{$prop-name}" select="'underline'"/>
       </xsl:when>
       <xsl:otherwise>
         <!-- nothing? -->
@@ -1511,7 +1559,9 @@
       <xsl:apply-templates select="$numId" mode="docx2hub:abstractNum">
         <xsl:with-param name="ilvl" select="$ilvl"/>
       </xsl:apply-templates>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates mode="#current">
+        <xsl:with-param name="p-toggles" select="$toggles"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
 

@@ -1373,7 +1373,8 @@
                        )]" mode="docx2hub:remove-redundant-run-atts" />
   
   <!-- what about list marker formatting? -->
-  <xsl:template match="w:r | w:p | w:tbl" mode="docx2hub:remove-redundant-run-atts" priority="20">
+  <xsl:template mode="docx2hub:remove-redundant-run-atts" priority="20"
+    match="w:r | w:p | w:tbl | *:superscript | *:subscript">
     <xsl:param name="p-toggles" as="attribute(*)*"/>
     <xsl:variable name="toggles" as="attribute(*)*">
       <xsl:variable name="context" as="element(*)" select="."/>
@@ -1426,7 +1427,7 @@
         <xsl:otherwise/>
       </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="r" as="element(*)?" select="$context/self::w:r"/>
+    <xsl:variable name="r" as="element(*)?" select="$context/(self::w:r, self::*:superscript, self::*:subscript)"/>
     <xsl:variable name="p" as="element(*)?" select="if ($context/(self::w:tbl | self::w:tr)) then () (: do not apply style from an outer para :) 
                                                     else ($context/ancestor-or-self::w:p)[1]"/>
     <xsl:variable name="t" as="element(*)?" select="$context/ancestor-or-self::w:tbl"/>
@@ -1565,7 +1566,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="w:r" mode="docx2hub:remove-redundant-run-atts">
+  <xsl:template match="w:r | *:superscript | *:subscript" mode="docx2hub:remove-redundant-run-atts">
     <xsl:param name="toggles" as="attribute(*)*" tunnel="yes"/>
     <!--<xsl:if test="w:t[.='Nat']">
       <xsl:message select="'TTTTTTTTTTTTT',$toggles"></xsl:message>

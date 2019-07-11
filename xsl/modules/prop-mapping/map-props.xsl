@@ -1480,7 +1480,7 @@
               (exists($p) and exists($p-toggle) and not($p-prop = $p-toggle))
               or not($p-prop = $by-p-rule)
             ))">
-          <xsl:attribute name="{$prop-name}" select="'underline'"/>
+        <xsl:attribute name="{$prop-name}" select="('underline'[$prop-name = 'css:text-decoration-line'], '1px 0px')[1]"/>
       </xsl:when>
       <xsl:otherwise>
         <!-- nothing? -->

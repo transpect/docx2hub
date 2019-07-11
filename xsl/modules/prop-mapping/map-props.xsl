@@ -1430,7 +1430,7 @@
     <xsl:variable name="r" as="element(*)?" select="$context/(self::w:r, self::*:superscript, self::*:subscript)"/>
     <xsl:variable name="p" as="element(*)?" select="if ($context/(self::w:tbl | self::w:tr)) then () (: do not apply style from an outer para :) 
                                                     else ($context/ancestor-or-self::w:p)[1]"/>
-    <xsl:variable name="t" as="element(*)?" select="$context/ancestor-or-self::w:tbl"/>
+    <xsl:variable name="t" as="element(*)?" select="($context/ancestor-or-self::w:tbl)[1]"/>
     <xsl:variable name="r-prop" as="attribute(*)*" 
       select="((key('docx2hub:style-by-role', $r/@role, root($context)), $r)/@*[name() = $prop-name])"/><!-- last in doc order: ad-hoc prop -->
     <xsl:variable name="p-prop" as="attribute(*)*" 

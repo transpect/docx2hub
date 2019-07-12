@@ -89,7 +89,7 @@
     <xsl:variable name="r" as="element(w:r)">
       <xsl:next-match/>
     </xsl:variable>
-    <xsl:for-each-group select="$r/* except $r/w:rPr" group-starting-with="$r/*[self::w:tab]">
+    <xsl:for-each-group select="$r/* except $r/w:rPr" group-starting-with="*[self::w:tab]">
       <xsl:sequence select="current-group()[self::w:tab]"/>
       <xsl:for-each select="$r">
         <xsl:copy>

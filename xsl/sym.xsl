@@ -207,6 +207,7 @@
       <xsl:otherwise>
         <phrase xmlns="http://docbook.org/ns/docbook" role="hub:ooxml-symbol" css:font-family="{$font}" annotations="{$number}"
           srcpath="{(@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1]}">
+          <xsl:text>&#xfffd;</xsl:text>
           <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
                                   concat('Could not map char ', $number, ' in font ', $font, ' (message e)'))"/>
         </phrase>

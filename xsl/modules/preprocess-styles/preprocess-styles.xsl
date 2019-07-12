@@ -21,9 +21,10 @@
             //w:style[@w:styleId = current()/w:tblPr/w:tblStyle/@w:val]
           )/node()
         )"/>
+    <xsl:variable name="first-border-style" select="($based-on-chain[.//w:tblBorders])[last()]"/>
     <xsl:next-match>
       <xsl:with-param name="tblSty" as="node()*" tunnel="yes"
-        select="$based-on-chain"/>
+        select="if ($word-2013-tablestyle-rules) then $based-on-chain else $first-border-style"/>
     </xsl:next-match>
   </xsl:template>
 

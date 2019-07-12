@@ -84,9 +84,12 @@
   <xsl:variable name="docx2hub:footnote-marker-embellishment-regex" as="xs:string" select="'^[\p{P}\s\p{Zs}]*$'"/>
 
   <!-- collateral, has to run before the templates below. They currently match in docx2hub:join-instrText-runs --> 
-  <xsl:template match="w:footnote/w:p[1]/w:r[w:tab]" mode="docx2hub:remove-redundant-run-atts">
-    <xsl:variable name="r" select="." as="element(w:r)"/>
-    <xsl:for-each-group select="* except w:rPr" group-starting-with="*[self::w:tab]">
+  <xsl:template match="w:footnote/w:p[1]/w:r[w:tab]" mode="docx2hub:remove-redundant-run-atts" priority="2">
+    <!-- FIXME: decouple this from (toggle-)prop handling, for better more modular code -->
+    <xsl:variable name="r" as="element(w:r)">
+      <xsl:next-match/>
+    </xsl:variable>
+    <xsl:for-each-group select="$r/* except $r/w:rPr" group-starting-with="$r/*[self::w:tab]">
       <xsl:sequence select="current-group()[self::w:tab]"/>
       <xsl:for-each select="$r">
         <xsl:copy>

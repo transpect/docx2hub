@@ -26,11 +26,11 @@
   <!-- IMPORT OF OTHER STYLESHEETS -->
   <!-- ================================================================================ -->
 
-  <xsl:import href="wml2dbk.xsl"/>
-  <xsl:import href="insert-xpath.xsl"/>
   <xsl:import href="modules/prop-mapping/map-props.xsl"/>
+  <xsl:import href="insert-xpath.xsl"/>
   <xsl:import href="modules/preprocess-styles/preprocess-styles.xsl"/>
   <xsl:import href="join-runs.xsl"/>
+  <xsl:import href="wml2dbk.xsl"/>
   <xsl:import href="drawingml2svg.xsl" use-when="xs:decimal(system-property('xsl:version')) ge 3.0"/>
   <xsl:import href="reference-managers.xsl" use-when="xs:decimal(system-property('xsl:version')) ge 3.0"/>
   

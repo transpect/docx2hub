@@ -1450,7 +1450,25 @@
       <xsl:apply-templates select="$p-prop" mode="#current"/>
     </xsl:variable>
     <xsl:choose>
+      <!-- underline/doublestrike, shadowing are no-toggle-props, so they can be inherited by css-rules already -->
+      <xsl:when test="
+        $prop-name = ('css:text-decoration-line', 'css:text-shadow') and
+        (some $prop in ($ad-hoc-prop, $t-prop, $p-prop, $r-prop) satisfies $prop = ('underline', '1px 0px')) and
+          (
+          (
+            (: ad-hoc-prop defines something other than rules :)
+            exists($ad-hoc-prop) and
+            not($ad-hoc-prop = ($by-r-rule, $p-toggle, $by-p-rule, $t-prop)[1])
+          ) or 
+          (
+            (: no ad-hoc-prop set, set att only if style comes from table-banding :)
+            empty(($ad-hoc-prop, $p-prop, $r-prop, $p-toggle))
+          )
+        )">
+        <xsl:attribute name="{$prop-name}" select="('underline'[$prop-name = 'css:text-decoration-line'], '1px 0px')[1]"/>
+      </xsl:when>
       <xsl:when test="exists($ad-hoc-prop)">
+        <!-- ad-hoc-formatting overrides style-inheritance -->
         <xsl:variable name="active" as="xs:string" select="replace($ad-hoc-prop, '^toggle\((.+?),(.+?)\)$', '$1')"/>
         <xsl:variable name="default" as="xs:string" select="replace($ad-hoc-prop, '^toggle\((.+?),(.+?)\)$', '$2')"/>
         <!-- need to look up the actual doc default: -->
@@ -1460,12 +1478,7 @@
           ($ad-hoc-prop),
           $doc-default)"/>
         <xsl:if test="
-          exists($by-r-rule) and not($calculated = $by-r-rule)
-          or empty($by-r-rule) and 
-          (
-          (exists($p) and exists($p-toggle) and not($calculated = $p-toggle))
-          or not($calculated = $by-p-rule)
-          )">
+          not($calculated = ($by-r-rule, $p-toggle, $by-p-rule)[1])">
           <xsl:attribute name="{$prop-name}" select="$calculated"/>
         </xsl:if>
       </xsl:when>
@@ -1478,30 +1491,10 @@
           select="docx2hub:toggle-prop($active, $default, 
                                        ($t-prop, $p-prop, $r-prop),
                                        $doc-default)"/>
-        <!-- TODO: keep table rules (with banding), and consider them too -->
-        <!--<xsl:if test="$context/w:t[. = 'rw']">
-          <xsl:message select="'CCCCCCCCCCCCCC',$calculated, $by-rule"></xsl:message>
-        </xsl:if>-->
         <xsl:if test="
-          exists($by-r-rule) and not($calculated = $by-r-rule)
-          or empty($by-r-rule) and 
-            (
-              (exists($p) and exists($p-toggle) and not($calculated = $p-toggle))
-              or not($calculated = $by-p-rule)
-            )">
+          not($calculated = ($by-r-rule, $p-toggle, $by-p-rule)[1])">
           <xsl:attribute name="{$prop-name}" select="$calculated"/>
         </xsl:if>
-      </xsl:when>
-      <xsl:when test="
-        $prop-name = ('css:text-decoration-line', 'css:text-shadow') and
-        (some $p in ($p-prop, $r-prop) satisfies $p = ('underline', '1px 0px')) and
-          (exists($by-r-rule) and not($r-prop = $by-r-rule)
-            or empty($by-r-rule) and
-            (
-              (exists($p) and exists($p-toggle) and not($p-prop = $p-toggle))
-              or not($p-prop = $by-p-rule)
-            ))">
-        <xsl:attribute name="{$prop-name}" select="('underline'[$prop-name = 'css:text-decoration-line'], '1px 0px')[1]"/>
       </xsl:when>
       <xsl:otherwise>
         <!-- nothing? -->

@@ -270,13 +270,23 @@
                 </p:identity>
               </p:when>
               <p:when test="matches($active, 'wmf') and matches($active, 'ole|yes')">
-                <!-- wmf ok, ole ok, with diff -->
+                <!-- wmf ok, ole ok, with diff -->                
+                <p:delete name="remove-class-from-wmf" match="@class">
+                  <p:input port="source"><p:pipe port="result" step="convert-wmf"/></p:input>
+                </p:delete>
+                <p:delete name="remove-pi-from-wmf" match="processing-instruction()"/>
+                <p:sink/>
+                <p:delete name="remove-class-from-ole" match="@class">
+                  <p:input port="source"><p:pipe port="result" step="convert-ole"/></p:input>
+                </p:delete>
+                <p:delete name="remove-pi-from-ole" match="processing-instruction()"/>
+                <p:sink/>
                 <p:compare name="compare-mml" fail-if-not-equal="false">
                   <p:input port="source">
-                    <p:pipe port="result" step="convert-wmf"/>
+                    <p:pipe port="result" step="remove-pi-from-wmf"/>
                   </p:input>
                   <p:input port="alternate">
-                    <p:pipe port="result" step="convert-ole"/>
+                    <p:pipe port="result" step="remove-pi-from-ole"/>
                   </p:input>
                 </p:compare>
                 <p:identity>

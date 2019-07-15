@@ -928,6 +928,14 @@
                     <xsl:attribute name="docx2hub:field-function-args" 
                       select="replace($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY\s+', '', 's')"/>
                   </xsl:when>
+                  <xsl:when test="$instr-text-nodes/w:instrText/@docx2hub:field-function-name = 'CITAVI_JSON'">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_JSON'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" select="$instr-text-nodes/w:instrText/@docx2hub:field-function-args"/>
+                  </xsl:when>
+                  <xsl:when test="matches($instr-text-string, '^https?')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'HYPERLINK'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" select="$instr-text-string"/>
+                  </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">
                       <xsl:analyze-string select="$instr-text-string" regex="^\s*\\?(\i\c*)\s*">

@@ -36,7 +36,7 @@
   <xsl:variable name="debug-dir" select="concat(replace($base-dir, '^(.+/)(.+?/)$', '$1'), 'debug')"/>
   <!-- Links that probably have been inserted by Word without user content: -->
   <xsl:param name="unwrap-tooltip-links" select="'no'" as="xs:string?"/>
-  <xsl:param name="hub-version" select="'1.0'" as="xs:string"/>
+  <xsl:param name="hub-version" select="'1.2'" as="xs:string"/>
   <xsl:param name="discard-alternate-choices" select="'yes'" as="xs:string"/>
   <xsl:param name="include-header-and-footer" select="'no'" as="xs:string"/>
   <xsl:param name="convert-footer" select="false()" as="xs:boolean"/>
@@ -370,7 +370,7 @@
   <xsl:template match="w:r[every $child in * satisfies $child/(self::w:instrText | self::w:fldChar)]" mode="docx2hub:field-functions"/>
   
   <!-- used to be handled in wml-to-dbk, earlier translation due to problems when used in 
-       fieldfunctions  -->
+       field codes -->
   <xsl:template match="w:r[w:noBreakHyphen[following-sibling::w:instrText]]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:copy>
       <xsl:apply-templates select="@*, node() except w:noBreakHyphen" mode="#current"/>
@@ -393,7 +393,7 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="w:p/w:r/@*" mode="docx2hub:remove-redundant-run-atts">
+  <xsl:template match="w:p/w:r/@*[not(name() = $docx2hub:toggle-prop-names)]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:variable name="self-name" select="name()"/>
     <xsl:variable name="p-style" select="../../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
     <xsl:variable name="r-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
@@ -415,7 +415,7 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="w:p/@*" mode="docx2hub:remove-redundant-run-atts">
+  <xsl:template match="w:p/@*[not(name() = $docx2hub:toggle-prop-names)]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:variable name="self-name" select="name()"/>
     <xsl:variable name="p-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
     <xsl:choose>

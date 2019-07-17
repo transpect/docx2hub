@@ -1058,7 +1058,7 @@
   <xsl:template match="w:instrText[not(position() = last())]
                                   [normalize-space()]
                                   [1]
-                                  [not(contains(., '&quot;'))]
+                                  [not(matches(., '[&quot;()]'))] (: word2tex mantis-18038 has a case with parentheses :)
                               /node()[1][self::text()]" 
     mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6"/>
   <xsl:template match="w:instrText[not(position() = last())]

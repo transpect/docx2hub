@@ -1571,7 +1571,7 @@
         <xsl:apply-templates select="m:oMath/@*" mode="omml2mml"/>
         <mml:mtable>
           <xsl:if test=".//w:br">
-            <xsl:attribute name="columnalign" select="'left'"/>
+            <xsl:attribute name="columnalign" select="if (@css:text-align) then @css:text-align else 'left'"/>
           </xsl:if>
           <xsl:apply-templates select="node()" mode="omml2mml"/>
         </mml:mtable>

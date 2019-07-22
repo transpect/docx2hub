@@ -71,7 +71,7 @@
                       not($every-row-is-a-header)">
           <thead>
             <xsl:apply-templates select="w:tr[docx2hub:is-tableheader-row(.) 
-                                              and (position() eq 1 or preceding-sibling::*[1][self::w:tr]/docx2hub:is-tableheader-row(.))]" mode="tables">
+                                              and (position() eq 1 or preceding-sibling::w:tr[1]/docx2hub:is-tableheader-row(.))]" mode="tables">
               <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
               <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
               <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
@@ -83,7 +83,7 @@
           <xsl:apply-templates mode="tables"
             select="if($every-row-is-a-header) then * except w:tblPr
                     else * except (w:tblPr union w:tr[docx2hub:is-tableheader-row(.)
-                                                      and (position() eq 1 or preceding-sibling::*[1][self::w:tr]/docx2hub:is-tableheader-row(.))])">
+                                                      and (position() eq 1 or preceding-sibling::w:tr[1]/docx2hub:is-tableheader-row(.))])">
             <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
             <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
             <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>

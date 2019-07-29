@@ -417,16 +417,12 @@
   
   <xsl:template match="w:p/@*[not(name() = $docx2hub:toggle-prop-names)]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:variable name="self-name" select="name()"/>
-    <xsl:variable name="p-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
-    <xsl:choose>
-      <xsl:when test="exists($p-style) and . = $p-style">
-        <!-- inherit from para-style -->
-      </xsl:when>
-      <xsl:otherwise>
-        <!-- cant inherit -->
-        <xsl:copy/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="p-style" as="attribute()*" 
+                  select="../@role/key('style-by-name', .)/@*[name() = $self-name]"/>
+    <xsl:if test="not(exists($p-style) and . = $p-style)">
+      <!-- can't inherit from para style -->
+      <xsl:copy/>
+    </xsl:if>
   </xsl:template>
 
   <!-- ================================================================================ -->

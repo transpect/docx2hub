@@ -928,6 +928,13 @@
                     <xsl:attribute name="docx2hub:field-function-args" 
                       select="replace($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY\s+', '', 's')"/>
                   </xsl:when>
+                  <xsl:when test="matches($instr-text-string, 'FORMCHECKBOX', 's')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="$instr-text-string"/>
+                    <xsl:variable name="prec" select="(preceding-sibling::*[w:fldChar[@w:fldCharType='begin']])[last()]" as="node()?"/>
+                    <xsl:attribute name="docx2hub:field-function-args" 
+                      select="$prec/w:fldChar[@w:fldCharType='begin']/@w:val"/>
+                    <!-- see w:ffData handling too -->
+                  </xsl:when>
                   <xsl:when test="$instr-text-nodes/w:instrText/@docx2hub:field-function-name = 'CITAVI_JSON'">
                     <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_JSON'"/>
                     <xsl:attribute name="docx2hub:field-function-args" select="$instr-text-nodes/w:instrText/@docx2hub:field-function-args"/>
@@ -1135,7 +1142,8 @@
   <xsl:template match="w:fldChar" mode="docx2hub:remove-redundant-run-atts">
     <xsl:copy copy-namespaces="no">
       <xsl:attribute name="xml:id" select="concat('fldChar_', generate-id())"/>
-      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="@*, w:ffData/w:checkBox/w:default/@w:val" mode="#current"/>
+      <!-- §17.16.17 for w:ffData -->
     </xsl:copy>    
   </xsl:template>
   

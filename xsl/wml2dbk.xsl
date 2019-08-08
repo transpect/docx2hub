@@ -1060,7 +1060,16 @@
             </phrase>
           </xsl:when>
           <xsl:when test="name() = ('FORMCHECKBOX')">
-            <xsl:apply-templates mode="#current"/>
+            <phrase role="docx2hub:FORMCHECKBOX">
+              <xsl:choose>
+                <!-- see w:ffData element -->
+                <xsl:when test="@fldArgs = ('0', 'false')"> &#x25a1; </xsl:when>
+                <xsl:when test="@fldArgs = ('1', 'true')"> &#x22a0; </xsl:when>
+                <xsl:otherwise>
+                  <xsl:apply-templates mode="#current"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </phrase>
           </xsl:when>
           <xsl:when test="name() = 'INCLUDEPICTURE'">
             <xsl:choose>

@@ -32,7 +32,7 @@
 
   <xsl:template match="*" mode="wml-to-dbk docx2hub:add-props" priority="-0.9">
     <xsl:copy copy-namespaces="no">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="@*, *" mode="#current"/>
     </xsl:copy>
   </xsl:template>
 

@@ -485,7 +485,7 @@
       <xsl:if test="$is-removable">
         <xsl:attribute name="docx2hub:removable" select="$is-removable"/>
       </xsl:if>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="@*, *" mode="#current"/>
     </xsl:copy>
   </xsl:template>
 

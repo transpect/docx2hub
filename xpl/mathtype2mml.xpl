@@ -506,6 +506,12 @@
         </p:choose>
       </p:group>
       
+      <p:insert match="c:error[@code = 'formula-error']" position="before">
+        <p:input port="insertion">
+          <p:inline><wrap-mml><?tr M2M_212 MathType Conversion failed?></wrap-mml></p:inline>
+        </p:input>
+      </p:insert>
+      
       <p:unwrap match="wrap-mml"/>
 
       <p:viewport name="remove-unused-rels" match="w:docRels|w:footnoteRels|w:endnoteRels|w:commentRels">

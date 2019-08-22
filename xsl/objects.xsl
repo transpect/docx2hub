@@ -322,7 +322,7 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="processing-instruction()" mode="vml">
+  <xsl:template match="processing-instruction()[not(matches(. ,'^M2M_'))]" mode="vml">
     <xsl:call-template name="signal-error">
       <xsl:with-param name="error-code" select="'W2D_023'"/>
       <xsl:with-param name="fail-on-error" select="$fail-on-error"/>

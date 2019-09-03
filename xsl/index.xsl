@@ -60,7 +60,7 @@
             <xsl:call-template name="docx2hub:indexterm-attributes">
               <xsl:with-param name="xe" select="."/>
             </xsl:call-template>
-            <xsl:for-each select="('primary', 'secondary', 'tertiary')">
+            <xsl:for-each select="('primary', 'secondary', 'tertiary', 'quaternary', 'quinary', 'senary', 'septenary', 'octonary', 'nonary', 'denary')">
               <xsl:call-template name="indexterm-sub">
                 <xsl:with-param name="pos" select="position()"/>
                 <xsl:with-param name="real-term" select="$real-term"/>
@@ -239,14 +239,14 @@
     <xsl:value-of select="replace(., '^\s*&quot;(.*?)&quot;?\s*$', '$1')"/>
   </xsl:template>
   
-  <xsl:variable name="primary-secondary-etc" as="xs:string+" select="('primary', 'secondary', 'tertiary', 'quaternary')"/>
+  <xsl:variable name="primary-secondary-etc" as="xs:string+" select="('primary', 'secondary', 'tertiary', 'quaternary', 'quinary', 'senary', 'septenary', 'octonary', 'nonary', 'denary')"/>
   
   <xsl:function name="tr:primary-secondary-tertiary-number" as="xs:integer?">
     <xsl:param name="name" as="xs:string"/>
     <xsl:sequence select="index-of($primary-secondary-etc, $name)"/>
   </xsl:function>
   
-  <xsl:template match="dbk:primary | dbk:secondary | dbk:tertiary" mode="index-processing-1" priority="1">
+  <xsl:template match="dbk:primary | dbk:secondary | dbk:tertiary | dbk:quaternary | dbk:quinary | dbk:senary | dbk:septenary | dbk:octonary | dbk:nonary | dbk:denary" mode="index-processing-1" priority="1">
     <xsl:variable name="content" as="node()*">
       <xsl:sequence select="tr:extract-chars(node(),':',':')"/>
     </xsl:variable>

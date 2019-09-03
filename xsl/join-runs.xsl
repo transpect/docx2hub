@@ -157,14 +157,21 @@
 
   <!-- Postprocess EQ field functions -->
   <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']" mode="docx2hub:join-runs" priority="10">
+    <xsl:variable name="next-match" as="node()*">
+      <xsl:next-match/>
+    </xsl:variable>
     <xsl:choose>
       <xsl:when test="exists(ancestor::dbk:phrase[@role = 'docx2hub:EQ'])">
-        <xsl:next-match/>
+        <xsl:sequence select="$next-match"/>
+      </xsl:when>
+      <xsl:when test="$next-match/self::dbk:phrase[@role = 'docx2hub:EQ'] and empty($next-match/node())">
+        <!-- totally empty equations like EQ \O{} can be removed -->
       </xsl:when>
       <xsl:otherwise>
         <inlineequation role="EQ">
           <mml:math>
-            <xsl:next-match/>
+            <!-- TODO: make sure next-match only contains valid MathML -->
+            <xsl:sequence select="$next-match"/>
           </mml:math>
         </inlineequation>
       </xsl:otherwise>

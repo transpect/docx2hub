@@ -1497,7 +1497,7 @@
                 if(
                   (
                     $pos[1] -
-                    $cell/preceding-sibling::w:tc[preceding-sibling::w:tc or $look/@w:firstColumn = 0]
+                    count($cell/preceding-sibling::w:tc[preceding-sibling::w:tc or $look/@w:firstColumn = 0])
                   ) mod 2 eq 1) then 'band1Vert' else 'band2Vert'"/>
             </xsl:when>
           </xsl:choose>

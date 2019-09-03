@@ -1439,10 +1439,10 @@
           <xsl:variable name="pos" as="xs:decimal+" select="
             (: applicable row and col :)
             count($row/(preceding-sibling::w:tr, self::w:tr)),
-            sum((1, for $tc in $cell/(preceding-sibling::w:tc) return ($tc/w:tcPr/w:gridSpan/@w:val, 1)[1]))"/>
+            xs:decimal(sum((1, for $tc in $cell/(preceding-sibling::w:tc) return ($tc/w:tcPr/w:gridSpan/@w:val, 1)[1])))"/>
           <xsl:variable name="lastPositions" as="xs:decimal+" select="
             count($tbl/w:tblGrid/w:gridCol),
-            sum((for $tc in $tbl/w:tr[1]/w:tc return ($tc/w:tcPr/w:gridSpan/@w:val, 1)[1]))
+            xs:decimal(sum((for $tc in $tbl/w:tr[1]/w:tc return ($tc/w:tcPr/w:gridSpan/@w:val, 1)[1])))
             "/>
           <xsl:variable name="pos-in-body" as="xs:decimal?" select="
             (: bandings ignore header lines in even/odd calculation :)

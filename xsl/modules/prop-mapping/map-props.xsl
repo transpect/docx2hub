@@ -1411,21 +1411,97 @@
     <xsl:param name="prop-name" as="xs:string"/>
     <xsl:param name="p-toggle" as="attribute(*)?"/>
     <xsl:variable name="banding-name" as="xs:string?">
-      <xsl:variable name="orig-name" select="$context/ancestor::w:tc/w:tcPr/w:cnfStyle/@w:*[. = ('1', 'true')]/local-name()"/>
+      <xsl:variable name="tbl" as="node()?" select="($context/ancestor::w:tbl)[last()]"/>
       <xsl:choose>
-        <xsl:when test="$orig-name = 'lastRow'">lastRow</xsl:when>
-        <xsl:when test="$orig-name = 'firstRow'">firstRow</xsl:when>
-        <xsl:when test="$orig-name = 'oddHBand'">band1Horz</xsl:when>
-        <xsl:when test="$orig-name = 'oddVBand'">band1Vert</xsl:when>
-        <xsl:when test="$orig-name = 'evenHBand'">band2Horz</xsl:when>
-        <xsl:when test="$orig-name = 'evenVBand'">band2Vert</xsl:when>
-        <xsl:when test="$orig-name = 'lastColumn'">lastCol</xsl:when>
-        <xsl:when test="$orig-name = 'firstColumn'">firstCol</xsl:when>
-        <xsl:when test="$orig-name = 'lastRowLastColumn'">seCell</xsl:when>
-        <xsl:when test="$orig-name = 'lastRowFirstColumn'">swCell</xsl:when>
-        <xsl:when test="$orig-name = 'firstRowLastColumn'">neCell</xsl:when>
-        <xsl:when test="$orig-name = 'firstRowFirstColumn'">nwCell</xsl:when>
-        <xsl:otherwise/>
+        <xsl:when test="empty($tbl)"/>
+        <xsl:when test="exists($context/ancestor::w:tc/w:tcPr/w:cnfStyle)">
+          <xsl:variable name="orig-name" select="$context/ancestor::w:tc/w:tcPr/w:cnfStyle/@w:*[. = ('1', 'true')]/local-name()"/>
+          <xsl:choose>
+            <xsl:when test="$orig-name = 'lastRow'">lastRow</xsl:when>
+            <xsl:when test="$orig-name = 'firstRow'">firstRow</xsl:when>
+            <xsl:when test="$orig-name = 'oddHBand'">band1Horz</xsl:when>
+            <xsl:when test="$orig-name = 'oddVBand'">band1Vert</xsl:when>
+            <xsl:when test="$orig-name = 'evenHBand'">band2Horz</xsl:when>
+            <xsl:when test="$orig-name = 'evenVBand'">band2Vert</xsl:when>
+            <xsl:when test="$orig-name = 'lastColumn'">lastCol</xsl:when>
+            <xsl:when test="$orig-name = 'firstColumn'">firstCol</xsl:when>
+            <xsl:when test="$orig-name = 'lastRowLastColumn'">seCell</xsl:when>
+            <xsl:when test="$orig-name = 'lastRowFirstColumn'">swCell</xsl:when>
+            <xsl:when test="$orig-name = 'firstRowLastColumn'">neCell</xsl:when>
+            <xsl:when test="$orig-name = 'firstRowFirstColumn'">nwCell</xsl:when>
+            <xsl:otherwise/>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="row" as="node()?" select="($context/ancestor::w:tr)[last()]"/>
+          <xsl:variable name="cell" as="node()?" select="($context/ancestor::w:tc)[last()]"/>
+          <xsl:variable name="look" as="node()?" select="$tbl/w:tblPr/w:tblLook"/>
+          <xsl:variable name="pos" as="xs:decimal+" select="
+            (: applicable row and col :)
+            count($row/(preceding-sibling::w:tr, self::w:tr)),
+            sum((1, for $tc in $cell/(preceding-sibling::w:tc) return ($tc/w:tcPr/w:gridSpan/@w:val, 1)[1]))"/>
+          <xsl:variable name="lastPositions" as="xs:decimal+" select="
+            count($tbl/w:tblGrid/w:gridCol),
+            sum((for $tc in $tbl/w:tr[1]/w:tc return ($tc/w:tcPr/w:gridSpan/@w:val, 1)[1]))
+            "/>
+          <xsl:variable name="pos-in-body" as="xs:decimal?" select="
+            (: bandings ignore header lines in even/odd calculation :)
+            max((0, $pos[1] - count($row/preceding-sibling::w:tr[w:tblHeader])))"/>
+          <xsl:variable name="is-thead" as="xs:boolean" select="
+            exists($row/w:tblHeader) or
+            ($pos[1] = 1 and $look/@w:firstRow = 1)"/>
+          <xsl:choose>
+            <!-- corner cells -->
+            <xsl:when test="
+              $look/@w:lastRow = 1 and
+              $look/@w:lastColumn = 1 and
+              $pos[1] = $lastPositions[1] and
+              $pos[2] = $lastPositions[2]">seCell</xsl:when>
+            <xsl:when test="
+              $look/@w:lastRow = 1 and
+              $look/@w:firstColumn = 1 and
+              $pos[1] = $lastPositions[1] and
+              $pos[2] = 1">swCell</xsl:when>
+            <xsl:when test="
+              $look/@w:firstRow = 1 and
+              $look/@w:lastColumn = 1 and
+              $pos[1] = 1 and
+              $pos[2] = $lastPositions[2]">neCell</xsl:when>
+            <xsl:when test="
+              $look/@w:firstRow = 1 and
+              $look/@w:firstColumn = 1 and
+              $pos[1] = 1 and
+              $pos[2] = 1">nwCell</xsl:when>
+            <!-- first/last row/col -->
+            <xsl:when test="
+              $look/@w:lastRow = 1 and
+              $pos[1] = $lastPositions[1]">lastRow</xsl:when>
+            <xsl:when test="
+              $look/@w:firstRow = 1 and
+              $is-thead">firstRow</xsl:when>
+            <xsl:when test="
+              $look/@w:lastColumn = 1 and
+              $pos[2] = $lastPositions[2]">lastCol</xsl:when>
+            <xsl:when test="
+              $look/@w:firstColumn = 1 and
+              $pos[2] = 1">firstCol</xsl:when>
+            <!-- even/odd banding -->
+            <xsl:when test="
+              $look/@w:noHBand = 0 and
+              not($is-thead)">
+              <xsl:sequence select="if($pos-in-body[1] mod 2 eq 1) then 'band1Horz' else 'band2Horz'"/>
+            </xsl:when>
+            <xsl:when test="
+              $look/@w:noVBand = 0">
+              <xsl:sequence select="
+                if(
+                  (
+                    $pos[1] -
+                    $cell/preceding-sibling::w:tc[preceding-sibling::w:tc or $look/@w:firstColumn = 0]
+                  ) mod 2 eq 1) then 'band1Vert' else 'band2Vert'"/>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:variable name="r" as="element(*)?" select="$context/(self::w:r, self::*:superscript, self::*:subscript)"/>

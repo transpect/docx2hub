@@ -899,14 +899,15 @@
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:variable name="instr-text-nodes" as="document-node()">
                   <xsl:document>
-                    <xsl:sequence select="current-group()/(w:instrText 
-                                                           (:| self::w:fldSimple/@w:instr 
-                                                           | self::w:fldSimple/w:r/w:instrText:)
-                                                           | self::w:fldSimple
-                                                           | w:sym[parent::w:r]
-                                                           | self::*:superscript | self::*:subscript
-                                                           | self::m:oMath (: may occur in XE :))
-                                                          [. >> $preceding-begin]"/>
+                    <xsl:apply-templates select="current-group()/(w:instrText 
+                                                                 (:| self::w:fldSimple/@w:instr 
+                                                                 | self::w:fldSimple/w:r/w:instrText:)
+                                                                 | self::w:fldSimple
+                                                                 | w:sym[parent::w:r]
+                                                                 | self::*:superscript | self::*:subscript
+                                                                 | self::m:oMath (: may occur in XE :))
+                                                                [. >> $preceding-begin]"
+                                         mode="docx2hub:join-instrText-runs_save-formatting"/>
                   </xsl:document>
                 </xsl:variable> 
                 <!-- docx2hub:join-instrText-runs_render-compound1 is for rendering the instrText as text for attributes,
@@ -1015,7 +1016,19 @@
   <xsl:template match="@*" mode="docx2hub:join-instrText-runs_render-compound2">
     <xsl:copy/>
   </xsl:template>
+  
+  <xsl:template match="node() | @*" mode="docx2hub:join-instrText-runs_save-formatting">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
 
+  <xsl:template match="w:r/w:instrText | w:r/w:sym" mode="docx2hub:join-instrText-runs_save-formatting">
+    <xsl:copy>
+      <xsl:apply-templates select="../@*, @*, node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template match="w:fldSimple" 
     mode="docx2hub:join-instrText-runs_render-compound2" priority="3">
     <!-- this should be covered by $instr-text-nodes in the long template above, but apparently it isn’t -->
@@ -1062,10 +1075,36 @@
   </xsl:template>
   
   <xsl:template match="w:instrText[1]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
+    <xsl:call-template name="docx2hub:instrText-formatting">
+      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
+      <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
+    </xsl:call-template>
   </xsl:template>
   
-  <!-- special case when the instr text namec is in one w:r and the " is in the next: -->
+  <xsl:template name="docx2hub:instrText-formatting">
+    <xsl:param name="instrText" as="element(w:instrText)"/>
+    <xsl:param name="string" as="xs:string"/>
+    <xsl:analyze-string select="$string" regex="[:;]">
+      <xsl:matching-substring>
+        <xsl:value-of select="."/>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <xsl:choose>
+          <xsl:when test="exists($instrText/@css:*)">
+            <phrase>
+              <xsl:copy-of select="$instrText/@css:*"/>
+              <xsl:value-of select="."/>
+            </phrase>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
+  </xsl:template>
+  
+  <!-- special case when the instr text name is in one w:r and the " is in the next: -->
   <xsl:template match="w:instrText[not(position() = last())][matches(., '^\s*&quot;\s*$')][1]/node()[1][self::text()]" 
     mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6">
   </xsl:template>
@@ -1083,19 +1122,38 @@
     mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6"/>
   
   <xsl:template match="w:instrText[last()]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-    <xsl:value-of select="replace(., '[\s&quot;]+$', '')"/>
+    <xsl:call-template name="docx2hub:instrText-formatting">
+      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
+      <xsl:with-param name="string" as="xs:string" select="replace(., '[\s&quot;]+$', '')"/>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="w:instrText[1][last()][empty(*)]/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:value-of select="replace(replace(., '^\s*\w+\s+&quot;?\s*', ''), '[\s&quot;]+$', '')"/>
+    <xsl:call-template name="docx2hub:instrText-formatting">
+      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
+      <xsl:with-param name="string" as="xs:string" select="replace(replace(., '^\s*\w+\s+&quot;?\s*', ''), '[\s&quot;]+$', '')"/>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="w:instrText[*]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:value-of select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
+    <xsl:call-template name="docx2hub:instrText-formatting">
+      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
+      <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="w:instrText[*]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:value-of select="replace(., '[\s&quot;]+$', '')"/>
+    <xsl:call-template name="docx2hub:instrText-formatting">
+      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
+      <xsl:with-param name="string" as="xs:string" select="replace(., '[\s&quot;]+$', '')"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template match="w:instrText/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="0.8">
+    <xsl:call-template name="docx2hub:instrText-formatting">
+      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
+      <xsl:with-param name="string" as="xs:string" select="."/>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="m:oMath" mode="docx2hub:join-instrText-runs_render-compound2" priority="2">

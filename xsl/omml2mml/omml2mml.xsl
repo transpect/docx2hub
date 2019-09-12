@@ -3292,6 +3292,21 @@
     </mml:mtr>
   </xsl:template>
   
+  <!-- w:std in equations
+       https://mantis.le-tex.de/mantis/view.php?id=26491 -->
+  
+  <xsl:template match="w:sdt" mode="omml2mml">
+    <xsl:apply-templates select="w:sdtContent/m:oMath/node()" mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="w:sdt[preceding-sibling::*[1][self::m:oMath][m:r]]" mode="omml2mml">
+    <mml:mtr>
+      <mml:mtd>
+        <xsl:apply-templates select="w:sdtContent/m:oMath/node()" mode="#current"/>
+      </mml:mtd>
+    </mml:mtr>
+  </xsl:template>
+  
   <xsl:function name="mml:replace-combining-chars" as="xs:string?">
     <xsl:param name="string" as="xs:string?"/>
     <xsl:value-of select="translate($string, 

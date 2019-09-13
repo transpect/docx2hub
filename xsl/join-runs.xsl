@@ -988,7 +988,10 @@
                       </xsl:when>
                       <xsl:otherwise>
                         <xsl:sequence select="$prelim"/>
-                        <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2"/>
+                        <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2">
+                          <xsl:with-param name="formatting-acceptable" as="xs:boolean" tunnel="yes" 
+                            select="matches($instr-text-string, '^\s*xe\s+', 'i')"/>
+                        </xsl:apply-templates>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:otherwise>
@@ -1084,24 +1087,32 @@
   <xsl:template name="docx2hub:instrText-formatting">
     <xsl:param name="instrText" as="element(w:instrText)"/>
     <xsl:param name="string" as="xs:string"/>
-    <xsl:analyze-string select="$string" regex="[:;]">
-      <xsl:matching-substring>
-        <xsl:value-of select="."/>
-      </xsl:matching-substring>
-      <xsl:non-matching-substring>
-        <xsl:choose>
-          <xsl:when test="exists($instrText/@css:*)">
-            <phrase>
-              <xsl:copy-of select="$instrText/@css:*"/>
-              <xsl:value-of select="."/>
-            </phrase>
-          </xsl:when>
-          <xsl:otherwise>
+    <xsl:param name="formatting-acceptable" as="xs:boolean" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="$formatting-acceptable">
+        <xsl:analyze-string select="$string" regex="[:;]">
+          <xsl:matching-substring>
             <xsl:value-of select="."/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:non-matching-substring>
-    </xsl:analyze-string>
+          </xsl:matching-substring>
+          <xsl:non-matching-substring>
+            <xsl:choose>
+              <xsl:when test="exists($instrText/@css:*)">
+                <phrase>
+                  <xsl:copy-of select="$instrText/@css:*"/>
+                  <xsl:value-of select="."/>
+                </phrase>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:non-matching-substring>
+        </xsl:analyze-string>    
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$string"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <!-- special case when the instr text name is in one w:r and the " is in the next: -->

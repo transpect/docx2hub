@@ -1322,7 +1322,8 @@
   <xsl:template match="mml:*[not(ancestor::*[ends-with(name(), 'equation')]/@role eq 'mtef')][mml:mi]" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] | self::mml:mtext)">
+      <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] 
+                                                                |self::mml:mtext[not(@fontstyle) or @fontstyle eq 'normal'])">
         <xsl:choose>
           <xsl:when test="current-grouping-key() and string-length(string-join(current-group(), '')) gt 1">
             <xsl:for-each-group select="current-group()" group-adjacent="if (@mathcolor) then @mathcolor else ''">
@@ -1330,7 +1331,7 @@
                 <xsl:when test="string-length(string-join(current-group(), '')) gt 1">
                   <xsl:variable name="prelim" as="element(mml:mtext)">
                     <mml:mtext>
-                      <xsl:apply-templates select="current-group()[1]/@mathcolor" mode="#current"/>
+                      <xsl:apply-templates select="current-group()[1]/@*[not(name() = @fontstyle)]" mode="#current"/>
                       <xsl:apply-templates select="current-group()/node()" mode="#current"/>
                     </mml:mtext>  
                   </xsl:variable>

@@ -1087,7 +1087,7 @@
   <xsl:template name="docx2hub:instrText-formatting">
     <xsl:param name="instrText" as="element(w:instrText)"/>
     <xsl:param name="string" as="xs:string"/>
-    <xsl:param name="formatting-acceptable" as="xs:boolean" tunnel="yes"/>
+    <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
         <xsl:analyze-string select="$string" regex="[:;]">

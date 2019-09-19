@@ -931,10 +931,18 @@
                     <xsl:attribute name="docx2hub:field-function-args" 
                       select="replace($instr-text-string, '^ADDIN\s+CitaviPlaceholder\{(.+)\}$', '$1', 's')"/>
                   </xsl:when>
-                  <xsl:when test="matches($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY', 's')">
+                  <xsl:when test="matches($instr-text-string, '^ADDIN\s+CITAVI\.PLACEHOLDER', 's')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_JSON'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" 
+                      select="replace($instr-text-string, '^ADDIN\s+CITAVI\.PLACEHOLDER\s+(.+?)\s+(.+)$', '$2', 's')"/>
+                    <xsl:attribute name="docx2hub:citation-uuid" 
+                      select="replace($instr-text-string, '^ADDIN\s+CITAVI\.PLACEHOLDER\s+(.+?)\s+(.+)$', '$1', 's')"/>
+                  </xsl:when>
+
+                  <xsl:when test="matches($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY', 'si')">
                     <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_XML'"/>
                     <xsl:attribute name="docx2hub:field-function-args" 
-                      select="replace($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY\s+', '', 's')"/>
+                      select="replace($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY\s+', '', 'si')"/>
                   </xsl:when>
                   <xsl:when test="matches($instr-text-string, 'FORMCHECKBOX', 's')">
                     <xsl:attribute name="docx2hub:field-function-name" select="$instr-text-string"/>
@@ -989,7 +997,7 @@
                       <xsl:otherwise>
                         <xsl:sequence select="$prelim"/>
                         <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2">
-                          <xsl:with-param name="formatting-acceptable" as="xs:boolean" tunnel="yes" 
+                          <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes" 
                             select="matches($instr-text-string, '^\s*xe\s+', 'i')"/>
                         </xsl:apply-templates>
                       </xsl:otherwise>
@@ -1149,6 +1157,14 @@
       <xsl:with-param name="string" as="xs:string" select="."/>
     </xsl:call-template>
   </xsl:template>
+  
+  <xsl:template match="w:instrText[1]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
+    <xsl:call-template name="docx2hub:instrText-formatting">
+      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
+      <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+\s+', '')"/>
+    </xsl:call-template>
+  </xsl:template>
+
   
   <xsl:template match="m:oMath" mode="docx2hub:join-instrText-runs_render-compound2" priority="2">
     <xsl:sequence select="."/>

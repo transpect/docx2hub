@@ -24,7 +24,7 @@
   </xsl:template>
   
 
-  <xsl:template match="w:sdtPr/w:tag/@w:val[starts-with(., 'CitaviPlaceholder')]" mode="wml-to-dbk">
+  <xsl:template match="w:sdtPr/w:tag/@w:val[matches(., '^Citavi\.?Placeholder', 'i')]" mode="wml-to-dbk">
     <xsl:param name="citavi-refs" as="document-node()?" tunnel="yes"/>
     <xsl:if test="exists($citavi-refs/docx2hub:citavi-jsons)">
       <xsl:variable name="cited-refs" as="element(fn:map)*" 
@@ -37,7 +37,7 @@
   <xsl:key name="docx2hub:by-citavi-placeholder" match="fn:map[fn:string[@key = 'Tag']]" 
     use="string(fn:string[@key = 'Tag'])"/>
   
-  <xsl:template match="w:sdt[w:sdtPr/w:tag/@w:val[starts-with(., 'CitaviPlaceholder')]]" mode="wml-to-dbk tables">
+  <xsl:template match="w:sdt[w:sdtPr/w:tag/@w:val[matches(., '^Citavi\.?Placeholder', 'i')]]" mode="wml-to-dbk tables">
     <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
   </xsl:template>
 

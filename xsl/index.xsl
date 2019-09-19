@@ -150,7 +150,7 @@
       </xsl:variable>
       <xsl:for-each-group select="$primary-etc/node()" group-starting-with="dbk:sep">
         <xsl:variable name="pos" as="xs:integer" select="position()"/>
-        <xsl:if test="normalize-space(string-join(current-group()))">
+        <xsl:if test="normalize-space(string-join(current-group(), ''))">
           <xsl:variable name="prelim" as="document-node(element(*))">
             <xsl:document>
               <xsl:element name="{$primary-secondary-etc[$pos]}">

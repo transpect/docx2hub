@@ -167,6 +167,19 @@
           <xsl:apply-templates select="$prelim" mode="wml-to-dbk_normalize-space"/>
         </xsl:if>
       </xsl:for-each-group>
+      <xsl:variable name="see-flag" as="element(dbk:flag)?" select="dbk:flag[. = '\t']"/>
+      <xsl:if test="exists($see-flag)">
+        <xsl:variable name="open" as="element(dbk:quot)" select="dbk:quot[. >> $see-flag][1]"/>
+        <xsl:variable name="close" as="element(dbk:quot)" select="dbk:quot[. >> $see-flag][2]"/>
+        <xsl:variable name="prelim" as="document-node(element(dbk:see))">
+          <xsl:document>
+            <see>
+              <xsl:apply-templates select="node()[. >> $open and . &lt;&lt; $close]" mode="#current"/>  
+            </see>
+          </xsl:document>
+        </xsl:variable>
+        <xsl:apply-templates select="$prelim" mode="wml-to-dbk_normalize-space"/>
+      </xsl:if>
     </indexterm>
     <xsl:apply-templates select="descendant::XE[1]" mode="#current">
       <!-- _intern/index_kursiv_fett2.docx contains nested XEs! -->

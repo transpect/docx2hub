@@ -1077,22 +1077,50 @@
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
-  <xsl:template match="w:instrText[1]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-    <xsl:call-template name="docx2hub:instrText-formatting">
-      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
-      <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
-    </xsl:call-template>
-  </xsl:template>
-  
   <xsl:template name="docx2hub:instrText-formatting">
     <xsl:param name="instrText" as="element(w:instrText)"/>
     <xsl:param name="string" as="xs:string"/>
     <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
-        <xsl:analyze-string select="$string" regex="[:;]">
+        <xsl:analyze-string select="$string" regex="([:;&quot;]|\s\\[a-z]|\\&quot;)">
           <xsl:matching-substring>
-            <xsl:value-of select="."/>
+            <xsl:choose>
+              <xsl:when test=". = ':'">
+                <sep>
+                  <xsl:value-of select="."/>
+                </sep>
+              </xsl:when>
+              <xsl:when test=". = ';'">
+                <sortkey>
+                  <xsl:value-of select="."/>
+                </sortkey>
+              </xsl:when>
+              <xsl:when test=". = '&quot;'">
+                <quot>
+                  <xsl:value-of select="."/>
+                </quot>
+              </xsl:when>
+              <xsl:when test="matches(., '^\s\\[a-z]$')">
+                <xsl:value-of select="substring(., 1, 1)"/>
+                <flag>
+                  <xsl:value-of select="substring(., 2)"/>
+                </flag>
+              </xsl:when>
+              <xsl:when test=". = '\&quot;'">
+                <xsl:choose>
+                  <xsl:when test="exists($instrText/@css:*)">
+                    <phrase>
+                      <xsl:copy-of select="$instrText/@css:*"/>
+                      <xsl:value-of select="'&quot;'"/>
+                    </phrase>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="'&quot;'"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:when>
+            </xsl:choose>
           </xsl:matching-substring>
           <xsl:non-matching-substring>
             <xsl:choose>
@@ -1113,51 +1141,6 @@
         <xsl:value-of select="$string"/>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:template>
-  
-  <!-- special case when the instr text name is in one w:r and the " is in the next: -->
-  <xsl:template match="w:instrText[not(position() = last())][matches(., '^\s*&quot;\s*$')][1]/node()[1][self::text()]" 
-    mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6">
-  </xsl:template>
-  <xsl:template match="w:instrText[not(position() = last())]
-                                  [normalize-space()]
-                                  [1]
-                                  [not(matches(., '[&quot;()]'))] (: word2tex mantis-18038 has a case with parentheses :)
-                              /node()[1][self::text()]" 
-    mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6"/>
-  <xsl:template match="w:instrText[not(position() = last())]
-                                  [not(normalize-space())]
-                                  [not(@xml:space = 'preserve')]
-                                  [1]
-                              /node()[1][self::text()]" 
-    mode="docx2hub:join-instrText-runs_render-compound2" priority="1.6"/>
-  
-  <xsl:template match="w:instrText[last()]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1">
-    <xsl:call-template name="docx2hub:instrText-formatting">
-      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
-      <xsl:with-param name="string" as="xs:string" select="replace(., '[\s&quot;]+$', '')"/>
-    </xsl:call-template>
-  </xsl:template>
-  
-  <xsl:template match="w:instrText[1][last()][empty(*)]/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:call-template name="docx2hub:instrText-formatting">
-      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
-      <xsl:with-param name="string" as="xs:string" select="replace(replace(., '^\s*\w+\s+&quot;?\s*', ''), '[\s&quot;]+$', '')"/>
-    </xsl:call-template>
-  </xsl:template>
-  
-  <xsl:template match="w:instrText[*]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:call-template name="docx2hub:instrText-formatting">
-      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
-      <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+\s+&quot;?\s*', '')"/>
-    </xsl:call-template>
-  </xsl:template>
-  
-  <xsl:template match="w:instrText[*]/node()[last()][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
-    <xsl:call-template name="docx2hub:instrText-formatting">
-      <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
-      <xsl:with-param name="string" as="xs:string" select="replace(., '[\s&quot;]+$', '')"/>
-    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="w:instrText/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="0.8">
@@ -1331,7 +1314,7 @@
                 <xsl:when test="string-length(string-join(current-group(), '')) gt 1">
                   <xsl:variable name="prelim" as="element(mml:mtext)">
                     <mml:mtext>
-                      <xsl:apply-templates select="current-group()[1]/@*[not(name() = @fontstyle)]" mode="#current"/>
+                      <xsl:apply-templates select="current-group()[1]/@*[not(name() = 'fontstyle')]" mode="#current"/>
                       <xsl:apply-templates select="current-group()/node()" mode="#current"/>
                     </mml:mtext>  
                   </xsl:variable>

@@ -141,59 +141,68 @@
       <xsl:call-template name="docx2hub:indexterm-attributes">
         <xsl:with-param name="xe" select="."/>
       </xsl:call-template>
+      <xsl:variable name="open" as="element(dbk:quot)" select="dbk:quot[1]"/>
+      <xsl:variable name="close" as="element(dbk:quot)" select="dbk:quot[2]"/>
       <xsl:variable name="primary-etc" as="document-node()">
         <xsl:document>
-          <xsl:apply-templates mode="#current"/>
+          <xsl:apply-templates select="node()[. >> $open and . &lt;&lt; $close]" mode="#current"/>
         </xsl:document>
       </xsl:variable>
       <xsl:for-each-group select="$primary-etc/node()" group-starting-with="dbk:sep">
         <xsl:variable name="pos" as="xs:integer" select="position()"/>
-        <xsl:element name="{$primary-secondary-etc[$pos]}">
-          <xsl:variable name="sortkey-sep" select="current-group()/self::dbk:sortkey[1]" as="element(dbk:sortkey)?"/>
-          <xsl:variable name="sortas" as="node()*" select="current-group()[. >> $sortkey-sep]"/>
-          <xsl:variable name="term" as="node()*" select="current-group()[not(self::dbk:sep)][not(. >> $sortkey-sep)]"/>
-          <xsl:if test="exists(current-group()[1][self::dbk:inlineequation or self::dbk:equation]|$sortas)">
-            <xsl:attribute name="sortas" select="string-join(if (exists($sortas)) then $sortas else current-group(), '')"/>
-          </xsl:if>
-          <xsl:sequence select="$term"/>
-        </xsl:element>
+        <xsl:variable name="prelim" as="document-node(element(*))">
+          <xsl:document>
+            <xsl:element name="{$primary-secondary-etc[$pos]}">
+              <xsl:variable name="sortkey-sep" select="current-group()/self::dbk:sortkey[1]" as="element(dbk:sortkey)?"/>
+              <xsl:variable name="sortas" as="node()*" select="current-group()[. >> $sortkey-sep]"/>
+              <xsl:variable name="term" as="node()*" select="current-group()[not(self::dbk:sep)][not(. >> $sortkey-sep)]"/>
+              <xsl:if test="exists(current-group()[1][self::dbk:inlineequation or self::dbk:equation]|$sortas)">
+                <xsl:attribute name="sortas" select="string-join(if (exists($sortas)) then $sortas else current-group(), '')"/>
+              </xsl:if>
+              <xsl:sequence select="$term"/>
+            </xsl:element>  
+          </xsl:document>
+        </xsl:variable>
+        <xsl:apply-templates select="$prelim" mode="wml-to-dbk_normalize-space"/>
       </xsl:for-each-group>
     </indexterm>
+    <xsl:apply-templates select="descendant::XE[1]" mode="#current">
+      <!-- _intern/index_kursiv_fett2.docx contains nested XEs! -->
+    </xsl:apply-templates>
+  </xsl:template>
+
+  <xsl:template match="/*//text()[. is (ancestor::*[last()]//text())[1]]" 
+    mode="wml-to-dbk_normalize-space" priority="1">
+    <xsl:value-of select="replace(., '^\s+', '')"/>
   </xsl:template>
   
-  <xsl:template match="XE[@docx2hub:contains-markup]/text()" mode="wml-to-dbk">
-    <xsl:analyze-string select="." regex="[:;]">
-      <xsl:matching-substring>
-        <xsl:choose>
-          <xsl:when test=". = ':'">
-            <sep/>
-          </xsl:when>
-          <xsl:otherwise>
-            <sortkey>;</sortkey>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:matching-substring>
-      <xsl:non-matching-substring>
-        <xsl:value-of select="."/>
-      </xsl:non-matching-substring>
-    </xsl:analyze-string>
+  <xsl:template match="/*//text()[. is (ancestor::*[last()]//text())[last()]]" 
+    mode="wml-to-dbk_normalize-space" priority="1">
+    <xsl:value-of select="replace(., '\s+$', '')"/>
   </xsl:template>
   
+  <xsl:template match="/*//text()[fn:normalize-space()]
+                                 [. is (ancestor::*[last()]//text())[last()]]
+                                 [. is (ancestor::*[last()]//text())[1]]" 
+    mode="wml-to-dbk_normalize-space" priority="1.5">
+    <xsl:value-of select="replace(., '^\s*(.+?)\s*$', '$1')"/>
+  </xsl:template>
+  
+  <xsl:template match="/*/@sortas" mode="wml-to-dbk_normalize-space">
+    <xsl:attribute name="{name()}" select="normalize-space(.)"/>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase[@css:font-stretch = 'normal'][count(@css:*) = 1]" mode="wml-to-dbk_normalize-space">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase/@css:font-stretch[. = 'normal']" mode="wml-to-dbk_normalize-space"/>
+
+
   <xsl:template match="*[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
     <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_051', 'WRN', 'wml-to-dbk', 
                             concat('Unexpected markup in ''', name(), ' ', @fldArgs, ' ', ., ''''))"/>
   </xsl:template>
-  
-  
-  
-  <!--<xsl:template match="XE[@fldArgs][m:oMath]" 
-    mode="wml-to-dbk" priority="2.5">
-    <indexterm>
-      <primary>
-        <xsl:apply-templates mode="#current"/>
-      </primary>
-    </indexterm>
-  </xsl:template>-->
 
   <xsl:template name="indexterm-sub">
     <xsl:param name="pos" as="xs:integer"/>

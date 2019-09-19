@@ -150,20 +150,22 @@
       </xsl:variable>
       <xsl:for-each-group select="$primary-etc/node()" group-starting-with="dbk:sep">
         <xsl:variable name="pos" as="xs:integer" select="position()"/>
-        <xsl:variable name="prelim" as="document-node(element(*))">
-          <xsl:document>
-            <xsl:element name="{$primary-secondary-etc[$pos]}">
-              <xsl:variable name="sortkey-sep" select="current-group()/self::dbk:sortkey[1]" as="element(dbk:sortkey)?"/>
-              <xsl:variable name="sortas" as="node()*" select="current-group()[. >> $sortkey-sep]"/>
-              <xsl:variable name="term" as="node()*" select="current-group()[not(self::dbk:sep)][not(. >> $sortkey-sep)]"/>
-              <xsl:if test="exists(current-group()[1][self::dbk:inlineequation or self::dbk:equation]|$sortas)">
-                <xsl:attribute name="sortas" select="string-join(if (exists($sortas)) then $sortas else current-group(), '')"/>
-              </xsl:if>
-              <xsl:sequence select="$term"/>
-            </xsl:element>  
-          </xsl:document>
-        </xsl:variable>
-        <xsl:apply-templates select="$prelim" mode="wml-to-dbk_normalize-space"/>
+        <xsl:if test="normalize-space(string-join(current-group()))">
+          <xsl:variable name="prelim" as="document-node(element(*))">
+            <xsl:document>
+              <xsl:element name="{$primary-secondary-etc[$pos]}">
+                <xsl:variable name="sortkey-sep" select="current-group()/self::dbk:sortkey[1]" as="element(dbk:sortkey)?"/>
+                <xsl:variable name="sortas" as="node()*" select="current-group()[. >> $sortkey-sep]"/>
+                <xsl:variable name="term" as="node()*" select="current-group()[not(self::dbk:sep)][not(. >> $sortkey-sep)]"/>
+                <xsl:if test="exists(current-group()[1][self::dbk:inlineequation or self::dbk:equation]|$sortas)">
+                  <xsl:attribute name="sortas" select="string-join(if (exists($sortas)) then $sortas else current-group(), '')"/>
+                </xsl:if>
+                <xsl:sequence select="$term"/>
+              </xsl:element>  
+            </xsl:document>
+          </xsl:variable>  
+          <xsl:apply-templates select="$prelim" mode="wml-to-dbk_normalize-space"/>
+        </xsl:if>
       </xsl:for-each-group>
     </indexterm>
     <xsl:apply-templates select="descendant::XE[1]" mode="#current">

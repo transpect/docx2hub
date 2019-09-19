@@ -1095,14 +1095,10 @@
           <xsl:matching-substring>
             <xsl:choose>
               <xsl:when test=". = ':'">
-                <sep>
-                  <xsl:value-of select="."/>
-                </sep>
+                <sep/>
               </xsl:when>
               <xsl:when test=". = ';'">
-                <sortkey>
-                  <xsl:value-of select="."/>
-                </sortkey>
+                <sortkey/>
               </xsl:when>
               <xsl:when test=". = '&quot;'">
                 <quot>

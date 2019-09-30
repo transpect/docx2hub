@@ -141,11 +141,13 @@
       <xsl:call-template name="docx2hub:indexterm-attributes">
         <xsl:with-param name="xe" select="."/>
       </xsl:call-template>
-      <xsl:variable name="open" as="element(dbk:quot)" select="dbk:quot[1]"/>
-      <xsl:variable name="close" as="element(dbk:quot)" select="dbk:quot[2]"/>
+      <xsl:variable name="open" as="element(dbk:quot)?" select="dbk:quot[1]"/>
+      <xsl:variable name="close" as="element(dbk:quot)?" select="dbk:quot[2]"/>
       <xsl:variable name="primary-etc" as="document-node()">
         <xsl:document>
-          <xsl:apply-templates select="node()[. >> $open and . &lt;&lt; $close]" mode="#current"/>
+          <xsl:apply-templates select="node()[if (exists($open)) 
+                                              then (. >> $open and . &lt;&lt; $close) 
+                                              else true()]" mode="#current"/>
         </xsl:document>
       </xsl:variable>
       <xsl:for-each-group select="$primary-etc/node()" group-starting-with="dbk:sep">
@@ -207,11 +209,12 @@
     <xsl:attribute name="{name()}" select="normalize-space(.)"/>
   </xsl:template>
   
-  <xsl:template match="dbk:phrase[@css:font-stretch = 'normal'][count(@css:*) = 1]" mode="wml-to-dbk_normalize-space">
+  <xsl:template match="dbk:phrase[@css:* = 'normal']
+                                 [every $c in @css:* satisfies ($c = 'normal')]" mode="wml-to-dbk_normalize-space">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="dbk:phrase/@css:font-stretch[. = 'normal']" mode="wml-to-dbk_normalize-space"/>
+  <xsl:template match="dbk:phrase/@css:*[. = 'normal']" mode="wml-to-dbk_normalize-space"/>
 
 
   <xsl:template match="*[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">

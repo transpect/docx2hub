@@ -43,8 +43,11 @@
 
 
   <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
-    <xsl:variable name="jsons" as="item()*" 
-      select="for $jd in .//CITAVI_JSON/@fldArgs return json-to-xml(unparsed-text($jd))"/>
+    <xsl:variable name="jsons" as="item()*">
+      <xsl:try select="for $jd in .//CITAVI_JSON/@fldArgs return json-to-xml(unparsed-text($jd))">
+        <xsl:catch/>
+      </xsl:try>
+    </xsl:variable>
     <xsl:if test="exists($jsons)">
       <xsl:document>
         <docx2hub:citavi-jsons>

@@ -499,7 +499,7 @@ it, but not when an ilvl=2 heading precedes it.
                 <xsl:message select="'Empty level counter for', $pattern-ilvl, ':', $context"/>
               </xsl:if>
               <xsl:variable name="provisional-number">
-                <xsl:number value="($level-counter, 9999)[1]"
+                <xsl:number value="($level-counter, 0)[1]"
                             format="{tr:get-numbering-format($pattern-lvl/w:numFmt/@w:val, $lvl-to-use/w:lvlText/@w:val)}"/>
               </xsl:variable>
               <xsl:variable name="cardinality" select="if (matches($provisional-number,'^\*†‡§[0-9]+\*†‡§$')) then xs:integer(replace($provisional-number, '^\*†‡§([0-9]+)\*†‡§$', '$1')) else 0"/>

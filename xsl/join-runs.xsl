@@ -1091,9 +1091,12 @@
     <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
-        <xsl:analyze-string select="$string" regex="([:;&quot;]|\s\\[a-z]|\\&quot;)">
+        <xsl:analyze-string select="$string" regex="(\\:|[:;&quot;]|\s\\[a-z]|\\&quot;)">
           <xsl:matching-substring>
             <xsl:choose>
+              <xsl:when test=". = '\:'">
+                <xsl:text>:</xsl:text>
+              </xsl:when>
               <xsl:when test=". = ':'">
                 <sep/>
               </xsl:when>

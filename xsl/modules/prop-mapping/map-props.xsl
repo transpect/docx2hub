@@ -1202,7 +1202,21 @@
     <xsl:variable name="content" as="node()*">
       <xsl:apply-templates select="docx2hub:style-link" mode="#current" />
       <xsl:apply-templates select="m:oMathPara/docx2hub:attribute[not(@name = ../docx2hub:remove-attribute/@name)]" mode="#current" />
-      <xsl:apply-templates select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]" mode="#current" />
+      <xsl:variable name="attributes" as="node()*">
+        <xsl:variable name="current" select="."/>
+        <xsl:choose>
+          <xsl:when test="self::w:tblPr">
+            <xsl:for-each select="distinct-values(docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]/@name | preceding-sibling::w:tblPr/docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]/@name)">
+              <xsl:variable name="dot" select="."/>
+              <xsl:sequence select="($current/docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][@name=$dot], $current/preceding-sibling::w:tblPr/docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][@name=$dot])[1]"/>
+            </xsl:for-each>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:apply-templates select="$attributes" mode="#current" />
       <xsl:apply-templates select="docx2hub:color-percentage[not(@name = following-sibling::docx2hub:remove-attribute/@name)]" mode="#current" />
       <xsl:variable name="remaining-tabs" as="element(dbk:tab)*">
         <xsl:for-each-group select="dbk:tabs/dbk:tab" group-by="docx2hub:attribute[@name eq 'horizontal-position']">

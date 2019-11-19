@@ -34,8 +34,8 @@
       <xsl:attribute name="css:border-collapse" select="$collapse"/>
       <xsl:apply-templates select="w:tblPr/@role,
                                    (
-                                    $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')], 
-                                    w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align)')]
+                                   $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align|padding-(top|right|bottom|left))')], 
+                                   w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align|padding-(top|right|bottom|left))')]
                                    )[$collapse = 'separate' or (matches(., 'background-color|margin-(left|right)|text-align')) or
                                     (
                                       (matches(name(), 'top') and $outer-border-set[1])

@@ -1311,9 +1311,16 @@
                      | EQ/text() 
                      | eq[empty(@docx2hub:contains-markup)]/@fldArgs 
                      | eq/text()" mode="wml-to-dbk" priority="5">
-    <xsl:analyze-string select="tr:EQ-string-to-unicode(replace(., '^\s*EQ\s+', '', 'i'))" regex="(\\\p{{Lu}}|[\(\);])">
+    <xsl:analyze-string select="tr:EQ-string-to-unicode(replace(., '^\s*EQ\s+', '', 'i'))" 
+      regex="(\\s\\do5\(([^)]+)\)|\\\p{{Lu}}|[\(\);])">
+      <!-- \s\do5(1) → subscript 1 -->
       <xsl:matching-substring>
         <xsl:choose>
+          <xsl:when test="matches(., '\\s\\do5\(([^)]+)\)')">
+            <subscript>
+              <xsl:value-of select="regex-group(2)"/>
+            </subscript>
+          </xsl:when>
           <xsl:when test=". = '('">
             <open-delim/>
           </xsl:when>

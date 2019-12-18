@@ -66,7 +66,9 @@
        dbk:anchors (corresponds to w:bookmarkStart/End) only for dbk:anchor. 
        dbk:anchors between identically formatted phrases will be merged
        with the phrases' content into a consolidated phrase. -->
-  <xsl:template match="*[w:r or dbk:phrase or dbk:superscript or dbk:subscript]" mode="docx2hub:join-runs" priority="3">
+  <xsl:template match="*[not(self::dbk:phrase[@role = 'docx2hub:EQ'])]
+                        [w:r or dbk:phrase or dbk:superscript or dbk:subscript]" 
+    mode="docx2hub:join-runs" priority="3">
     <!-- move sidebars to para level --><xsl:variable name="context" select="."/>
     <xsl:if test="self::dbk:para and .//dbk:sidebar">
       <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>

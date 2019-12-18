@@ -208,6 +208,10 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']" mode="docx2hub:join-runs">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
   <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ'][*[1]/self::dbk:root]" mode="docx2hub:join-runs" priority="5">
     <xsl:choose>
       <xsl:when test="exists(node()[empty(self::dbk:open-delim | self::dbk:root)][following-sibling::dbk:sep])">

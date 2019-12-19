@@ -183,7 +183,7 @@ TEMPLATES
       </xsl:document>
     </xsl:variable>
     <xsl:variable name="p-before" select="count(//w:p[. &lt;&lt; current()])" as="xs:integer"/>
-    <xsl:message select="'PPPPPPPPPP ',$p-before"/>
+<!--    <xsl:message select="'PPPPPPPPPP ',$p-before"/>-->
     <!--Transformation-->
     <xsl:variable name="phi" as="xs:integer">
       <!--HIER: als 60.000 Grad - IN BOGENMAss WIRD ERST BEI NUTZUNG UMGERECHNET Drehung um Mittelpunkt (wps:wsp/wps:spPr/a:xfrm/@rot, 0)[1]-->
@@ -223,7 +223,7 @@ TEMPLATES
       select="(../../wp:positionV/wp:align[normalize-space()], ../../wp:positionV/wp:posOffset, '')[1]"/>
     <!-- please check the variable below -->
     <xsl:variable name="c-y" select="(.//@cy)[1]" as="xs:integer"/>
-    <xsl:message select="'aaaaaaaaaaaa ', $align-y"></xsl:message>
+<!--    <xsl:message select="'aaaaaaaaaaaa ', $align-y"></xsl:message>-->
     <xsl:variable name="position-y" select="d2s:pos-y($relativeFrom-y, $align-y, $c-y, $p-before, $d2s:sec-layout-map)"
                   as="xs:integer"/>
     <xsl:variable name="center-y" select="$c-y idiv 2 + $position-y" as="xs:integer"/>
@@ -406,7 +406,7 @@ TEMPLATES
     <xsl:template match="@*[name() = ('x', 'y', 'hR', 'wR', 'stAng', 'swAng')][matches(., '^\p{Ll}')]" mode="d2s:resolve-fmla">
         <xsl:param name="xfrm" as="element(a:xfrm)" tunnel="yes"/>
         <xsl:param name="lookup-docs" as="document-node(element(*))+" tunnel="yes"/>
-       <xsl:message select="'gd | resolved ', string(.),'|',d2s:resolve-gd-token(., $lookup-docs, $xfrm)"/>
+<!--       <xsl:message select="'gd | resolved ', string(.),'|',d2s:resolve-gd-token(., $lookup-docs, $xfrm)"/>-->
         <xsl:attribute name="{name()}">
             <xsl:sequence select="d2s:resolve-gd-token(., $lookup-docs, $xfrm)"/>
         </xsl:attribute>

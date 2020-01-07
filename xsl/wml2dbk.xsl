@@ -1054,6 +1054,15 @@
               <xsl:with-param name="context" select="."/>
             </xsl:call-template>
           </xsl:when>
+          <xsl:when test="name() = 'INDEX'">
+            <div role="hub:index">
+              <xsl:attribute name="docx2hub:field-function" select="'yes'"/>
+              <xsl:if test="$tokens[.='\f']">
+                <xsl:attribute name="type" select="$tokens[position()=index-of($tokens,'\f')[1]+1]"/>
+              </xsl:if>
+              <xsl:apply-templates mode="#current"/>
+            </div>
+          </xsl:when>
           <xsl:when test="name() = ('EQ','eq')">
             <phrase role="docx2hub:EQ">
               <xsl:apply-templates select="@fldArgs, node()" mode="#current"/>
@@ -1464,7 +1473,7 @@
         <tr:field-function name="CITATION"><!-- not implemented yet --></tr:field-function>
         <tr:field-function name="CITAVI_XML"/>
         <tr:field-function name="CITAVI_JSON"/>
-        <tr:field-function name="INDEX" element="div" role="hub:index"/>
+        <!--<tr:field-function name="INDEX" element="div" role="hub:index"/>-->
         <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="GOTOBUTTON" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="PAGE"/>

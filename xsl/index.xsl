@@ -89,7 +89,7 @@
     <xsl:param name="xe" as="element(XE)"/>
     <xsl:variable name="type" as="xs:string?" 
                   select="if(matches($xe/@fldArgs, '\\f')) 
-                          then replace($xe/@fldArgs, '^.*\\f\s*&quot;?(.+?)&quot;?\s*(\\.*$|$)', '$1')
+                          then replace($xe/@fldArgs, '^.*\\f\s*[&quot;&#8220;]?(.+?)[&quot;&#8221;]?\s*(\\.*$|$)', '$1')
                           else 
                             if(some $i in tokenize($xe/@fldArgs,':') satisfies matches($i,'Register§§')) 
                             then replace(tokenize($xe/@fldArgs,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')
@@ -187,7 +187,7 @@
       <!-- _intern/index_kursiv_fett2.docx contains nested XEs! -->
     </xsl:apply-templates>
   </xsl:template>
-
+  
   <xsl:template match="/*//text()[. is (ancestor::*[last()]//text())[1]]" 
     mode="wml-to-dbk_normalize-space" priority="1">
     <xsl:value-of select="replace(., '^\s+', '')"/>

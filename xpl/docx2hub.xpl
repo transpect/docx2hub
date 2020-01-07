@@ -202,7 +202,7 @@
   <p:option name="insert-document-defaults" required="false" select="'yes'">
     <p:documentation>Insert default attributes (i.e. document language and font names). Permitted values: yes|no</p:documentation>
   </p:option>
-
+  <p:option name="float-nr-check-error-level" select="''"/>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -328,6 +328,7 @@
     <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
     <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
     <p:with-param name="include-header-and-footer" select="$include-header-and-footer"/>
+    <p:with-param name="float-nr-check-error-level" select="$float-nr-check-error-level"/>
   </tr:xslt-mode>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:props2atts" name="props2atts">

@@ -32,6 +32,8 @@
   <xsl:key name="docx2hub:font-by-name" match="w:font[@w:name]" use="@w:name"/>
   <xsl:key name="docx2hub:header-footer-ref-by-id" match="w:headerReference|w:footerReference" use="@r:id"/>
   
+  <xsl:param name="float-nr-check-error-level" select="''"/>
+  
   <xsl:template match="/" mode="docx2hub:add-props">
     <xsl:apply-templates select="w:root/w:document/w:body" mode="#current" />
   </xsl:template>
@@ -116,6 +118,11 @@
           <xsl:if test="not($mathtype2mml eq 'no')">
             <keyword role="mathtype2mml">
               <xsl:value-of select="if ($mathtype2mml = 'yes') then 'true' else $mathtype2mml"/>
+            </keyword>
+          </xsl:if>
+          <xsl:if test="not($float-nr-check-error-level eq '')">
+            <keyword role="float-nr-check-error-level">
+              <xsl:value-of select="$float-nr-check-error-level"/>
             </keyword>
           </xsl:if>
         </keywordset>

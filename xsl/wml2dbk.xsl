@@ -607,8 +607,11 @@
                       not($most-frequent-lang = ancestor-or-self::*[@xml:lang][1]/@xml:lang)">
         <xsl:copy-of select="ancestor-or-self::*[@xml:lang][1]/@xml:lang"/>
       </xsl:when>
-      <xsl:when test="every $run in w:r[w:t[matches(., '\w')]]
-                      satisfies (($run/@xml:lang, key('docx2hub:style-by-role', $run/@role))[1] = $most-frequent-lang)">
+      <xsl:when test="exists(w:r[w:t[matches(., '\w')]])
+                      and 
+                      (every $run in w:r[w:t[matches(., '\w')]]
+                       satisfies (($run/@xml:lang, key('docx2hub:style-by-role', $run/@role))[1] = $most-frequent-lang)
+                      )">
         <xsl:attribute name="xml:lang" select="$most-frequent-lang"/>
       </xsl:when>
     </xsl:choose>

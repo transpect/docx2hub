@@ -601,7 +601,6 @@
   
   <xsl:template name="docx2hub:adjust-lang">
     <xsl:param name="most-frequent-lang" as="xs:string?" tunnel="yes"/>
-    <xsl:message select="'MMMMMMM ', $most-frequent-lang"></xsl:message>
     <xsl:choose>
       <xsl:when test="empty(@role | ancestor::w:p[1]/@role)
                       and

@@ -587,7 +587,7 @@
   
   <xsl:function name="docx2hub:text-lang" as="xs:string?">
     <xsl:param name="text" as="element(w:t)"/>
-    <xsl:variable name="closest" select="$text/ancestor::*[@xml:lang | @role[key('style-by-name', ., $text)/@xml:lang]][1]" as="element(*)?"/>
+    <xsl:variable name="closest" select="$text/ancestor::*[@xml:lang | @role[key('style-by-name', ., root($text))/@xml:lang]][1]" as="element(*)?"/>
     <xsl:sequence select="($closest/@xml:lang, key('style-by-name', $closest/@role, root($text))/@xml:lang)[1]"/>
   </xsl:function>
   
@@ -601,6 +601,7 @@
   
   <xsl:template name="docx2hub:adjust-lang">
     <xsl:param name="most-frequent-lang" as="xs:string?" tunnel="yes"/>
+    <xsl:message select="'MMMMMMM ', $most-frequent-lang"></xsl:message>
     <xsl:choose>
       <xsl:when test="empty(@role | ancestor::w:p[1]/@role)
                       and

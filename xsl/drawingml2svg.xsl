@@ -98,12 +98,10 @@
         <xsl:map-entry key="'linePitch'"    select="$linePitch"/>        
       </xsl:map>
     </xsl:variable>
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node()" mode="#current">
-        <xsl:with-param name="d2s:sec-layout-map" select="$d2s:sec-layout-map" 
-                        as="map(xs:string, xs:integer?)" tunnel="yes"/>  
-      </xsl:apply-templates>
-    </xsl:copy>
+    <xsl:next-match>
+      <xsl:with-param name="d2s:sec-layout-map" select="$d2s:sec-layout-map" 
+                        as="map(xs:string, xs:integer?)" tunnel="yes"/>
+    </xsl:next-match>
   </xsl:template>
   
   <xsl:template match="mc:AlternateContent[mc:Choice/w:drawing/wp:anchor/a:graphic/a:graphicData]" mode="docx2hub:add-props">

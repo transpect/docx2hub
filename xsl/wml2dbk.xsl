@@ -1700,6 +1700,10 @@
     <xsl:next-match/>
   </xsl:template>
 
+  <xsl:template match="w:pgNum" mode="wml-to-dbk">
+    <phrase role="docx2hub:pgNum"/>
+  </xsl:template>
+
   <xsl:template match="@role" mode="wml-to-dbk" priority="2">
     <xsl:attribute name="role" select="replace(., ' ', '_')" />
   </xsl:template>

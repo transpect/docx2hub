@@ -876,6 +876,8 @@
                           | self::w:fldSimple (: prEN_16815 :)
                           | self::m:oMath[preceding-sibling::*[empty(self::m:oMath)][1]/self::w:r[w:instrText]] (: hanser_loeser_omml_index :)
                           | self::w:r[w:sym][count(*) = 1]
+                          | self::w:r[w:object/mml:math][count(* except w:rPr) = 1]
+                                     [preceding-sibling::*[empty(w:object/mml:math)][1]/self::w:r[w:instrText]]
                           | self::*:superscript | self::*:subscript
                           | self::w:bookmarkStart | self::w:bookmarkEnd)"><!-- the _GoBack bookmark might be here -->
         <xsl:choose>
@@ -910,12 +912,13 @@
                                                                  | self::w:fldSimple/w:r/w:instrText:)
                                                                  | self::w:fldSimple
                                                                  | w:sym[parent::w:r]
+                                                                 | w:object[mml:math][parent::w:r]
                                                                  | self::*:superscript | self::*:subscript
                                                                  | self::m:oMath (: may occur in XE :))
                                                                 [. >> $preceding-begin]"
                                          mode="docx2hub:join-instrText-runs_save-formatting"/>
                   </xsl:document>
-                </xsl:variable> 
+                </xsl:variable>
                 <!-- docx2hub:join-instrText-runs_render-compound1 is for rendering the instrText as text for attributes,
                      docx2hub:join-instrText-runs_render-compound2 is for rendering it with markup -->
                 <xsl:variable name="instr-text" as="node()*">
@@ -944,7 +947,6 @@
                     <xsl:attribute name="docx2hub:citation-uuid" 
                       select="replace($instr-text-string, '^ADDIN\s+CITAVI\.PLACEHOLDER\s+(.+?)\s+(.+)$', '$1', 's')"/>
                   </xsl:when>
-
                   <xsl:when test="matches($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY', 'si')">
                     <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_XML'"/>
                     <xsl:attribute name="docx2hub:field-function-args" 
@@ -1062,6 +1064,10 @@
       </xsl:analyze-string>
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="w:object[mml:math]" mode="docx2hub:join-instrText-runs_render-compound2">
+    <xsl:copy-of select="."/>
   </xsl:template>
 
   <xsl:template match="w:fldSimple[matches(@w:instr, $w:fldSimple-REF-regex)]" 

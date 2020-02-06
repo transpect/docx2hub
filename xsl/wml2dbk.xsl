@@ -369,28 +369,11 @@
   
   <xsl:template match="w:r[every $child in * satisfies $child/(self::w:instrText | self::w:fldChar)]" mode="docx2hub:field-functions"/>
   
-  <!-- used to be handled in wml-to-dbk, earlier translation due to problems when used in 
-       field codes -->
-  <xsl:template match="w:r[w:noBreakHyphen[following-sibling::w:instrText]]" mode="docx2hub:remove-redundant-run-atts">
-    <xsl:copy>
-      <xsl:apply-templates select="@*, node() except w:noBreakHyphen" mode="#current"/>
-    </xsl:copy>
-  </xsl:template>
-  
   <xsl:template match="w:fldSimple[@docx2hub:field-function-name]" mode="docx2hub:field-functions">
     <xsl:element name="{@docx2hub:field-function-name}" xmlns="">
       <xsl:attribute name="fldArgs" select="@docx2hub:field-function-args"/>
       <xsl:apply-templates mode="#current"/>
     </xsl:element>
-  </xsl:template>
-  
-  <!-- change to normal hyphen when used in fieldfunction &#x2d;-->
-  <xsl:template match="w:instrText[ancestor::w:r[w:noBreakHyphen[following-sibling::w:instrText]]]" mode="docx2hub:remove-redundant-run-atts">
-    <xsl:copy>
-      <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:value-of select="'&#x2d;'"/>
-      <xsl:apply-templates select="node()" mode="#current"/>
-    </xsl:copy>
   </xsl:template>
   
   <xsl:template match="w:p/w:r/@*[not(name() = $docx2hub:toggle-prop-names)]" mode="docx2hub:remove-redundant-run-atts">

@@ -1003,22 +1003,22 @@
         <xsl:sequence select="'#00FFFF'" />
       </xsl:when>
       <xsl:when test="$val eq 'darkBlue'">
-        <xsl:sequence select="'#00008B'" />
+        <xsl:sequence select="'#000080'" />
       </xsl:when>
       <xsl:when test="$val eq 'darkCyan'">
-        <xsl:sequence select="'#008B8B'" />
+        <xsl:sequence select="'#008080'" />
       </xsl:when>
       <xsl:when test="$val eq 'darkGray'">
-        <xsl:sequence select="'#A9A9A9'" />
+        <xsl:sequence select="'#808080'" />
       </xsl:when>
       <xsl:when test="$val eq 'darkGreen'">
-        <xsl:sequence select="'#006400'" />
+        <xsl:sequence select="'#008000'" />
       </xsl:when>
       <xsl:when test="$val eq 'darkMagenta'">
         <xsl:sequence select="'#800080'" />
       </xsl:when>
       <xsl:when test="$val eq 'darkRed'">
-        <xsl:sequence select="'#8B0000'" />
+        <xsl:sequence select="'#800000'" />
       </xsl:when>
       <xsl:when test="$val eq 'darkYellow'">
         <xsl:sequence select="'#808000'" />
@@ -1027,7 +1027,7 @@
         <xsl:sequence select="'#00FF00'" />
       </xsl:when>
       <xsl:when test="$val eq 'lightGray'">
-        <xsl:sequence select="'#D3D3D3'" />
+        <xsl:sequence select="'#C0C0C0'" />
       </xsl:when>
       <xsl:when test="$val eq 'magenta'">
         <xsl:sequence select="'#FF00FF'" />

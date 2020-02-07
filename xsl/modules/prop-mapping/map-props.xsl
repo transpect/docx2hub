@@ -492,6 +492,9 @@
       <xsl:if test="$is-removable">
         <xsl:attribute name="docx2hub:removable" select="$is-removable"/>
       </xsl:if>
+      <xsl:if test="exists(descendant::w:sectPr)">
+        <xsl:attribute name="docx2hub:sectPr" select="'true'"/>
+      </xsl:if>
       <xsl:apply-templates select="@* | * | processing-instruction() | comment()" mode="#current"/>
     </xsl:copy>
   </xsl:template>

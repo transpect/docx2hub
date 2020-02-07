@@ -772,6 +772,8 @@
     </xsl:variable>
     <xsl:next-match>
       <xsl:with-param name="nested-fldChars" select="$nested-fldChars" tunnel="yes"/>
+      <xsl:with-param name="footnotePrs" as="element(w:footnotePr)*" select="descendant-or-self::w:footnotePr" tunnel="yes"/>
+      <xsl:with-param name="sect-boundaries" as="element(*)*" select="descendant-or-self::*[@docx2hub:sectPr]" tunnel="yes"/>
     </xsl:next-match>
   </xsl:template>
   

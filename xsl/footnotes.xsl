@@ -265,21 +265,30 @@
   
   <xsl:template match="w:footnoteRef" mode="docx2hub:join-instrText-runs">
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
+    <xsl:param name="footnotePrs" as="element(w:footnotePr)*" tunnel="yes"/>
+    <xsl:param name="sect-boundaries" as="element(*)*" tunnel="yes"/>
     <xsl:if test="$identifier">
       <xsl:variable name="fnref" as="element(w:footnoteReference)*"
         select="key('footnoteReference-by-id', ancestor::w:footnote/@w:id)"/>
+      <xsl:variable name="fnpr" as="element(w:footnotePr)?" select="($footnotePrs[. >> $fnref/..])[1]"/>
+      <xsl:variable name="section-reset" as="xs:boolean" select="exists($fnpr/w:numRestart[@w:val='eachSect'])"/>
+      <xsl:variable name="preceding-boundary" as="element(*)?" select="($sect-boundaries[. &lt;&lt; $fnref/..])[last()]"/>
       <xsl:variable name="footnote-num-format" 
-                    select="( $fnref/following::w:footnotePr[ancestor::w:p | ancestor::w:sectPr]/w:numFmt/@w:val,
+                    select="( $fnpr/w:numFmt/@w:val,
                              /*/w:settings/w:footnotePr/w:numFmt/@w:val)[1]" as="xs:string?"/>
       <xsl:variable name="provisional-footnote-number">
         <xsl:number value="if (exists($fnref)) 
                            then count(
                              distinct-values(
                                $fnref[1]
-                                  /preceding::w:footnoteReference[not(@w:customMarkFollows = ('1','on','true'))]/@w:id
+                                  /preceding::w:footnoteReference[not(@w:customMarkFollows = ('1','on','true'))]
+                                                                 [if (exists($section-reset) and exists($preceding-boundary)) 
+                                                                  then . >> $preceding-boundary else true()]
+                                    /@w:id
                              )
                            ) + 1
-                           else (count(preceding::w:footnoteRef) + 1)" 
+                           else (count(preceding::w:footnoteRef[if (exists($section-reset) and exists($preceding-boundary)) 
+                                                               then . >> $preceding-boundary else true()]) + 1)" 
                     format="{if ($footnote-num-format)
                              then tr:get-numbering-format($footnote-num-format, '') 
                              else '1'}"/>

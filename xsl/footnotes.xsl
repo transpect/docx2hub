@@ -270,25 +270,29 @@
     <xsl:if test="$identifier">
       <xsl:variable name="fnref" as="element(w:footnoteReference)*"
         select="key('footnoteReference-by-id', ancestor::w:footnote/@w:id)"/>
-      <xsl:variable name="fnpr" as="element(w:footnotePr)?" select="($footnotePrs[. >> $fnref/..])[1]"/>
-      <xsl:variable name="section-reset" as="xs:boolean" select="exists($fnpr/w:numRestart[@w:val='eachSect'])"/>
       <xsl:variable name="preceding-boundary" as="element(*)?" select="($sect-boundaries[. &lt;&lt; $fnref/..])[last()]"/>
+      <xsl:variable name="following-boundary" as="element(*)?" select="($sect-boundaries[. >> $fnref/..])[1]"/>
+      <xsl:variable name="fnpr" as="element(w:footnotePr)?" 
+        select="($footnotePrs[. >> $fnref/..]
+                             [.. is $following-boundary],
+                 /*/w:settings/w:footnotePr)[1]"/>
+      <xsl:variable name="section-reset" as="xs:boolean" select="exists($fnpr/w:numRestart[@w:val='eachSect'])"/>
       <xsl:variable name="footnote-num-format" 
-                    select="( $fnpr/w:numFmt/@w:val,
-                             /*/w:settings/w:footnotePr/w:numFmt/@w:val)[1]" as="xs:string?"/>
-      <xsl:variable name="provisional-footnote-number">
+                    select="$fnpr/w:numFmt/@w:val" as="xs:string?"/>
+      <xsl:variable name="startnum" as="xs:integer" select="xs:integer(($fnpr/w:numStart/@w:val, 1)[1])"/>
+      <xsl:variable name="provisional-footnote-number" as="xs:string">
         <xsl:number value="if (exists($fnref)) 
                            then count(
                              distinct-values(
                                $fnref[1]
                                   /preceding::w:footnoteReference[not(@w:customMarkFollows = ('1','on','true'))]
-                                                                 [if (exists($section-reset) and exists($preceding-boundary)) 
+                                                                 [if ($section-reset and exists($preceding-boundary)) 
                                                                   then . >> $preceding-boundary else true()]
                                     /@w:id
                              )
-                           ) + 1
-                           else (count(preceding::w:footnoteRef[if (exists($section-reset) and exists($preceding-boundary)) 
-                                                               then . >> $preceding-boundary else true()]) + 1)" 
+                           ) + $startnum
+                           else (count(preceding::w:footnoteRef[if ($section-reset and exists($preceding-boundary)) 
+                                                               then . >> $preceding-boundary else true()]) + $startnum)" 
                     format="{if ($footnote-num-format)
                              then tr:get-numbering-format($footnote-num-format, '') 
                              else '1'}"/>

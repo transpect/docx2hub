@@ -201,7 +201,7 @@
       </xsl:if>
       <xsl:apply-templates select="../../w:numbering" mode="#current"/>
       <xsl:sequence select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>
-      <xsl:apply-templates select="../../w:comments, ../../w:footnotes, ../../w:endnotes" mode="#current"/>
+      <xsl:apply-templates select="../../w:comments, ../../w:footnotes, ../../w:endnotes, ../../w:settings" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
       <xsl:apply-templates select="../../w:footer/w:ftr[$convert-footer]" mode="#current"/>
     </xsl:element>

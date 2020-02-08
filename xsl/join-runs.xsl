@@ -425,7 +425,7 @@
     <xsl:sequence select="$transformed"/>
   </xsl:template>
   
-  <xsl:template match="@docx2hub:map-from | @docx2hub:field-function" mode="docx2hub:join-runs"/>
+  <xsl:template match="@docx2hub:map-from | @docx2hub:field-function | @docx2hub:sectPr" mode="docx2hub:join-runs"/>
 
 
   <xsl:template match="dbk:para[not(@docx2hub:removable)]" mode="docx2hub:join-runs">

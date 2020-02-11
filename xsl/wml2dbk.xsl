@@ -1561,6 +1561,8 @@
     </phrase>
   </xsl:template>
 
+  <xsl:template match="/*/w:settings" mode="wml-to-dbk"/>
+
   <!-- math section -->
   <xsl:template match="m:oMathPara" mode="wml-to-dbk">
     <equation role="omml">

@@ -140,7 +140,6 @@
     <xsl:if test="$debug = 'yes'">
       <xsl:message select="'Number of lookaround paragraphs for inline field functions: ', $max-lookaround-count"/>
     </xsl:if>
-    <!--<xsl:message select="'CCCCCCCCCCCCC ', count($non-block-field-begins), count($non-block-field-ends)"></xsl:message>-->
     <xsl:next-match>
       <!-- Pre-calculating all these params for large documents with many field functions, such as prEN_16815 -->
       <xsl:with-param name="field-begins" select="$field-begins" tunnel="yes"/>

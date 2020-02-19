@@ -973,6 +973,10 @@
                     <xsl:attribute name="docx2hub:field-function-name" select="'HYPERLINK'"/>
                     <xsl:attribute name="docx2hub:field-function-args" select="$instr-text-string"/>
                   </xsl:when>
+                  <xsl:when test="matches(tokenize($instr-text-string,'\s+')[not(.='')][1],'\.(tiff?|png|jpe?g|gif)','i')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'INCLUDEPICTURE'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" select="replace($instr-text-string,'”','&#34;')"/>
+                  </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">
                       <xsl:analyze-string select="$instr-text-string" regex="^\s*\\?(\i\c*)\s*">

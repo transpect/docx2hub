@@ -27,15 +27,6 @@
     </rule>
   </pattern>
   
-    <pattern id="crop">
-      <rule context="a:graphic">
-      <report id="cropped_image" role="warning" test="a:graphicData/pic:pic/pic:blipFill/a:srcRect[@r or @b]">
-        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-       Dieses Bild wurde zugeschnitten
-      </report>
-    </rule>
-  </pattern>
-  
   <pattern id="instrText">
     <rule context="*[w:r[w:instrText]/following-sibling::*[1][self::m:oMath and following-sibling::*[1][self::w:r/w:instrText]]]">
       <report id="instrText_math" role="warning" test="true()">
@@ -66,7 +57,15 @@
     <rule context="*:inline">
       <report id="scaled_image" role="warning" test="*:extent[@cx != parent::*/a:graphic//a:ext/@cx] or *:extent[@cy != parent::*/a:graphic//a:ext/@cy]">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        Das Bild <xsl:value-of select="tokenize(//*:Relationship[@Id=current()//a:blip/@*:link]/@Target,'[/\\]')[last()]"/> wurde skaliert
+        Das Bild <xsl:value-of select="tokenize(//*:Relationship[@Id=current()//a:blip/(@*:link, @*:embed)[1]]/@Target,'[/\\]')[last()]"/> wurde skaliert
+      </report>
+      <report id="rotated_image" role="warning" test="*:graphic/*:graphicData//*:xfrm/@rot">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        Das Bild <xsl:value-of select="tokenize(//*:Relationship[@Id=current()//a:blip/(@*:link, @*:embed)[1]]/@Target,'[/\\]')[last()]"/> wurde gedreht
+      </report>
+      <report id="cropped_image" role="warning" test="*:graphic/*:graphicData/pic:pic/pic:blipFill/a:srcRect[@r or @b]">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+       Das Bild <xsl:value-of select="tokenize(//*:Relationship[@Id=current()//a:blip/(@*:link, @*:embed)[1]]/@Target,'[/\\]')[last()]"/> wurde zugeschnitten
       </report>
     </rule>
   </pattern>

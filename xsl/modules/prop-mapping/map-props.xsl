@@ -412,7 +412,9 @@
   </xsl:template>
   
   <!-- § 17.3.1.29: this is only for the paragraph mark's formatting: -->
-  <xsl:template match="w:pPr/w:rPr" mode="docx2hub:add-props" priority="2.5" />
+  <xsl:template match="w:pPr/w:rPr" mode="docx2hub:add-props" priority="2.5" >
+    <xsl:apply-templates select="w:vanish" mode="#current"/>
+  </xsl:template>
 
   <xsl:template mode="docx2hub:add-props" priority="2"
     match="w:tblPr | w:tblStylePr | w:tblPrEx">

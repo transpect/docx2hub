@@ -157,18 +157,6 @@
           <p:pipe port="source" step="mathtype2mml"/>
         </p:variable>
 
-        <p:choose>
-          <p:when test="$debug">
-            <cx:message>
-              <p:with-option name="message"
-                select="'wmf:', $rel-wmf-id, ' ole:', $rel-ole-id, ' wmf-href:', $equation-wmf-href, ' ole-href:', $equation-ole-href"/>
-            </cx:message>
-          </p:when>
-          <p:otherwise>
-            <p:identity/>
-          </p:otherwise>
-        </p:choose>
-
         <p:try>
           <p:group>
             <p:group name="convert-wmf">

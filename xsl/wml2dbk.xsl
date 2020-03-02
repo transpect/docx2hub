@@ -1596,7 +1596,8 @@
     </inlineequation>
   </xsl:template>
   
-  <xsl:template match="w:object[mml:math]" mode="wml-to-dbk">
+  <xsl:template match="w:object[mml:math]
+                      |w:pict[mml:math]" mode="wml-to-dbk">
     <inlineequation role="mtef">
       <xsl:attribute name="condition" select="mml:math/@class"/>
       <xsl:apply-templates select="mml:math" mode="mathml"/>
@@ -1607,7 +1608,8 @@
   <xsl:template match="mml:math/@class" mode="mathml"/>
   
   <!-- inlineequation? remove block display setting! -->
-  <xsl:template match="w:object/mml:math/@display[. eq 'block']" mode="mathml"/>
+  <xsl:template match="w:object/mml:math/@display[. eq 'block']
+                      |w:pict/mml:math/@display[. eq 'block']" mode="mathml"/>
   
   <!-- identity template to preserve mathml text nodes -->
   <xsl:template match="mml:*" mode="mathml">

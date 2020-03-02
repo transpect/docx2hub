@@ -132,8 +132,8 @@
   <xsl:template match="o:lock" mode="vml">
   </xsl:template>
 
-  <xsl:template match="o:OLEObject[parent::w:object]" mode="vml">
-    <inlinemediaobject role="OLEObject" annotations="{concat('object_',generate-id(parent::w:object))}">
+  <xsl:template match="w:object/o:OLEObject" mode="vml">
+    <inlinemediaobject role="OLEObject" annotations="{concat('object_', generate-id(parent::*))}">
       <imageobject>
         <xsl:apply-templates select="@* except @r:id" mode="#current"/>
         <imagedata fileref="{docx2hub:rel-lookup(current()/@r:id)/@Target}"/>

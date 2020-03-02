@@ -122,12 +122,16 @@
       <!--<cx:message>
         <p:with-option name="message" select="'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ', $active"></p:with-option>
       </cx:message>-->
-      <p:viewport
-        match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]//w:object[o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]]"
-        name="mathtype2mml-viewport">
-        <p:variable name="rel-wmf-id" select="w:object/v:shape/v:imagedata/@r:id"
+      <p:viewport match="/w:root/*[name() = ('w:document', 
+                                             'w:footnotes', 
+                                             'w:endnotes', 
+                                             'w:comments')]//*[name() = ('w:object',
+                                                                         'w:pict')][o:OLEObject[    @Type eq 'Embed' 
+                                                                                                and starts-with(@ProgID, 'Equation')]]"
+                  name="mathtype2mml-viewport">
+        <p:variable name="rel-wmf-id" select="*/v:shape/v:imagedata/@r:id"
           xmlns:v="urn:schemas-microsoft-com:vml"/>
-        <p:variable name="rel-ole-id" select="w:object/o:OLEObject/@r:id"/>
+        <p:variable name="rel-ole-id" select="*/o:OLEObject/@r:id"/>
         <p:variable name="rels-elt"
           select="if (contains(base-uri(/*), '/word/document'))
                     then 'w:docRels'
@@ -392,15 +396,15 @@
             
             <p:delete match="o:OLEObject[@Type eq 'Embed' and starts-with(@ProgID, 'Equation')]"/>
             
-            <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-ole-id">
+            <p:add-attribute match="*/mml:math" attribute-name="docx2hub:rel-ole-id">
               <p:with-option name="attribute-value" select="$rel-ole-id"/>
             </p:add-attribute>
             
-            <p:add-attribute match="w:object/mml:math" attribute-name="docx2hub:rel-wmf-id">
+            <p:add-attribute match="*/mml:math" attribute-name="docx2hub:rel-wmf-id">
               <p:with-option name="attribute-value" select="$rel-wmf-id"/>
             </p:add-attribute>
             
-            <p:delete match="w:object/v:shape[v:imagedata[@r:id]]"/>
+            <p:delete match="*/v:shape[v:imagedata[@r:id]]"/>
             
           </p:group>
           <p:catch>

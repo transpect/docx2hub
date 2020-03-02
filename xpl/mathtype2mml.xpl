@@ -453,17 +453,6 @@
                 <p:pipe port="source" step="mathtype2mml"/>
               </p:variable>
 
-              <p:choose>
-                <p:when test="$debug">
-                  <cx:message>
-                    <p:with-option name="message" select="'try-all-wmf: image-wmf:', $rel-wmf-id, ' wmf-href:', $image-wmf-href"/>
-                  </cx:message>
-                </p:when>
-                <p:otherwise>
-                  <p:identity/>
-                </p:otherwise>
-              </p:choose>
-
               <p:try name="convert-image-wmf">
                 <p:group>
                   <tr:mathtype2mml name="image-wmf2mml">

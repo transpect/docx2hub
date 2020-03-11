@@ -926,11 +926,16 @@
                   </xsl:document>
                 </xsl:variable>
                 <!-- docx2hub:join-instrText-runs_render-compound1 is for rendering the instrText as text for attributes,
-                     docx2hub:join-instrText-runs_render-compound2 is for rendering it with markup -->
+                     docx2hub:join-instrText-runs_render-compound2 is for rendering it with markup
+                     docx2hub:join-instrText-runs_render-compound3 is for postprocessing the joint transformed instrText 
+                        content just in case there is a backslash in one instrText and the quote in the next 
+                        (https://redmine.le-tex.de/issues/8174) -->
                 <xsl:variable name="instr-text" as="node()*">
                   <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound1"/>
                 </xsl:variable>
                 <xsl:variable name="instr-text-string" as="xs:string" select="string-join($instr-text, '')"/>
+                <xsl:variable name="formatting-acceptable" as="xs:boolean" 
+                  select="matches($instr-text-string, '^\s*xe\s+', 'i')"/>
                 <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
                 <xsl:choose>
                   <xsl:when test="empty($instr-text-nodes/node())">
@@ -939,7 +944,18 @@
                   </xsl:when>
                   <xsl:when test="not($start/@xml:id = $preceding-begin/@xml:id)">
                     <xsl:attribute name="docx2hub:field-function-continuation-for" select="$start/@xml:id"/>
-                    <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2"/>
+                    <xsl:variable name="wrapper" as="element(dbk:wrapper)">
+                      <wrapper>
+                        <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2">
+                          <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"  
+                            select="$formatting-acceptable"/>
+                        </xsl:apply-templates>    
+                      </wrapper>
+                    </xsl:variable>
+                    <xsl:apply-templates select="$wrapper" mode="docx2hub:join-instrText-runs_render-compound3">
+                      <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"  
+                        select="$formatting-acceptable"/>
+                    </xsl:apply-templates>
                   </xsl:when>
                   <xsl:when test="matches($instr-text-string, '^ADDIN\s+CitaviPlaceholder', 's')">
                     <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_JSON'"/>
@@ -1014,10 +1030,19 @@
                       </xsl:when>
                       <xsl:otherwise>
                         <xsl:sequence select="$prelim"/>
-                        <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2">
-                          <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes" 
-                            select="matches($instr-text-string, '^\s*xe\s+', 'i')"/>
+                        <xsl:variable name="wrapper" as="element(dbk:wrapper)">
+                          <wrapper>
+                            <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2">
+                              <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"  
+                                select="$formatting-acceptable"/>
+                            </xsl:apply-templates>    
+                          </wrapper>
+                        </xsl:variable>
+                        <xsl:apply-templates select="$wrapper" mode="docx2hub:join-instrText-runs_render-compound3">
+                          <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"  
+                            select="$formatting-acceptable"/>
                         </xsl:apply-templates>
+                        <xsl:message select="'RRRRRRRRRRRRRr ', $formatting-acceptable, ' :: ',$wrapper"></xsl:message>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:otherwise>
@@ -1175,15 +1200,73 @@
   <xsl:template match="w:instrText/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="0.8">
     <xsl:call-template name="docx2hub:instrText-formatting">
       <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
-      <xsl:with-param name="string" as="xs:string" select="."/>
-    </xsl:call-template>
-  </xsl:template>
-  
+       <xsl:with-param name="string" as="xs:string" select="."/>
+     </xsl:call-template>
+   </xsl:template>
+
   <xsl:template match="w:instrText[1]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
     <xsl:call-template name="docx2hub:instrText-formatting">
       <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
       <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+\s+', '')"/>
-    </xsl:call-template>
+     </xsl:call-template>
+   </xsl:template>
+
+  
+  
+  <xsl:template match="dbk:wrapper/text()" mode="docx2hub:join-instrText-runs_render-compound3" priority="0.8">
+    <xsl:variable name="prelim" as="xs:string">
+      <xsl:choose>
+        <xsl:when test="ends-with(., '\') and following-sibling::*[1]/local-name() = ('sep', 'quot')">
+          <xsl:sequence select="replace(., '\\$', '')"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:sequence select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test=". is parent::dbk:wrapper/node()[1]">
+        <xsl:value-of select="replace($prelim, '^\s*\w+\s+', '')">
+          <!-- remove field function name -->
+        </xsl:value-of>
+      </xsl:when>
+      <xsl:otherwise>
+          <xsl:value-of select="$prelim"/>
+        </xsl:otherwise>
+    </xsl:choose>
+    <xsl:message>
+      <xsl:text>AAAAAAAAAAAAAAAAa</xsl:text>
+      <xsl:choose>
+      <xsl:when test=". is parent::dbk:wrapper/node()[1]">
+        <xsl:value-of select="replace($prelim, '^\s*\w+\s+', '')">
+          <!-- remove field function name -->
+        </xsl:value-of>
+      </xsl:when>
+      <xsl:otherwise>
+          <xsl:value-of select="$prelim"/>
+        </xsl:otherwise>
+    </xsl:choose>
+    </xsl:message>
+  </xsl:template>
+  
+  <xsl:template match="dbk:wrapper/dbk:quot[ends-with(preceding-sibling::node()[1]/self::text(), '\')]" 
+    mode="docx2hub:join-instrText-runs_render-compound3" >
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+  
+  <xsl:template match="dbk:wrapper/dbk:sep[ends-with(preceding-sibling::node()[1]/self::text(), '\')]" 
+    mode="docx2hub:join-instrText-runs_render-compound3" >
+    <xsl:value-of select="':'"/>
+  </xsl:template>
+
+  <xsl:template match="node() | @*" mode="docx2hub:join-instrText-runs_render-compound3">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="dbk:wrapper" mode="docx2hub:join-instrText-runs_render-compound3">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
   

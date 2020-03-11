@@ -22,68 +22,7 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr">
 
-  <xsl:template match="XE[@fldArgs][not(@docx2hub:contains-markup)]" mode="wml-to-dbk" priority="2">
-    <xsl:variable name="context" as="element(XE)" select="."/>
-    <xsl:apply-templates select="w:r" mode="#current"/>
-    <xsl:choose>
-      <xsl:when test="matches(@fldArgs,'&quot;(\s*\\[a-z])*\s*(\w+)?\s*$')">       
-        <xsl:if test="matches(@fldArgs, '\\[^bfrity&#x201e;&#x201c;]')">
-          <xsl:message select="concat('Unexpected index (XE) field function option in ''', @fldArgs, '''')"/>
-        </xsl:if>
-        <xsl:variable name="see" as="xs:string?" 
-                      select="if(matches(@fldArgs, '\\t')) 
-                              then replace(@fldArgs, '^.*\\t\s*&quot;(.+?)&quot;(.*$|$)', '$1') 
-                              else ()"/>
-        <xsl:variable name="temporary-term" as="node()*" select="tr:extract-chars(@fldArgs,'\','\\')"/>
-        <xsl:variable name="real-term" as="node()*">
-          <xsl:for-each-group select="$temporary-term" group-starting-with="*:text[matches(.,'^\\')]">
-           <xsl:choose>
-              <xsl:when test="current-group()[1][self::*:text[matches(.,'^\\')]]"/>
-              <xsl:otherwise>
-                <xsl:for-each select="current-group()">
-                  <xsl:choose>
-                    <xsl:when test="self::*:text">
-                      <xsl:apply-templates select=".//text()" mode="#current"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                      <xsl:apply-templates select="." mode="#current"/>
-                    </xsl:otherwise>
-                  </xsl:choose>
-                </xsl:for-each>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:for-each-group>
-        </xsl:variable>
-        <xsl:variable name="indexterm">
-          <indexterm docx2hub:field-function="yes">
-            <xsl:copy-of select="@css:*"/>
-            <xsl:call-template name="docx2hub:indexterm-attributes">
-              <xsl:with-param name="xe" select="."/>
-            </xsl:call-template>
-            <xsl:for-each select="('primary', 'secondary', 'tertiary', 'quaternary', 'quinary', 'senary', 'septenary', 'octonary', 'nonary', 'denary')">
-              <xsl:call-template name="indexterm-sub">
-                <xsl:with-param name="pos" select="position()"/>
-                <xsl:with-param name="real-term" select="$real-term"/>
-                <xsl:with-param name="elt" select="."/>
-              </xsl:call-template>
-            </xsl:for-each>
-            <xsl:if test="not($see = '') and not(empty($see))">
-              <see>
-                <xsl:value-of select="tr:rereplace-chars($see)"/>
-              </see>
-            </xsl:if>
-          </indexterm>  
-        </xsl:variable>
-        <xsl:if test="normalize-space(@fldArgs)">
-          <xsl:apply-templates select="$indexterm" mode="index-processing-1"/>            
-        </xsl:if>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_041', 'WRN', 'wml-to-dbk', 
-                                               concat('Unexpected index (XE) field function content in ''', @fldArgs, ''''))"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
+  
   
   <xsl:template name="docx2hub:indexterm-attributes">
     <xsl:param name="xe" as="element(XE)"/>
@@ -136,7 +75,7 @@
     </xsl:for-each-group>
   </xsl:template>
   
-  <xsl:template match="XE[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="2">
+  <xsl:template match="XE" mode="wml-to-dbk" priority="2">
     <indexterm docx2hub:field-function="yes">
       <xsl:call-template name="docx2hub:indexterm-attributes">
         <xsl:with-param name="xe" select="."/>

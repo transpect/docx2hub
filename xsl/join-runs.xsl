@@ -1042,7 +1042,6 @@
                           <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"  
                             select="$formatting-acceptable"/>
                         </xsl:apply-templates>
-                        <xsl:message select="'RRRRRRRRRRRRRr ', $formatting-acceptable, ' :: ',$wrapper"></xsl:message>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:otherwise>
@@ -1234,19 +1233,6 @@
           <xsl:value-of select="$prelim"/>
         </xsl:otherwise>
     </xsl:choose>
-    <xsl:message>
-      <xsl:text>AAAAAAAAAAAAAAAAa</xsl:text>
-      <xsl:choose>
-      <xsl:when test=". is parent::dbk:wrapper/node()[1]">
-        <xsl:value-of select="replace($prelim, '^\s*\w+\s+', '')">
-          <!-- remove field function name -->
-        </xsl:value-of>
-      </xsl:when>
-      <xsl:otherwise>
-          <xsl:value-of select="$prelim"/>
-        </xsl:otherwise>
-    </xsl:choose>
-    </xsl:message>
   </xsl:template>
   
   <xsl:template match="dbk:wrapper/dbk:quot[ends-with(preceding-sibling::node()[1]/self::text(), '\')]" 

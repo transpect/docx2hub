@@ -1552,92 +1552,101 @@
                                       else m:naryPr[last()]/m:chr/@m:val" as="xs:string"/>
     <xsl:choose>
       <xsl:when test="not($sLowerCaseSupHide='off') and not($sLowerCaseSubHide='off')">
-        <mml:mo>
-          <xsl:value-of select="$mval"/>
-        </mml:mo>
-      </xsl:when>
-      <xsl:when test="not($sLowerCaseSubHide='off')">
-        <xsl:choose>
-          <xsl:when test="$fLimLocSubSup=1">
-            <mml:msup>
-              <mml:mo>
-                <xsl:value-of select="$mval"/>
-              </mml:mo>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
-              </mml:mrow>
-            </mml:msup>
-          </xsl:when>
-          <xsl:otherwise>
-            <mml:mover>
-              <mml:mo>
-                <xsl:value-of select="$mval"/>
-              </mml:mo>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
-              </mml:mrow>
-            </mml:mover>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="not($sLowerCaseSupHide='off')">
-        <xsl:choose>
-          <xsl:when test="$fLimLocSubSup=1">
-            <mml:msub>
-              <mml:mo>
-                <xsl:value-of select="$mval"/>
-              </mml:mo>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
-              </mml:mrow>
-            </mml:msub>
-          </xsl:when>
-          <xsl:otherwise>
-            <mml:munder>
-              <mml:mo>
-                <xsl:value-of select="$mval"/>
-              </mml:mo>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
-              </mml:mrow>
-            </mml:munder>
-          </xsl:otherwise>
-        </xsl:choose>
+        <mml:mrow>
+          <mml:mo>
+            <xsl:value-of select="$mval"/>
+          </mml:mo>
+          <mml:mrow>
+            <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
+          </mml:mrow>          
+        </mml:mrow>
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>
-          <xsl:when test="$fLimLocSubSup=1">
-            <mml:msubsup>
-              <mml:mo>
-                <xsl:value-of select="$mval"/>
-              </mml:mo>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
-              </mml:mrow>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
-              </mml:mrow>
-            </mml:msubsup>
+          <xsl:when test="not($sLowerCaseSubHide='off')">
+            <xsl:choose>
+              <xsl:when test="$fLimLocSubSup=1">
+                <mml:msup>
+                  <mml:mo>
+                    <xsl:value-of select="$mval"/>
+                  </mml:mo>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                </mml:msup>
+              </xsl:when>
+              <xsl:otherwise>
+                <mml:mover>
+                  <mml:mo>
+                    <xsl:value-of select="$mval"/>
+                  </mml:mo>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                </mml:mover>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:when test="not($sLowerCaseSupHide='off')">
+            <xsl:choose>
+              <xsl:when test="$fLimLocSubSup=1">
+                <mml:msub>
+                  <mml:mo>
+                    <xsl:value-of select="$mval"/>
+                  </mml:mo>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                </mml:msub>
+              </xsl:when>
+              <xsl:otherwise>
+                <mml:munder>
+                  <mml:mo>
+                    <xsl:value-of select="$mval"/>
+                  </mml:mo>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                </mml:munder>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
-            <mml:munderover>
-              <mml:mo>
-                <xsl:value-of select="$mval"/>
-              </mml:mo>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
-              </mml:mrow>
-              <mml:mrow>
-                <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
-              </mml:mrow>
-            </mml:munderover>
+            <xsl:choose>
+              <xsl:when test="$fLimLocSubSup=1">
+                <mml:msubsup>
+                  <mml:mo>
+                    <xsl:value-of select="$mval"/>
+                  </mml:mo>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                </mml:msubsup>
+              </xsl:when>
+              <xsl:otherwise>
+                <mml:munderover>
+                  <mml:mo>
+                    <xsl:value-of select="$mval"/>
+                  </mml:mo>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sub[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                  <mml:mrow>
+                    <xsl:apply-templates select="m:sup[1]" mode="omml2mml"/>
+                  </mml:mrow>
+                </mml:munderover>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
+        <mml:mrow>
+          <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
+        </mml:mrow>
       </xsl:otherwise>
     </xsl:choose>
-    <mml:mrow>
-      <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
-    </mml:mrow>
   </xsl:template>
 
   <xsl:template match="m:limLow" mode="omml2mml">

@@ -1213,6 +1213,7 @@
   
   
   <xsl:template match="dbk:wrapper/text()" mode="docx2hub:join-instrText-runs_render-compound3" priority="0.8">
+    <xsl:param name="formatting-acceptable" as="xs:boolean" tunnel="yes"/>
     <xsl:variable name="prelim" as="xs:string">
       <xsl:choose>
         <xsl:when test="ends-with(., '\') and following-sibling::*[1]/local-name() = ('sep', 'quot')">
@@ -1224,7 +1225,7 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:choose>
-      <xsl:when test=". is parent::dbk:wrapper/node()[1]">
+      <xsl:when test="(. is parent::dbk:wrapper/node()[1]) and $formatting-acceptable">
         <xsl:value-of select="replace($prelim, '^\s*\w+\s+', '')">
           <!-- remove field function name -->
         </xsl:value-of>

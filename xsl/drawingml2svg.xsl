@@ -77,7 +77,7 @@
 
   <xsl:key name="d2s:gd-by-name" match="a:gd" use="@name"/>  
   
-  <xsl:template match="w:sectPr" mode="docx2hub:add-props">
+  <xsl:template match="w:sectPr[not(parent::w:sectPrChange)]" mode="docx2hub:add-props">
     <xsl:variable name="pageWidth"    select="xs:integer(w:pgSz/@w:w * 635)" as="xs:integer"/>
     <xsl:variable name="pageHeight"   select="xs:integer(w:pgSz/@w:h * 635)" as="xs:integer"/>
     <xsl:variable name="marginTop"    select="xs:integer(w:pgMar/@w:top * 635)" as="xs:integer"/>

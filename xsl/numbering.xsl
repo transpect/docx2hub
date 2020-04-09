@@ -6,9 +6,10 @@
   xmlns:tr="http://transpect.io"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:css="http://www.w3.org/1996/css"
+  xmlns:saxon="http://saxon.sf.net/"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
-  exclude-result-prefixes="w xs dbk tr docx2hub">
+  exclude-result-prefixes="w xs dbk tr docx2hub saxon">
 
   <!-- This mode is called from docx2hub:remove-redundant-run-atts as a collateral -->
 
@@ -153,7 +154,7 @@ it, but not when an ilvl=2 heading precedes it.
     list paragraph. It outputs multiple attributes so that we can add more information to the intermediate debug file.
     Of the recursive invocation results, only the @docx2hub:num-counter-ilvl{$ilvl} attribute is used.
   -->
-  <xsl:function name="docx2hub:level-counter" as="attribute(*)*">
+  <xsl:function name="docx2hub:level-counter" as="attribute(*)*" saxon:memo-function="yes">
     <xsl:param name="context" as="element(w:p)"/>
     <xsl:param name="ilvl" as="xs:integer?"/>
     <xsl:variable name="ilvl" as="xs:integer?" select="$context/@docx2hub:num-ilvl"/>

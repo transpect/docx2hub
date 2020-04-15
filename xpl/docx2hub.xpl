@@ -629,13 +629,8 @@
           <p:pipe step="single-tree-enhanced" port="params"/>
         </p:input>
       </p:xslt>
-
-      <p:sink/>
       
       <p:validate-with-schematron assert-valid="false" name="sch_tables0">
-        <p:input port="source">
-          <p:pipe port="result" step="join-runs"/>
-        </p:input>
         <p:input port="schema">
           <p:document href="http://transpect.io/xslt-util/calstable/sch/sch_tables.sch.xml"/>
         </p:input>

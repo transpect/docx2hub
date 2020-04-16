@@ -37,6 +37,10 @@
     <p:document href="../sch/single-tree.sch.xml"/>
     <p:documentation>Schematron that will validate the entire Word container document.</p:documentation>
   </p:input>
+  <p:input port="check-tables-schematron">
+    <p:document href="../sch/check-tables.sch.xml"/>
+    <p:documentation>Schematron that will validate tables in the document.</p:documentation>
+  </p:input>
   <p:input port="changemarkup-schematron">
     <p:document href="../sch/changemarkup.sch.xml"/>
     <p:documentation>Schematron that will validate the entire document after applying change markup.</p:documentation>
@@ -593,10 +597,41 @@
         <p:pipe port="result" step="normalize-tables"/>
       </p:output>
       
-      <p:output port="report">
-        <p:pipe port="result" step="sch_tables"/>
+      <p:output port="report" sequence="true">
+        <p:pipe port="result" step="sch_tables_cals"/>
+        <p:pipe port="result" step="sch_tables_d2h"/>
       </p:output>
+
+      <p:validate-with-schematron assert-valid="false" name="sch_tables_d2h-0">
+        <p:input port="source">
+          <p:pipe step="single-tree-enhanced" port="result"/>
+        </p:input>
+        <p:input port="schema">
+          <p:pipe port="check-tables-schematron" step="docx2hub"/>
+        </p:input>
+        <p:input port="parameters"><p:empty/></p:input>
+        <p:with-param name="allow-foreign" select="'true'"/>
+      </p:validate-with-schematron>
       
+      <p:add-attribute match="/*" 
+        attribute-name="tr:step-name" attribute-value="docx2hub">
+        <p:input port="source">
+          <p:pipe port="report" step="sch_tables_d2h-0"/>
+        </p:input>
+      </p:add-attribute>
+      
+      <p:add-attribute name="sch_tables_d2h-1" match="/*" 
+        attribute-name="tr:rule-family" attribute-value="docx2hub_tables">
+      </p:add-attribute>
+      
+      <p:insert name="sch_tables_d2h" match="/*" position="first-child">
+        <p:input port="insertion" select="/*/*:title">
+          <p:pipe port="check-tables-schematron" step="docx2hub"/>
+        </p:input>
+      </p:insert> 
+
+      <p:sink/>
+
       <p:xslt name="normalize-tables">
         <p:input port="source">
           <p:pipe port="result" step="join-runs"/>
@@ -630,7 +665,7 @@
         </p:input>
       </p:xslt>
       
-      <p:validate-with-schematron assert-valid="false" name="sch_tables0">
+      <p:validate-with-schematron assert-valid="false" name="sch_tables_cals0">
         <p:input port="schema">
           <p:document href="http://transpect.io/xslt-util/calstable/sch/sch_tables.sch.xml"/>
         </p:input>
@@ -643,25 +678,24 @@
       <p:add-attribute match="/*" 
         attribute-name="tr:step-name" attribute-value="docx2hub">
         <p:input port="source">
-          <p:pipe port="report" step="sch_tables0"/>
+          <p:pipe port="report" step="sch_tables_cals0"/>
         </p:input>
       </p:add-attribute>
       
-      <p:add-attribute name="sch_tables1" match="/*" 
+      <p:add-attribute name="sch_tables-cals1" match="/*" 
         attribute-name="tr:rule-family" attribute-value="docx2hub_tables">
       </p:add-attribute>
       
-      <p:insert name="sch_tables" match="/*" position="first-child">
+      <p:insert name="sch_tables_cals" match="/*" position="first-child">
         <p:input port="insertion" select="/*/*:title">
           <p:document href="http://transpect.io/xslt-util/calstable/sch/sch_tables.sch.xml"/>
         </p:input>
       </p:insert>
       
-      
     </p:when>
     
     <p:otherwise>
-        <p:output port="normalized-tables">
+      <p:output port="normalized-tables">
         <p:pipe port="result" step="identity"/>
       </p:output>
       

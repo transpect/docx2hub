@@ -549,7 +549,7 @@ TEMPLATES
       <xsl:param name="relativeFrom" as="xs:string"/>
       <xsl:param name="align" as="xs:anyAtomicType"/>
       <xsl:param name="cx" as="xs:integer"/>
-      <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer)"/>
+      <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)"/>
         <xsl:choose>
             <xsl:when test="$relativeFrom = 'page'">
                 <xsl:choose>
@@ -754,7 +754,7 @@ Unterschied gibt es nur wenn es mehrere Spalten gibt'"/>-->
       <xsl:param name="align" as="xs:anyAtomicType"/>
       <xsl:param name="cy" as="xs:integer"/>
       <xsl:param name="pBefore" as="xs:integer"/>
-      <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer)"/>
+      <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)"/>
       <xsl:choose>
             <xsl:when test="$relativeFrom = 'page'">
                 <xsl:choose>

@@ -16,8 +16,8 @@
   
   <pattern id="check_tables_columns">
     <rule context="w:tbl[w:tblGrid/w:gridCol]">
+        <!--diagnostics="table_grid_greater_column_count-de"-->
       <report id="table_grid_greater_column_count" role="warning" 
-        diagnostics="table_grid_greater_column_count-de"
         test="count(w:tblGrid/w:gridCol) &gt; max(for $row in w:tr return count($row/w:tc))">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath, '^(.*word/document\.xml)', 'word/document.xml')), '')"/></span>
         The table grid colum count (<xsl:value-of select="count(w:tblGrid/w:gridCol)"/>) is higher than the maximum column count (<xsl:value-of select="max(for $row in w:tr return count($row/w:tc))"/>) in any table row. Please check.
@@ -29,24 +29,26 @@
 
   <pattern id="check_tables_small_columns">
     <rule context="w:tbl[w:tblGrid/w:gridCol[@w:w]]">
+        <!--diagnostics="table_with_small_columns-de"-->
       <report id="table_with_small_columns" role="warning"
-        diagnostics="table_with_small_columns-de"
         test="some $gridCol in w:tblGrid/w:gridCol 
               satisfies xs:integer($gridCol/@w:w) lt xs:integer($check_tables_small_columns-threshold)">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath, '^(.*word/document\.xml)', 'word/document.xml')), '')"/></span>
-        There are column grid widths (columns: <xsl:value-of select="string-join(w:tblGrid/w:gridCol[xs:integer(@w:w) lt xs:integer($check_tables_small_columns-threshold)]/position(), ', ')"/>) in the current table narrower than typically. Please check.
+        There are column grid widths (columns: <xsl:value-of select="string-join(for $i in w:tblGrid/w:gridCol[xs:integer(@w:w) lt xs:integer($check_tables_small_columns-threshold)]/count(preceding-sibling::w:gridCol) return ($i + 1), ', ')"/>) in the current table narrower than typically. Please check.
       </report>
     </rule>
   </pattern>
 
-  <diagnostics>
+  <!--<diagnostics>
     <diagnostic id="table_grid_greater_column_count-de" xml:lang="de">
       <span class="category">docx</span>
+      <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath, '^(.*word/document\.xml)', 'word/document.xml')), '')"/></span>
       Die Anzahl der definierten Tabellenspalten (<xsl:value-of select="count(w:tblGrid/w:gridCol)"/>) ist höher als die tatsächlich maximale Anzahl an vorkommenden Spalten in einer einzelnen Tabellenzeile (<xsl:value-of select="max(for $row in w:tr return count($row/w:tc))"/>). Bitte prüfen, ob ggf. Tabellenspalten verbunden werden können.
     </diagnostic>
     <diagnostic id="table_with_small_columns-de" xml:lang="de">
+      <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath, '^(.*word/document\.xml)', 'word/document.xml')), '')"/></span>
       <span class="category">docx</span>
         In dieser Tabelle kommen untypisch kleine Werte für die Breite in den Einstellungen der Tabellenspalten vor (Spalte(n): <xsl:value-of select="string-join(w:tblGrid/w:gridCol[xs:integer(@w:w) lt xs:integer($check_tables_small_columns-threshold)]/position(), ', ')"/>). Bitte diese schmalen Spalten auf ihre Richtigkeit prüfen.
     </diagnostic>
-  </diagnostics>
+  </diagnostics>-->
 </schema>

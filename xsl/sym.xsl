@@ -188,11 +188,11 @@
   <xsl:function name="docx2hub:applied-font-for-w-t" as="xs:string?">
     <xsl:param name="w-t" as="element(w:t)"/>
     <xsl:variable name="rStyle-val" as="xs:string?" select="$w-t/../w:rPr/w:rStyle/@w:val"/>
-    <xsl:variable name="pStyle-val" as="xs:string?" select="$w-t/../w:pPr/w:pStyle/@w:val"/>
+    <xsl:variable name="pStyle-val" as="xs:string?" select="$w-t/../../w:pPr/w:pStyle/@w:val"/>
     <xsl:variable name="rStyle" as="element(w:style)?" 
       select="docx2hub:based-on-chain(key('style-by-id', $rStyle-val, root($w-t)))/w:style[1]"/>
     <xsl:variable name="pStyle" as="element(w:style)?" 
-      select="docx2hub:based-on-chain(key('style-by-id', $pStyle-val, root($w-t)))/w:style[1]"/>
+      select="docx2hub:based-on-chain(key('style-by-id', $pStyle-val, root($w-t)))/w:style[w:rPr[w:rFonts]][1]"/>
     <xsl:variable name="applied-font" as="xs:string?" 
       select="($w-t/../w:rPr/w:rFonts/@w:ascii, $rStyle/w:rPr/w:rFonts/@w:ascii, $pStyle/w:rPr/w:rFonts/@w:ascii)[1]"/>
     <xsl:sequence select="$applied-font"/>

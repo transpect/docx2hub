@@ -673,16 +673,20 @@
         select="parent::w:tc[current() is w:p[1]]/preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/parent::w:tc/preceding-sibling::*[not(self::w:bookmarkStart or self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkstart-before-tr" as="element(w:bookmarkStart)*"
         select="parent::w:tc/parent::w:tr[current() is (w:tc/w:p)[1]]/preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/parent::w:tc/parent::w:tr/preceding-sibling::*[not(self::w:bookmarkStart or self::w:bookmarkEnd)][1]]"/>
+      <xsl:variable name="bookmarkstart-before-tbl" as="element(w:bookmarkStart)*"
+        select="parent::w:tc/parent::w:tr/parent::w:tbl[current() is (w:tr/w:tc/w:p)[1]]/preceding-sibling::w:bookmarkStart[. &gt;&gt; current()/parent::w:tc/parent::w:tr/parent::w:tbl/preceding-sibling::*[not(self::w:bookmarkStart or self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkend-after-p" as="element(w:bookmarkEnd)*"
         select="following-sibling::w:bookmarkEnd[. &lt;&lt; current()/following-sibling::*[not(self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkend-after-tc" as="element(w:bookmarkEnd)*"
-        select="parent::w:tc[current() is w:p[1]]/following-sibling::w:bookmarkEnd[. &lt;&lt; current()/parent::w:tc/following-sibling::*[not(self::w:bookmarkEnd)][1]]"/>
+        select="parent::w:tc[current() is w:p[last()]]/following-sibling::w:bookmarkEnd[. &lt;&lt; current()/parent::w:tc/following-sibling::*[not(self::w:bookmarkEnd)][1]]"/>
       <xsl:variable name="bookmarkend-after-tr" as="element(w:bookmarkEnd)*"
-        select="parent::w:tc/parent::w:tr[current() is (w:tc/w:p)[1]]/following-sibling::w:bookmarkEnd[. &lt;&lt; current()/parent::w:tc/parent::w:tr/following-sibling::*[not(self::w:bookmarkEnd)][1]]"/>
+        select="parent::w:tc/parent::w:tr[current() is (w:tc/w:p)[last()]]/following-sibling::w:bookmarkEnd[. &lt;&lt; current()/parent::w:tc/parent::w:tr/following-sibling::*[not(self::w:bookmarkEnd)][1]]"/>
+      <xsl:variable name="bookmarkend-after-tbl" as="element(w:bookmarkEnd)*"
+        select="parent::w:tc/parent::w:tr/parent::w:tbl[current() is (w:tr/w:tc/w:p)[last()]]/following-sibling::w:bookmarkEnd[. &lt;&lt; current()/parent::w:tc/parent::w:tr/parent::w:tbl/following-sibling::*[not(self::w:bookmarkEnd)][1]]"/>
 
-      <xsl:apply-templates select="$bookmarkstart-before-p | $bookmarkstart-before-tc | $bookmarkstart-before-tr" mode="wml-to-dbk-bookmarkStart"/>
+      <xsl:apply-templates select="$bookmarkstart-before-p | $bookmarkstart-before-tc | $bookmarkstart-before-tr | $bookmarkstart-before-tbl" mode="wml-to-dbk-bookmarkStart"/>
       <xsl:apply-templates select="node() except dbk:tabs" mode="#current"/>
-      <xsl:apply-templates select="$bookmarkend-after-p | $bookmarkend-after-tc | $bookmarkend-after-tr" mode="wml-to-dbk-bookmarkEnd"/>
+      <xsl:apply-templates select="$bookmarkend-after-p | $bookmarkend-after-tc | $bookmarkend-after-tr | $bookmarkend-after-tbl" mode="wml-to-dbk-bookmarkEnd"/>
     </xsl:element>
   </xsl:template>
 

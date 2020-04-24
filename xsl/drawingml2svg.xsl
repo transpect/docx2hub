@@ -55,8 +55,8 @@
                 select="$d2s:pageWidth-fallback - $d2s:marginRight-fallback - $d2s:marginLeft-fallback"/>
   <xsl:variable name="d2s:SatzspHeight-fallback" as="xs:integer"
                 select="$d2s:pageHeight-fallback - $d2s:marginTop-fallback - $d2s:marginBottom-fallback"/>
-  <xsl:variable name="d2s:linePitch-fallback" as="xs:integer?"
-                select="xs:integer(/w:root/w:document/w:body/w:sectPr/w:docGrid/@w:linePitch * 635)"/>
+  <xsl:variable name="d2s:linePitch-fallback" as="xs:integer"
+                select="xs:integer((/w:root/w:document/w:body/w:sectPr/w:docGrid/@w:linePitch, 360)[1] * 635)"/>
   
   <xsl:variable name="d2s:sec-layout-map-fallback" as="map(xs:string, xs:integer?)">
     <xsl:map>
@@ -936,7 +936,7 @@ Unterschied gibt es nur wenn es mehrere Spalten gibt'"/>-->
                 <xsl:choose>
                     <xsl:when test="matches($align, '\d')">
                       <xsl:sequence select="xs:integer($align) + $d2s:sec-layout-map('marginTop') + ($pBefore * $d2s:sec-layout-map('linePitch')) "/>
-                        <xsl:message select="'align', $align, 'vertikal relativeFrom', $relativeFrom, 'nicht definiert'"/>
+                      <xsl:message select="'align', $align, 'vertikal relativeFrom', $relativeFrom, 'nicht definiert'"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:sequence select="533400"/>

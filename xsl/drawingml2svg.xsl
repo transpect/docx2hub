@@ -208,15 +208,17 @@ TEMPLATES
       </xsl:choose>
     </xsl:variable>
     <!--X Koordinaten -->
-    <xsl:variable name="relativeFrom-x" select="../../wp:positionH/@relativeFrom" as="xs:string"/>
+    <xsl:variable name="relativeFrom-x" select="(../../wp:positionH/@relativeFrom, 'character')[1]" as="xs:string"/>
     <xsl:variable name="align-x" as="xs:string?"
-      select="(../../wp:positionH/wp:align[normalize-space()], ../../wp:positionH/wp:posOffset, '')[1]"/>
+                  select="(../../wp:positionH/wp:align[normalize-space()], 
+                           ../../wp:positionH/wp:posOffset, 
+                           '')[1]"/>
     <!-- inserted zero as default value below, but needs to be checked -->
     <xsl:variable name="c-x" select="(wps:wsp/wps:spPr/a:xfrm/a:ext/@cx, 0)[1]" as="xs:integer"/>
     <xsl:variable name="position-x" select="d2s:pos-x($relativeFrom-x, $align-x, $c-x, $d2s:sec-layout-map)" as="xs:integer"/>
     <xsl:variable name="center-x" select="$c-x idiv 2 + $position-x" as="xs:integer"/>
     <!--Y Koordinaten-->
-    <xsl:variable name="relativeFrom-y" select="../../wp:positionV/@relativeFrom" as="xs:string"/>
+    <xsl:variable name="relativeFrom-y" select="(../../wp:positionV/@relativeFrom, 'paragraph')[1]" as="xs:string"/>
     <xsl:variable name="align-y" as="xs:string?"
       select="(../../wp:positionV/wp:align[normalize-space()], ../../wp:positionV/wp:posOffset, '')[1]"/>
     <!-- please check the variable below -->

@@ -129,22 +129,38 @@
     </biblioentry>
   </xsl:template>
   
+  <xsl:variable name="other-citavi-ref-parts" as="xs:string+"
+                select="'Date',
+                        'Doi', 
+                        'Edition', 
+                        'Isbn', 
+                        'Language',
+                        'Number',
+                        'PageRange',
+                        'Title',
+                        'Volume',
+                        'Year'"/>
+  
   <xsl:template name="citavi-reference">
     <xsl:variable name="reference-type" as="attribute(relation)?">
       <xsl:apply-templates select="fn:string[@key = 'ReferenceType']" mode="#current"/>
     </xsl:variable>
     <xsl:apply-templates mode="#current"
-      select="fn:map[@key = 'Periodical'][fn:string[@key = ('Name', 'StandardAbbreviation', 'Issn')]]"/>
+                         select="fn:map[@key = 'Periodical']
+                                       [fn:string[@key = ('Name', 
+                                                          'StandardAbbreviation', 
+                                                          'Issn')]]"/>
     <biblioset>
       <xsl:sequence select="$reference-type"/>
-      <xsl:apply-templates select="fn:string[@key = ('LanguageCode', 'OnlineAddress')]" mode="#current"/>
+      <xsl:apply-templates select="fn:string[@key = ('LanguageCode', 
+                                                     'OnlineAddress')]" mode="#current"/>
       <xsl:variable name="authorgroup" as="node()*">
-        <xsl:apply-templates
-          select="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map" mode="#current"/>
+        <xsl:apply-templates select="fn:array[@key = ('Authors', 
+                                                      'Editors', 
+                                                      'Collaborators')]/fn:map" mode="#current"/>
       </xsl:variable>
       <xsl:if test="exists($authorgroup)">
         <authorgroup>
-          <!-- also 'Groups', or is that an unrelated field? -->
           <xsl:sequence select="$authorgroup"/>
         </authorgroup>
       </xsl:if>
@@ -156,8 +172,7 @@
           <xsl:sequence select="$publisher"/>
         </publisher>
       </xsl:if>
-      <xsl:apply-templates select="fn:string[@key = ('Doi', 'Edition', 'Isbn', 'PageRange', 'Title', 'Year', 'Language',
-                                                     'Date', 'Number', 'Volume', 'Volume')]" mode="#current"/>
+      <xsl:apply-templates select="fn:string[@key = $other-citavi-ref-parts]" mode="#current"/>
     </biblioset>
   </xsl:template>
   
@@ -170,14 +185,13 @@
       <xsl:sequence select="$reference-type"/>
       <xsl:apply-templates select="LanguageCode
                                   |OnlineAddress" mode="#current"/>
-      <xsl:variable name="authorgroup" as="element()*">
+      <xsl:variable name="authorgroup" as="node()*">
         <xsl:apply-templates select="Authors/Person
                                     |Collaborators/Person
                                     |Editors/Person" mode="#current"/>
       </xsl:variable>
       <xsl:if test="exists($authorgroup)">
         <authorgroup>
-          <!-- also 'Groups', or is that an unrelated field? -->
           <xsl:sequence select="$authorgroup"/>
         </authorgroup>
       </xsl:if>
@@ -189,16 +203,7 @@
           <xsl:sequence select="$publisher"/>
         </publisher>
       </xsl:if>
-      <xsl:apply-templates select="Date
-                                  |Doi
-                                  |Edition
-                                  |Isbn
-                                  |Language
-                                  |Number
-                                  |PageRange
-                                  |Title
-                                  |Volume
-                                  |Year" mode="#current"/>
+      <xsl:apply-templates select="*[local-name() = $other-citavi-ref-parts]" mode="#current"/>
     </biblioset>
   </xsl:template>
   
@@ -328,12 +333,6 @@
       <xsl:with-param name="person-group-name" as="xs:string?" select="parent::fn:array/@key"/>
     </xsl:apply-templates>
   </xsl:template>
-  
-  <xsl:template match="Authors
-                      |Collaborators
-                      |Editors" mode="citavi">
-    <xsl:apply-templates mode="#current"/>
-  </xsl:template>
 
   <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map
                       |Authors/Person
@@ -405,8 +404,8 @@
   </xsl:template>
     
   <xsl:template match="fn:string[@key = ('Edition', 'Title')]
-                       |Edition
-                       |Title"
+                      |Edition
+                      |Title"
                 mode="citavi">
     <xsl:element name="{lower-case((@key, local-name())[1])}">
       <xsl:value-of select="."/>

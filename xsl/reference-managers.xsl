@@ -12,15 +12,32 @@
 
   
   <xsl:template match="CITAVI_JSON" mode="wml-to-dbk tables" 
-    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
-    <biblioref>
-      <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk"/>
-      <xsl:comment select="."/>
-    </biblioref>
+                use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:param name="citavi-refs" as="document-node()?" tunnel="yes"/>
+    <xsl:variable name="citavi-xml" as="element(Placeholder)?"
+                  select="for $i in replace(w:bookmarkStart[1]/@w:name, '^_CTVP001', '')
+                          return $citavi-refs/docx2hub:citavi-xml/Placeholder[replace(Id, '-', '') eq $i]"/>
+    <xsl:choose>
+      <xsl:when test="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val">
+        <biblioref>
+          <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk"/>
+          <xsl:comment select="."/>
+        </biblioref>    
+      </xsl:when>
+      <xsl:when test="$citavi-xml">
+        <biblioref linkends="{$citavi-xml/Entries/Entry/ReferenceId/concat('_', .)}">
+          <xsl:comment select="."/>
+        </biblioref>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates mode="wml-to-dbk"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="w:sdt[.//*:CITAVI_XML]" mode="wml-to-dbk tables" priority="2" 
-    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+  <xsl:template match="w:sdt[.//*:CITAVI_XML]
+                      |*:CITAVI_XML" mode="wml-to-dbk tables" priority="2" 
+                use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
   </xsl:template>
   
 
@@ -43,18 +60,32 @@
 
 
   <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:variable name="jsons-actually-containing-xml" as="document-node(element(Placeholder))*" 
+                  select="for $jd in .//CITAVI_JSON/@fldArgs 
+                          return if(doc-available($jd)) then doc($jd) else ()"/>
     <xsl:variable name="jsons" as="item()*">
-      <xsl:try select="for $jd in .//CITAVI_JSON/@fldArgs return json-to-xml(unparsed-text($jd))">
+      <xsl:try select="for $jd in .//CITAVI_JSON/@fldArgs 
+                       return json-to-xml(unparsed-text($jd))">
         <xsl:catch/>
       </xsl:try>
     </xsl:variable>
-    <xsl:if test="exists($jsons)">
-      <xsl:document>
-        <docx2hub:citavi-jsons>
-          <xsl:sequence select="$jsons"/>
-        </docx2hub:citavi-jsons>
-      </xsl:document>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="exists($jsons)">
+        <xsl:document>
+          <docx2hub:citavi-jsons>
+            <xsl:sequence select="$jsons"/>
+          </docx2hub:citavi-jsons>
+        </xsl:document>
+      </xsl:when>
+      <xsl:when test="exists($jsons-actually-containing-xml)">
+        <xsl:document>
+          <docx2hub:citavi-xml>
+            <xsl:sequence select="$jsons-actually-containing-xml"/>
+          </docx2hub:citavi-xml>
+        </xsl:document>
+      </xsl:when>
+    </xsl:choose>
+    
   </xsl:template>
   
   <xsl:template match="node() | @*" mode="citavi">
@@ -91,6 +122,13 @@
     </biblioentry>
   </xsl:template>
   
+  <xsl:template match="Reference" mode="citavi">
+    <biblioentry xml:id="_{Id}">
+      <xsl:apply-templates select="ParentReference" mode="#current"/>
+      <xsl:call-template name="citavi-reference-xml"/>
+    </biblioentry>
+  </xsl:template>
+  
   <xsl:template name="citavi-reference">
     <xsl:variable name="reference-type" as="attribute(relation)?">
       <xsl:apply-templates select="fn:string[@key = 'ReferenceType']" mode="#current"/>
@@ -121,16 +159,56 @@
       <xsl:apply-templates select="fn:string[@key = ('Doi', 'Edition', 'Isbn', 'PageRange', 'Title', 'Year', 'Language',
                                                      'Date', 'Number', 'Volume', 'Volume')]" mode="#current"/>
     </biblioset>
-
+  </xsl:template>
+  
+  <xsl:template name="citavi-reference-xml">
+    <xsl:variable name="reference-type" as="attribute(relation)?">
+      <xsl:apply-templates select="ReferenceTypeId" mode="#current"/>
+    </xsl:variable>
+    <xsl:apply-templates select="Periodical[Issn|Name|StandardAbbreviation]" mode="#current"/>
+    <biblioset>
+      <xsl:sequence select="$reference-type"/>
+      <xsl:apply-templates select="LanguageCode
+                                  |OnlineAddress" mode="#current"/>
+      <xsl:variable name="authorgroup" as="element()*">
+        <xsl:apply-templates select="Authors
+                                    |Collaborators
+                                    |Editors" mode="#current"/>
+      </xsl:variable>
+      <xsl:if test="exists($authorgroup)">
+        <authorgroup>
+          <!-- also 'Groups', or is that an unrelated field? -->
+          <xsl:sequence select="$authorgroup"/>
+        </authorgroup>
+      </xsl:if>
+      <xsl:variable name="publisher" as="element(*)*">
+        <xsl:apply-templates select="Publishers" mode="#current"/>
+      </xsl:variable>
+      <xsl:if test="exists($publisher)">
+        <publisher>
+          <xsl:sequence select="$publisher"/>
+        </publisher>
+      </xsl:if>
+      <xsl:apply-templates select="Date
+                                  |Doi
+                                  |Edition
+                                  |Isbn
+                                  |Language
+                                  |Number
+                                  |PageRange
+                                  |Title
+                                  |Volume
+                                  |Year" mode="#current"/>
+    </biblioset>
   </xsl:template>
   
   <xsl:key name="docx2hub:by-citavi-id" 
-    match="fn:map[@key][fn:string[@key = '$id']]
-            | fn:array[@key]/fn:map[empty(@key)][fn:string[@key = '$id']]" 
-    use="string-join(((@key, 'person')[1], fn:string[@key = '$id']), '__')"/>
+           match="fn:map[@key][fn:string[@key = '$id']]
+                 |fn:array[@key]/fn:map[empty(@key)][fn:string[@key = '$id']]" 
+           use="string-join(((@key, 'person')[1], fn:string[@key = '$id']), '__')"/>
   
   <xsl:template match="fn:map[@key = 'ParentReference'][count(*) = 1][fn:string[@key = '$ref']]" 
-    mode="citavi" priority="1">
+                mode="citavi" priority="1">
     <xsl:if test="$debug = 'yes'">
       <xsl:comment>redirect to <xsl:value-of select="@key, fn:string[@key = '$ref']"/></xsl:comment>
     </xsl:if>
@@ -144,32 +222,45 @@
     <xsl:call-template name="citavi-reference"/>
   </xsl:template>
   
-  <xsl:template match="fn:map[@key = 'Periodical']" mode="citavi">
+  <xsl:template match="fn:map[@key = 'Periodical']
+                      |Periodical" mode="citavi">
     <biblioset relation="journal">
-      <xsl:apply-templates select="fn:string[@key = ('Name', 'StandardAbbreviation', 'Issn', 'UserAbbreviation1')]" 
-        mode="#current"/>
+      <xsl:apply-templates select="fn:string[@key = ('Name', 'StandardAbbreviation', 'Issn', 'UserAbbreviation1')]
+                                  |Name
+                                  |StandardAbbreviation
+                                  |Issn
+                                  |UserAbbreviation1"
+                           mode="#current"/>
     </biblioset>
   </xsl:template>
   
-  <xsl:template match="fn:map[@key = 'Periodical']/fn:string[@key = 'Name']" mode="citavi">
+  <xsl:template match="fn:map[@key = 'Periodical']/fn:string[@key = 'Name']
+                      |Periodical/Name" 
+                mode="citavi">
     <title>
       <xsl:value-of select="."/>
     </title>
   </xsl:template>
   
-  <xsl:template match="fn:map[@key = 'Periodical']/fn:string[@key = 'StandardAbbreviation']" mode="citavi">
+  <xsl:template match="fn:map[@key = 'Periodical']/fn:string[@key = 'StandardAbbreviation']
+                      |Periodical/StandardAbbreviation" 
+                mode="citavi">
     <abbrev>
       <xsl:value-of select="."/>
     </abbrev>
   </xsl:template>
   
-  <xsl:template match="fn:map[@key = 'Periodical']/fn:string[@key = 'UserAbbreviation1']" mode="citavi">
-    <abbrev role="{@key}">
+  <xsl:template match="fn:map[@key = 'Periodical']/fn:string[@key = 'UserAbbreviation1']
+                      |Periodical/UserAbbreviation1" 
+                mode="citavi">
+    <abbrev role="periodical">
       <xsl:value-of select="."/>
     </abbrev>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = 'ReferenceType']" mode="citavi" as="attribute(relation)?">
+  <xsl:template match="fn:string[@key = 'ReferenceType']
+                      |ReferenceTypeId"
+                mode="citavi" as="attribute(relation)?">
     <xsl:choose>
       <xsl:when test=". = 'Book'">
         <xsl:attribute name="relation" select="'book'"/>
@@ -201,11 +292,15 @@
     </xsl:choose>
   </xsl:template>
     
-  <xsl:template match="fn:string[@key = 'LanguageCode']" mode="citavi" as="attribute(xml:lang)">
+  <xsl:template match="fn:string[@key = 'LanguageCode']
+                      |LanguageCode" 
+                mode="citavi" as="attribute(xml:lang)">
     <xsl:attribute name="xml:lang" select="string(.)"/>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = 'Language']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'Language']
+                      |Language" 
+                mode="citavi">
     <language xmlns="http://purl.org/dc/terms/">
       <xsl:value-of select="."/>
     </language>
@@ -234,8 +329,12 @@
     </xsl:apply-templates>
   </xsl:template>
 
-  <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map" mode="citavi">
-    <xsl:param name="person-group-name" as="xs:string?" select="../@key"/>
+  <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map
+                      |Authors/Person
+                      |Collaborators/Person
+                      |Editors/Person"
+                mode="citavi">
+    <xsl:param name="person-group-name" as="xs:string?" select="../@key, parent::*/local-name()"/>
     <xsl:if test="$debug = 'yes'">
       <xsl:comment select="../@key, fn:string[@key = '$id']"/>
     </xsl:if>
@@ -258,87 +357,124 @@
       <xsl:apply-templates select="fn:string[@key = 'FirstName'],
                                    fn:string[@key = 'MiddleName'],
                                    fn:string[@key = 'Particle'],
-                                   fn:string[@key = 'LastName']" mode="#current"/>
+                                   fn:string[@key = 'LastName'],
+                                   FirstName,
+                                   MiddleName,
+                                   Particle,
+                                   LastName" 
+                           mode="#current"/>
     </personname>
   </xsl:template>
 
-  <xsl:template match="fn:string[@key = 'FirstName']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'FirstName']
+                      |FirstName" 
+                mode="citavi">
     <firstname>
       <xsl:value-of select="."/>
     </firstname>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = 'LastName']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'LastName']
+                      |LastName" 
+                mode="citavi">
     <surname>
       <xsl:value-of select="."/>
     </surname>
   </xsl:template>
 
-  <xsl:template match="fn:string[@key = 'MiddleName']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'MiddleName']
+                      |MiddleName"
+                mode="citavi">
     <othername role="middle">
       <xsl:value-of select="."/>
     </othername>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = 'Particle']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'Particle']
+                      |Particle" 
+                mode="citavi">
     <othername role="particle">
       <xsl:value-of select="."/>
     </othername>
   </xsl:template>
     
-  <xsl:template match="fn:string[@key = ('Edition', 'Title')]" mode="citavi">
-    <xsl:element name="{lower-case(@key)}">
+  <xsl:template match="fn:string[@key = ('Edition', 'Title')]
+                       |Edition
+                       |Title"
+                mode="citavi">
+    <xsl:element name="{lower-case((@key, local-name())[1])}">
       <xsl:value-of select="."/>
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = ('Year', 'Date')]" mode="citavi">
-    <pubdate role="{lower-case(@key)}">
+  <xsl:template match="fn:string[@key = ('Year', 'Date')]
+                      |Year
+                      |Date" mode="citavi">
+    <pubdate role="{lower-case((@key, local-name())[1])}">
       <xsl:value-of select="."/>
     </pubdate>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = ('Number')]" mode="citavi">
+  <xsl:template match="fn:string[@key = ('Number')]
+                      |Number" 
+                mode="citavi">
     <issuenum>
       <xsl:value-of select="."/>
     </issuenum>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = ('Volume')]" mode="citavi">
+  <xsl:template match="fn:string[@key = ('Volume')]
+                      |Volume" 
+                mode="citavi">
     <volumenum>
       <xsl:value-of select="."/>
     </volumenum>
   </xsl:template>
     
-  <xsl:template match="fn:string[@key = ('Doi', 'Isbn', 'Issn')]" mode="citavi">
-    <biblioid class="{lower-case(@key)}">
+  <xsl:template match="fn:string[@key = ('Doi', 'Isbn', 'Issn')]
+                      |Doi
+                      |Isbn
+                      |Issn" 
+                mode="citavi">
+    <biblioid class="{lower-case(lower-case((@key, local-name())[1]))}">
       <xsl:value-of select="."/>
     </biblioid>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = 'OnlineAddress']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'OnlineAddress']
+                      |OnlineAddress" mode="citavi">
     <xsl:attribute name="xlink:href" select="."/>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = 'PageRange']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'PageRange']
+                      |PageRange" 
+                mode="citavi">
     <xsl:variable name="parsed" as="document-node(element(PageRange))" 
-      select="parse-xml('&lt;PageRange>' || . || '&lt;/PageRange>')"/>
+                  select="parse-xml('&lt;PageRange>' || . || '&lt;/PageRange>')"/>
     <pagenums>
       <xsl:value-of select="replace($parsed/PageRange/os, '-', '–')"/>
     </pagenums>
   </xsl:template>
   
-  <xsl:template match="fn:array[@key = 'Publishers']/fn:map" mode="citavi">
-    <xsl:apply-templates select="../fn:string[@key = 'PlaceOfPublication'], fn:string[@key = 'Name']" mode="#current"/>
+  <xsl:template match="fn:array[@key = 'Publishers']/fn:map
+                      |Publishers" 
+                mode="citavi">
+    <xsl:apply-templates select="../fn:string[@key = 'PlaceOfPublication'], 
+                                 fn:string[@key = 'Name'],
+                                 ../PlaceOfPublication,
+                                 Name" mode="#current"/>
   </xsl:template>
     
-  <xsl:template match="fn:array[@key = 'Publishers']/fn:map/fn:string[@key = 'Name']" mode="citavi">
+  <xsl:template match="fn:array[@key = 'Publishers']/fn:map/fn:string[@key = 'Name']
+                      |Publishers/Name" mode="citavi">
     <publishername>
       <xsl:value-of select="."/>
     </publishername>
   </xsl:template>
     
-  <xsl:template match="fn:string[@key = 'PlaceOfPublication']" mode="citavi">
+  <xsl:template match="fn:string[@key = 'PlaceOfPublication']
+                      |PlaceOfPublication" 
+                mode="citavi">
     <address>
       <city>
         <!-- ';' → ' and ' replacement probably necessary for BibTeX --> 

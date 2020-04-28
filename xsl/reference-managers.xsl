@@ -109,7 +109,6 @@
     </xsl:if>
   </xsl:template>
   
-  
   <xsl:template match="fn:string" mode="citavi">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
@@ -467,11 +466,11 @@
     <xsl:apply-templates select="../fn:string[@key = 'PlaceOfPublication'], 
                                  fn:string[@key = 'Name'],
                                  ../PlaceOfPublication,
-                                 Name" mode="#current"/>
+                                 Publisher/Name" mode="#current"/>
   </xsl:template>
     
   <xsl:template match="fn:array[@key = 'Publishers']/fn:map/fn:string[@key = 'Name']
-                      |Publishers/Name" mode="citavi">
+                      |Publisher/Name" mode="citavi">
     <publishername>
       <xsl:value-of select="."/>
     </publishername>

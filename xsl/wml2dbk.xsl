@@ -619,10 +619,20 @@
         <xsl:with-param name="citavi-refs" as="document-node()?" select="$citavi-refs" tunnel="yes"/>
       </xsl:apply-templates>
       <xsl:variable name="citavi-bib" as="element(dbk:biblioentry)*">
-        <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-jsons/fn:map/fn:array/fn:map/fn:map[@key = 'Reference']"
-          group-by="fn:string[@key = 'Id']">
-          <xsl:apply-templates select="." mode="citavi"/>
-        </xsl:for-each-group>
+        <xsl:choose>
+          <xsl:when test="$citavi-refs/docx2hub:citavi-jsons">
+            <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-jsons/fn:map/fn:array/fn:map/fn:map[@key = 'Reference']"
+                                group-by="fn:string[@key = 'Id']">
+              <xsl:apply-templates select="." mode="citavi"/>
+            </xsl:for-each-group>    
+          </xsl:when>
+          <xsl:when test="$citavi-refs/docx2hub:citavi-xml">
+            <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-xml/Placeholder/Entries/Entry/Reference"
+                                group-by="Id">
+              <xsl:apply-templates select="." mode="citavi"/>
+            </xsl:for-each-group>
+          </xsl:when>
+        </xsl:choose>
       </xsl:variable>
       <xsl:if test="exists($citavi-bib)">
         <bibliography role="Citavi">

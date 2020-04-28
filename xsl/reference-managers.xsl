@@ -171,9 +171,9 @@
       <xsl:apply-templates select="LanguageCode
                                   |OnlineAddress" mode="#current"/>
       <xsl:variable name="authorgroup" as="element()*">
-        <xsl:apply-templates select="Authors
-                                    |Collaborators
-                                    |Editors" mode="#current"/>
+        <xsl:apply-templates select="Authors/Person
+                                    |Collaborators/Person
+                                    |Editors/Person" mode="#current"/>
       </xsl:variable>
       <xsl:if test="exists($authorgroup)">
         <authorgroup>
@@ -328,12 +328,11 @@
       <xsl:with-param name="person-group-name" as="xs:string?" select="parent::fn:array/@key"/>
     </xsl:apply-templates>
   </xsl:template>
-
+  
   <xsl:template match="Authors
                       |Collaborators
-                      |Editors" 
-                mode="citavi">
-    <xsl:apply-templates select="*" mode="#current"/>
+                      |Editors" mode="citavi">
+    <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
   <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map

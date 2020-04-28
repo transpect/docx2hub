@@ -14,7 +14,7 @@
   <xsl:template match="CITAVI_JSON" mode="wml-to-dbk tables" 
                 use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
     <xsl:param name="citavi-refs" as="document-node()?" tunnel="yes"/>
-    <xsl:variable name="citavi-xml" as="element(Placeholder)?"
+    <xsl:variable name="citavi-xml" as="element(Placeholder)*"
                   select="for $i in replace(w:bookmarkStart[1]/@w:name, '^_CTVP001', '')
                           return $citavi-refs/docx2hub:citavi-xml/Placeholder[replace(Id, '-', '') eq $i]"/>
     <xsl:choose>

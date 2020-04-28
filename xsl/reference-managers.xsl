@@ -329,6 +329,13 @@
     </xsl:apply-templates>
   </xsl:template>
 
+  <xsl:template match="Authors
+                      |Collaborators
+                      |Editors" 
+                mode="citavi">
+    <xsl:apply-templates select="*" mode="#current"/>
+  </xsl:template>
+
   <xsl:template match="fn:array[@key = ('Authors', 'Editors', 'Collaborators')]/fn:map
                       |Authors/Person
                       |Collaborators/Person

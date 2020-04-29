@@ -338,7 +338,7 @@
                       |Collaborators/Person
                       |Editors/Person"
                 mode="citavi">
-    <xsl:param name="person-group-name" as="xs:string?" select="../@key, parent::*/local-name()"/>
+    <xsl:param name="person-group-name" as="xs:string?" select="(../@key, parent::*/local-name())[1]"/>
     <xsl:if test="$debug = 'yes'">
       <xsl:comment select="../@key, fn:string[@key = '$id']"/>
     </xsl:if>

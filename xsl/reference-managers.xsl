@@ -257,7 +257,7 @@
   <xsl:template match="fn:map[@key = 'Periodical']/fn:string[@key = 'UserAbbreviation1']
                       |Periodical/UserAbbreviation1" 
                 mode="citavi">
-    <abbrev role="periodical">
+    <abbrev role="user-abbrev">
       <xsl:value-of select="."/>
     </abbrev>
   </xsl:template>

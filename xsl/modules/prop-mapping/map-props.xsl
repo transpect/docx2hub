@@ -1263,12 +1263,17 @@
       <!-- do not wrap field function elements in subscript or superscript.
       Exception: instrText will be wrapped (see next xsl:when) when it isn’t the first instrText after a 'begin' fldChar.
       There may be sub/superscripts in index terms. However, sometimes even the field function name (XE for index terms)
-      is lowered or raised. This leads to errors when processing it. -->
+      is lowered or raised. This leads to errors when processing it. 
+      GI 2020-05-03: Even the first instrText will be wrapped since 
+      https://github.com/transpect/docx2hub/blame/master/xsl/modules/prop-mapping/map-props.xsl#L1271
+      This is probably because the field function name XE and the superscripted content could appear together
+      in the first instrText.
+      -->
       <xsl:when test="docx2hub:wrap/@element = ('superscript', 'subscript') 
                       and
                       (exists(w:fldChar | w:instrText[current()/preceding-sibling::*[1]/self::w:r/w:fldChar[@w:fldCharType = 'begin']] ))
                       and
-                      (every $i in * satisfies $i[self::w:fldChar (:or self::w:instrText:) or self::docx2hub:*])">
+                      (every $i in * satisfies $i[self::w:fldChar | self::docx2hub:*])">
         <xsl:copy>
           <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
         </xsl:copy>

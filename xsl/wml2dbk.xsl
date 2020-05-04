@@ -343,7 +343,9 @@
                   <xsl:element name="{replace($ffname, '\\', '')}" xmlns="">
                     <xsl:attribute name="fldArgs" select="$ffargs"/>
                     <xsl:copy-of select="$inner/@css:*"/>
-                    <xsl:if test="exists($instr-text[1]/*)">
+                    <xsl:if test="exists($instr-text[1]/*) and not($ffname = 'NOTEREF')">
+                      <!-- exclude NOTEREF: Testset file EN_ISO_473_D_tr_NOTEREF.docx will otherwise have undesired 
+                        superscript around the field codes -->
                       <xsl:attribute name="docx2hub:contains-markup" select="'yes'"/>
                       <xsl:sequence select="$instr-text[1]/node()"/>
                     </xsl:if>

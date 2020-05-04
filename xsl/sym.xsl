@@ -32,7 +32,7 @@
 
   <xsl:variable name="docx2hub:symbol-font-names" as="xs:string+" 
     select="('ArialMT+1', 'Math1', 'MT Extra', 'Symbol', 'TimesNewRomanPSMT+1', 'Wingdings', 
-             'Wingdings 2', 'Wingdings 3', 'Webdings', 'Euclid Math One', 
+             'Wingdings 2', 'Wingdings 3', 'Webdings', 'Euclid Math One', 'Courier New',
              'Euclid Math Two', 'Euclid Extra', 'Euclid Fraktur', 'Euclid Symbol', 
              'Lucida Bright Math Italic', 'Lucida Bright Math Extension',
              'Lucida Bright Math Symbol', 'Marlett', 'Monotype Sorts', 'MT Symbol', 

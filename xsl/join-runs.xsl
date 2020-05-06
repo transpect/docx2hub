@@ -1413,7 +1413,7 @@
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="node()" group-adjacent="exists(self::mml:mi[@mathvariant eq 'normal'] 
-                                                                |self::mml:mtext[not(@fontstyle) or @fontstyle eq 'normal'])">
+                                                                |self::mml:mtext[not(@fontstyle or @fontweight) or (@fontstyle, @fontweight) = 'normal'])">
         <xsl:choose>
           <xsl:when test="current-grouping-key() and string-length(string-join(current-group(), '')) gt 1">
             <xsl:for-each-group select="current-group()" group-adjacent="if (@mathcolor) then @mathcolor else ''">

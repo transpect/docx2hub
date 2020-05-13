@@ -122,6 +122,15 @@
       <!--<cx:message>
         <p:with-option name="message" select="'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa ', $active"></p:with-option>
       </cx:message>-->
+      <p:wrap name="wrap-helper" wrapper="w:object"
+        match="/w:root/*[name() = ('w:document', 
+                                   'w:footnotes', 
+                                   'w:endnotes', 
+                                   'w:comments')]//w:pict[count(o:OLEObject) != 1]
+                                                   /o:OLEObject[
+                                                     @Type eq 'Embed' 
+                                                     and 
+                                                     starts-with(@ProgID, 'Equation')]"/>
       <p:viewport match="/w:root/*[name() = ('w:document', 
                                              'w:footnotes', 
                                              'w:endnotes', 

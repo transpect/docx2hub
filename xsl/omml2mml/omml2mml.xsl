@@ -2658,6 +2658,9 @@
             <xsl:if test="$context/w:rPr/w:color/@w:val">
               <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
             </xsl:if>
+            <xsl:if test="$context/w:rPr/w:highlight/@w:val">
+              <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
+            </xsl:if>
             <xsl:if test="$context/w:rPr/w:sz/@w:val">
               <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
             </xsl:if>
@@ -2742,6 +2745,9 @@
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
                 </xsl:if>
+                <xsl:if test="$context/w:rPr/w:highlight/@w:val">
+                  <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
+                </xsl:if>
                 <xsl:if test="$context/w:rPr/w:sz/@w:val">
                   <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
                 </xsl:if>
@@ -2772,6 +2778,9 @@
               <mml:mo>
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                </xsl:if>
+                <xsl:if test="$context/w:rPr/w:highlight/@w:val">
+                  <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:sz/@w:val">
                   <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
@@ -2805,6 +2814,9 @@
               <mml:mn>
                 <xsl:if test="$context/w:rPr/w:color/@w:val">
                   <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                </xsl:if>
+                <xsl:if test="$context/w:rPr/w:highlight/@w:val">
+                  <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:sz/@w:val">
                   <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
@@ -3253,6 +3265,9 @@
     </xsl:choose>
     <xsl:if test="w:rPr/w:color/@w:val">
       <xsl:attribute name="mathcolor" select="w:rPr/w:color/@w:val"/>
+    </xsl:if>
+    <xsl:if test="w:rPr/w:highlight/@w:val">
+      <xsl:attribute name="mathbackground" select="w:rPr/w:highlight/@w:val"/>
     </xsl:if>
     <xsl:if test="w:rPr/w:sz/@w:val">
       <xsl:attribute name="mathsize" select="concat(number(w:rPr/w:sz/@w:val) div 2,'pt')"/>

@@ -330,7 +330,7 @@
               ', Name: ', string(@docx2hub:field-function-name), ', Args: ', string(@docx2hub:field-function-args)"/>
           </xsl:for-each>
         </xsl:if>
-        <xsl:variable name="ffname" as="xs:string" select="$instr-text[1]/@docx2hub:field-function-name"/>
+        <xsl:variable name="ffname" as="xs:string?" select="$instr-text[1]/@docx2hub:field-function-name"/>
         <xsl:variable name="ffargs" as="xs:string?" select="$instr-text[1]/@docx2hub:field-function-args"/>
         <xsl:call-template name="docx2hub:nest-inline-field-function">
           <xsl:with-param name="para-contents">

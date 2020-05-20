@@ -921,7 +921,7 @@
         </xsl:copy>
       </xsl:for-each>
     </xsl:variable>
-    <xsl:variable name="dir" as="xs:string?" select="($ancestors-with-langs, ..)[@css:direction][last()]/@css:direction"/>
+    <xsl:variable name="dir" as="xs:string?" select="($ancestors-with-langs, ..)[@docx2hub:rtl-lang][last()]/@docx2hub:rtl-lang"/>
     <xsl:variable name="last-lang" select="($ancestors-with-langs[@docx2hub:rtl-lang][@css:direction = 'rtl'][last()]/@docx2hub:rtl-lang,
                                            $ancestors-with-langs[@xml:lang][not(@css:direction = 'rtl')][last()]/@xml:lang)[last()]"/>
     <!-- Only output the next specific xml:lang if its string value differs from the current one’s: -->

@@ -86,6 +86,12 @@
           <xsl:when test="current-grouping-key() eq 'phrase___role__=__docx2hub:EQ'">
             <xsl:apply-templates select="current-group()" mode="#current"/>
           </xsl:when>
+          <xsl:when test="starts-with(fn:current-grouping-key(), 'phrase')
+                          and
+                          current-group()/*[docx2hub:is-display-equation(.)]">
+            <!-- https://github.com/transpect/docx2hub/issues/23 -->
+            <xsl:apply-templates select="current-group()/*" mode="#current"/>
+          </xsl:when>
           <xsl:otherwise>
             <xsl:copy copy-namespaces="no">
               <xsl:apply-templates select="@role, @* except (@srcpath, @role)" mode="#current"/>
@@ -1319,6 +1325,10 @@
   
   <xsl:template name="docx2hub:nest-field-functions" as="document-node()">
     <xsl:param name="input" as="document-node()"/><!-- containing raw w:fldChar or nested docx2hub:field-function -->
+    <xsl:param name="iteration" as="xs:integer" select="1"/>
+    <xsl:if test="$iteration gt 8">
+      <xsl:message terminate="yes" select="'docx2hub:nest-field-functions may be looping. Input: ', $input"/>
+    </xsl:if>
     <xsl:variable name="grouping" as="element(*)*">
       <xsl:for-each-group select="$input/*" 
                           group-starting-with="w:fldChar[@w:fldCharType = 'begin']
@@ -1363,6 +1373,7 @@
               <xsl:sequence select="$grouping"/>
             </xsl:document>
           </xsl:with-param>
+          <xsl:with-param name="iteration" select="$iteration + 1"/>
         </xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
@@ -1390,8 +1401,24 @@
   
   <xsl:template match="dbk:inlineequation[@role eq 'mtef']" mode="docx2hub:join-runs">
     <xsl:variable name="para" select="ancestor::dbk:para[1]" as="element(dbk:para)"/>
-    <xsl:variable name="is-display-equation" 
-      select="count($para//dbk:inlineequation[dbk:same-scope(., $para)]) eq 1
+    <xsl:variable name="is-display-equation" select="docx2hub:is-display-equation(.)" as="xs:boolean"/>
+    <xsl:element name="{if ($is-display-equation) then 'equation' else name()}">
+      <xsl:if test="$is-display-equation">
+        <!-- also consider other inline parent elements? This was done solely on the example given
+          in https://github.com/transpect/docx2hub/issues/23 -->
+        <xsl:apply-templates select="parent::dbk:phrase/(@css:* | @xml:*)"/>
+      </xsl:if>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
+  <xsl:function name="docx2hub:is-display-equation" as="xs:boolean">
+    <xsl:param name="ieq" as="element(*)"/>
+    <xsl:variable name="para" as="element(dbk:para)" select="$ieq/ancestor::dbk:para[1]"/>
+    <xsl:sequence 
+      select="exists($ieq/self::dbk:inlineequation)
+              and
+              count($para//dbk:inlineequation[dbk:same-scope($ieq, $para)]) eq 1
               and 
               not(
                 normalize-space(
@@ -1402,11 +1429,8 @@
                     ''
                   )
                 )
-              )" as="xs:boolean"/>
-    <xsl:element name="{if ($is-display-equation) then 'equation' else name()}">
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </xsl:element>
-  </xsl:template>
+              )"/>
+  </xsl:function>
   
 <!-- group more than one mml:mi[@mathvariant='normal'] element to mtext; exclude mathtype2mml processed mathml -->
   <xsl:template match="mml:*[not(ancestor::*[ends-with(name(), 'equation')]/@role eq 'mtef')][mml:mi]" mode="docx2hub:join-runs">

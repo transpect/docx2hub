@@ -1619,6 +1619,14 @@
       <xsl:apply-templates select="mml:math" mode="mathml"/>
     </inlineequation>
   </xsl:template>
+  
+  <!-- WMF forcibly converted to MathML using mathtype2mml=wmf+try-all-pict-wmf, when included by a:blip, 
+    might end up as w:r/mml:math, see https://github.com/transpect/docx2hub/issues/23 -->
+  <xsl:template match="w:r/mml:math" mode="wml-to-dbk">
+    <inlineequation role="mtef">
+      <xsl:apply-templates select="." mode="mathml"/>
+    </inlineequation>
+  </xsl:template>
 
   <!-- we used @class just as placeholder, the value was moved to inlineequation/@condition -->
   <xsl:template match="mml:math/@class" mode="mathml"/>

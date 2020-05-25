@@ -417,8 +417,8 @@
         <p:choose>
           <p:when test="contains($active, '+try-all-pict-wmf')">
             <p:viewport name="pict-wmf-to-mml-viewport" 
-              match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]/
-                        descendant::*[name() = ('w:drawing', 'w:pict')][
+              match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]
+                        //*[name() = ('w:drawing', 'w:pict')][
                           exists(
                             (
                               self::w:drawing/descendant::a:blip

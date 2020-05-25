@@ -169,9 +169,13 @@
             This is the default value for the option.
           </dd>
         <dt>any other String</dt>
-          <dd>Is treated as 'yes'.</dd>
+          <dd>Is treated as 'yes', but see the next paragraph.</dd>
           </dd>
       </dl>
+      <p>Note that both <code>ole</code> and <code>wmf</code> options will only process <code>v:shape</code>
+      obejcts that contain an <code>o:OLEObject</code>. It may happen that WMF files are just embedded as images,
+      not with an accompanying OLE object. In this case, append <code>+try-all-pict-wmf</code> to the option.
+      Example: <code>mathtype2mml=ole+wmf+try-all-pict-wmf</code>.</p>
     </p:documentation>
   </p:option>
   <p:option name="mathtype-source-pi" required="false" select="'no'">

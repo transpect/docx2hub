@@ -473,15 +473,26 @@
                     <p:with-option name="debug-dir-uri" select="concat($debug-dir-uri, '/docx2hub/', $basename, '/')"/>
                   </tr:mathtype2mml>
                   
-                  <p:add-attribute match="mml:math" attribute-name="docx2hub:rel-wmf-id">
-                    <p:with-option name="attribute-value" select="$rel-wmf-id"/>
-                  </p:add-attribute>
-                  
-                  <p:insert match="mml:math" position="first-child">
-                    <p:input port="insertion">
-                      <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
-                    </p:input>
-                  </p:insert>
+                  <p:choose>
+                    <p:when test="/*/name() = 'c:errors'">
+                      <p:sink/>
+                      <p:identity>
+                        <p:input port="source">
+                          <p:pipe port="current" step="pict-wmf-to-mml-viewport"/>
+                        </p:input>
+                      </p:identity>
+                    </p:when>
+                    <p:otherwise>
+                      <p:add-attribute match="mml:math" attribute-name="docx2hub:rel-wmf-id">
+                        <p:with-option name="attribute-value" select="$rel-wmf-id"/>
+                      </p:add-attribute>
+                      <p:insert match="mml:math" position="first-child">
+                        <p:input port="insertion">
+                          <p:inline><wrap-mml><?tr M2M_211 MathML equation source:wmf?></wrap-mml></p:inline>
+                        </p:input>
+                      </p:insert>
+                    </p:otherwise>
+                  </p:choose>
                 </p:group>
                 <p:catch>
                   <cx:message>

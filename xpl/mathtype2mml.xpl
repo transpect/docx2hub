@@ -165,7 +165,6 @@
                         )">
           <p:pipe port="source" step="mathtype2mml"/>
         </p:variable>
-
         <p:try>
           <p:group>
             <p:group name="convert-wmf">
@@ -418,19 +417,28 @@
         <p:choose>
           <p:when test="contains($active, '+try-all-pict-wmf')">
             <p:viewport name="pict-wmf-to-mml-viewport" 
-              match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]
-                       //w:drawing[
-                         descendant::a:blip[
-                           @r:embed = /w:root/*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]
-                             /rel:Relationships
-                               /rel:Relationship[
-                                 matches(@Target, '^media/.+\.wmf$') and
-                                 @Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
-                               ]/@Id
-                         ]
-                       ]">
-  
-              <p:variable name="rel-wmf-id" select="descendant::a:blip/@r:embed"/>
+              match="/w:root/*[local-name() = ('document', 'footnotes', 'endnotes', 'comments')]/
+                        descendant::*[name() = ('w:drawing', 'w:pict')][
+                          exists(
+                            (
+                              self::w:drawing/descendant::a:blip
+                              union
+                              self::w:pict[empty(o:OLEObject)]/
+                                          v:shape/v:imagedata
+                            )[
+                              (self::a:blip/@r:embed, self::v:imagedata/@r:id) 
+                              = /w:root/*[name() = ('w:docRels', 'w:footnoteRels', 'w:endnoteRels', 'w:commentRels')]
+                                  /rel:Relationships
+                                    /rel:Relationship[
+                                      matches(@Target, '^media/.+\.wmf$') and
+                                      @Type = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
+                                    ]/@Id
+                             ]
+                          )
+                        ]">
+              <p:variable name="rel-wmf-id" select="/w:drawing/descendant::a:blip/@r:embed
+                                                    union
+                                                    /w:pict/v:shape/v:imagedata/@r:id"/>
               <p:variable name="rels-elt"
                 select="if (contains(base-uri(/*), '/word/document'))
                           then 'w:docRels'
@@ -449,7 +457,9 @@
                           else 'no-image-found'">
                 <p:pipe port="source" step="mathtype2mml"/>
               </p:variable>
-
+              <!--<cx:message>
+                <p:with-option name="message" select="'WWWWWWWWWWWWw ', $rel-wmf-id"/>
+              </cx:message>-->
               <p:try name="convert-image-wmf">
                 <p:group>
                   <tr:mathtype2mml name="image-wmf2mml">

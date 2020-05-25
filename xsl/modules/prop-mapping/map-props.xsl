@@ -411,9 +411,9 @@
     </xsl:copy>
   </xsl:template>
   
-  <!-- § 17.3.1.29: this is only for the paragraph mark's formatting: -->
+  <!-- § 17.3.1.29: this is only for the paragraph mark's formatting: since there is no representation for the paragraph mark character in HUB there is no need for this property; Word ignores this property for the whole paragraph -->
   <xsl:template match="w:pPr/w:rPr" mode="docx2hub:add-props" priority="2.5" >
-    <xsl:apply-templates select="w:vanish" mode="#current"/>
+    <!--<xsl:apply-templates select="w:vanish" mode="#current"/>-->
   </xsl:template>
 
   <xsl:template mode="docx2hub:add-props" priority="2"

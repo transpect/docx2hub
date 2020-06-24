@@ -263,7 +263,7 @@ TEMPLATES
 
     <!--PRESET GEOMETRY -->
     <xsl:for-each select=".//a:prstGeom">
-      <xsl:variable name="preset" as="document-node(element(*))?">
+      <xsl:variable name="preset" as="document-node()?">
         <xsl:document>
           <xsl:copy-of select="$d2s:presetShapeDefinitions/presetShapeDefinitions/*[name() = current()/@prst]"/>
         </xsl:document>
@@ -275,7 +275,7 @@ TEMPLATES
         <xsl:attribute name="d2s:max-x" select="$max-local-x"/>
         <xsl:attribute name="d2s:max-y" select="$max-local-y"/>
         <xsl:apply-templates select="$d2s:presetShapeDefinitions/presetShapeDefinitions/*[name() = current()/@prst]" mode="d2s:default">
-          <xsl:with-param name="lookup-docs" as="document-node(element(*))+" tunnel="yes"
+          <xsl:with-param name="lookup-docs" as="document-node()+" tunnel="yes"
             select="$preset, $d2s:constants"/>
           <xsl:with-param name="xfrm" select="current()/../a:xfrm" as="element(a:xfrm)" tunnel="yes"/>
         </xsl:apply-templates>

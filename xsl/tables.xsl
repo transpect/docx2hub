@@ -48,49 +48,51 @@
                                    w:tblPr/@css:table-layout,
                                    @srcpath, 
                                    @css:orientation" mode="#current"/>
-      <tgroup>
-        <xsl:attribute name="cols" select="(
-                                             count(w:tblGrid/w:gridCol),
-                                             max(for $row in w:tr return count($row/w:tc)) (: fallback if w:tblGrid is missing :) 
-                                           )[not(. = 0)][1]"/>
-        <xsl:variable name="table-adhoc-borders" select="w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width))')]"/>
-        <xsl:variable name="insideH-width" as="xs:string?" 
-          select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
-        <xsl:variable name="insideV-width" as="xs:string?" 
-          select="($styledef/w:tblPr/@css:border-insideV-width, w:tblPr/@css:border-insideV-width)[last()]"/>
-        <xsl:if test="exists($insideH-width) and not($insideH-width = '0pt')">
-          <xsl:attribute name="rowsep" select="'1'"/>
-        </xsl:if>
-        <xsl:if test="exists($insideV-width) and not($insideV-width = '0pt')">
-          <xsl:attribute name="colsep" select="'1'"/>
-        </xsl:if>
-        <xsl:apply-templates select="w:tblGrid" mode="colspec"/>
-        <xsl:variable name="every-row-is-a-header" as="xs:boolean"
-          select="every $tr in w:tr satisfies $tr[docx2hub:is-tableheader-row(.)]"/>
-        <xsl:if test="w:tr[docx2hub:is-tableheader-row(.)] and 
-                      not($every-row-is-a-header)">
-          <thead>
-            <xsl:apply-templates select="w:tr[docx2hub:is-tableheader-row(.) 
-                                              and (position() eq 1 or preceding-sibling::w:tr[1]/docx2hub:is-tableheader-row(.))]" mode="tables">
-              <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
-              <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
-              <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
+      <xsl:variable name="insideH-width" as="xs:string?" 
+        select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
+      <xsl:variable name="insideV-width" as="xs:string?" 
+        select="($styledef/w:tblPr/@css:border-insideV-width, w:tblPr/@css:border-insideV-width)[last()]"/>
+      <xsl:variable name="table-adhoc-borders" select="w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width))')]"/>
+      <xsl:variable name="width" select="w:tblPr/w:tblW/@w:w"/>
+      <xsl:variable name="tblGrid" select="w:tblGrid"/>
+      <xsl:for-each-group select="w:tr" group-starting-with="w:tr[not(preceding-sibling::w:tr) or (docx2hub:is-tableheader-row(.) and preceding-sibling::w:tr[1][not(docx2hub:is-tableheader-row(.))])]">
+        <tgroup>
+          <xsl:attribute name="cols" select="(
+            count($tblGrid/w:gridCol),
+            max(for $row in current-group() return count($row/w:tc)) (: fallback if w:tblGrid is missing :) 
+            )[not(. = 0)][1]"/>
+          <xsl:if test="exists($insideH-width) and not($insideH-width = '0pt')">
+            <xsl:attribute name="rowsep" select="'1'"/>
+          </xsl:if>
+          <xsl:if test="exists($insideV-width) and not($insideV-width = '0pt')">
+            <xsl:attribute name="colsep" select="'1'"/>
+          </xsl:if>
+          <xsl:apply-templates select="$tblGrid" mode="colspec"/>
+          <xsl:variable name="every-row-is-a-header" as="xs:boolean"
+            select="every $tr in current-group() satisfies $tr[docx2hub:is-tableheader-row(.)]"/>
+          <xsl:if test="current-group()[docx2hub:is-tableheader-row(.)] and 
+            not($every-row-is-a-header)">
+            <thead>
+              <xsl:apply-templates select="current-group()[docx2hub:is-tableheader-row(.)]" mode="tables">
+                <xsl:with-param name="cols" select="count($tblGrid/w:gridCol)" tunnel="yes"/>
+                <xsl:with-param name="width" select="$width" tunnel="yes"/>
+                <xsl:with-param name="col-widths" select="(for $x in $tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
+                <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
+              </xsl:apply-templates>
+            </thead>
+          </xsl:if>
+          <tbody>
+            <xsl:apply-templates mode="tables"
+              select="if ($every-row-is-a-header) then current-group()
+              else current-group()[not(docx2hub:is-tableheader-row(.))]">
+              <xsl:with-param name="cols" select="count($tblGrid/w:gridCol)" tunnel="yes"/>
+              <xsl:with-param name="width" select="$width" tunnel="yes"/>
+              <xsl:with-param name="col-widths" select="(for $x in $tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
               <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
             </xsl:apply-templates>
-          </thead>
-        </xsl:if>
-        <tbody>
-          <xsl:apply-templates mode="tables"
-            select="if($every-row-is-a-header) then * except w:tblPr
-                    else * except (w:tblPr union w:tr[docx2hub:is-tableheader-row(.)
-                                                      and (position() eq 1 or preceding-sibling::w:tr[1]/docx2hub:is-tableheader-row(.))])">
-            <xsl:with-param name="cols" select="count(w:tblGrid/w:gridCol)" tunnel="yes"/>
-            <xsl:with-param name="width" select="w:tblPr/w:tblW/@w:w" tunnel="yes"/>
-            <xsl:with-param name="col-widths" select="(for $x in w:tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
-            <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
-          </xsl:apply-templates>
-        </tbody>
-      </tgroup>
+          </tbody>
+        </tgroup>
+      </xsl:for-each-group>
     </informaltable>
   </xsl:template>
 

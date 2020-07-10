@@ -35,7 +35,7 @@
     select="('ArialMT+1', 'Math1', 'MT Extra', 'Symbol', 'TimesNewRomanPSMT+1', 'Wingdings', 
              'Wingdings 2', 'Wingdings 3', 'Webdings', 'Euclid Math One', 
              'Euclid Math Two', 'Euclid Extra', 'Euclid Fraktur', 'Euclid Symbol', 
-             'Lucida Bright Math Italic', 'Lucida Bright Math Extension',
+             'Lucida Bright Math Italic', 'Lucida Bright Math Extension', 'SymbolMT',
              'Lucida Bright Math Symbol', 'Marlett', 'Monotype Sorts', 'MT Symbol', 
              'UniversalMath1 BT', 'ZWAdobeF', $custom-font-names)"/>
 
@@ -175,7 +175,7 @@
             select="tr:resolve-uri-by-catalog(
                       concat(
                         'http://transpect.io/fontmaps/', 
-                        replace($font-name, ' ', '_'),
+                        replace(replace($font-name, 'SymbolMT', 'MT_Symbol'), ' ', '_'),
                         '.xml'
                       ),
                       $catalog

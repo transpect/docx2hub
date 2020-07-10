@@ -155,6 +155,7 @@
   
   <xsl:template match="dbk:phrase/@css:*[. = 'normal']" mode="wml-to-dbk_normalize-space"/>
 
+  <xsl:template match="dbk:sortkey[not(node())]" mode="wml-to-dbk_normalize-space"/>
 
   <xsl:template match="*[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
     <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_051', 'WRN', 'wml-to-dbk', 

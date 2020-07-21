@@ -1322,7 +1322,7 @@
                      | eq[empty(@docx2hub:contains-markup)]/@fldArgs 
                      | eq/text()" mode="wml-to-dbk" priority="5">
     <xsl:analyze-string select="tr:EQ-string-to-unicode(replace(., '^\s*EQ\s+', '', 'i'))" 
-      regex="(\\s\\do5\(([^)]+)\)|\\\p{{Lu}}|[\(\);])">
+      regex="(\\s\\do5\(([^)]+)\)|\\\p{{Lu}}(\\\p{{Ll}}+)?|[\(\);])">
       <!-- \s\do5(1) → subscript 1 -->
       <xsl:matching-substring>
         <xsl:choose>
@@ -1345,6 +1345,9 @@
           </xsl:when>
           <xsl:when test=". = '\R'">
             <root/>
+          </xsl:when>
+          <xsl:when test=". = '\X\to'">
+            <overline/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:message select="'Unknown EQ markup: ', ."/>

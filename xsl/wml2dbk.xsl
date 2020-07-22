@@ -1317,19 +1317,40 @@
     </phrase>
   </xsl:template>
 
+  <!-- https://jay-freedman.info/EQ%20field%20switches.htm -->
   <xsl:template match="EQ[empty(@docx2hub:contains-markup)]/@fldArgs 
                      | EQ/text() 
                      | eq[empty(@docx2hub:contains-markup)]/@fldArgs 
                      | eq/text()" mode="wml-to-dbk" priority="5">
+    <xsl:variable name="regex" as="xs:string" 
+      select="'(
+                   \\S(\\DO|\\UP)\d?
+                 | \\B\\LC\\?(.)\\RC\\?(.)
+                 | \\\p{L}\p{L}?(\\\p{L}\p{L})?
+                 | [\(\);]
+                 | (\\;|\\\(|\\\)|\\)
+               )'"/>
     <xsl:analyze-string select="tr:EQ-string-to-unicode(replace(., '^\s*EQ\s+', '', 'i'))" 
-      regex="(\\s\\do5\(([^)]+)\)|\\\p{{Lu}}(\\\p{{Ll}}+)?|[\(\);])">
-      <!-- \s\do5(1) → subscript 1 -->
+      regex="{$regex}" flags="ix">
       <xsl:matching-substring>
         <xsl:choose>
-          <xsl:when test="matches(., '\\s\\do5\(([^)]+)\)')">
-            <subscript>
-              <xsl:value-of select="regex-group(2)"/>
-            </subscript>
+          <xsl:when test="matches(., '^\\S', 'i')">
+            <xsl:element name="{if (matches(regex-group(2), '\\up', 'i')) then 'sup' else 'sub'}"/>
+          </xsl:when>
+          <xsl:when test="matches(., '^\\B', 'i')">
+            <fenced open="{regex-group(3)}" close="{regex-group(4)}"/>
+          </xsl:when>
+          <xsl:when test=". = '\\'">
+            <xsl:text>\</xsl:text>
+          </xsl:when>
+          <xsl:when test=". = '\;'">
+            <xsl:text>;</xsl:text>
+          </xsl:when>
+          <xsl:when test=". = '\('">
+            <xsl:text>(</xsl:text>
+          </xsl:when>
+          <xsl:when test=". = '\)'">
+            <xsl:text>)</xsl:text>
           </xsl:when>
           <xsl:when test=". = '('">
             <open-delim/>
@@ -1340,14 +1361,17 @@
           <xsl:when test=". = ';'">
             <sep/>
           </xsl:when>
-          <xsl:when test=". = '\F'">
+          <xsl:when test="matches(., '^\\F$', 'i')">
             <frac/>
           </xsl:when>
-          <xsl:when test=". = '\R'">
+          <xsl:when test="matches(., '^\\R$', 'i')">
             <root/>
           </xsl:when>
-          <xsl:when test=". = '\X\to'">
+          <xsl:when test="matches(., '^\\X\\to$', 'i')">
             <overline/>
+          </xsl:when>
+          <xsl:when test="matches(., '^\\O$', 'i')">
+            <over/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:message select="'Unknown EQ markup: ', ."/>

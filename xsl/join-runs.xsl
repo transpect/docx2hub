@@ -169,32 +169,27 @@
       <xsl:next-match/>
     </xsl:variable>
     <xsl:choose>
-      <xsl:when test="exists(ancestor::dbk:phrase[@role = 'docx2hub:EQ'])">
+      <xsl:when test="exists(ancestor::dbk:phrase[@role = ('docx2hub:EQ', 'docx2hub:EQ_tmp')])">
         <xsl:sequence select="$next-match"/>
       </xsl:when>
-      <xsl:when test="$next-match/self::dbk:phrase[@role = 'docx2hub:EQ'] and empty($next-match/node())">
+      <xsl:when test="$next-match/self::dbk:phrase[@role = ('docx2hub:EQ', 'docx2hub:EQ_tmp')] and empty($next-match/node())">
         <!-- totally empty equations like EQ \O{} can be removed -->
+      </xsl:when>
+      <xsl:when test="$next-match/self::dbk:phrase[@role = ('docx2hub:EQ_tmp')]">
+        <inlineequation role="EQ">
+          <mml:math>
+            <xsl:sequence select="$next-match/node()"/>
+          </mml:math>
+        </inlineequation>
       </xsl:when>
       <xsl:otherwise>
         <inlineequation role="EQ">
           <mml:math>
-            <!-- TODO: make sure next-match only contains valid MathML -->
             <xsl:sequence select="$next-match"/>
           </mml:math>
         </inlineequation>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:template>
-
-  <xsl:template match="dbk:frac" mode="docx2hub:join-runs" priority="5">
-    <mml:mfrac>
-      <xsl:call-template name="docx2hub:EQ-mrow">
-        <xsl:with-param name="nodes" select="current-group()[position() gt 1][following-sibling::dbk:sep]"/>
-      </xsl:call-template>
-      <xsl:call-template name="docx2hub:EQ-mrow">
-        <xsl:with-param name="nodes" select="current-group()[position() gt 1][preceding-sibling::dbk:sep]"/>
-      </xsl:call-template>
-    </mml:mfrac>
   </xsl:template>
 
   <xsl:template name="docx2hub:EQ-mrow">
@@ -215,54 +210,123 @@
   </xsl:template>
 
   <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']" mode="docx2hub:join-runs">
-    <!-- GI 2020-07-21 Shouldn’t we better do a nested grouping? -->
-    <xsl:for-each-group select="node()" 
-      group-starting-with="dbk:root | dbk:superscript | dbk:subscript | dbk:frac | dbk:overline">
-      <xsl:for-each-group select="fn:current-group()" group-ending-with="dbk:close-delim">
-        <xsl:choose>
-          <xsl:when test="empty (self::dbk:root | self::dbk:superscript | self::dbk:subscript | self::dbk:frac | self::dbk:overline)">
-            <xsl:apply-templates select="current-group()" mode="#current"/>
-          </xsl:when>
-        </xsl:choose>
-        <xsl:apply-templates select="." mode="#current"/>
-      </xsl:for-each-group>
-    </xsl:for-each-group>
+    <xsl:call-template name="nest-eq">
+      <xsl:with-param name="nodes" select="node()"/>
+      <xsl:with-param name="level" select="1"/>
+    </xsl:call-template>
+  </xsl:template>
+  
+  <xsl:template name="nest-eq">
+    <xsl:param name="nodes" as="node()*"/>
+    <xsl:param name="level" as="xs:integer"/>
+    <xsl:variable name="first-open" select="($nodes/self::dbk:open-delim)[1]" as="element(dbk:open-delim)?"/>
+    <xsl:variable name="last-close" select="($nodes/self::dbk:close-delim)[last()]" as="element(dbk:close-delim)?"/>
+    <xsl:variable name="prelim" as="element(dbk:phrase)">
+      <phrase role="docx2hub:EQ_tmp">
+        <xsl:for-each-group select="$nodes"
+          group-starting-with="dbk:open-delim[(following-sibling::dbk:open-delim  
+                                               | following-sibling::dbk:close-delim)[1]/self::dbk:close-delim]">
+          <xsl:variable name="open" as="element(dbk:open-delim)?" select="self::dbk:open-delim"/>
+          <xsl:variable name="close" as="element(dbk:close-delim)?" select="(current-group()/self::dbk:close-delim)[1]"/>
+          <xsl:choose>
+            <xsl:when test="exists($open) and exists($close)">
+              <paren-group>
+                <xsl:sequence select="current-group()[. &lt;&lt; $close] except $open"/>
+              </paren-group>
+              <xsl:sequence select="current-group()[. >> $close]"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:sequence select="current-group()"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each-group>    
+      </phrase>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="exists($prelim/dbk:open-delim)">
+        <xsl:call-template name="nest-eq">
+          <xsl:with-param name="nodes" select="$prelim/node()"/>
+          <xsl:with-param name="level" select="$level + 1"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="$prelim" mode="#current"/>
+<!--     debug:   <xsl:sequence select="$prelim"/>-->
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="dbk:root" mode="docx2hub:join-runs" priority="5">
+  <xsl:function name="docx2hub:preceding-eq-macro" as="element(*)?">
+    <xsl:param name="context" as="element(dbk:paren-group)"/>
+    <xsl:sequence select="$context/preceding-sibling::node()[empty(self::text()[not(normalize-space())])][1]
+                            /(self::dbk:frac | self::dbk:root | self::dbk:fenced 
+                              | self::dbk:overline | self::dbk:over | self::dbk:sub | self::dbk:sup)"/>
+  </xsl:function>
+
+  <xsl:template match="dbk:frac | dbk:root | dbk:fenced | dbk:overline | dbk:over | dbk:sub | dbk:sup" mode="docx2hub:join-runs"/>
+
+  <xsl:template match="dbk:paren-group[docx2hub:preceding-eq-macro(.)/self::dbk:frac]" mode="docx2hub:join-runs" priority="5">
+    <xsl:variable name="sep" as="element(dbk:sep)?" select="dbk:sep"/>
+    <xsl:if test="empty($sep)">
+      <xsl:message select="'Empty $sep: ', ."/>
+    </xsl:if>
+    <mml:mfrac>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()[. &lt;&lt; $sep]"/>
+      </xsl:call-template>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()[. >> $sep]"/>
+      </xsl:call-template>
+    </mml:mfrac>
+  </xsl:template>
+
+  <xsl:template match="dbk:paren-group[docx2hub:preceding-eq-macro(.)/self::dbk:root]" mode="docx2hub:join-runs" priority="5">
+    <xsl:variable name="sep" as="element(dbk:sep)?" select="dbk:sep"/>
     <xsl:choose>
-      <xsl:when test="exists(current-group()[empty(self::dbk:open-delim | self::dbk:root)][following-sibling::dbk:sep])">
+      <xsl:when test="exists(node()[following-sibling::dbk:sep])">
         <mml:mroot>
           <xsl:call-template name="docx2hub:EQ-mrow">
-            <xsl:with-param name="nodes" select="current-group()[position() gt 1][preceding-sibling::dbk:sep]"/>
+            <xsl:with-param name="nodes" select="node()[preceding-sibling::dbk:sep]"/>
           </xsl:call-template>
           <xsl:call-template name="docx2hub:EQ-mrow">
-            <xsl:with-param name="nodes" select="current-group()[position() gt 1][following-sibling::dbk:sep]"/>
+            <xsl:with-param name="nodes" select="node()[following-sibling::dbk:sep]"/>
           </xsl:call-template>
         </mml:mroot>
       </xsl:when>
       <xsl:otherwise>
         <mml:msqrt>
           <xsl:call-template name="docx2hub:EQ-mrow">
-            <xsl:with-param name="nodes" select="current-group()[position() gt 1][preceding-sibling::dbk:sep]"/>
+            <xsl:with-param name="nodes" select="node() except dbk:sep"/>
           </xsl:call-template>
         </mml:msqrt>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="dbk:open-delim | dbk:close-delim | dbk:sep" mode="docx2hub:join-runs"/>
-  
-  <xsl:template match="dbk:overline" mode="docx2hub:join-runs">
+  <xsl:template match="dbk:paren-group[docx2hub:preceding-eq-macro(.)/self::dbk:overline]" mode="docx2hub:join-runs" priority="5">
     <mml:mover accent="true">
       <xsl:call-template name="docx2hub:EQ-mrow">
-        <xsl:with-param name="nodes" select="current-group()[position() gt 1]"/>
+        <xsl:with-param name="nodes" select="node()"/>
       </xsl:call-template>
-      <mml:mo>&#xAF;<!-- macron --></mml:mo>
+      <mml:mo stretchy="true">&#xAF;<!-- macron --></mml:mo>
     </mml:mover>
   </xsl:template>
   
-  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']//dbk:superscript" mode="docx2hub:join-runs">
+  <xsl:template match="dbk:paren-group[docx2hub:preceding-eq-macro(.)/self::dbk:over]" mode="docx2hub:join-runs" priority="5">
+    <xsl:if test="count(dbk:sep) gt 1">
+      <xsl:message terminate="yes">docx2hub:join-runs: Implement more than one stacked item in <xsl:sequence select=".."/></xsl:message>
+    </xsl:if>
+    <mml:mover>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()[following-sibling::dbk:sep]"/>
+      </xsl:call-template>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()[preceding-sibling::dbk:sep]"/>
+      </xsl:call-template>
+    </mml:mover>
+  </xsl:template>
+  
+  <xsl:template match="dbk:paren-group[docx2hub:preceding-eq-macro(.)/self::dbk:sup]" mode="docx2hub:join-runs" priority="5">
     <mml:msup>
       <mml:mrow/>
       <xsl:call-template name="docx2hub:EQ-mrow">
@@ -271,7 +335,7 @@
     </mml:msup>
   </xsl:template>
   
-  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']//dbk:subscript" mode="docx2hub:join-runs">
+  <xsl:template match="dbk:paren-group[docx2hub:preceding-eq-macro(.)/self::dbk:sub]" mode="docx2hub:join-runs" priority="5">
     <mml:msub>
       <mml:mrow/>
       <xsl:call-template name="docx2hub:EQ-mrow">
@@ -280,7 +344,30 @@
     </mml:msub>
   </xsl:template>
   
-  <xsl:template match="dbk:phrase[@role = 'docx2hub:EQ']//text()" mode="docx2hub:join-runs">
+  <xsl:template match="dbk:paren-group[docx2hub:preceding-eq-macro(.)/self::dbk:fenced]" mode="docx2hub:join-runs" priority="5">
+    <xsl:variable name="fenced" as="element(dbk:fenced)" select="docx2hub:preceding-eq-macro(.)"/>
+    <mml:mrow>
+      <mml:mo>
+        <xsl:value-of select="($fenced/@open, '(')[1]"/>
+      </mml:mo>
+      <xsl:call-template name="docx2hub:EQ-mrow">
+        <xsl:with-param name="nodes" select="node()"/>
+      </xsl:call-template>
+      <mml:mo>
+        <xsl:value-of select="($fenced/@close, ')')[1]"/>
+      </mml:mo>
+    </mml:mrow>
+  </xsl:template>
+  
+  <xsl:template match="dbk:paren-group" mode="docx2hub:join-runs">
+    <mml:mo>(</mml:mo>
+    <xsl:call-template name="docx2hub:EQ-mrow">
+      <xsl:with-param name="nodes" select="node()"/>
+    </xsl:call-template>
+    <mml:mo>)</mml:mo>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase[@role = ('docx2hub:EQ', 'docx2hub:EQ_tmp')]//text()" mode="docx2hub:join-runs">
     <xsl:variable name="prelim" as="document-node()">
       <xsl:document>
         <xsl:analyze-string select="." flags="x"

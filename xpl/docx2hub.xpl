@@ -211,6 +211,11 @@
     <p:documentation>Insert default attributes (i.e. document language and font names). Permitted values: yes|no</p:documentation>
   </p:option>
   <p:option name="float-nr-check-error-level" select="''"/>
+  <p:option name="lang-variant" select="'no'">
+    <p:documentation>When this option is set to 'yes', @xml:lang attributes will include 
+      the language variant, e.g. 'en-GB'. Per default only the short language code
+      is provided ('en').</p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -334,6 +339,7 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="field-vars" select="$field-vars"/>
     <p:with-param name="mathtype2mml" select="$mathtype2mml"/>
+    <p:with-param name="lang-variant" select="$lang-variant"/>
     <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
     <p:with-param name="include-header-and-footer" select="$include-header-and-footer"/>
     <p:with-param name="float-nr-check-error-level" select="$float-nr-check-error-level"/>

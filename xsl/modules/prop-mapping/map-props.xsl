@@ -647,25 +647,35 @@
       </xsl:when>
 
       <xsl:when test=". eq 'lang'">
-        <xsl:variable name="stringval" as="xs:string?" 
-          select="if ($val/self::w:lang) then $val/@w:val[1] else $val"/>
-        <!-- stripping the country by default. If someone needs it, we need to introduce an option -->
+        <!-- for lang codes including the lang-variant (e.g. en-GB), you need to 
+             set the parameter $lang-variant to 'yes'. The default is to print 
+             the language without variant -->
+        <xsl:variable name="stringval" as="xs:string?"
+                      select="if ($val/self::w:lang) 
+                              then $val/@w:val[1] 
+                              else $val"/>
         <xsl:variable name="repl" as="xs:string" 
-          select="if (matches($stringval, 'German') or matches($stringval, '\Wde\W'))
-                  then 'de'
-                  else 
-                    if (matches($stringval, 'English'))
-                    then 'en'
-                    else replace($stringval, '^(\p{Ll}+).*$', '$1')" />
+                      select="if (matches($stringval, 'German') or matches($stringval, '\Wde\W'))
+                                then 'de'
+                              else if (matches($stringval, 'English'))
+                                then 'en'
+                              else replace($stringval, '^(\p{Ll}+).*$', '$1')" />
+        <xsl:variable name="repl-long" as="xs:string" 
+                      select="if (matches($stringval, 'German') or matches($stringval, '\Wde\W'))
+                                then 'de-DE'
+                              else if (matches($stringval, 'English'))
+                                then 'en-US'
+                               else replace($stringval, '^(\p{Lu}+-\p{Ll}+).*$', '$1')"/>
         <xsl:if test="normalize-space($repl)">
           <docx2hub:attribute name="{../@target-name}">
-            <xsl:value-of select="$repl"/>  
+            <xsl:value-of select="if($lang-variant eq 'yes') then $repl-long else $repl"/>
           </docx2hub:attribute>
-        <!-- stripping the country by default. If someone needs it, we need to introduce an option -->
         </xsl:if>
       <xsl:if test="$val/self::w:lang[not(@w:val)]/@w:bidi">
           <docx2hub:attribute name="docx2hub:rtl-lang">
-            <xsl:value-of select="replace($val/@w:bidi, '^(\p{Ll}+).*$', '$1')"/>  
+            <xsl:value-of select="if($lang-variant eq 'yes') 
+                                  then replace($val/@w:bidi, '^(\p{Lu}+-\p{Ll}+).*$', '$1')
+                                  else replace($val/@w:bidi, '^(\p{Ll}+).*$', '$1')"/>  
           </docx2hub:attribute>
         </xsl:if>
       </xsl:when>

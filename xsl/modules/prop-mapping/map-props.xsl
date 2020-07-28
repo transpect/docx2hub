@@ -81,7 +81,10 @@
       <xsl:namespace name="xs">http://www.w3.org/2001/XMLSchema</xsl:namespace>
       <xsl:if test="../../w:styles/@xml:lang">
         <!-- might be superseded by the most frequently used language in a later mode --> 
-        <xsl:attribute name="xml:lang" select="replace(../../w:styles/@xml:lang, '\-[A-Z]+$', '')"/>  
+        <xsl:attribute name="xml:lang" 
+                       select="if($lang-variant eq 'yes')
+                               then replace(../../w:styles/@xml:lang, '^(\p{Lu}+-\p{Ll}+).*$', '$1')
+                               else replace(../../w:styles/@xml:lang, '^(\p{Ll}+).*$', '$1')"/>  
       </xsl:if>
       <xsl:attribute name="version" select="concat('5.1-variant le-tex_Hub-', $hub-version)"/>
       <xsl:attribute name="css:version" select="concat('3.0-variant le-tex_Hub-', $hub-version)" />

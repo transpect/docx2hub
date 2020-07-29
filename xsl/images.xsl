@@ -136,10 +136,15 @@
   </xsl:template>
   
   <!-- @rot attribute values are 60,000ths of a degree, with positive angles 
-       moving clockwise or towards the positive y-axis -->
+       moving clockwise or towards the positive y-axis. @flipH and @flipV are
+       boolean values with a value of 1 indicating that the shape should be flipped  -->
                        
-  <xsl:template match="a:xfrm[@rot]" mode="wml-to-dbk">
-    <xsl:attribute name="css:transform" select="concat('rotate(', @rot div 60000, 'deg)')"/>
+  <xsl:template match="a:xfrm[@rot|@flipH|@flipV]" mode="wml-to-dbk">
+    <xsl:attribute name="css:transform" 
+                   select="string-join((@rot/concat('rotate(', . div 60000, 'deg)'),
+                                        @flipH[. eq '1']/'scaleX(-1)',
+                                        @flipV[. eq '1']/'scaleY(-1)'),
+                                       ' ')"/>
   </xsl:template>
   
 </xsl:stylesheet>

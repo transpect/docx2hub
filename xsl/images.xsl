@@ -18,7 +18,9 @@
   
   <xsl:template match="w:drawing[descendant::a:blip]" mode="wml-to-dbk">
     <mediaobject>
-      <xsl:apply-templates select="@srcpath" mode="#current"/>
+      <xsl:apply-templates select="@srcpath,
+                                   wp:anchor/a:graphic/a:graphicData/pic:pic/pic:spPr/a:xfrm" mode="#current"/>
+      
       <xsl:if test=".//wp:docPr/@title[. ne '']">
         <info>
           <xsl:value-of select=".//wp:docPr/@title[. ne '']"/>
@@ -131,6 +133,13 @@
   
   <xsl:template match="a:srcRect[not(@*)]" mode="wml-to-dbk">
     <!-- don’t know whether the empty a:srcRect conveys some meaning; just wanted to get rid of W2D_020 messages -->
+  </xsl:template>
+  
+  <!-- @rot attribute values are 60,000ths of a degree, with positive angles 
+       moving clockwise or towards the positive y-axis -->
+                       
+  <xsl:template match="a:xfrm[@rot]" mode="wml-to-dbk">
+    <xsl:attribute name="css:transform" select="concat('rotate(', @rot div 60000, 'deg)')"/>
   </xsl:template>
   
 </xsl:stylesheet>

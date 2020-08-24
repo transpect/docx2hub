@@ -226,7 +226,7 @@
         <prop name="w:gridAfter" type="linear" target-name="w:fill-cells-after"/>
         <prop name="w:wAfter/@w:w" type="docx-length-attr" target-name="w:fill-width-after"/>
         <prop name="w:u">
-          <val match="none"/>
+          <val match="none" target-name="css:text-decoration-line" target-value="none"/>
           <val match="dash" target-name="css:text-decoration-style" target-value="dashed"/>
           <val match="dash" target-name="css:text-decoration-line" target-value="underline"/>
           <val match="dotted" target-name="css:text-decoration-style" target-value="dotted"/>

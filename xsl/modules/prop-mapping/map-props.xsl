@@ -931,7 +931,7 @@
       
       <xsl:when test=". eq 'docx-underline'">
         <!-- §§§ TODO -->
-        <docx2hub:attribute name="css:text-decoration-line"><xsl:value-of select="'underline'" /></docx2hub:attribute>
+        <docx2hub:attribute name="css:text-decoration-line"><xsl:value-of select="'underline'"/></docx2hub:attribute>
       </xsl:when>
 
       <xsl:when test=". eq 'tablist'">
@@ -1577,7 +1577,11 @@
       <!-- underline/doublestrike, shadowing are no-toggle-props, so they can be inherited by css-rules already -->
       <xsl:when test="
         $prop-name = ('css:text-decoration-line', 'css:text-shadow') and
-        (some $prop in ($ad-hoc-prop, $t-prop, $p-prop, $r-prop) satisfies $prop = ('underline', '1px 0px')) and
+        (some $prop in ($ad-hoc-prop, $t-prop, $p-prop, $r-prop) 
+         satisfies $prop = ('underline', '1px 0px')
+         and 
+         not(($ad-hoc-prop, $t-prop, $p-prop, $r-prop) = 'none')
+        ) and
           (
           (
             (: ad-hoc-prop defines something other than rules :)

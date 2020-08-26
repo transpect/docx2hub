@@ -272,6 +272,9 @@
       <xsl:when test=". = 'BookEdited'">
         <xsl:attribute name="relation" select="'incollection'"/>
       </xsl:when>
+      <xsl:when test=". = 'Broadcast'">
+        <xsl:attribute name="relation" select="'broadcast'"/>
+      </xsl:when>
       <xsl:when test=". = 'ConferenceProceedings'">
         <xsl:attribute name="relation" select="'proceedings'"/>
       </xsl:when>
@@ -292,6 +295,9 @@
       </xsl:when>
       <xsl:when test=". = 'UnpublishedWork'">
         <xsl:attribute name="relation" select="'misc'"/>
+      </xsl:when>
+      <xsl:when test=". = 'Thesis'">
+        <xsl:attribute name="relation" select="'thesis'"/>
       </xsl:when>
     </xsl:choose>
   </xsl:template>

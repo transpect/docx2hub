@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl	= "http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:css="http://www.w3.org/1996/css"
@@ -484,10 +484,12 @@
     Word. -->
   <xsl:function name="docx2hub:is-removable-para" as="xs:boolean">
     <xsl:param name="para" as="element(w:p)"/>
-    <xsl:sequence select="exists($para[not(.//w:r)]/w:pPr/w:sectPr)
-                          or
-                          exists($para[w:r/w:br[@w:type = 'page']]
-                                      [every $c in w:r/* satisfies $c/self::w:br[@w:type = 'page']])"/>
+    <xsl:sequence select="(exists($para[not(.//w:r)]/w:pPr/w:sectPr)
+                           or
+                           exists($para[w:r/w:br[@w:type = 'page']]
+                                      [every $c in w:r/* satisfies $c/self::w:br[@w:type = 'page']]))
+                          and
+                          not(exists($para//m:oMathPara))"/>
   </xsl:function>
 
   <xsl:template match="w:p" mode="docx2hub:add-props">

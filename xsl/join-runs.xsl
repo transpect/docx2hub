@@ -1016,6 +1016,8 @@
                       )[last()]"/>
             <xsl:variable name="start" as="element(w:fldChar)" 
               select="key('docx2hub:item-by-id', $fldCharGroup/@begin, $mode-root)"/>
+            <xsl:variable name="end" as="element(w:fldChar)" 
+              select="key('docx2hub:item-by-id', $fldCharGroup/@end, $mode-root)"/>
             <w:r>
               <xsl:apply-templates select="current-group()/self::w:r/(@* except @srcpath)" mode="#current"/>
               <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
@@ -1023,6 +1025,8 @@
               </xsl:if>
               <xsl:variable name="preceding-begin" as="element(w:fldChar)"
                 select="(current-group()/w:instrText)[1]/preceding::w:fldChar[@w:fldCharType = 'begin'][1]"/>
+              <xsl:variable name="following-end" as="element(w:fldChar)"
+                select="(current-group()/w:instrText)[1]/following::w:fldChar[@w:fldCharType = 'end'][1]"/>
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:variable name="instr-text-nodes" as="document-node()">
                   <xsl:document>
@@ -1048,15 +1052,41 @@
                 </xsl:variable>
                 <xsl:variable name="instr-text-string" as="xs:string" select="string-join($instr-text, '')"/>
                 <xsl:variable name="formatting-acceptable" as="xs:boolean" 
-                  select="matches($instr-text-string, '^\s*xe\s+', 'i')"/>
-                <xsl:attribute name="docx2hub:fldChar-start-id" select="$start/@xml:id"/>
+                  select="matches($instr-text-string, '^\s*(xe[\s\p{Zs}]+|&quot;\s*$)', 'i')">
+                  <!-- &quot;\s*$ is there when there is, for ex. { XE Lagerstättenabschluss \t "6.8" }
+                    with a REF around the 6.8 (“see Sect. 6.8”). It is separated from the first part
+                  of the XE instrText. But we don’t know yet that they belong together since they haven’t 
+                  been grouped yet. This is a mess. See https://tickets.le-tex.de/view.php?id=7060#c25632 -->
+                </xsl:variable>
+                <xsl:attribute name="docx2hub:fldChar-start-id" 
+                  select="if ($following-end/@xml:id = $end/@xml:id) 
+                          then $start/@xml:id
+                          else $preceding-begin/@xml:id"/>
                 <xsl:choose>
                   <xsl:when test="empty($instr-text-nodes/node())">
                     <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN3'"/>
                     <xsl:attribute name="docx2hub:field-function-error" select="'missing or wrongly named w:instrText element'"/>
                   </xsl:when>
-                  <xsl:when test="not($start/@xml:id = $preceding-begin/@xml:id)">
+                  <xsl:when test="not($start/@xml:id = $preceding-begin/@xml:id)
+                                  and 
+                                  ($following-end/@xml:id = $end/@xml:id)">
                     <xsl:attribute name="docx2hub:field-function-continuation-for" select="$start/@xml:id"/>
+                    <xsl:attribute name="docx2hub:preceding-begin" select="$preceding-begin/@xml:id"/>
+                    <xsl:variable name="wrapper" as="element(dbk:wrapper)">
+                      <wrapper>
+                        <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2">
+                          <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"  
+                            select="$formatting-acceptable"/>
+                        </xsl:apply-templates>    
+                      </wrapper>
+                    </xsl:variable>
+                    <xsl:apply-templates select="$wrapper" mode="docx2hub:join-instrText-runs_render-compound3">
+                      <xsl:with-param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"  
+                        select="$formatting-acceptable"/>
+                    </xsl:apply-templates>
+                  </xsl:when>
+                  <xsl:when test="not($start/@xml:id = $preceding-begin/@xml:id)">
+                    <xsl:attribute name="docx2hub:preceding-begin" select="$preceding-begin/@xml:id"/>
                     <xsl:variable name="wrapper" as="element(dbk:wrapper)">
                       <wrapper>
                         <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound2">
@@ -1108,7 +1138,7 @@
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:variable name="prelim" as="attribute()+">
-                      <xsl:analyze-string select="$instr-text-string" regex="^\s*\\?(\i\c*)\s*">
+                      <xsl:analyze-string select="$instr-text-string" regex="^\s*\\?(\i\c*)[\s\p{{Zs}}]*">
                         <xsl:matching-substring>
                           <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))">
                             <!-- upper-case: for the rare (and maybe user error) case of 'xe' for index terms -->
@@ -1316,11 +1346,13 @@
      </xsl:call-template>
    </xsl:template>
 
-  <xsl:template match="w:instrText[1]/node()[1][self::text()]" mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
+  <xsl:template match="w:instrText[1][../preceding-sibling::*[1]/self::w:r/w:fldChar[@w:fldCharType = 'begin']]/node()[1][self::text()]" 
+    mode="docx2hub:join-instrText-runs_render-compound2" priority="1.5">
     <xsl:call-template name="docx2hub:instrText-formatting">
       <xsl:with-param name="instrText" as="element(w:instrText)" select=".."/>
-      <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+\s+', '')"/>
+      <xsl:with-param name="string" as="xs:string" select="replace(., '^\s*\w+[\p{Zs}\s]+', '')"/>
      </xsl:call-template>
+    <xsl:comment>foo</xsl:comment>
    </xsl:template>
 
   

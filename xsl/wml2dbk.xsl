@@ -1269,6 +1269,10 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="SEQ[starts-with(@fldArgs, 'aaa ')]/text()" mode="wml-to-dbk">
+    <!-- apparently necessary since https://github.com/transpect/docx2hub/commit/2dd0128 -->
+  </xsl:template>
 
   <xsl:template match="MACROBUTTON[starts-with(@fldArgs, 'MTPlaceRef')]" mode="wml-to-dbk" priority="1.5">
     <!-- MathType equation numbers, for ex. 

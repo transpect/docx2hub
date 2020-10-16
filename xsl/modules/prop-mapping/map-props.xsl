@@ -1242,6 +1242,13 @@
               <xsl:sequence select="($current/docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][@name=$dot], $current/preceding-sibling::w:tblPr/docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][@name=$dot])[1]"/>
             </xsl:for-each>
           </xsl:when>
+          <xsl:when test="w:t and docx2hub:attribute/@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style') 
+            and (
+            every $el in *[not(self::docx2hub:attribute/@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style') )] 
+            satisfies $el[self::w:t[@xml:space eq 'preserve'][matches(., '^\p{Zs}*$')]]
+            )">
+            <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][not(@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style'))]"/>
+          </xsl:when>
           <xsl:otherwise>
             <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]"/>
           </xsl:otherwise>
@@ -1317,15 +1324,6 @@
       </xsl:when>
       <xsl:when test="exists(docx2hub:wrap) and not(self::css:rule or self::dbk:style)">
         <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap))" />
-      </xsl:when>
-      <xsl:when test="w:t and docx2hub:attribute/@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style') 
-        and (
-        every $el in $content[self::*] 
-        satisfies $el[self::w:t[@xml:space eq 'preserve'][matches(., '^\p{Zs}*$')]]
-        )">
-        <xsl:copy>
-          <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
-        </xsl:copy>
       </xsl:when>
       <xsl:otherwise>
         <xsl:copy>

@@ -1242,13 +1242,13 @@
               <xsl:sequence select="($current/docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][@name=$dot], $current/preceding-sibling::w:tblPr/docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][@name=$dot])[1]"/>
             </xsl:for-each>
           </xsl:when>
-          <xsl:when test="w:t and docx2hub:attribute/@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style') 
+          <!--<xsl:when test="w:t and docx2hub:attribute/@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style') 
             and (
             every $el in *[not(self::docx2hub:attribute/@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style') )] 
             satisfies $el[self::w:t[@xml:space eq 'preserve'][matches(., '^\p{Zs}*$')]]
             )">
             <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][not(@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style'))]"/>
-          </xsl:when>
+          </xsl:when>-->
           <xsl:otherwise>
             <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]"/>
           </xsl:otherwise>
@@ -1272,7 +1272,7 @@
     </xsl:variable>
     <xsl:choose>
       <!-- do not wrap whitespace only subscript or superscript -->
-      <xsl:when test="w:t and docx2hub:wrap/@element = ('superscript', 'subscript') 
+      <!--<xsl:when test="w:t and docx2hub:wrap/@element = ('superscript', 'subscript') 
                       and not(exists(docx2hub:wrap/@element[ . ne 'superscript' and . ne 'subscript']))
                       and (
                         every $el in $content[self::*] 
@@ -1281,7 +1281,7 @@
         <xsl:copy>
           <xsl:sequence select="docx2hub:wrap((@srcpath, $content), (docx2hub:wrap[not(@element = ('superscript', 'subscript'))]))" />
         </xsl:copy>
-      </xsl:when>
+      </xsl:when>-->
       <!-- do not wrap field function elements in subscript or superscript.
       Exception: instrText will be wrapped (see next xsl:when) when it isn’t the first instrText after a 'begin' fldChar.
       There may be sub/superscripts in index terms. However, sometimes even the field function name (XE for index terms)

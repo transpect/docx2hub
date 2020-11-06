@@ -266,7 +266,7 @@
       <p:with-param name="srcpaths" select="$srcpaths"/>
       <p:with-param name="fail-on-error" select="$fail-on-error"/>
       <p:with-param name="srcpaths-on-runs"
-        select="if (count(//w:r) &gt; $no-srcpaths-for-text-runs-threshold)
+        select="if (count(//w:r | //w:t) &gt; $no-srcpaths-for-text-runs-threshold)
               then 'no' else 'yes'">
         <p:pipe step="document" port="result"/>
       </p:with-param>

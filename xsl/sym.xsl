@@ -37,7 +37,7 @@
              'Euclid Math Two', 'Euclid Extra', 'Euclid Fraktur', 'Euclid Symbol', 
              'Lucida Bright Math Italic', 'Lucida Bright Math Extension', 'SymbolMT',
              'Lucida Bright Math Symbol', 'Marlett', 'Monotype Sorts', 'MT Symbol', 
-             'UniversalMath1 BT', 'ZWAdobeF', $custom-font-names)"/>
+             'UniversalMath1 BT', 'ZWAdobeF', 'Mediaevum', $custom-font-names)"/>
 
   <xsl:variable name="docx2hub:symbol-replacement-rfonts" as="element(w:rFonts)">
     <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math"/>
@@ -64,9 +64,12 @@
                          [if (matches(., '%\d')) then not(../../w:numFmt/@w:val = 'decimal') else true()]
                        " mode="wml-to-dbk" priority="1.5">
     <!-- priority = 1.5 because of priority = 1 ("default for attributes") in wml2dbk.xsl -->
-
+    <xsl:variable name="context" select="." as="item()"/>
     <xsl:variable name="font" select="if (self::w:sym) 
-                                      then @w:font
+                                      then 
+                                        if(not(docx2hub:font-map($context/@w:font)) and //w:fonts/w:font[w:altName/@w:val = $docx2hub:symbol-font-names]/@w:name = $context/@w:font)
+                                          then //w:fonts/w:font[@w:name = $context/@w:font]/w:altName/@w:val
+                                          else @w:font
                                       else
                                         if (self::attribute(w:val)) (: in w:lvlText :)
                                         then 
@@ -88,7 +91,6 @@
       </xsl:call-template>
     </xsl:if>
     <xsl:variable name="number" select="if (self::w:sym) then @w:char else xs:string(.)"/>
-    <xsl:variable name="context" select="." as="item()"/>
     <xsl:variable name="font_map" as="document-node(element(symbols))?" select="docx2hub:font-map($font)"/>
     <xsl:variable name="text" as="node()">
       <xsl:choose>

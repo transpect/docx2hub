@@ -380,8 +380,8 @@
   
   <xsl:template match="w:p/w:r/@*[not(name() = $docx2hub:toggle-prop-names)]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:variable name="self-name" select="name()"/>
-    <xsl:variable name="p-style" select="../../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
-    <xsl:variable name="r-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()?"/>
+    <xsl:variable name="p-style" select="../../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()*"/>
+    <xsl:variable name="r-style" select="../@role/key('style-by-name', .)/@*[name() = $self-name]" as="attribute()*"/>
     <xsl:choose>
       <xsl:when test="exists($r-style) and . = $r-style">
         <!-- inherit from run-style -->

@@ -404,7 +404,7 @@ it, but not when an ilvl=2 heading precedes it.
       <xsl:otherwise>
         <xsl:variable name="numPr" select="$context/w:numPr" as="element(w:numPr)?"/>
         <xsl:variable name="style" as="element(w:numPr)?" 
-          select="key('docx2hub:style-by-role', $context/@role, root($context))/w:numPr"/>
+          select="(key('docx2hub:style-by-role', $context/@role, root($context))/w:numPr)[1]"/>
         <xsl:sequence select="if ($numPr)
                               then key('numbering-by-id', $numPr/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $numPr/w:ilvl/@w:val][last()]
                               else if ($style)

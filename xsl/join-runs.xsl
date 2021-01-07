@@ -1230,7 +1230,7 @@
     <!-- this should be covered by $instr-text-nodes in the long template above, but apparently it isn’t -->
 <!--    <xsl:message select="'!!!!!!!!!!!!!!!!!!!!!!!'"></xsl:message>-->
     <xsl:copy copy-namespaces="no">
-      <xsl:copy-of select="@w:instr"/>
+      <xsl:sequence select="@w:instr"/>
       <xsl:analyze-string select="@w:instr" regex="^\s*(\w+)(\s+(.+?))?\s*$">
         <xsl:matching-substring>
           <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))"/>
@@ -1244,12 +1244,12 @@
   </xsl:template>
 
   <xsl:template match="w:object[mml:math]" mode="docx2hub:join-instrText-runs_render-compound2">
-    <xsl:copy-of select="."/>
+    <xsl:sequence select="."/>
   </xsl:template>
 
   <xsl:template match="w:fldSimple[matches(@w:instr, $w:fldSimple-REF-regex)]" 
     mode="docx2hub:join-instrText-runs_render-compound2_" priority="3">
-    <xsl:copy-of select="."/>
+    <xsl:sequence select="."/>
 <!--    <xsl:message select="'222222222222222'"></xsl:message>-->
   </xsl:template>
   
@@ -1307,7 +1307,7 @@
                 <xsl:choose>
                   <xsl:when test="exists($instrText/@css:*)">
                     <phrase>
-                      <xsl:copy-of select="$instrText/@css:*"/>
+                      <xsl:sequence select="$instrText/@css:*"/>
                       <xsl:value-of select="'&quot;'"/>
                     </phrase>
                   </xsl:when>
@@ -1322,7 +1322,7 @@
             <xsl:choose>
               <xsl:when test="exists($instrText/@css:*)">
                 <phrase>
-                  <xsl:copy-of select="$instrText/@css:*"/>
+                  <xsl:sequence select="$instrText/@css:*"/>
                   <xsl:value-of select="."/>
                 </phrase>
               </xsl:when>

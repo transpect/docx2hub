@@ -434,6 +434,7 @@
        -->
   <xsl:template match="  w:p/w:numPr 
                        | css:rule/w:numPr 
+                       | css:rule/w:tblStylePr
                        | *:style/w:numPr 
                        | *:phrase/w:numPr
                        | /*/w:numbering 

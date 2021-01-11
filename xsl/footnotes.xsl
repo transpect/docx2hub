@@ -16,10 +16,13 @@
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:css="http://www.w3.org/1996/css"
   xmlns:docx2hub="http://transpect.io/docx2hub"
+  xmlns:functx="http://www.functx.com"
   xmlns:tr="http://transpect.io"
   version="2.0"
   xmlns="http://docbook.org/ns/docbook"
   exclude-result-prefixes = "fn xs w word200x v dbk wx o pkg r rel exsl saxon mml css docx2hub tr">
+  
+  <xsl:import href="http://transpect.io/xslt-util/functx/Strings/Replacing/escape-for-regex.xsl"/>
 
   <!-- We don’t need to include MS Word localized style names if we trust it to
     always use 'footnote reference' as the native name -->
@@ -65,7 +68,7 @@
       <xsl:variable name="id" select="@w:id"/>
       <xsl:attribute name="xml:id" select="string-join(('fn', $id), '-')"/>
       <xsl:variable name="xreflabel" select="if (@w:customMarkFollows=('1','on','true')) 
-                                             then following-sibling::w:t[1]/text() 
+                                             then key('footnote-by-id', $id)//dbk:phrase[@role eq 'hub:identifier'][1]
                                              else ''" as="xs:string?"/>
       <xsl:if test="not($xreflabel = '')">
         <xsl:attribute name="xreflabel" select="$xreflabel"/>
@@ -75,7 +78,13 @@
     </footnote>
   </xsl:template>
   
-  <xsl:template match="w:t[preceding-sibling::w:footnoteReference/@w:customMarkFollows=('1', 'on', 'true')]" mode="wml-to-dbk"/>
+  <xsl:template match="w:t[preceding-sibling::node()[1][self::w:footnoteReference]/@w:customMarkFollows=('1', 'on', 'true')]/text()[1]" mode="wml-to-dbk">
+    <xsl:variable name="fnref" as="element(w:footnoteReference)"
+                  select="parent::w:t/preceding-sibling::node()[1][self::w:footnoteReference]"/>
+    <xsl:variable name="fn" as="element(w:footnote)" select="key('footnote-by-id', $fnref/@w:id)"/>
+    <xsl:variable name="fn-mark" select="$fn//dbk:phrase[@role eq 'hub:identifier'][1]" as="xs:string"/>
+    <xsl:value-of select="replace(., functx:escape-for-regex($fn-mark), '')"/>
+  </xsl:template>
 
   <xsl:template match="w:footnote" mode="wml-to-dbk">
     <xsl:apply-templates mode="#current"/>

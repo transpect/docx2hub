@@ -26,6 +26,18 @@
       </assert>
     </rule>
   </pattern>
+  
+  <pattern id="indexterms">
+    <rule context="*:XE">
+      <assert test="replace(normalize-space(.), '&quot;', '')" id="empty-indexterm" role="warning" diagnostics="empty-indexterm_de">
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Empty index term found.</span>
+        An index term was created, but it does not contain any content. Please check whether content
+        was previously available in the DOCX file. This issue can also be caused by paragraph 
+        marks and other unexpected markup in the index term.
+      </assert>
+    </rule>
+  </pattern>
 
   <pattern id="fnmarks">
     <rule context="w:p[w:r/w:footnoteRef]">
@@ -80,6 +92,13 @@
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Lesezeichen-Bereich nicht gefunden</span>
       Der Indexbegriff '<value-of select="."/>' verweist auf einen Lesezeichen-Bereich '<value-of select="$bookmark-name"/>', 
         der im Dokument nicht gefunden wurde. Er wird deshalb nun wie ein normaler (Nicht-Bereichs-) Indexbegriff behandelt.
+    </diagnostic>
+    <diagnostic id="empty-indexterm_de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Leerer Indexeintrag gefunden</span>
+      Ein Indexeintrag wurde angelegt, enthält aber keinen Inhalt. Bitte prüfen Sie ob in der
+      DOCX-Datei an dieser Stelle ursprünglich Text vorhanden war. Dieses Problem kann auch durch 
+      unerwartete Auszeichnungen wie Absatzmarken im Indexeintrag hervorgerufen werden.
     </diagnostic>
     <diagnostic id="footnote_mark_style_de">
       <span class="category">docx</span>

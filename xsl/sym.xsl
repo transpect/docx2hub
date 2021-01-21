@@ -32,7 +32,7 @@
     select="for $cfm in $custom-font-maps return docx2hub:font-map-name($cfm)"/>
 
   <xsl:variable name="docx2hub:symbol-font-names" as="xs:string+" 
-    select="('ArialMT+1', 'Math1', 'MT Extra', 'Symbol', 'TimesNewRomanPSMT+1', 'Wingdings', 
+    select="('ArialMT+1', 'Math1', 'MT Extra', 'Symbol', 'TimesNewRomanPSMT+1', 'Wingdings', 'WingDings', 
              'Wingdings 2', 'Wingdings 3', 'Webdings', 'Euclid Math One', 
              'Euclid Math Two', 'Euclid Extra', 'Euclid Fraktur', 'Euclid Symbol', 
              'Lucida Bright Math Italic', 'Lucida Bright Math Extension', 'SymbolMT',

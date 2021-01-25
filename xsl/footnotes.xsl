@@ -271,7 +271,11 @@
                          /w:r[w:t[dbk:phrase/@role = 'hub:separator']
                                  [count(node()) = 1]
                              ]" mode="wml-to-dbk"/>
-  
+  <!-- usage of document footnotePr settings disabled (MS Word bug)
+       (see https://mantis.le-tex.de/view.php?id=29167) -->
+  <xsl:variable name="docx2hub:use-document-footnotePr-settings" as="xs:boolean"
+    select="false()"/>
+
   <xsl:template match="w:footnoteRef" mode="docx2hub:join-instrText-runs">
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
     <xsl:param name="footnotePrs" as="element(w:footnotePr)*" tunnel="yes"/>
@@ -284,7 +288,9 @@
       <xsl:variable name="fnpr" as="element(w:footnotePr)?" 
         select="($footnotePrs[. >> $fnref/..]
                              [.. is $following-boundary],
-                 /*/w:settings/w:footnotePr)[1]"/>
+                 if($docx2hub:use-document-footnotePr-settings) 
+                   then /*/w:settings/w:footnotePr else ()
+                )[1]"/>
       <xsl:variable name="section-reset" as="xs:boolean" select="exists($fnpr/w:numRestart[@w:val='eachSect'])"/>
       <xsl:variable name="footnote-num-format" 
                     select="$fnpr/w:numFmt/@w:val" as="xs:string?"/>

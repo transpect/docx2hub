@@ -67,9 +67,11 @@
     <footnote>
       <xsl:variable name="id" select="@w:id"/>
       <xsl:attribute name="xml:id" select="string-join(('fn', $id), '-')"/>
+      <xsl:variable name="fn-mark" select="key('footnote-by-id', $id)//dbk:phrase[@role eq 'hub:identifier'][1]" as="xs:string?"/>
+      <xsl:variable name="fn-mark-fallback" select="key('footnote-by-id', $id)//w:r[1][following-sibling::node()[1][self::w:tab]]" as="xs:string?"/>
       <xsl:variable name="xreflabel" select="if (@w:customMarkFollows=('1','on','true')) 
-                                             then normalize-space(key('footnote-by-id', $id)//dbk:phrase[@role eq 'hub:identifier'][1])
-                                             else ''" as="xs:string?"/>
+                                             then normalize-space(($fn-mark, $fn-mark-fallback)[. ne ''][1])
+                                             else ()" as="xs:string?"/>
       <xsl:if test="not($xreflabel = '')">
         <xsl:attribute name="xreflabel" select="$xreflabel"/>
       </xsl:if>
@@ -83,7 +85,8 @@
                   select="parent::w:t/preceding-sibling::node()[1][self::w:footnoteReference]"/>
     <xsl:variable name="fn" as="element(w:footnote)" select="key('footnote-by-id', $fnref/@w:id)"/>
     <xsl:variable name="fn-mark" select="normalize-space($fn//dbk:phrase[@role eq 'hub:identifier'][1])" as="xs:string"/>
-    <xsl:value-of select="replace(., functx:escape-for-regex($fn-mark), '')"/>
+    <xsl:variable name="fn-mark-fallback" select="$fn//w:r[1][following-sibling::node()[1][self::w:tab]]" as="xs:string"/>
+    <xsl:value-of select="replace(., functx:escape-for-regex(($fn-mark, $fn-mark-fallback)[. ne ''][1]), '')"/>
   </xsl:template>
 
   <xsl:template match="w:footnote" mode="wml-to-dbk">

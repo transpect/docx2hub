@@ -72,7 +72,7 @@
       <xsl:variable name="xreflabel" select="if (@w:customMarkFollows=('1','on','true')) 
                                              then normalize-space(($fn-mark, $fn-mark-fallback)[. ne ''][1])
                                              else ()" as="xs:string?"/>
-      <xsl:if test="not($xreflabel)">
+      <xsl:if test="$xreflabel">
         <xsl:attribute name="xreflabel" select="$xreflabel"/>
       </xsl:if>
       <xsl:apply-templates select="/*/w:footnotes/w:footnote[@w:id = $id]/@srcpath" mode="#current"/>

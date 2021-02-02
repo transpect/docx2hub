@@ -80,6 +80,7 @@
       <xsl:call-template name="docx2hub:indexterm-attributes">
         <xsl:with-param name="xe" select="."/>
       </xsl:call-template>
+      <xsl:variable name="role" select="@role" as="attribute(role)?"/>
       <xsl:variable name="open" as="element(dbk:quot)?" select="dbk:quot[1]"/>
       <xsl:variable name="close" as="element(dbk:quot)?" select="dbk:quot[2]"/>
       <xsl:variable name="primary-etc" as="document-node()">
@@ -101,7 +102,7 @@
                 <xsl:if test="exists(current-group()[1][self::dbk:inlineequation or self::dbk:equation]|$sortas)">
                   <xsl:attribute name="sortas" select="string-join(if (exists($sortas)) then $sortas else current-group(), '')"/>
                 </xsl:if>
-                <xsl:sequence select="$term"/>
+                <xsl:sequence select="$role, $term"/>
               </xsl:element>  
             </xsl:document>
           </xsl:variable>  

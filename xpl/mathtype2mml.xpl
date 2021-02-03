@@ -61,7 +61,7 @@
   
   <p:option name="debug" required="false" select="'no'"/>
   <p:option name="debug-dir-uri" required="false" select="'file:/tmp/debug'"/>
-  <p:option name="active" required="false" select="$mathtype2mml">
+  <p:option name="active" required="false" select="'yes'">
     <p:documentation>see corresponding documentation for docx2hub.
     Additionally append '+try-all-pict-wmf' to try conversion
     of all referenced '*.wmf' files in word/media/
@@ -71,10 +71,6 @@
   <p:option name="word-container-cleanup" required="false" select="'yes'">
     <p:documentation>'yes': the files in media and/or embeddings directory
     and the Relationship elements of the replaced formulas are removed too.</p:documentation>
-  </p:option>
-  <p:option name="sources" required="false" select="$mathtype2mml">
-    <p:documentation>see documentation for 'active' in docx2hub
-    This option is not used!</p:documentation>
   </p:option>
   <p:option name="mathtype-source-pi" required="false" select="'no'"/>
   <p:option name="mml-space-handling" select="'mspace'">

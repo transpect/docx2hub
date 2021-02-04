@@ -75,7 +75,7 @@
 
   <xsl:template match="w:del" mode="docx2hub:apply-changemarkup"/>
   <xsl:template match="m:oMath[every $i in descendant::text() satisfies $i/ancestor::w:del]" mode="docx2hub:apply-changemarkup"/>
-  <xsl:template match="w:pPrChange" mode="docx2hub:apply-changemarkup"/>
+  <xsl:template match="w:pPrChange|w:rPrChange" mode="docx2hub:apply-changemarkup"/>
 
   <!-- some magic: let some deleted end-fldChar elements stay, if begin and end were not equal -->
   <xsl:template match="w:del[*][every $r in * satisfies $r[self::w:r[*][every $e in * satisfies $e[self::w:rPr or self::w:fldChar[@w:fldCharType eq 'end']]]]]" mode="docx2hub:apply-changemarkup" priority="1">

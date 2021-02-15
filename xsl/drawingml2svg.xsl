@@ -106,7 +106,9 @@
     </xsl:next-match>
   </xsl:template>
   
-  <xsl:template match="mc:AlternateContent[mc:Choice/w:drawing/wp:anchor/a:graphic/a:graphicData][$create-svg]" 
+  <xsl:template match="mc:AlternateContent[$create-svg]
+                                          [mc:Choice/w:drawing/wp:anchor/a:graphic/a:graphicData[not(    wps:wsp/wps:txbx 
+                                                                                                     and wps:wsp/wps:cNvSpPr/@txBox eq '1')]]" 
     mode="docx2hub:add-props">
     <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)?" tunnel="yes"/>
     <xsl:variable name="element-name" select="if(parent::w:r|parent::w:p) then 'phrase' else 'sidebar'" as="xs:string"/>

@@ -127,9 +127,6 @@
     Will be available as extract-dir-uri in the c:param-set document that comes out of single-tree-enhanced on the
     params port.</p:documentation>
   </p:option>
-  <p:option name="create-svg" required="false" select="'no'">
-    <p:documentation>Whether Office Open Drawing ML should be mapped to SVG</p:documentation>
-  </p:option>
   <p:option name="discard-alternate-choices" select="'yes'">
     <p:documentation>Whether to remove mc:AlternateContent/mc:Choice at an early conversion stage (after insert-xpath 
       though).</p:documentation>
@@ -203,6 +200,10 @@
   <p:option name="check-tables" required="false" select="'no'">
     <p:documentation>If this option is set to 'yes' all tables are normalized with calstable and checked against 
     schematron</p:documentation>
+  </p:option>
+  <p:option name="create-svg" select="'true'">
+    <p:documentation>Whether to convert DrawingML to SVG. This is an experimental feature. Text in v:textbox
+    elements will not be retained at the moment.</p:documentation>
   </p:option>
   <p:option name="include-header-and-footer" required="false" select="'no'">
     <p:documentation>Whether to include headers and footers as div at the beginning of the document. Permitted values: yes|no</p:documentation>
@@ -343,6 +344,7 @@
     <p:with-param name="discard-alternate-choices" select="$discard-alternate-choices"/>
     <p:with-param name="include-header-and-footer" select="$include-header-and-footer"/>
     <p:with-param name="float-nr-check-error-level" select="$float-nr-check-error-level"/>
+    <p:with-param name="create-svg" select="$create-svg"/>
   </tr:xslt-mode>
 
   <tr:xslt-mode msg="yes" mode="docx2hub:props2atts" name="props2atts">

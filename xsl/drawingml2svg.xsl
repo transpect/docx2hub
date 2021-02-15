@@ -16,6 +16,8 @@
   exclude-result-prefixes="a d2s docx2hub mc math v w w14 wp wpg wps xs" 
   version="3.0">
   
+  <xsl:param name="create-svg" as="xs:boolean" select="true()"/>
+  
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" standalone="no"
               doctype-public="-//W3C//DTD SVG 1.1/EN"
               doctype-system="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"/>
@@ -77,7 +79,7 @@
 
   <xsl:key name="d2s:gd-by-name" match="a:gd" use="@name"/>  
   
-  <xsl:template match="w:sectPr[not(parent::w:sectPrChange)]" mode="docx2hub:add-props">
+  <xsl:template match="w:sectPr[not(parent::w:sectPrChange)][$create-svg]" mode="docx2hub:add-props">
     <xsl:variable name="pageWidth"    select="xs:integer(w:pgSz/@w:w * 635)" as="xs:integer"/>
     <xsl:variable name="pageHeight"   select="xs:integer(w:pgSz/@w:h * 635)" as="xs:integer"/>
     <xsl:variable name="marginTop"    select="xs:integer(w:pgMar/@w:top * 635)" as="xs:integer"/>
@@ -104,7 +106,8 @@
     </xsl:next-match>
   </xsl:template>
   
-  <xsl:template match="mc:AlternateContent[mc:Choice/w:drawing/wp:anchor/a:graphic/a:graphicData]" mode="docx2hub:add-props">
+  <xsl:template match="mc:AlternateContent[mc:Choice/w:drawing/wp:anchor/a:graphic/a:graphicData][$create-svg]" 
+    mode="docx2hub:add-props">
     <xsl:param name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)?" tunnel="yes"/>
     <xsl:variable name="element-name" select="if(parent::w:r|parent::w:p) then 'phrase' else 'sidebar'" as="xs:string"/>
     <xsl:apply-templates select="mc:Choice//a:graphic" mode="d2s:default">

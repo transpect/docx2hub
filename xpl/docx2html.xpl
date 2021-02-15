@@ -43,7 +43,7 @@
     <p:documentation>Directory (OS path, not file: URL) to which the file will be unzipped. If option is empty string, will be
       '.tmp' appended to OS file path.</p:documentation>
   </p:option>
-  <p:option name="create-svg" required="false" select="'no'">
+  <p:option name="create-svg" required="false" select="'false'">
     <p:documentation>Whether Office Open Drawing ML should be mapped to SVG</p:documentation>
   </p:option>
   

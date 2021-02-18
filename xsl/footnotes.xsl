@@ -85,8 +85,10 @@
                   select="parent::w:t/preceding-sibling::node()[1][self::w:footnoteReference]"/>
     <xsl:variable name="fn" as="element(w:footnote)" select="key('footnote-by-id', $fnref/@w:id)"/>
     <xsl:variable name="fn-mark" select="normalize-space($fn//dbk:phrase[@role eq 'hub:identifier'][1])" as="xs:string"/>
-    <xsl:variable name="fn-mark-fallback" select="$fn//w:r[1][following-sibling::node()[1][self::w:tab]]" as="xs:string"/>
-    <xsl:value-of select="replace(., functx:escape-for-regex(($fn-mark, $fn-mark-fallback)[. ne ''][1]), '')"/>
+    <xsl:variable name="fn-mark-fallback" select="$fn//w:r[1][following-sibling::node()[1][self::w:tab]]" as="xs:string?"/>
+    <xsl:sequence select="if(($fn-mark, $fn-mark-fallback)[. ne ''][1])
+                          then replace(., functx:escape-for-regex(($fn-mark, $fn-mark-fallback)[. ne ''][1]), '')
+                          else ()"/>
   </xsl:template>
 
   <xsl:template match="w:footnote" mode="wml-to-dbk">

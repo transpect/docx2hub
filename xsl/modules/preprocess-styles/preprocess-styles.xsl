@@ -188,4 +188,23 @@
     </xsl:choose>
   </xsl:function>
 
+  <!-- Collateral: Map built-in style names in localized files. Dealing only with headings for the time being. 
+    There is a list of built-in styles at https://bettersolutions.com/word/styles/list-all-built-in-styles.htm -->
+  
+  <xsl:template match="w:style[@w:type='paragraph']/@w:styleId[../w:name/@w:val[matches(., '^heading \d$')]]
+                                                              [not(matches(., '^Heading\d'))]" 
+    mode="docx2hub:resolve-tblBorders">
+    <xsl:attribute name="{name()}" select="concat('Heading', replace(../w:name/@w:val, 'heading ', ''))"/>
+  </xsl:template>
+  
+  <xsl:template match="*[name() = ('w:pStyle', 'w:basedOn')]
+                           /@w:val[. = /w:root/w:styles/w:style[@w:type='paragraph']
+                                                               [matches(w:name/@w:val, '^heading \d$')]/@w:styleId]"
+                mode="docx2hub:resolve-tblBorders">
+    <xsl:attribute name="{name()}">
+      <xsl:apply-templates select="/w:root/w:styles/w:style[@w:type='paragraph'][@w:styleId = current()]/@w:styleId"
+        mode="#current"/>
+    </xsl:attribute> 
+  </xsl:template>
+  
 </xsl:stylesheet>

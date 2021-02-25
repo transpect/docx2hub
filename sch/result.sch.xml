@@ -100,7 +100,7 @@
     <diagnostic id="Unimplemented_CSL_element_de" xml:lang="de">
       <span class="category">docx</span>
         <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Mapping unvollständig</span>
-        Mapping des 'Citation Style Language' (CSL) Literaturverzeichnisses: in Eintrag <xsl:value-of select="index-of(for $i in //biblioentry return generate-id($i), generate-id(.))"/> finden sich Inhalte, welche nicht ordentlich nach DocBook/Hub konvertiert werden konnten.
+        Mapping des 'Citation Style Language' (CSL) Literaturverzeichnisses: in Eintrag <xsl:value-of select="index-of(for $i in //dbk:biblioentry return generate-id($i), generate-id(.))"/> finden sich Inhalte, welche nicht ordentlich nach DocBook/Hub konvertiert werden konnten.
         <br xmlns="http://www.w3.org/1999/xhtml"/>
         In weiteren Konvertierungsschritten könnten diese Inhalte verloren gehen.
         <br xmlns="http://www.w3.org/1999/xhtml"/>

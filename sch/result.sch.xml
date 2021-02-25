@@ -40,7 +40,7 @@
 
   <pattern id="docx_CSL_mapping">
     <rule context="dbk:bibliography[@role = 'CSL']//dbk:biblioentry">
-      <report test="descendant::dbk:phrase[@role] or descendant::fn:*" id="Unimplemented_CSL_element" 
+      <report test="descendant::fn:*" id="Unimplemented_CSL_element" 
         diagnostics="Unimplemented_CSL_element_de" role="info">
         <span class="srcpath"><xsl:value-of 
           select="for $s in tokenize((descendant-or-self::*[@srcpath][1])/@srcpath, '\s+')

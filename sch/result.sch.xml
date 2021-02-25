@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://purl.oclc.org/dsdl/schematron" 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:dbk="http://docbook.org/ns/docbook"
   queryBinding="xslt2" xml:lang="en">
   
   <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
   <ns prefix="dbk" uri="http://docbook.org/ns/docbook" />
+  <ns prefix="fn" uri="http://www.w3.org/2005/xpath-functions"/>
 
   <title>docx</title>
 
@@ -33,6 +35,24 @@
         text and regular text – might give you a hint where the error occured: <xsl:value-of select="$pi-text"/>.
       </report>
       
+    </rule>
+  </pattern>
+
+  <pattern id="docx_CSL_mapping">
+    <rule context="dbk:bibliography[@role = 'CSL']//dbk:biblioentry">
+      <report test="descendant::dbk:phrase[@role] or descendant::fn:*" id="Unimplemented_CSL_element" 
+        diagnostics="Unimplemented_CSL_element_de" role="info">
+        <span class="srcpath"><xsl:value-of 
+          select="for $s in tokenize((descendant-or-self::*[@srcpath][1])/@srcpath, '\s+')
+                  return concat($base-dir, $s)"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Mapping incomplete</span>
+        Regarding mapping of the 'Citation Style Language' (CSL) bibliography: there is content in biblio entry <xsl:value-of select="index-of(for $i in //dbk:biblioentry return generate-id($i), generate-id(.))"/> not mapped to DocBook/Hub properly.
+        <br xmlns="http://www.w3.org/1999/xhtml"/>
+        In further conversion processes content may get lost.
+        <br xmlns="http://www.w3.org/1999/xhtml"/>
+        In the absence of a more specific contact, you may turn to <a xmlns="http://www.w3.org/1999/xhtml" href="mailto:support@le-tex.de">support@le-tex.de</a>.
+      </report>
     </rule>
   </pattern>
 
@@ -76,6 +96,15 @@
         <br xmlns="http://www.w3.org/1999/xhtml"/>
         Bitte prüfen, ob Tabellenzellen zusammengeführt oder erneuert werden können.
         Andernfalls verbleibt die Tabelle XML-seitig im aktuellen Stand: mehr Tabellenspalten definiert als benötigt werden. 
+    </diagnostic>
+    <diagnostic id="Unimplemented_CSL_element_de" xml:lang="de">
+      <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Mapping unvollständig</span>
+        Mapping des 'Citation Style Language' (CSL) Literaturverzeichnisses: in Eintrag <xsl:value-of select="index-of(for $i in //biblioentry return generate-id($i), generate-id(.))"/> finden sich Inhalte, welche nicht ordentlich nach DocBook/Hub konvertiert werden konnten.
+        <br xmlns="http://www.w3.org/1999/xhtml"/>
+        In weiteren Konvertierungsschritten könnten diese Inhalte verloren gehen.
+        <br xmlns="http://www.w3.org/1999/xhtml"/>
+        Falls keine konkreten Ansprechpartner bekannt sind, bitte an <a xmlns="http://www.w3.org/1999/xhtml" href="mailto:support@le-tex.de">support@le-tex.de</a> wenden.
     </diagnostic>
   </diagnostics>
   

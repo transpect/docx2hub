@@ -1100,6 +1100,16 @@
                         select="$formatting-acceptable"/>
                     </xsl:apply-templates>
                   </xsl:when>
+                  <xsl:when test="matches($instr-text-string, '^\s*ADDIN\s+(ZOTERO_ITEM\s+)?CSL_CITATION', 's')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'CSL_JSON'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" 
+                      select="replace($instr-text-string, '^\s*ADDIN\s+(ZOTERO_ITEM\s+)?CSL_CITATION\s+(\{.+\})\s*$', '$2', 's')"/>
+                  </xsl:when>
+                  <xsl:when test="matches($instr-text-string, '^\s*ADDIN\s+(Mendeley\s+Bibliography|ZOTERO_BIBL).+CSL_BIBLIOGRAPHY', 'si')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="'CSL_XML'"/>
+                    <xsl:attribute name="docx2hub:field-function-args" 
+                      select="replace($instr-text-string, '^\s*ADDIN\s+(Mendeley\s+Bibliography|ZOTERO_BIBL).+CSL_BIBLIOGRAPHY\s+', '', 'si')"/>
+                  </xsl:when>
                   <xsl:when test="matches($instr-text-string, '^ADDIN\s+CitaviPlaceholder', 's')">
                     <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_JSON'"/>
                     <xsl:attribute name="docx2hub:field-function-args" 
@@ -1112,10 +1122,10 @@
                     <xsl:attribute name="docx2hub:citation-uuid" 
                       select="replace($instr-text-string, '^ADDIN\s+CITAVI\.PLACEHOLDER\s+(.+?)\s+(.+)$', '$1', 's')"/>
                   </xsl:when>
-                  <xsl:when test="matches($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY', 'si')">
+                  <xsl:when test="matches($instr-text-string, '^ADDIN\s+CITAVI\.?BIBLIOGRAPHY', 'si')">
                     <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_XML'"/>
                     <xsl:attribute name="docx2hub:field-function-args" 
-                      select="replace($instr-text-string, '^ADDIN\s+CITAVI\.BIBLIOGRAPHY\s+', '', 'si')"/>
+                      select="replace($instr-text-string, '^ADDIN\s+CITAVI\.?BIBLIOGRAPHY\s+', '', 'si')"/>
                   </xsl:when>
                   <xsl:when test="matches($instr-text-string, 'FORMCHECKBOX', 's')">
                     <xsl:attribute name="docx2hub:field-function-name" select="$instr-text-string"/>
@@ -1124,8 +1134,8 @@
                       select="$prec/w:fldChar[@w:fldCharType='begin']/@w:val"/>
                     <!-- see w:ffData handling too -->
                   </xsl:when>
-                  <xsl:when test="$instr-text-nodes/w:instrText/@docx2hub:field-function-name = 'CITAVI_JSON'">
-                    <xsl:attribute name="docx2hub:field-function-name" select="'CITAVI_JSON'"/>
+                  <xsl:when test="$instr-text-nodes/w:instrText/@docx2hub:field-function-name = ('CITAVI_JSON', 'CSL_JSON')">
+                    <xsl:attribute name="docx2hub:field-function-name" select="$instr-text-nodes/w:instrText/@docx2hub:field-function-name"/>
                     <xsl:attribute name="docx2hub:field-function-args" select="$instr-text-nodes/w:instrText/@docx2hub:field-function-args"/>
                   </xsl:when>
                   <xsl:when test="matches($instr-text-string, '^https?')">

@@ -27,6 +27,7 @@
   <xsl:import href="modules/error-handler/error-handler.xsl"/>
 
   <xsl:param name="debug" select="'yes'" as="xs:string?"/>
+  <xsl:param name="debug-dir-uri" select="'debug-dir-uri_not_set'" as="xs:string?"/>
   <xsl:param name="fail-on-error" select="'no'" as="xs:string?"/>
   <xsl:param name="field-vars" select="'no'" as="xs:string?"/>
   <xsl:param name="srcpaths" select="'no'" as="xs:string?"/>
@@ -158,7 +159,7 @@
     use="@docx2hub:fldChar-start-id"/>
 
   <xsl:variable name="docx2hub:block-field-functions" as="xs:string+" 
-    select="('ADDRESSBLOCK', 'BIBLIOGRAPHY', 'CITAVI_XML', 'COMMENTS', 'DATABASE', 'INDEX', 'RD', 'TOA', 'TOC')"/>
+    select="('ADDRESSBLOCK', 'BIBLIOGRAPHY', 'CITAVI_XML', 'COMMENTS', 'CSL_XML', 'DATABASE', 'INDEX', 'RD', 'TOA', 'TOC')"/>
   
   <xsl:variable name="docx2hub:hybrid-field-functions" as="xs:string+" 
     select="('IF')"/>
@@ -619,37 +620,63 @@
     <xsl:variable name="citavi-refs" as="document-node()?">
       <xsl:call-template name="docx2hub:citavi-json-to-xml"/>
     </xsl:variable>
+    <xsl:variable name="csl-refs" as="document-node()?">
+      <xsl:call-template name="docx2hub:csl-json-to-xml"/>
+    </xsl:variable>
     <xsl:copy>
       <xsl:apply-templates select="@*, *" mode="#current">
-        <xsl:with-param name="citavi-refs" as="document-node()?" select="$citavi-refs" tunnel="yes"/>
+        <xsl:with-param name="citavi-refs" select="$citavi-refs" as="document-node()?" tunnel="yes"/>
+        <xsl:with-param name="csl-refs" select="$csl-refs" as="document-node()?" tunnel="yes"/>
       </xsl:apply-templates>
-      <xsl:variable name="citavi-bib" as="element(dbk:biblioentry)*">
-        <xsl:choose>
-          <xsl:when test="$citavi-refs/docx2hub:citavi-jsons">
-            <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-jsons/fn:map/fn:array/fn:map/fn:map[@key = 'Reference']"
-                                group-by="fn:string[@key = 'Id']">
-              <xsl:apply-templates select="." mode="citavi"/>
-            </xsl:for-each-group>    
-          </xsl:when>
-          <xsl:when test="$citavi-refs/docx2hub:citavi-xml">
-            <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-xml/Placeholder/Entries/Entry/Reference"
-                                group-by="Id">
-              <xsl:apply-templates select="." mode="citavi"/>
-            </xsl:for-each-group>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:variable>
-      <xsl:if test="exists($citavi-bib)">
-        <bibliography role="Citavi">
-          <xsl:sequence select="$citavi-bib"/>
-        </bibliography>
-      </xsl:if>
-      <xsl:if test="$debug = 'yes'">
-        <xsl:sequence select="$citavi-refs/*"/>
-      </xsl:if>
+      <xsl:call-template name="insert-bibliography">
+        <xsl:with-param name="citavi-refs" select="$citavi-refs" as="document-node()?"/>
+        <xsl:with-param name="csl-refs" select="$csl-refs" as="document-node()?"/>
+      </xsl:call-template>
     </xsl:copy>
   </xsl:template>
-  
+
+
+  <xsl:template name="insert-bibliography">
+    <xsl:param name="citavi-refs" as="document-node()?"/>
+    <xsl:param name="csl-refs" as="document-node()?"/>
+    <xsl:variable name="citavi-bib" as="element(dbk:biblioentry)*">
+      <xsl:choose>
+        <xsl:when test="$citavi-refs/docx2hub:citavi-jsons">
+          <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-jsons/fn:map/fn:array/fn:map/fn:map[@key = 'Reference']"
+                              group-by="fn:string[@key = 'Id']">
+            <xsl:apply-templates select="." mode="citavi"/>
+          </xsl:for-each-group>    
+        </xsl:when>
+        <xsl:when test="$citavi-refs/docx2hub:citavi-xml">
+          <xsl:for-each-group select="$citavi-refs/docx2hub:citavi-xml/Placeholder/Entries/Entry/Reference"
+                              group-by="Id">
+            <xsl:apply-templates select="." mode="citavi"/>
+          </xsl:for-each-group>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="csl-bib" as="element(dbk:biblioentry)*">
+      <xsl:apply-templates mode="csl"
+        select="$csl-refs//fn:*[@key = 'citationItems']//fn:*[@key = 'itemData']"/>
+    </xsl:variable>
+    <xsl:if test="exists($citavi-bib)">
+      <bibliography role="Citavi">
+        <xsl:sequence select="$citavi-bib"/>
+      </bibliography>
+    </xsl:if>
+    <xsl:if test="exists($csl-bib)">
+      <bibliography role="CSL">
+        <xsl:sequence select="$csl-bib"/>
+      </bibliography>
+    </xsl:if>
+    <xsl:if test="contains($debug-dir-uri, 'debug-json-to-xml-bibliography=yes')">
+      <bibliography role="debug">
+        <xsl:sequence select="$csl-refs/node()"/>
+        <xsl:comment>SEP</xsl:comment>
+        <xsl:sequence select="$citavi-refs/node()"/>
+      </bibliography>
+    </xsl:if>
+  </xsl:template>
   
   <!-- paragraphs (w:p) -->
 
@@ -1140,7 +1167,7 @@
           </xsl:when>
          <xsl:when test="name() = 'NUMPAGES'">
             <!-- Ignore silently like Conditionally calculated field function above. 
-            	Prospectively we could add a phrase for that to create a field again in docx for a better roundtripping -->
+              Prospectively we could add a phrase for that to create a field again in docx for a better roundtripping -->
           </xsl:when>
           <xsl:when test="matches(@fldArgs,'^[\s&#160;]*$')">
             <xsl:apply-templates mode="#current"/>
@@ -1508,6 +1535,8 @@
         <tr:field-function name="CITATION"><!-- not implemented yet --></tr:field-function>
         <tr:field-function name="CITAVI_XML"/>
         <tr:field-function name="CITAVI_JSON"/>
+        <tr:field-function name="CSL_XML"/>
+        <tr:field-function name="CSL_JSON"/>
         <!--<tr:field-function name="INDEX" element="div" role="hub:index"/>-->
         <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="GOTOBUTTON" element="link" attrib="linkend" value="1"/>
@@ -1580,7 +1609,7 @@
   </xsl:template>
 
   <xsl:template match="w:softHyphen" mode="wml-to-dbk">
-  	<xsl:value-of select="'&#xad;'"/>
+    <xsl:value-of select="'&#xad;'"/>
   </xsl:template>
  
   <xsl:template match="w:noBreakHyphen" mode="wml-to-dbk">
@@ -1723,18 +1752,19 @@
     </xsl:element>
   </xsl:template>
   
-  <xsl:template match="CITAVI_JSON" mode="wml-to-dbk tables" 
+  <xsl:template match="CITAVI_JSON | CSL_JSON" mode="wml-to-dbk tables" 
     use-when="xs:decimal(system-property('xsl:version')) lt 3.0">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="CITAVI_XML" mode="wml-to-dbk tables"
+  <xsl:template match="CITAVI_XML | CSL_XML" mode="wml-to-dbk tables"
     use-when="xs:decimal(system-property('xsl:version')) lt 3.0">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
   <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) lt 3.0"/>
 
+  <xsl:template name="docx2hub:csl-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) lt 3.0"/>
 
   
   <!-- The following template removes indentation if the document.xml was processed 

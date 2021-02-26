@@ -88,7 +88,7 @@
     
   </xsl:template>
   
-  <xsl:template match="node() | @*" mode="citavi">
+  <xsl:template match="node() | @*" mode="citavi csl">
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
@@ -209,7 +209,7 @@
   <xsl:key name="docx2hub:by-citavi-id" 
            match="fn:map[@key][fn:string[@key = '$id']]
                  |fn:array[@key]/fn:map[empty(@key)][fn:string[@key = '$id']]" 
-           use="string-join(((@key, 'person')[1], fn:string[@key = '$id']), '__')"/>
+           use="string-join((((@key, ../@key)[not(. = 'ParentReference')][1], 'person')[1], fn:string[@key = '$id']), '__')"/>
   
   <xsl:template match="fn:map[@key = 'ParentReference'][count(*) = 1][fn:string[@key = '$ref']]" 
                 mode="citavi" priority="1">
@@ -330,7 +330,7 @@
   </xsl:template> 
 
   <xsl:template name="docx2hub:citavi-redirect">
-    <xsl:param name="id-family" select="string((@key, ../@key)[1])" as="xs:string"/>
+    <xsl:param name="id-family" select="string((@key, ../@key)[not(. = 'ParentReference')][1])" as="xs:string"/>
     <xsl:variable name="same-key" as="element(fn:map)+"
       select="key('docx2hub:by-citavi-id', string-join(($id-family, fn:string[@key = '$ref']), '__'))"/>
     <xsl:variable name="last" select="$same-key[. &lt;&lt; current()][last()]" as="element(fn:map)"/>
@@ -491,6 +491,271 @@
         <xsl:value-of select="."/>
       </city>
     </address>
+  </xsl:template>
+
+
+  <!-- CSL reference manger -->
+
+  <xsl:template match="CSL_JSON" mode="wml-to-dbk tables" 
+                use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:param name="csl-refs" as="document-node()?" tunnel="yes"/>
+    <xsl:variable name="csl-citation-id" select="." as="xs:string"/>
+    <xsl:choose>
+      <xsl:when test="$csl-refs">
+        <biblioref linkends="csl-{generate-id()}">
+          <xsl:message select="."/>
+          <xsl:apply-templates mode="wml-to-dbk"/>
+        </biblioref>    
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates mode="wml-to-dbk"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="docx2hub:csl-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:variable name="jsons" as="item()*">
+      <xsl:try>
+        <xsl:for-each select=".//CSL_JSON/@fldArgs">
+          <docx2hub:csl-json id="csl-{generate-id(..)}">
+            <xsl:sequence select="json-to-xml(.)"/>
+          </docx2hub:csl-json>
+        </xsl:for-each>
+        <xsl:catch/>
+      </xsl:try>
+    </xsl:variable>
+    <xsl:if test="exists($jsons)">
+      <xsl:document>
+        <docx2hub:csl-jsons>
+          <xsl:sequence select="$jsons"/>
+        </docx2hub:csl-jsons>
+      </xsl:document>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="fn:map[@key = 'itemData']" mode="csl">
+    <biblioentry xml:id="{ancestor::docx2hub:csl-json/@id}">
+      <xsl:call-template name="csl-reference"/>
+      <xsl:if test="contains($debug-dir-uri, 'debug-json-to-xml-bibliography=yes')">
+        <docx2hub:debug role="input">
+          <xsl:sequence select="."/>
+        </docx2hub:debug>
+      </xsl:if>
+    </biblioentry>
+  </xsl:template>
+
+  <xsl:template name="csl-reference">
+    <xsl:variable name="reference-type" as="attribute(relation)?">
+      <xsl:apply-templates select="fn:string[@key = 'type']" mode="#current"/>
+    </xsl:variable>
+    <biblioset>
+      <xsl:sequence select="$reference-type"/>
+      <xsl:apply-templates select="fn:string[@key = 'language']" mode="#current"/>
+
+      <xsl:variable name="authorgroup" as="node()*">
+        <xsl:apply-templates select="fn:array[@key = $author-role-values]
+          /fn:map" mode="#current"/>
+      </xsl:variable>
+      <xsl:if test="exists($authorgroup)">
+        <authorgroup>
+          <xsl:sequence select="$authorgroup"/>
+        </authorgroup>
+      </xsl:if>
+
+      <xsl:variable name="publisher" as="element(*)*">
+        <xsl:apply-templates select="fn:string[@key = ('publisher', 'publisher-place')]" mode="#current"/>
+      </xsl:variable>
+      <xsl:if test="exists($publisher)">
+        <publisher>
+          <xsl:sequence select="$publisher"/>
+        </publisher>
+      </xsl:if>
+
+      <xsl:variable name="conference" as="element(*)*">
+        <xsl:apply-templates select="fn:string[@key = ('event', 'event-title', 'event-place')]" mode="#current"/>
+      </xsl:variable>
+      <xsl:if test="exists($conference)">
+        <confgroup>
+          <xsl:sequence select="$conference"/>
+        </confgroup>
+      </xsl:if>
+
+      <xsl:apply-templates select="fn:*[not(@key = (
+        (: authorgroup element:)
+        $author-role-values,
+        
+        (: publisher element :)
+        'publisher', 'publisher-place', 
+
+        (: conference :)
+        'event', 'event-title', 'event-place',
+
+        (: attributes :)
+        'type', 'language'))]" mode="#current"/>
+    </biblioset>
+  </xsl:template>
+
+  <xsl:variable name="author-role-values" as="xs:string*"
+    select="('author', 'chair', 'collection-editor', 'compiler', 'composer', 'container-author', 'contributor', 'curator', 'director', 'editor', 'editorial-director', 'editortranslator', 'executive-producer', 'guest', 'host', 'illustrator', 'interviewer', 'narrator', 'organizer', 'original-author', 'performer', 'producer', 'recipient', 'reviewed-author', 'script-writer', 'series-creator', 'translator')"/>
+
+  <xsl:template match="fn:string[@key = 'type']" mode="csl" as="attribute(relation)?">
+    <!-- CSL 1.0.1: article, article-magazine, article-newspaper, article-journal, bill, 
+    book, broadcast, chapter, dataset, entry, entry-dictionary, entry-encyclopedia, figure, 
+    graphic, interview, legislation, legal_case, manuscript, map, motion_picture, musical_score, 
+    pamphlet, paper-conference, patent, post, post-weblog, personal_communication, report, review, review-book, song, speech, thesis, treaty, webpage -->
+    <xsl:attribute name="relation" select="."/>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = ('DOI', 'ISBN', 'ISSN')]" 
+                mode="csl">
+    <biblioid class="{lower-case(lower-case((@key, local-name())[1]))}">
+      <xsl:value-of select="."/>
+    </biblioid>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'language']" 
+                mode="csl" as="attribute(xml:lang)">
+    <xsl:attribute name="xml:lang" select="string(.)"/>
+  </xsl:template>
+
+  <xsl:template match="fn:array[@key = $author-role-values]/fn:map" mode="csl">
+    <xsl:variable name="el-name" as="xs:string"
+      select="(parent::*/@key[. = ('author', 'editor')], 'othercredit')[1]"/>
+    <xsl:element name="{$el-name}">
+      <xsl:if test="$el-name = 'othercredit'">
+        <xsl:attribute name="role" select="parent::*/@key"/>
+      </xsl:if>
+      <personname>
+        <xsl:apply-templates mode="#current"/>
+      </personname>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'family']" mode="csl">
+    <surname>
+      <xsl:apply-templates mode="#current"/>
+    </surname>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'given']" mode="csl">
+    <firstname>
+      <xsl:apply-templates mode="#current"/>
+    </firstname>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'suffix']" mode="csl">
+    <honorific>
+      <xsl:apply-templates mode="#current"/>
+    </honorific>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'publisher']" mode="csl">
+    <publishername>
+      <xsl:apply-templates mode="#current"/>
+    </publishername>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'publisher-place']" mode="csl">
+    <address>
+      <xsl:apply-templates mode="#current"/>
+    </address>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = ('event', 'event-title')]" mode="csl">
+    <conftitle>
+      <xsl:apply-templates mode="#current"/>
+    </conftitle>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'event-place']" mode="csl">
+    <address>
+      <xsl:apply-templates mode="#current"/>
+    </address>
+  </xsl:template>
+
+  <!--<xsl:template match="fn:string[@key = 'note']" mode="csl">
+    <annotation>
+      <xsl:apply-templates mode="#current"/>
+    </annotation>
+  </xsl:template>-->
+
+  <xsl:template match="fn:*[@key = 'id']" mode="csl">
+    <xsl:processing-instruction name="tr_csl_id" select="."/>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'schema']" mode="csl"/>
+  <xsl:template match="fn:string[@key = 'formattedCitation']" mode="csl"/>
+  <xsl:template match="fn:string[@key = 'manualFormatting']" mode="csl"/>
+  <xsl:template match="fn:string[@key = 'plainTextFormattedCitation']" mode="csl"/>
+  <xsl:template match="fn:string[@key = 'previouslyFormattedCitation']" mode="csl"/>
+  <xsl:template match="fn:string[@key = 'properties']" mode="csl"/>
+
+  <xsl:template match="*[@key = ('comma-suffix', 'dropping-particle', 'parse-names', 'non-dropping-particle', 'static-ordering', 'literal')]" mode="csl">
+    <xsl:processing-instruction name="tr_csl_{@key}" select="."/>
+  </xsl:template>
+
+  <xsl:template match="fn:array[@key = 'citationItems'] | fn:array[@key = 'citationItems']/fn:map" mode="csl" priority="-1">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
+  <xsl:template match="fn:string[not(*)][not(normalize-space())]" mode="csl" priority="1"/>
+
+  <xsl:template match="fn:string[@key = 'title'
+                                 or
+                                 (@key = 'container-title' and not(../fn:string[@key = 'title']))
+                                ]" mode="csl">
+    <title>
+      <xsl:apply-templates mode="#current"/>
+    </title>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'title-short']" mode="csl">
+    <titleabbrev>
+      <xsl:apply-templates mode="#current"/>
+    </titleabbrev>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'source']" mode="csl">
+    <bibliosource>
+      <xsl:apply-templates mode="#current"/>
+    </bibliosource>
+  </xsl:template>
+
+  <xsl:template match="fn:*[@key = 'issue']" mode="csl">
+    <issuenum>
+      <xsl:apply-templates mode="#current"/>
+    </issuenum>
+  </xsl:template>
+
+  <xsl:template match="fn:*[@key = 'volume']" mode="csl">
+    <volumenum>
+      <xsl:apply-templates mode="#current"/>
+    </volumenum>
+  </xsl:template>
+
+  <xsl:template match="fn:*[@key = 'page']" mode="csl">
+    <pagenums>
+      <xsl:value-of select="replace(., '-', '–')"/>
+    </pagenums>
+  </xsl:template>
+
+  <xsl:template match="fn:string[@key = 'abstract']" mode="csl">
+    <abstract>
+      <xsl:apply-templates mode="#current"/>
+    </abstract>
+  </xsl:template>
+
+  <xsl:template mode="csl" priority="-.5" as="element(dbk:bibliomisc)"
+    match="fn:*[@key = 'itemData']/fn:string[@key]">
+    <bibliomisc role="{@key}">
+      <xsl:apply-templates mode="#current"/>
+    </bibliomisc>
+  </xsl:template>
+
+  <xsl:template match="fn:*[@key]" priority="-3" mode="csl" as="item()*">
+    <phrase role="csl_{@key}">
+      <xsl:apply-templates mode="#current"/>
+    </phrase>
   </xsl:template>
   
 </xsl:stylesheet>

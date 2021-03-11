@@ -494,7 +494,7 @@
   </xsl:template>
 
 
-  <!-- CSL reference manger -->
+  <!-- CSL reference manager -->
 
   <xsl:template match="CSL_JSON" mode="wml-to-dbk tables" 
                 use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
@@ -503,7 +503,6 @@
     <xsl:choose>
       <xsl:when test="$csl-refs">
         <biblioref linkends="csl-{generate-id()}">
-          <xsl:message select="."/>
           <xsl:apply-templates mode="wml-to-dbk"/>
         </biblioref>    
       </xsl:when>
@@ -596,7 +595,12 @@
   </xsl:template>
 
   <xsl:variable name="author-role-values" as="xs:string*"
-    select="('author', 'chair', 'collection-editor', 'compiler', 'composer', 'container-author', 'contributor', 'curator', 'director', 'editor', 'editorial-director', 'editortranslator', 'executive-producer', 'guest', 'host', 'illustrator', 'interviewer', 'narrator', 'organizer', 'original-author', 'performer', 'producer', 'recipient', 'reviewed-author', 'script-writer', 'series-creator', 'translator')"/>
+    select="('author', 'chair', 'collection-editor', 'compiler', 'composer', 
+             'container-author', 'contributor', 'curator', 'director', 'editor', 
+             'editorial-director', 'editortranslator', 'executive-producer', 'guest', 
+             'host', 'illustrator', 'interviewer', 'narrator', 'organizer', 
+             'original-author', 'performer', 'producer', 'recipient', 'reviewed-author', 
+             'script-writer', 'series-creator', 'translator')"/>
 
   <xsl:template match="fn:string[@key = 'type']" mode="csl" as="attribute(relation)?">
     <!-- CSL 1.0.1: article, article-magazine, article-newspaper, article-journal, bill, 

@@ -553,7 +553,7 @@
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:variable name="most-frequent-lang" select="docx2hub:most-frequent-lang(.)" as="xs:string?"/>
-      <xsl:if test="exists($most-frequent-lang)">
+      <xsl:if test="exists($most-frequent-lang) and not($most-frequent-lang eq 'x')">
         <xsl:attribute name="xml:lang" select="$most-frequent-lang"/>
       </xsl:if>
       <xsl:apply-templates mode="#current">
@@ -599,7 +599,8 @@
                       and 
                       (every $run in w:r[w:t[matches(., '\w')]]
                        satisfies (($run/@xml:lang, key('docx2hub:style-by-role', $run/@role))[1] = $most-frequent-lang)
-                      )">
+                      )
+                      and not($most-frequent-lang eq 'x')">
         <xsl:attribute name="xml:lang" select="$most-frequent-lang"/>
       </xsl:when>
     </xsl:choose>
@@ -955,7 +956,7 @@
     <xsl:variable name="last-lang" select="($ancestors-with-langs[@docx2hub:rtl-lang][@css:direction = 'rtl'][last()]/@docx2hub:rtl-lang,
                                            $ancestors-with-langs[@xml:lang][not(@css:direction = 'rtl')][last()]/@xml:lang)[last()]"/>
     <!-- Only output the next specific xml:lang if its string value differs from the current one’s: -->
-    <xsl:if test="not($dir = 'rtl') and not($last-lang = $context)">
+    <xsl:if test="not($dir = 'rtl') and not($last-lang = $context) and not($context eq 'x')">
       <xsl:attribute name="xml:lang" select="$context"/>
     </xsl:if>
   </xsl:template>
@@ -974,7 +975,7 @@
     <xsl:variable name="last-lang" select="($ancestors-with-langs[@docx2hub:rtl-lang][@css:direction = 'rtl'][last()]/@docx2hub:rtl-lang,
                                            $ancestors-with-langs[@xml:lang][not(@css:direction = 'rtl')][last()]/@xml:lang)[last()]"/>
     <!-- Only output the next specific xml:lang if its string value differs from the current one’s: -->
-    <xsl:if test="$dir = 'rtl' and not($last-lang = $context)">
+    <xsl:if test="$dir = 'rtl' and not($last-lang = $context) and not($context eq 'x')">
       <xsl:attribute name="xml:lang" select="$context"/>
     </xsl:if>
   </xsl:template>

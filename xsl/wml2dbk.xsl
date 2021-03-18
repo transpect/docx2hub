@@ -1706,6 +1706,11 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:template match="@*[local-name() = ('mathcolor', 'mathbackground')]
+                         [matches(., '^[0-9a-fA-F]{6}$')]" mode="docx2hub:join-runs">
+    <xsl:attribute name="{local-name()}" select="concat('#', .)"/>
+  </xsl:template>
+
  <xsl:template match="w:sym" mode="omml2mml" priority="120">
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>

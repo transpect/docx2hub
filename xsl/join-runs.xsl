@@ -67,6 +67,7 @@
        dbk:anchors between identically formatted phrases will be merged
        with the phrases' content into a consolidated phrase. -->
   <xsl:template match="*[not(self::dbk:phrase[@role = 'docx2hub:EQ'])]
+                        [not(ancestor::dbk:bibliography)]
                         [w:r or dbk:phrase or dbk:superscript or dbk:subscript]" 
     mode="docx2hub:join-runs" priority="3">
     <!-- move sidebars to para level --><xsl:variable name="context" select="."/>

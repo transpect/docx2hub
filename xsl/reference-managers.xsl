@@ -571,7 +571,7 @@
       </xsl:if>
 
       <xsl:variable name="conference" as="element(*)*">
-        <xsl:apply-templates select="fn:string[@key = ('event', 'event-title', 'event-place')]" mode="#current"/>
+        <xsl:apply-templates select="fn:string[@key = ('event', 'event-title', 'event-place', 'event-date')]" mode="#current"/>
       </xsl:variable>
       <xsl:if test="exists($conference)">
         <confgroup>
@@ -587,7 +587,7 @@
         'publisher', 'publisher-place', 
 
         (: conference :)
-        'event', 'event-title', 'event-place',
+        'event', 'event-title', 'event-place', 'event-date',
 
         (: attributes :)
         'type', 'language'))]" mode="#current"/>
@@ -743,9 +743,31 @@
     </pagenums>
   </xsl:template>
 
+  <xsl:variable name="date-variables" as="xs:string+"
+    select="('accessed', 'available-date', 'event-date', 'issued', 'original-date', 'submitted')"/>
+
+  <xsl:template match="fn:*[@key = $date-variables[not(. = 'event-date')]]" mode="csl">
+    <releaseinfo role="{@key}">
+      <xsl:apply-templates mode="#current"/>
+    </releaseinfo>
+  </xsl:template>
+  <xsl:template match="fn:*[@key = 'event-date']" mode="csl">
+    <confdates>
+      <xsl:apply-templates mode="#current"/>
+    </confdates>
+  </xsl:template>
+
+  <xsl:template match="fn:*[@key = $date-variables]//*" mode="csl">
+    <phrase role="{(@key, local-name())[1]}">
+      <xsl:apply-templates mode="#current"/>
+    </phrase>
+  </xsl:template>
+
   <xsl:template match="fn:string[@key = 'abstract']" mode="csl">
     <abstract>
-      <xsl:apply-templates mode="#current"/>
+      <para>
+        <xsl:apply-templates mode="#current"/>
+      </para>
     </abstract>
   </xsl:template>
 

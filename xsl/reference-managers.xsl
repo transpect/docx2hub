@@ -763,6 +763,11 @@
     </phrase>
   </xsl:template>
 
+  <xsl:template match="fn:*[@key = $date-variables]//*[@key = 'date-parts' or self::fn:array]
+                                                      [count(.//text()) = 1]" mode="csl" priority="1">
+    <xsl:apply-templates mode="#current"/>
+  </xsl:template>
+
   <xsl:template match="fn:string[@key = 'abstract']" mode="csl">
     <abstract>
       <para>

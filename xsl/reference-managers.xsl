@@ -216,6 +216,7 @@
     <xsl:if test="$debug = 'yes'">
       <xsl:comment>redirect to <xsl:value-of select="@key, fn:string[@key = '$ref']"/></xsl:comment>
     </xsl:if>
+    <xsl:message>redirect to <xsl:value-of select="@key, fn:string[@key = '$ref']"/></xsl:message>
     <xsl:call-template name="docx2hub:citavi-redirect"/>
   </xsl:template>
   
@@ -331,9 +332,9 @@
 
   <xsl:template name="docx2hub:citavi-redirect">
     <xsl:param name="id-family" select="string((@key, ../@key)[not(. = 'ParentReference')][1])" as="xs:string"/>
-    <xsl:variable name="same-key" as="element(fn:map)+"
+    <xsl:variable name="same-key" as="element(fn:map)*"
       select="key('docx2hub:by-citavi-id', string-join(($id-family, fn:string[@key = '$ref']), '__'))"/>
-    <xsl:variable name="last" select="$same-key[. &lt;&lt; current()][last()]" as="element(fn:map)"/>
+    <xsl:variable name="last" select="$same-key[. &lt;&lt; current()][last()]" as="element(fn:map)?"/>
     <xsl:apply-templates select="$last" mode="#current">
       <xsl:with-param name="person-group-name" as="xs:string?" select="parent::fn:array/@key"/>
     </xsl:apply-templates>

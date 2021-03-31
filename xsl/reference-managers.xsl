@@ -209,7 +209,7 @@
   <xsl:key name="docx2hub:by-citavi-id" 
            match="fn:map[@key][fn:string[@key = '$id']]
                  |fn:array[@key]/fn:map[empty(@key)][fn:string[@key = '$id']]" 
-           use="string-join((((@key, ../@key)[not(. = 'ParentReference')][1], 'person')[1], fn:string[@key = '$id']), '__')"/>
+           use="string-join(((@key, 'person')[1], fn:string[@key = '$id']), '__')"/>
   
   <xsl:template match="fn:map[@key = 'ParentReference'][count(*) = 1][fn:string[@key = '$ref']]" 
                 mode="citavi" priority="1">
@@ -331,7 +331,7 @@
   </xsl:template> 
 
   <xsl:template name="docx2hub:citavi-redirect">
-    <xsl:param name="id-family" select="string((@key, ../@key)[not(. = 'ParentReference')][1])" as="xs:string"/>
+    <xsl:param name="id-family" select="string((@key, ../@key)[1])" as="xs:string"/>
     <xsl:variable name="same-key" as="element(fn:map)*"
       select="key('docx2hub:by-citavi-id', string-join(($id-family, fn:string[@key = '$ref']), '__'))"/>
     <xsl:variable name="last" select="$same-key[. &lt;&lt; current()][last()]" as="element(fn:map)?"/>

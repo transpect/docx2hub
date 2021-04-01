@@ -2,7 +2,7 @@
 <schema xmlns="http://purl.oclc.org/dsdl/schematron" 
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:dbk="http://docbook.org/ns/docbook"
-  queryBinding="xslt2">
+  queryBinding="xslt2" xml:lang="en">
   
   <ns prefix="w" uri="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>
   <ns prefix="a" uri="http://schemas.openxmlformats.org/drawingml/2006/main"/>
@@ -17,21 +17,23 @@
   <pattern id="table">
       <rule context="w:p[w:pPr/w:pStyle/@w:val='Tablecolumnhead']">
       <let name="current_table" value="ancestor::w:tbl[1]"/>
-      <report id="multipe_formattings_for_tablecolumnhead" role="warning"
+      <report id="multipe_formattings_for_tablecolumnhead" role="warning" diagnostics="multipe_formattings_for_tablecolumnhead_de"
         test="preceding::w:p[not(ancestor::w:tc[1]/w:tcPr/w:vMerge)]
                             [w:pPr/w:pStyle/@w:val=('Tablebody')]
                             [. &gt;&gt; $current_table]">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        Dieser Absatz wurde als Tabellenkopf ausgezeichnet. Vorher (innerhalb dieser Tabelle) befinden sich allerdings schon Tablebody-Zellen. Durch die Konvertierung wurden alle als Kopf ausgezeichneten Absätze nach ganz oben in die Tabelle verschoben. Wenn dies nicht gewünscht ist, Auszeichnung bitte korrigieren und noch einmal konvertieren.
+        This paragraph has been marked up as a 'Tablecolumnhead'. However, there are preceding cells with 'Tablebody' paragraphs. 
+        The conversion will move all head cells before the body cells. If this is not wanted, you need to reassign the paragraph styles. 
       </report>
     </rule>
   </pattern>
   
   <pattern id="instrText">
     <rule context="*[w:r[w:instrText]/following-sibling::*[1][self::m:oMath and following-sibling::*[1][self::w:r/w:instrText]]]">
-      <report id="instrText_math" role="warning" test="true()">
+      <report id="instrText_math" role="warning" test="true()" diagnostics="instrText_math_de">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        Hier wurde eine Formel innerhalb einer Feldfunktion verwendet.
+        Here is maths inside a field code. This might be supported for index entries, but not for other field codes.
+        Please check the output.
       </report>
     </rule>
   </pattern>
@@ -46,46 +48,83 @@
                         /self::w:r[count(*) = 1]
                                   [w:fldChar[@w:fldCharType = 'begin']]
                       ]">
-      <report id="field_function_text" role="warning" test="true()">
+      <report id="field_function_text" role="warning" test="true()" diagnostics="field_function_text_de">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        Hier steht Text, welche in einer fremdartigen Feldfunktion steht und ggf. nicht dargestellt werden sollte. Textstelle: <xsl:value-of select=".//w:t[normalize-space()]"/>
+        Here’s text that in a field code that might not be intended for rendering. Content: <xsl:value-of select=".//w:t[normalize-space()]"/>
       </report>
     </rule>
   </pattern>
   
   <pattern id="drawing">
     <rule context="*:inline">
-      <report id="scaled_image" role="warning" test="*:extent[@cx != parent::*/a:graphic//a:ext/@cx] or *:extent[@cy != parent::*/a:graphic//a:ext/@cy]">
+      <let name="rels" value="//*:Relationship[@Id=current()//a:blip/(@*:link, @*:embed)[1]]/@Target/tokenize(., '[/\\]')[last()]"/>
+      <report id="scaled_image" role="warning" diagnostics="scaled_image_de" 
+        test="*:extent[@cx != parent::*/a:graphic//a:ext/@cx] or *:extent[@cy != parent::*/a:graphic//a:ext/@cy]">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        Das Bild <xsl:value-of select="string-join(//*:Relationship[@Id=current()//a:blip/(@*:link, @*:embed)[1]]/@Target/tokenize(., '[/\\]')[last()], ' und ')"/> wurde skaliert
+        Image <xsl:value-of select="string-join($rels, ' and ')"/> has been scaled.
       </report>
-      <report id="rotated_image" role="warning" test="*:graphic/*:graphicData//*:xfrm/@rot">
+      <report id="rotated_image" role="warning" diagnostics="rotated_image_de"
+        test="*:graphic/*:graphicData//*:xfrm/@rot">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        Das Bild <xsl:value-of select="string-join(//*:Relationship[@Id=current()//a:blip/(@*:link, @*:embed)[1]]/@Target/tokenize(., '[/\\]')[last()], ' und ')"/> wurde gedreht
+        Image <xsl:value-of select="string-join($rels, ' and ')"/> has been rotated.
       </report>
-      <report id="cropped_image" role="warning" test="*:graphic/*:graphicData/pic:pic/pic:blipFill/a:srcRect[@r or @b]">
+      <report id="cropped_image" role="warning" diagnostics="cropped_image_de"
+        test="*:graphic/*:graphicData/pic:pic/pic:blipFill/a:srcRect[@r or @b]">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-       Das Bild <xsl:value-of select="string-join(//*:Relationship[@Id=current()//a:blip/(@*:link, @*:embed)[1]]/@Target/tokenize(., '[/\\]')[last()], ' und ')"/> wurde zugeschnitten
+       Image <xsl:value-of select="string-join($rels, ' and ')"/> has been cropped.
       </report>
     </rule>
   </pattern>
   
   <pattern id="omath-formula">
     <rule context="m:oMath">
-      <report id="mml_in_omml" role="fatal-error" test="descendant::o:OLEObject">
+      <report id="mml_in_omml" role="error" test="descendant::o:OLEObject" diagnostics="mml_in_omml_de">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
-        Hier wurde eine MathType-Formel in einer Word-Formel gefunden. Bitte ersetzen Sie die MathType-Formel.
+        There is probably a MathType equation in an OMML equation. Please use only OMML in OMML formulas.
       </report>
     </rule>
   </pattern>
   
   <pattern id="update-field-function">
     <rule context="*:fldSimple | *:fldChar">
-      <report id="update_field_function" role="warning" test="@w:dirty and not(preceding::*[self::*:fldSimple or self::*:fldChar][@w:dirty])">
+      <report id="update_field_function" role="warning" diagnostics="update_field_function_de" 
+        test="@w:dirty and not(preceding::*[self::*:fldSimple or self::*:fldChar][@w:dirty])">
         <span class="srcpath">BC_orphans</span>
-        In diesem Dokument wurden die Feldfunktionen nicht aktualisiert. Um eine korrekte Konvertierung zu gewährleisten, aktualisieren Sie bitte die Feldfunktionen vor der Konvertierung.
+        The field codes have not been refreshed in this document. Please do so for achieving accurate conversion results. 
       </report>
     </rule>
   </pattern>
-  
+
+  <diagnostics>
+    <diagnostic id="multipe_formattings_for_tablecolumnhead_de" xml:lang="de">
+      Dieser Absatz wurde als Tabellenkopf ausgezeichnet. Vorher (innerhalb dieser Tabelle) befinden sich allerdings 
+      schon Tablebody-Zellen. Durch die Konvertierung wurden alle als Kopf ausgezeichneten Absätze nach ganz oben in 
+      die Tabelle verschoben. Wenn dies nicht gewünscht ist, Auszeichnung bitte korrigieren und noch einmal konvertieren.
+      
+    </diagnostic>
+    <diagnostic id="field_function_text_de" xml:lang="de">
+      Hier steht Text, welche in einer fremdartigen Feldfunktion steht und ggf. nicht dargestellt werden sollte. 
+      Textstelle: <xsl:value-of select=".//w:t[normalize-space()]"/>
+    </diagnostic>
+    <diagnostic id="instrText_math_de" xml:lang="de">
+      Hier wurde eine Formel innerhalb einer Feldfunktion verwendet.
+    </diagnostic>
+    <diagnostic id="cropped_image_de" xml:lang="de">
+      Bild <xsl:value-of select="string-join($rels, ' und ')"/> wurde beschnitten.
+    </diagnostic>
+    <diagnostic id="rotated_image_de" xml:lang="de">
+      Bild <xsl:value-of select="string-join($rels, ' und ')"/> wurde gedreht.
+    </diagnostic>
+    <diagnostic id="scaled_image_de" xml:lang="de">
+      Bild <xsl:value-of select="string-join($rels, ' und ')"/> wurde skaliert
+    </diagnostic>
+    <diagnostic id="mml_in_omml_de" xml:lang="de">
+       Hier steht wahrscheinlich eine MathType-Formel in einer Word-OMML-Formel. Bitte ersetzen Sie die MathType-Formel.
+    </diagnostic>
+    <diagnostic id="update_field_function_de" xml:lang="de">
+      In diesem Dokument wurden die Feldfunktionen nicht aktualisiert. Um eine korrekte Konvertierung zu gewährleisten, 
+      aktualisieren Sie bitte die Feldfunktionen vor der Konvertierung.
+    </diagnostic>
+  </diagnostics>
+
 </schema>

@@ -58,7 +58,6 @@
     <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
   </xsl:template>
 
-
   <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
     <xsl:variable name="jsons-actually-containing-xml" as="document-node(element(Placeholder))*" 
                   select="for $jd in .//CITAVI_JSON/@fldArgs 
@@ -88,7 +87,7 @@
     
   </xsl:template>
   
-  <xsl:template match="node() | @*" mode="citavi csl">
+  <xsl:template match="node() | @*" mode="citavi csl" priority="-1">
     <xsl:copy>
       <xsl:apply-templates select="@*, node()" mode="#current"/>
     </xsl:copy>
@@ -114,17 +113,49 @@
   </xsl:template>
   
   <xsl:template match="fn:map[@key = 'Reference']" mode="citavi">
+    <xsl:variable name="pos" 
+      select="index-of(
+                for $i in //fn:map[@key = 'Reference'] return generate-id($i), 
+                generate-id(.)
+              )" as="xs:integer"/>
     <biblioentry xml:id="_{fn:string[@key = 'Id']}">
+      <xsl:call-template name="citavi-bibliomisc">
+        <xsl:with-param name="pos" select="$pos"/>
+      </xsl:call-template>
       <xsl:apply-templates mode="#current" 
         select="fn:map[@key = 'ParentReference'][*/@key]"/>
       <xsl:call-template name="citavi-reference"/>
     </biblioentry>
   </xsl:template>
+
+  <xsl:template name="citavi-bibliomisc">
+    <xsl:param name="pos" select="0" as="xs:integer"/>
+    <xsl:variable name="rendered" 
+      select="$root//w:sdt[
+                w:sdtPr/w:tag/@w:val = 'CitaviBibliography' and w:sdtContent/*
+              ]/w:sdtContent
+                /(*:CITAVI_XML/w:p union */self::w:p)[
+                  (: position '+1': ignore heading paragraph :)
+                  position() = ($pos +1)
+                ]"/>
+    <xsl:if test="$rendered">
+      <info>
+        <bibliomisc role="rendered">
+          <xsl:apply-templates select="$rendered/(@srcpath, node())" mode="wml-to-dbk"/>
+        </bibliomisc>
+      </info>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="w:sdtContent/*:CITAVI_XML//*[self::w:bookmarkStart or self::w:bookmarkEnd]" mode="wml-to-dbk"/>
   
   <xsl:template match="Reference" mode="citavi">
     <biblioentry xml:id="_{Id}">
       <xsl:apply-templates select="ParentReference" mode="#current"/>
       <xsl:call-template name="citavi-reference-xml"/>
+      <xsl:call-template name="citavi-bibliomisc">
+        <xsl:with-param name="pos" select="position()"/><!-- untested -->
+      </xsl:call-template>
     </biblioentry>
   </xsl:template>
   
@@ -533,8 +564,16 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="fn:map[@key = 'itemData']" mode="csl">
+  <xsl:template match="fn:*[@key = 'citationItems']//fn:map[@key = 'itemData']" mode="csl">
+    <xsl:variable name="pos" 
+      select="index-of(
+                for $i in //fn:map[@key = 'itemData'][ancestor::fn:*[@key = 'citationItems']] return generate-id($i), 
+                generate-id(.)
+              )" as="xs:integer"/>
     <biblioentry xml:id="{ancestor::docx2hub:csl-json/@id}">
+      <xsl:call-template name="csl-bibliomisc">
+        <xsl:with-param name="pos" select="$pos"/>
+      </xsl:call-template>
       <xsl:call-template name="csl-reference"/>
       <xsl:if test="contains($debug-dir-uri, 'debug-json-to-xml-bibliography=yes')">
         <docx2hub:debug role="input">
@@ -542,6 +581,19 @@
         </docx2hub:debug>
       </xsl:if>
     </biblioentry>
+  </xsl:template>
+
+  <xsl:template name="csl-bibliomisc">
+    <xsl:param name="pos" select="0" as="xs:integer"/>
+    <xsl:variable name="rendered" 
+      select="$root//*:CSL_XML/w:p[position() = $pos]"/>
+    <xsl:if test="$rendered">
+      <info>
+        <bibliomisc role="rendered">
+          <xsl:apply-templates select="$rendered/(@srcpath, node())" mode="wml-to-dbk"/>
+        </bibliomisc>
+      </info>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template name="csl-reference">

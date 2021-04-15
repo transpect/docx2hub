@@ -119,7 +119,7 @@
                 generate-id(.)
               )" as="xs:integer"/>
     <biblioentry xml:id="_{fn:string[@key = 'Id']}">
-      <xsl:call-template name="citavi-bibliomisc">
+      <xsl:call-template name="citavi-rendered">
         <xsl:with-param name="pos" select="$pos"/>
       </xsl:call-template>
       <xsl:apply-templates mode="#current" 
@@ -128,7 +128,7 @@
     </biblioentry>
   </xsl:template>
 
-  <xsl:template name="citavi-bibliomisc">
+  <xsl:template name="citavi-rendered">
     <xsl:param name="pos" select="0" as="xs:integer"/>
     <xsl:variable name="rendered" 
       select="$root//w:sdt[
@@ -139,11 +139,11 @@
                   position() = ($pos +1)
                 ]"/>
     <xsl:if test="$rendered">
-      <info>
-        <bibliomisc role="rendered">
+      <abstract role="rendered">
+        <para>
           <xsl:apply-templates select="$rendered/(@srcpath, node())" mode="wml-to-dbk"/>
-        </bibliomisc>
-      </info>
+        </para>
+      </abstract>
     </xsl:if>
   </xsl:template>
 
@@ -153,7 +153,7 @@
     <biblioentry xml:id="_{Id}">
       <xsl:apply-templates select="ParentReference" mode="#current"/>
       <xsl:call-template name="citavi-reference-xml"/>
-      <xsl:call-template name="citavi-bibliomisc">
+      <xsl:call-template name="citavi-rendered">
         <xsl:with-param name="pos" select="position()"/><!-- untested -->
       </xsl:call-template>
     </biblioentry>
@@ -571,7 +571,7 @@
                 generate-id(.)
               )" as="xs:integer"/>
     <biblioentry xml:id="{ancestor::docx2hub:csl-json/@id}">
-      <xsl:call-template name="csl-bibliomisc">
+      <xsl:call-template name="csl-rendered">
         <xsl:with-param name="pos" select="$pos"/>
       </xsl:call-template>
       <xsl:call-template name="csl-reference"/>
@@ -583,16 +583,16 @@
     </biblioentry>
   </xsl:template>
 
-  <xsl:template name="csl-bibliomisc">
+  <xsl:template name="csl-rendered">
     <xsl:param name="pos" select="0" as="xs:integer"/>
     <xsl:variable name="rendered" 
       select="$root//*:CSL_XML/w:p[position() = $pos]"/>
     <xsl:if test="$rendered">
-      <info>
-        <bibliomisc role="rendered">
+      <abstract role="rendered">
+        <para>
           <xsl:apply-templates select="$rendered/(@srcpath, node())" mode="wml-to-dbk"/>
-        </bibliomisc>
-      </info>
+        </para>
+      </abstract>
     </xsl:if>
   </xsl:template>
 

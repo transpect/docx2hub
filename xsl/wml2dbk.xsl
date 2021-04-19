@@ -67,6 +67,7 @@
   <xsl:key name="symbol-by-number" match="symbol" use="upper-case(replace(@number, '^0*(.+?)$', '$1'))" />
   <xsl:key name="symbol-by-entity" match="symbol" use="@entity" />
   <xsl:key name="style-by-name" match="css:rule | dbk:style" use="@name | @role"/>
+  <xsl:key name="by-id" match="*" use="@xml:id"/>
 
 
   <!-- sorted includes -->

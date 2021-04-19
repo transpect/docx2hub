@@ -135,7 +135,7 @@
                 w:sdtPr/w:tag/@w:val = 'CitaviBibliography' and w:sdtContent/*
               ]/w:sdtContent
                 /(*:CITAVI_XML/w:p union */self::w:p)[
-                  .//w:bookmarkStart[@name/starts-with(., '_CTVL')]
+                  .//w:bookmarkStart[@w:name/starts-with(., '_CTVL')]
                 ][position() = $pos]"/>
     <xsl:if test="$rendered">
       <abstract role="rendered">

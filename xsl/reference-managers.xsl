@@ -841,5 +841,34 @@
       <xsl:apply-templates mode="#current"/>
     </phrase>
   </xsl:template>
+
+  <xsl:variable name="docx2hub:bibref-id-prefix" select="'bib'" as="xs:string"/>
+
+  <xsl:template match="*:biblioref/@*[name() = ('linkends', 'linkend')]" mode="docx2hub:join-runs">
+    <xsl:attribute name="{name()}" 
+      select="string-join(
+                for $ref in tokenize(., '&#x20;') 
+                return concat(
+                  $docx2hub:bibref-id-prefix,
+                  index-of(
+                    for $bibentry in //*:biblioentry 
+                      return generate-id($bibentry), 
+                    generate-id(//*:biblioentry[@xml:id = $ref][1])
+                  )
+                ), '&#x20;'
+              )"/>  
+  </xsl:template>
+
+  <xsl:template match="*:biblioentry/@xml:id" mode="docx2hub:join-runs">
+    <xsl:attribute name="xml:id" 
+      select="concat(
+                $docx2hub:bibref-id-prefix, 
+                index-of(
+                  for $bibentry in //*:biblioentry 
+                    return generate-id($bibentry), 
+                  generate-id(..)
+                )
+              )"/>
+  </xsl:template>
   
 </xsl:stylesheet>

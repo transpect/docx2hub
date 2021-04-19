@@ -1769,6 +1769,11 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
+  <xsl:template match="*:CITAVI_XML | *:CSL_XML" mode="wml-to-dbk tables"
+    use-when="xs:decimal(system-property('xsl:version')) gt 2.0" priority="3">
+    <xsl:processing-instruction name="docx2hub_{lower-case(name())}_bibliography"/>
+  </xsl:template>
+
   <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) lt 3.0"/>
 
   <xsl:template name="docx2hub:csl-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) lt 3.0"/>

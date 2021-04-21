@@ -841,6 +841,8 @@
     </phrase>
   </xsl:template>
 
+  <xsl:template match="*:biblioset[@xml:lang/normalize-space(.)]/*:language" mode="docx2hub:join-runs"/>
+
   <xsl:variable name="docx2hub:bibref-id-prefix" select="'bib'" as="xs:string"/>
 
   <xsl:template match="*:biblioref/@*[name() = ('linkends', 'linkend')]" mode="docx2hub:join-runs">

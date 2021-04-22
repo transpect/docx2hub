@@ -12,6 +12,7 @@
   <title>docx</title>
 
   <let name="base-dir" value="/*/dbk:info/dbk:keywordset[@role eq 'hub']/dbk:keyword[@role eq 'source-dir-uri']"/>
+  <xsl:param name="report-referenced-images-in-docx"/>
   
   <pattern id="docx_unbalanced_field_functions_pattern">
     <rule context="*[processing-instruction(letex)[starts-with(., 'W2D_094')]]">
@@ -75,7 +76,28 @@
     </rule>
   </pattern>
 
+  <pattern id="docx_referenced-images">
+    <rule context="dbk:imagedata[@fileref]">
+      <report test="($report-referenced-images-in-docx = ('yes', 'true')) and not(starts-with(@fileref, 'container:'))" id="docx_referenced-image" diagnostics="docx_referenced-image_de" role="warning">
+        <span class="srcpath"><xsl:value-of select="concat($base-dir, @srcpath)"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Image not inside docx file</span>
+        The image  <xsl:value-of select="@fileref"/> is referenced and not contained in the docx container.
+        <br xmlns="http://www.w3.org/1999/xhtml"/>
+        If the image is needed for your workflow make sure it is available for the conversion process via embedding it or uploading it.
+      </report>
+      
+    </rule>
+  </pattern>
+
   <diagnostics>
+    <diagnostic id="docx_referenced-image_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Referenziertes Bild</span>
+      Das Bild  <xsl:value-of select="@fileref"/> wurde im Word-Dokument referenziert und ist nicht physisch im Dokument enthalten.
+        <br xmlns="http://www.w3.org/1999/xhtml"/>
+      Soll das Bild im weiteren Konvertierungsprozess verarbeitet werden, muss es an definierter Stelle bereit gestellt oder in die docx-Datei eingebettet werden.
+    </diagnostic>
     <diagnostic id="docx_unbalanced_field_functions_de" xml:lang="de">
       <span class="category">docx</span>
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Feldfunktionen: Schachtelung falsch</span>

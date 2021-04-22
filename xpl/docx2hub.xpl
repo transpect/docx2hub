@@ -212,6 +212,9 @@
     <p:documentation>Insert default attributes (i.e. document language and font names). Permitted values: yes|no</p:documentation>
   </p:option>
   <p:option name="float-nr-check-error-level" select="''"/>
+  <p:option name="report-referenced-images-in-docx" required="false" select="'no'">
+    <p:documentation>If set to 'yes' or 'true' schematron checks for referenced images. Useful if your workflow includes processing images from docx rather than from external sources.</p:documentation>
+  </p:option>
   <p:option name="lang-variant" select="'no'">
     <p:documentation>When this option is set to 'yes', @xml:lang attributes will include 
       the language variant, e.g. 'en-GB'. Per default only the short language code
@@ -749,6 +752,7 @@
     </p:input>
     <p:input port="parameters"><p:empty/></p:input>
     <p:with-param name="allow-foreign" select="'true'"/>
+    <p:with-param name="report-referenced-images-in-docx" select="$report-referenced-images-in-docx"/>
   </p:validate-with-schematron>
 
   <p:sink/>

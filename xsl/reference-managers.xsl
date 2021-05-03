@@ -115,7 +115,9 @@
   <xsl:template match="fn:map[@key = 'Reference']" mode="citavi">
     <xsl:variable name="pos" 
       select="index-of(
-                for $i in //fn:map[@key = 'Reference'] return generate-id($i), 
+                for $i in //fn:map[@key = 'Reference']
+                                  [not(../fn:string[@key = 'ReferenceId'] = ../preceding::fn:string[@key = 'ReferenceId'])] 
+                  return generate-id($i), 
                 generate-id(.)
               )" as="xs:integer"/>
     <biblioentry xml:id="_{fn:string[@key = 'Id']}">

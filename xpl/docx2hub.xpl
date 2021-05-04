@@ -415,7 +415,9 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
   </tr:xslt-mode>
 
-  <p:viewport match="w:instrText[starts-with(@docx2hub:field-function-name, 'CITAVI')]" name="citavi-viewport">
+  <p:viewport name="citavi-viewport"
+    match="w:instrText[starts-with(@docx2hub:field-function-name, 'CITAVI')]
+                      [not(normalize-space(@docx2hub:field-function-args) = 'ADDIN CITAVI.PLACEHOLDER')]">
     <p:documentation>Since there seems to be no other means in XProc 1.0 (with Saxon HE that does not support the
       EXPath binary module) to decode base64, we will store these contents to JSON files and read them later using 
       XPath 3.1 json-doc(). The same for CITAVI.BIBLIOGRAPHY which apparently is base64-encoded XML.</p:documentation>

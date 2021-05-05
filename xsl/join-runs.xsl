@@ -39,6 +39,10 @@
 
   <xsl:template match="dbk:bibliography[@role = 'Citavi']//comment()" mode="docx2hub:join-runs"/>
 
+  <xsl:template match="dbk:biblioref[every $n in node() satisfies $n[matches(., '^\p{Zs}+$')]]" mode="docx2hub:join-runs">
+    <xsl:value-of select="comment()"/>
+  </xsl:template>
+
   <xsl:template match="dbk:para[
                          dbk:br[@role eq 'column'][preceding-sibling::node() and following-sibling::node()]
                        ]" mode="docx2hub:join-runs" priority="5">

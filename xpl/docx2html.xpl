@@ -22,6 +22,9 @@
     <p:documentation>This is to prevent a default readable port connecting to this step’s xslt port.</p:documentation>
     <p:empty/>
   </p:input>
+  <p:input port="paths">
+    <p:empty/>
+  </p:input>
   <p:output port="result" primary="true"/>
   <p:serialization port="result" method="xhtml" omit-xml-declaration="false"/>
   <p:output port="hub">
@@ -68,7 +71,9 @@
   </docx2hub:convert>
 
   <hub2htm:convert name="hub2html">
-    <p:input port="paths"><p:empty/></p:input>    
+    <p:input port="paths">
+      <p:pipe port="paths" step="docx2html"/>
+    </p:input>    
     <p:input port="other-params"><p:empty/></p:input>    
     <p:with-option name="debug" select="$debug"/>
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>

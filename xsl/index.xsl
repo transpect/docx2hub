@@ -28,7 +28,7 @@
     <xsl:param name="xe" as="element(XE)"/>
     <xsl:variable name="type" as="xs:string?" 
                   select="if(matches($xe/@fldArgs, '\\f')) 
-                          then replace($xe/@fldArgs, '^.*\\f\s*[&quot;&#8220;]?(.+?)[&quot;&#8221;]?\s*(\\.*$|$)', '$1')
+                          then replace($xe/@fldArgs, '^.*\\f\s*[&quot;&#8220;&#x201e;]?(.+?)[&quot;&#8221;&#x201d;]?\s*(\\.*$|$)', '$1')
                           else 
                             if(some $i in tokenize($xe/@fldArgs,':') satisfies matches($i,'Register§§')) 
                             then replace(tokenize($xe/@fldArgs,':')[matches(.,'.*Register§§')],'.*Register§§(.*)$','$1')

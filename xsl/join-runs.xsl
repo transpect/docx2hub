@@ -1167,16 +1167,21 @@
                         <xsl:non-matching-substring>
                           <!-- use replace to de-escape Words quote escape fldArgs="&#34;\„Fenster offen\“-Erkennung&#34;" -->
                           <!-- use replace to fix wrong applied quotes/ spaces in Word fldArgs="&#34; Very-Low-Cycle-Fatigue, VLCF&#34;" -->
-                          <xsl:attribute name="docx2hub:field-function-args" select="replace(
-                                                      normalize-space(replace(
-                                                                          replace(
-                                                                                  .,
-                                                                                  '^(&#34;)\s*(.+)$',
-                                                                                  '$1$2'),
-                                                                          '\s*(&#34;)$',
-                                                                          '$1')),
-                                                      '\\([&#x201e;&#x201c;])',
-                                                      '$1')"/>
+                          <!-- <w:instrText xml:space="preserve"> XE „Emotion“ </w:instrText> fldArgs="„Emotion“" -->
+                          <xsl:attribute name="docx2hub:field-function-args" 
+                                         select="replace(
+                                                      replace(
+                                                              normalize-space(replace(
+                                                                                  replace(
+                                                                                          .,
+                                                                                          '^(&#34;)\s*(.+)$',
+                                                                                          '$1$2'),
+                                                                                  '\s*(&#34;)$',
+                                                                                  '$1')),
+                                                              '\\([&#x201e;&#x201c;])',
+                                                              '$1'),
+                                                      '(^|\\)&#x201e;(.+[^\\])&#x201c;$',
+                                                      '&#34;$2&#34;')"/>
                         </xsl:non-matching-substring>
                       </xsl:analyze-string>
                     </xsl:variable>
@@ -1295,7 +1300,7 @@
     <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
-        <xsl:analyze-string select="$string" regex="(\\:|[:;&quot;]|\s\\[a-z]|\\&quot;)">
+        <xsl:analyze-string select="$string" regex="(^\s*XE\s*&#x201e;|\\:|[:;&quot;]|\s\\[a-z]|\\&quot;|([^\\]|^)&#x201c;\s*$)">
           <xsl:matching-substring>
             <xsl:choose>
               <xsl:when test=". = '\:'">
@@ -1311,6 +1316,15 @@
                 <quot>
                   <xsl:value-of select="."/>
                 </quot>
+              </xsl:when>
+              <xsl:when test=" matches(.,'^\s*XE(\s*|[^\\])&#x201e;|&#x201c;\s*$')">
+                <xsl:value-of select="regex-group(2)"/>
+                <quot>
+                  <xsl:value-of select="replace(.,'.*(&#x201e;|&#x201c;).*','$1')"/>
+                </quot>
+              </xsl:when>
+              <xsl:when test=" matches(.,'\\&#x201e;|\\&#x201c;')">
+                <xsl:value-of select="."/>
               </xsl:when>
               <xsl:when test="matches(., '^\s\\[a-z]$')">
                 <xsl:value-of select="substring(., 1, 1)"/>
@@ -1340,6 +1354,9 @@
                   <xsl:sequence select="$instrText/@css:*"/>
                   <xsl:value-of select="."/>
                 </phrase>
+              </xsl:when>
+              <xsl:when test="matches(.,'\\&#x201e;|\\&#x201c;')">
+                <xsl:value-of select="replace(.,'\\','')"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="."/>

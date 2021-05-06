@@ -248,7 +248,8 @@
 
   <!-- There is a space after the marker in each Word-generated footnote. Convert it to a separator if there is no
     following separator tab. -->
-  <xsl:template match="w:footnote/w:p/w:r[preceding-sibling::w:r[1]/w:footnoteRef]/w:t/text()" mode="docx2hub:join-instrText-runs">
+  <xsl:template match="w:footnote/w:p/w:r[preceding-sibling::w:r[1]/w:footnoteRef]/w:t/text()
+                       | w:footnote/w:p/w:r[preceding-sibling::*[1][self::dbk:superscript]/w:footnoteRef]/w:t/text()" mode="docx2hub:join-instrText-runs">
     <xsl:param name="tab" as="element(w:tab)*" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="empty($tab)">

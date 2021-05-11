@@ -1294,13 +1294,16 @@
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
+  <xsl:variable name="quot-like-regex" as="xs:string" select="'&quot;\p{Pi}\p{Pf}\p{Ps}\p{Pe}'"/>
+  
   <xsl:template name="docx2hub:instrText-formatting">
     <xsl:param name="instrText" as="element(w:instrText)"/>
     <xsl:param name="string" as="xs:string"/>
     <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
-        <xsl:analyze-string select="$string" regex="(^\s*XE\s*&#x201e;|\\:|[:;&quot;]|\s\\[a-z]|\\&quot;|([^\\]|^)&#x201c;\s*$)">
+        <xsl:analyze-string select="$string" 
+          regex="(\\:|[:;{$quot-like-regex}]|\s\\[a-z]|\\[{$quot-like-regex}])">
           <xsl:matching-substring>
             <xsl:choose>
               <xsl:when test=". = '\:'">
@@ -1317,33 +1320,29 @@
                   <xsl:value-of select="."/>
                 </quot>
               </xsl:when>
-              <xsl:when test=" matches(.,'^\s*XE(\s*|[^\\])&#x201e;|&#x201c;\s*$')">
-                <xsl:value-of select="regex-group(2)"/>
+              <xsl:when test="matches(., concat('^[', $quot-like-regex,']$'))">
                 <quot>
-                  <xsl:value-of select="replace(.,'.*(&#x201e;|&#x201c;).*','$1')"/>
+                  <xsl:value-of select="."/>
                 </quot>
               </xsl:when>
-              <xsl:when test=" matches(.,'\\&#x201e;|\\&#x201c;')">
-                <xsl:value-of select="."/>
+              <xsl:when test="matches(., concat('^\\[', $quot-like-regex, ']$'))">
+                <xsl:choose>
+                  <xsl:when test="exists($instrText/@css:*)">
+                    <phrase>
+                      <xsl:sequence select="$instrText/@css:*"/>
+                      <xsl:value-of select="substring(., 2)"/>
+                    </phrase>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="substring(., 2)"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:when>
               <xsl:when test="matches(., '^\s\\[a-z]$')">
                 <xsl:value-of select="substring(., 1, 1)"/>
                 <flag>
                   <xsl:value-of select="substring(., 2)"/>
                 </flag>
-              </xsl:when>
-              <xsl:when test=". = '\&quot;'">
-                <xsl:choose>
-                  <xsl:when test="exists($instrText/@css:*)">
-                    <phrase>
-                      <xsl:sequence select="$instrText/@css:*"/>
-                      <xsl:value-of select="'&quot;'"/>
-                    </phrase>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="'&quot;'"/>
-                  </xsl:otherwise>
-                </xsl:choose>
               </xsl:when>
             </xsl:choose>
           </xsl:matching-substring>
@@ -1354,9 +1353,6 @@
                   <xsl:sequence select="$instrText/@css:*"/>
                   <xsl:value-of select="."/>
                 </phrase>
-              </xsl:when>
-              <xsl:when test="matches(.,'\\&#x201e;|\\&#x201c;')">
-                <xsl:value-of select="replace(.,'\\','')"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:value-of select="."/>

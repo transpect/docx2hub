@@ -1294,7 +1294,7 @@
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
-  <xsl:variable name="quot-like-regex" as="xs:string" select="'&quot;\p{Pi}\p{Pf}\p{Ps}\p{Pe}'"/>
+  <xsl:variable name="quot-like-regex" as="xs:string" select="'&quot;„“”'"/>
   
   <xsl:template name="docx2hub:instrText-formatting">
     <xsl:param name="instrText" as="element(w:instrText)"/>

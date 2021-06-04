@@ -1759,6 +1759,12 @@
     </xsl:element>
   </xsl:template>
   
+  <xsl:template match="w:sdt[w:sdtPr/w:docPartObj/w:docPartGallery/@w:val='Table of Contents'][empty(.//*:CITAVI_XML)]" mode="wml-to-dbk tables">
+    <xsl:element name="toc">
+      <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
+    </xsl:element>
+  </xsl:template>
+  
   <xsl:template match="CITAVI_JSON | CSL_JSON" mode="wml-to-dbk tables" 
     use-when="xs:decimal(system-property('xsl:version')) lt 3.0">
     <xsl:apply-templates mode="#current"/>

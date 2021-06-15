@@ -100,9 +100,10 @@
           </xsl:when>
           <!-- https://redmine.le-tex.de/issues/10523
                remove phrases that contain only a mediaobject -->
-          <xsl:when test="    current-group()/local-name() eq 'phrase'
+          <xsl:when test="count(current-group()) = 1
+                          and current-group()/local-name() = 'phrase'
                           and current-group()[not(normalize-space())]
-                          and current-group()/count(*) eq 1
+                          and current-group()/count(*) = 1
                           and current-group()/*/local-name() = 'mediaobject'">
             <xsl:apply-templates select="current-group()/*" mode="#current"/>
           </xsl:when>

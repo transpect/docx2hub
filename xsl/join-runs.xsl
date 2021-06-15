@@ -73,13 +73,14 @@
   <xsl:template match="*[not(self::dbk:phrase[@role = 'docx2hub:EQ'])]
                         [not(ancestor::dbk:bibliography)]
                         [w:r or dbk:phrase or dbk:superscript or dbk:subscript]" 
-    mode="docx2hub:join-runs" priority="3">
-    <!-- move sidebars to para level --><xsl:variable name="context" select="."/>
+                mode="docx2hub:join-runs" priority="3">
+    <!-- move sidebars to para level -->
+    <xsl:variable name="context" select="."/>
     <xsl:if test="self::dbk:para and .//dbk:sidebar">
       <xsl:call-template name="docx2hub_move-invalid-sidebar-elements"/>
     </xsl:if>
     <xsl:variable name="prelim" as="node()*">
-            <xsl:variable name="processed-pagebreak-elements" as="item()*">
+      <xsl:variable name="processed-pagebreak-elements" as="item()*">
         <xsl:call-template name="docx2hub:pagebreak-elements-to-attributes"/>  
       </xsl:variable>
       <xsl:sequence select="$processed-pagebreak-elements/self::attribute(), $processed-pagebreak-elements/self::dbk:anchor"/>
@@ -95,6 +96,14 @@
                           and
                           current-group()/*[docx2hub:is-display-equation(.)]">
             <!-- https://github.com/transpect/docx2hub/issues/23 -->
+            <xsl:apply-templates select="current-group()/*" mode="#current"/>
+          </xsl:when>
+          <!-- https://redmine.le-tex.de/issues/10523
+               remove phrases that contain only a mediaobject -->
+          <xsl:when test="    current-group()/local-name() eq 'phrase'
+                          and current-group()[not(normalize-space())]
+                          and current-group()/count(*) eq 1
+                          and current-group()/*/local-name() = 'mediaobject'">
             <xsl:apply-templates select="current-group()/*" mode="#current"/>
           </xsl:when>
           <xsl:otherwise>

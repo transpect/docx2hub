@@ -97,6 +97,7 @@
   </xsl:template>
   
   <xsl:key name="docrel" match="rel:Relationship" use="@Id"/>
+  <xsl:key name="docrel-by-target" match="rel:Relationship" use="@Target"/>
   
   <xsl:template name="create-imageobject">
     <xsl:param name="image-id" as="xs:string"/>

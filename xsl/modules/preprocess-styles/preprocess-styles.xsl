@@ -191,15 +191,25 @@
   <!-- Collateral: Map built-in style names in localized files. Dealing only with headings for the time being. 
     There is a list of built-in styles at https://bettersolutions.com/word/styles/list-all-built-in-styles.htm -->
   
-  <xsl:template match="w:style[@w:type='paragraph']/@w:styleId[../w:name/@w:val[matches(., '^heading \d$')]]
+  <xsl:template match="w:style[@w:type='paragraph'][not(@w:customStyle='1')]/@w:styleId[../w:name/@w:val[matches(., '^heading \d$')]]
                                                               [not(matches(., '^Heading\d'))]" 
     mode="docx2hub:resolve-tblBorders">
     <xsl:attribute name="{name()}" select="concat('Heading', replace(../w:name/@w:val, 'heading ', ''))"/>
   </xsl:template>
   
+  <xsl:template match="w:style[@w:type='paragraph']
+                              [@w:customStyle='1']/@w:styleId[matches(., '^Heading\d')]
+                              [some $p in (/w:root/w:styles/w:style[@w:type='paragraph'][not(@w:customStyle='1')]/w:name/@w:val) 
+                               satisfies . = concat('Heading', replace($p, 'heading ', ''))]" 
+                mode="docx2hub:resolve-tblBorders">
+    <xsl:variable name="count" select="for $s in /w:root/w:styles/w:style[@w:type='paragraph']/@w:styleId[matches(.,concat('^',current(),'\d+$'))]
+                                       return xs:integer(replace($s, ., ''))" as="xs:integer *"/>
+    <xsl:attribute name="{name()}" select="concat(., if (empty($count)) then '0' else max($count)+1)"/>
+  </xsl:template>
+  
   <xsl:template match="*[name() = ('w:pStyle', 'w:basedOn')]
-                           /@w:val[. = /w:root/w:styles/w:style[@w:type='paragraph']
-                                                               [matches(w:name/@w:val, '^heading \d$')]/@w:styleId]"
+    /@w:val[. = /w:root/w:styles/w:style[@w:type='paragraph']
+                                        [matches(w:name/@w:val, '^heading \d$') or matches(@w:styleId,'^Heading\d+$')]/@w:styleId]"
                 mode="docx2hub:resolve-tblBorders">
     <xsl:attribute name="{name()}">
       <xsl:apply-templates select="/w:root/w:styles/w:style[@w:type='paragraph'][@w:styleId = current()]/@w:styleId"

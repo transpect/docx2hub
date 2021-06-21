@@ -104,7 +104,7 @@
                           and current-group()/local-name() = 'phrase'
                           and current-group()[not(normalize-space())]
                           and current-group()[every $att in @*
-                                              satisfies not(matches($att/local-name(), '^(role|border|background|color|position|top|left)'))]
+                                              satisfies not(matches($att/local-name(), '^(role|border|background|color|display|position|top|left)'))]
                           and current-group()/count(*) = 1
                           and current-group()/*/local-name() = 'mediaobject'">
             <xsl:apply-templates select="current-group()/*" mode="#current"/>

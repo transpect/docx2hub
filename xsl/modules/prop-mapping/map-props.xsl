@@ -285,7 +285,7 @@
       <xsl:for-each-group select="$mergeable-atts[self::docx2hub:attribute]" group-by="@name">
         <docx2hub:attribute name="{current-grouping-key()}">
           <xsl:copy-of select="current-group()/(@* except @name)"/>
-          <xsl:value-of select="if (matches(current-grouping-key(), '^css:(margin|text-indent)'))
+          <xsl:value-of select="if (matches(current-grouping-key(), '^css:(border|margin|text-indent)'))
                                 then current-group()[last()]
                                 else current-group()"/>
         </docx2hub:attribute>

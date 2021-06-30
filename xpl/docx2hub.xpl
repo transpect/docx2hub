@@ -103,6 +103,7 @@
   <p:option name="status-dir-uri" select="'status'"/>
   <p:option name="srcpaths" select="'no'"/>
   <p:option name="unwrap-tooltip-links" select="'no'"/>
+  <p:option name="remove-biblioentry-paragraphs" select="'yes'"/>
   <p:option name="mml-space-handling" select="'mspace'">
     <p:documentation xmlns="http://www.w3.org/1999/xhtml">
       <p>Whitespace conversion from OMML to MathML</p>
@@ -260,6 +261,7 @@
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
+    <p:with-option name="remove-biblioentry-paragraphs" select="$remove-biblioentry-paragraphs"/>
     <p:with-option name="mathtype2mml" select="$mathtype2mml"/>
     <p:with-option name="mathtype-source-pi" select="$mathtype-source-pi"/>
     <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>

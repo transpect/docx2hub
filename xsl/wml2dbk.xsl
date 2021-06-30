@@ -41,6 +41,7 @@
   <xsl:param name="discard-alternate-choices" select="'yes'" as="xs:string"/>
   <xsl:param name="include-header-and-footer" select="'no'" as="xs:string"/>
   <xsl:param name="convert-footer" select="false()" as="xs:boolean"/>
+  <xsl:param name="remove-biblioentry-paragraphs" select="'yes'" as="xs:string"/>
   <xsl:param name="mathtype2mml" select="'no'" as="xs:string?"/>
   <xsl:param name="lang-variant" select="'no'" as="xs:string"/>
   <xsl:param name="charmap-policy" select="'unicode'" as="xs:string">

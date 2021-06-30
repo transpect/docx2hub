@@ -73,6 +73,7 @@
   <p:option name="fail-on-error" select="'no'"/>
   <p:option name="field-vars" select="'no'"/>
   <p:option name="extract-dir" select="''"/>
+  <p:option name="remove-biblioentry-paragraphs" select="'yes'"/>
   <p:option name="mathtype2mml" required="false" select="'yes'"/>
   <p:option name="mathtype-source-pi" required="false" select="'no'"/>
   <p:option name="mathtype2mml-cleanup" required="false" select="'yes'"/>
@@ -95,6 +96,7 @@
     <p:with-option name="field-vars" select="$field-vars"/>
     <p:with-option name="srcpaths" select="$srcpaths"/>
     <p:with-option name="no-srcpaths-for-text-runs-threshold" select="$no-srcpaths-for-text-runs-threshold"/>
+    <p:with-option name="remove-biblioentry-paragraphs" select="$remove-biblioentry-paragraphs"/>
     <p:with-option name="extract-dir" select="$extract-dir"/>
     <p:with-option name="use-filename-from-http-response" select="$use-filename-from-http-response"/>
     <p:with-option name="insert-document-defaults" select="$insert-document-defaults"/>

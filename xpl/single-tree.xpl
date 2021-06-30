@@ -52,6 +52,11 @@
   <p:option name="debug-dir-uri" required="false" select="'file:/tmp/debug'"/>
   <p:option name="srcpaths" required="false" select="'no'"/>
   <p:option name="unwrap-tooltip-links" required="false" select="'no'"/>
+  <p:option name="remove-biblioentry-paragraphs" required="false" select="'yes'">
+    <p:documentation>Wether to remove reference paragraphs from content body or not.
+    Also: if there is no structured bibliography processing available, 
+          these reference paragraphs will be kept.</p:documentation>
+  </p:option>
   <p:option name="mml-space-handling" select="'mspace'">
     <p:documentation>see corresponding documentation for docx2hub</p:documentation>
   </p:option>

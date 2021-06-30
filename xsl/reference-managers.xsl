@@ -58,6 +58,9 @@
   <xsl:template match="w:sdt[.//*:CITAVI_XML]
                       |*:CITAVI_XML" mode="wml-to-dbk tables" priority="2" 
                 use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:if test="$remove-biblioentry-paragraphs = 'no'">
+      <xsl:apply-templates select="(descendant-or-self::*:CITAVI_XML)/node()" mode="#current"/>
+    </xsl:if>
   </xsl:template>
   
 

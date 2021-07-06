@@ -58,7 +58,7 @@
         <xsl:attribute name="annotations" select="concat('object_',generate-id(ancestor::w:object[1]))"/>
       </xsl:if>
       <xsl:apply-templates select="@srcpath, parent::v:shape/@style" mode="#current"/>
-      <xsl:if test="ancestor::v:shape[1]/@docx2hub:generated-alt">
+      <xsl:if test="ancestor::v:shape[1]/@docx2hub:generated-alt/normalize-space(.) != 'alt:'">
         <alt>
           <xsl:value-of select="ancestor::v:shape[1]/@docx2hub:generated-alt"/>
         </alt>

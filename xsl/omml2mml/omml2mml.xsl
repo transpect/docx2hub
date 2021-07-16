@@ -14,6 +14,7 @@
   xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" 
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:dbk="http://docbook.org/ns/docbook"
+  xmlns:css="http://www.w3.org/1996/css"
   version="2.0" 
   exclude-result-prefixes="m w mml xs dbk">
   
@@ -2212,6 +2213,8 @@
     <xsl:param name="nor"/>
     <xsl:param name="nCharToPrint"/>
     <xsl:param name="sTokenType"/>
+    <xsl:param name="fontweight" as="xs:string?"/>
+    <xsl:param name="fontstyle" as="xs:string?"/>
     <xsl:variable name="sLowerCaseNor"
       select="translate($nor, $alpha-uppercase,                                                               $alpha-lowercase)"/>
     <xsl:choose>
@@ -2223,7 +2226,6 @@
           <xsl:choose>
             <!-- numbers don't care -->
             <xsl:when test="$sTokenType='mn'"/>
-
             <xsl:when test="$scr='monospace'">monospace</xsl:when>
             <xsl:when test="$scr='sans-serif' and $sty='i'">sans-serif-italic</xsl:when>
             <xsl:when test="$scr='sans-serif' and $sty='b'">bold-sans-serif</xsl:when>
@@ -2241,15 +2243,17 @@
             <xsl:otherwise/>
           </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="fontweight">
+        <xsl:variable name="fontweight-var">
           <xsl:choose>
             <xsl:when test="$sty='b' or $sty='bi'">bold</xsl:when>
+            <xsl:when test="not($fontweight='')"><xsl:value-of select="$fontweight"/></xsl:when>
             <xsl:otherwise>normal</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="fontstyle">
+        <xsl:variable name="fontstyle-var">
           <xsl:choose>
             <xsl:when test="$sty='p' or $sty='b'">normal</xsl:when>
+            <xsl:when test="not($fontstyle='')"><xsl:value-of select="$fontstyle"/></xsl:when>
             <xsl:otherwise>italic</xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
@@ -2257,15 +2261,45 @@
         <!-- Writing of attributes begins here -->
         <xsl:choose>
           <!-- Don't write mathvariant for operators unless they want to be normal -->
-          <xsl:when test="$sTokenType='mo' and $mathvariant!='normal'"/>
+          <xsl:when test="$sTokenType='mo' and $mathvariant!='normal'">
+            <xsl:if test="($fontweight,$fontstyle)='normal'">
+              <xsl:attribute name="mathvariant" select="'normal'"/>
+            </xsl:if>
+          </xsl:when>
 
           <!-- A single character within an mi is already italics, don't write -->
-          <xsl:when test="$sTokenType='mi' and $nCharToPrint=1 and ($mathvariant='' or $mathvariant='italic')"/>
+          <xsl:when test="$sTokenType='mi' and $nCharToPrint=1 and $mathvariant='italic'"/>
+          <xsl:when test="$sTokenType='mi' and $nCharToPrint=1 and $mathvariant=''">
+            <xsl:choose>
+              <xsl:when test="$fontweight!='' and $fontstyle='normal'">
+                <xsl:attribute name="mathvariant" select="$fontweight"/>
+              </xsl:when>
+              <xsl:when test="$fontweight='normal'">
+                <xsl:attribute name="mathvariant" select="'italic'"/>
+              </xsl:when>
+              <xsl:when test="$fontweight='bold'">
+                <xsl:attribute name="mathvariant" select="'bold-italic'"/>
+              </xsl:when>
+            </xsl:choose>
+          </xsl:when>
 
-          <xsl:when test="$sTokenType='mi' and $nCharToPrint &gt; 1 and ($mathvariant='' or $mathvariant='italic')">
+          <xsl:when test="$sTokenType='mi' and $nCharToPrint &gt; 1 and $mathvariant='italic'">
             <xsl:attribute name="mathvariant">
-              <xsl:value-of select="'italic'"/>
+              <xsl:value-of select="$mathvariant"/>
             </xsl:attribute>
+          </xsl:when>
+          <xsl:when test="$sTokenType='mi' and $nCharToPrint &gt; 1 and $mathvariant=''">
+            <xsl:choose>
+              <xsl:when test="$fontweight!='' and $fontstyle='normal'">
+                <xsl:attribute name="mathvariant" select="$fontweight"/>
+              </xsl:when>
+              <xsl:when test="$fontweight='normal'">
+                <xsl:attribute name="mathvariant" select="'italic'"/>
+              </xsl:when>
+              <xsl:when test="$fontweight='bold'">
+                <xsl:attribute name="mathvariant" select="'bold-italic'"/>
+              </xsl:when>
+            </xsl:choose>
           </xsl:when>
           <xsl:when test="$mathvariant!='italic' and $mathvariant!=''">
             <xsl:attribute name="mathvariant">
@@ -2273,10 +2307,21 @@
             </xsl:attribute>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:if test="not($sTokenType='mi' and $nCharToPrint=1) and $fontstyle='italic'">
+            <xsl:choose>
+              <xsl:when test="$fontweight!='' and $fontstyle='normal'">
+                <xsl:attribute name="mathvariant" select="$fontweight"/>
+              </xsl:when>
+              <xsl:when test="$fontweight='normal' and $fontstyle!=''">
+                <xsl:attribute name="mathvariant" select="$fontstyle"/>
+              </xsl:when>
+              <xsl:when test="$fontweight='bold' and $fontstyle='italic'">
+                <xsl:attribute name="mathvariant" select="'bold-italic'"/>
+              </xsl:when>
+            </xsl:choose>
+            <xsl:if test="not($sTokenType='mi' and $nCharToPrint=1) and $fontstyle-var='italic'">
               <xsl:attribute name="fontstyle">italic</xsl:attribute>
             </xsl:if>
-            <xsl:if test="$fontweight='bold'">
+            <xsl:if test="$fontweight-var='bold'">
               <xsl:attribute name="fontweight">bold</xsl:attribute>
             </xsl:if>
           </xsl:otherwise>
@@ -2465,6 +2510,8 @@
                   <xsl:with-param name="nor" select="$nor"/>
                   <xsl:with-param name="nCharToPrint" select="1"/>
                   <xsl:with-param name="sTokenType" select="'mi'"/>
+                  <xsl:with-param name="fontstyle" select="ancestor::m:oMathPara/@css:font-style"/>
+                  <xsl:with-param name="fontweight" select="ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="substring($sToParse,1,1)"/>
               </mml:mi>
@@ -2485,6 +2532,8 @@
                   <xsl:with-param name="sty"/>
                   <xsl:with-param name="nor"/>
                   <xsl:with-param name="sTokenType" select="'mo'"/>
+                  <xsl:with-param name="fontstyle" select="ancestor::m:oMathPara/@css:font-style"/>
+                  <xsl:with-param name="fontweight" select="ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="substring($sToParse,1,1)"/>
               </mml:mo>
@@ -2511,6 +2560,8 @@
                   <xsl:with-param name="sty" select="'p'"/>
                   <xsl:with-param name="nor" select="$nor"/>
                   <xsl:with-param name="sTokenType" select="'mn'"/>
+                  <xsl:with-param name="fontstyle" select="ancestor::m:oMathPara/@css:font-style"/>
+                  <xsl:with-param name="fontweight" select="ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="$sConsecNum"/>
               </mml:mn>
@@ -2669,6 +2720,8 @@
               <xsl:with-param name="sty"/>
               <xsl:with-param name="nor" select="$nor"/>
               <xsl:with-param name="sTokenType" select="'mo'"/>
+              <xsl:with-param name="fontstyle" select="$context/ancestor::m:oMathPara/@css:font-style"/>
+              <xsl:with-param name="fontweight" select="$context/ancestor::m:oMathPara/@css:font-weight"/>
             </xsl:call-template>
             <!-- replace some combining characters, because they cause 
                  a messy MathML rendering when used in mml:mo -->
@@ -2757,6 +2810,8 @@
                   <xsl:with-param name="nor" select="$nor"/>
                   <xsl:with-param name="nCharToPrint" select="$nCharToPrint"/>
                   <xsl:with-param name="sTokenType" select="$local-name"/>
+                  <xsl:with-param name="fontstyle" select="$context/ancestor::m:oMathPara/@css:font-style"/>
+                  <xsl:with-param name="fontweight" select="$context/ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="substring($sToParse, 1, $nCharToPrint)"/>
               </xsl:element>
@@ -2790,6 +2845,8 @@
                   <xsl:with-param name="sty"/>
                   <xsl:with-param name="nor" select="$nor"/>
                   <xsl:with-param name="sTokenType" select="'mo'"/>
+                  <xsl:with-param name="fontstyle" select="$context/ancestor::m:oMathPara/@css:font-style"/>
+                  <xsl:with-param name="fontweight" select="$context/ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="substring($sToParse,1,1)"/>
               </mml:mo>
@@ -2830,6 +2887,8 @@
                   <xsl:with-param name="sty" select="'p'"/>
                   <xsl:with-param name="nor" select="$nor"/>
                   <xsl:with-param name="sTokenType" select="'mn'"/>
+                  <xsl:with-param name="fontstyle" select="$context/ancestor::m:oMathPara/@css:font-style"/>
+                  <xsl:with-param name="fontweight" select="$context/ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="$sConsecNum"/>
               </mml:mn>
@@ -3244,15 +3303,23 @@
 
 
   <xsl:template name="checkDirectFormatting">
-    <xsl:if test="w:rPr/w:rFonts/@w:ascii and not(w:rPr/w:rFonts/@w:ascii='Cambria Math')">
-      <xsl:attribute name="fontfamily" select="w:rPr/w:rFonts/@w:ascii"/>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="w:rPr/w:rFonts/@w:ascii and not(w:rPr/w:rFonts/@w:ascii='Cambria Math')">
+        <xsl:attribute name="fontfamily" select="w:rPr/w:rFonts/@w:ascii"/>
+      </xsl:when>
+      <xsl:when test="ancestor::m:oMathPara/@css:font-family">
+        <xsl:attribute name="fontfamily" select="ancestor::m:oMathPara/@css:font-family"/>  
+      </xsl:when>
+    </xsl:choose>
     <xsl:choose>
       <xsl:when test="w:rPr/w:b[not(@w:val='0')]">
         <xsl:attribute name="fontweight">bold</xsl:attribute>
       </xsl:when>
       <xsl:when test="w:rPr/w:b[@w:val='0']">
         <xsl:attribute name="fontweight">normal</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="ancestor::m:oMathPara/@css:font-weight">
+        <xsl:attribute name="fontweight" select="ancestor::m:oMathPara/@css:font-weight"/>  
       </xsl:when>
     </xsl:choose>
     <xsl:choose>
@@ -3262,16 +3329,29 @@
       <xsl:when test="w:rPr/w:i[@w:val='0']">
         <xsl:attribute name="fontstyle">normal</xsl:attribute>
       </xsl:when>
+      <xsl:when test="ancestor::m:oMathPara/@css:font-style">
+        <xsl:attribute name="fontstyle" select="ancestor::m:oMathPara/@css:font-style"/>  
+      </xsl:when>
     </xsl:choose>
-    <xsl:if test="w:rPr/w:color/@w:val">
-      <xsl:attribute name="mathcolor" select="w:rPr/w:color/@w:val"/>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="w:rPr/w:color/@w:val">
+        <xsl:attribute name="mathcolor" select="w:rPr/w:color/@w:val"/>
+      </xsl:when>
+      <xsl:when test="ancestor::m:oMathPara/@css:color">
+        <xsl:attribute name="mathcolor" select="ancestor::m:oMathPara/@css:color"/>  
+      </xsl:when>
+    </xsl:choose>
     <xsl:if test="w:rPr/w:highlight/@w:val">
       <xsl:attribute name="mathbackground" select="w:rPr/w:highlight/@w:val"/>
     </xsl:if>
-    <xsl:if test="w:rPr/w:sz/@w:val">
-      <xsl:attribute name="mathsize" select="concat(number(w:rPr/w:sz/@w:val) div 2,'pt')"/>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="w:rPr/w:sz/@w:val">
+        <xsl:attribute name="mathsize" select="concat(number(w:rPr/w:sz/@w:val) div 2,'pt')"/>
+      </xsl:when>
+      <xsl:when test="ancestor::m:oMathPara/@css:font-size">
+        <xsl:attribute name="mathsize" select="ancestor::m:oMathPara/@css:font-size"/>  
+      </xsl:when>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Templates by le-tex -->

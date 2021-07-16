@@ -4,6 +4,7 @@
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
   exclude-result-prefixes="xsl xs docx2hub"
   version="2.0">
   
@@ -47,7 +48,7 @@
       <xsl:with-param name="tc-pos" select="$tc-pos" tunnel="yes"/>
       <xsl:with-param name="tblsty" select="$tblSty" tunnel="yes"/>
       <xsl:with-param name="tblStylePr-name" tunnel="yes"
-                      select="docx2hub:active-cnf-style-name(w:tcPr/w:cnfStyle)"/>
+                      select="docx2hub:active-cnf-style-name((w:tcPr/w:cnfStyle,parent::w:tr/w:trPr/w:cnfStyle)[1])"/>
     </xsl:next-match>
   </xsl:template>
 
@@ -103,6 +104,11 @@
                   />
                 </xsl:when>
                 <!-- inner tcBorder -->
+                <xsl:when test="$tblsty/w:tblStylePr[@w:type = $tblStylePr-name]/w:tcPr/w:tcBorders/w:*[local-name() = current()]">
+                  <xsl:sequence
+                    select="($tblsty/w:tblStylePr[@w:type = $tblStylePr-name]/w:tcPr/w:tcBorders/w:*[local-name() = current()])[last()]/@*"
+                  />
+                </xsl:when>
                 <xsl:otherwise>
                   <xsl:sequence
                     select="($borders/w:insideH[current() = ('top', 'bottom')], $borders/w:insideV[current() = ('left', 'right')])[1]/@*"
@@ -181,7 +187,7 @@
           @w:firstRow, @w:FirstColumn,
           @w:lastRow, @w:LastColumn
           )[. = ('1', 'yes')])[1]">
-          <xsl:sequence select="replace(., 'umn$', '')"/>
+          <xsl:sequence select="replace(local-name(), 'umn$', '')"/>
           <!-- 'firstColumn' to 'firstCol' -->
         </xsl:for-each>
       </xsl:otherwise>
@@ -215,6 +221,14 @@
       <xsl:apply-templates select="/w:root/w:styles/w:style[@w:type='paragraph'][@w:styleId = current()]/@w:styleId"
         mode="#current"/>
     </xsl:attribute> 
+  </xsl:template>
+  
+  <xsl:template match="w:p[w:pPr/w:rPr]/m:oMathPara" mode="docx2hub:resolve-tblBorders">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="parent::w:p/w:pPr/w:rPr" mode="#current"/>
+      <xsl:apply-templates select="node()" mode="#current"/>
+    </xsl:copy>
   </xsl:template>
   
 </xsl:stylesheet>

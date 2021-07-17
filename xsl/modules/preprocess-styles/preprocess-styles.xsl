@@ -226,9 +226,26 @@
   <xsl:template match="w:p[w:pPr/w:rPr]/m:oMathPara" mode="docx2hub:resolve-tblBorders">
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:apply-templates select="parent::w:p/w:pPr/w:rPr" mode="#current"/>
+      <xsl:apply-templates select="parent::w:p/w:pPr/w:rPr" mode="#current">
+        <xsl:with-param name="in-math" select="true()"/>
+      </xsl:apply-templates>
       <xsl:apply-templates select="node()" mode="#current"/>
     </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="w:p[m:oMathPara]/w:pPr/w:rPr" mode="docx2hub:resolve-tblBorders">
+    <xsl:param name="in-math" select="false()"/>
+    <xsl:choose>
+      <xsl:when test="$in-math">
+        <xsl:copy>
+          <xsl:apply-templates select="@*" mode="#current"/>
+          <xsl:apply-templates select="w:b | w:i | w:color | w:sz | w:caps" mode="#current"/>
+        </xsl:copy>        
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:next-match/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
 </xsl:stylesheet>

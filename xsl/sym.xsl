@@ -32,12 +32,35 @@
     select="for $cfm in $custom-font-maps return docx2hub:font-map-name($cfm)"/>
 
   <xsl:variable name="docx2hub:symbol-font-names" as="xs:string+" 
-    select="('ArialMT+1', 'Math1', 'MT Extra', 'Symbol', 'TimesNewRomanPSMT+1', 'Wingdings', 'WingDings', 
-             'Wingdings 2', 'Wingdings 3', 'Webdings', 'Euclid Math One', 
-             'Euclid Math Two', 'Euclid Extra', 'Euclid Fraktur', 'Euclid Symbol', 
-             'Lucida Bright Math Italic', 'Lucida Bright Math Extension', 'SymbolMT',
-             'Lucida Bright Math Symbol', 'Marlett', 'Monotype Sorts', 'MT Symbol', 
-             'UniversalMath1 BT', 'ZWAdobeF', 'Mediaevum', $custom-font-names)"/>
+                select="('ArialMT+1',
+                         'Euclid Extra', 
+                         'Euclid Fraktur', 
+                         'Euclid Math One',
+                         'Euclid Math Two',
+                         'Euclid Symbol', 
+                         'Lucida Bright Math Extension',
+                         'Lucida Bright Math Italic', 
+                         'Lucida Bright Math Symbol', 
+                         'Math1', 
+                         'Marlett',
+                         'Mediaevum',
+                         'Monotype Sorts',
+                         'MT Extra', 
+                         'MT Symbol',              
+                         'Symbol', 
+                         'SymbolMT',  
+                         'TimesNewRomanPSMT+1', 
+                         'UniversalMath1 BT',
+                         'Webdings',
+                         'Wingdings', 
+                         'WingDings', 
+                         'Wingdings 2',
+                         'Wingdings 3', 
+                         'WP Greek Century',
+                         'WP Greek Courier',
+                         'WP Greek Helve',
+                         'ZWAdobeF', 
+                         $custom-font-names)"/>
 
   <xsl:variable name="docx2hub:symbol-replacement-rfonts" as="element(w:rFonts)">
     <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math"/>

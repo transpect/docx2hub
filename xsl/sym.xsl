@@ -56,9 +56,11 @@
                          'WingDings', 
                          'Wingdings 2',
                          'Wingdings 3', 
+                         'WP IconicSymbolsA',
                          'WP Greek Century',
                          'WP Greek Courier',
                          'WP Greek Helve',
+                         'WP MathA',
                          'ZWAdobeF', 
                          $custom-font-names)"/>
 

@@ -2486,8 +2486,6 @@
                   <xsl:with-param name="nor" select="$nor"/>
                   <xsl:with-param name="nCharToPrint" select="1"/>
                   <xsl:with-param name="sTokenType" select="'mi'"/>
-                  <xsl:with-param name="fontstyle" select="ancestor::m:oMathPara/@css:font-style"/>
-                  <xsl:with-param name="fontweight" select="ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="substring($sToParse,1,1)"/>
               </mml:mi>
@@ -2508,8 +2506,6 @@
                   <xsl:with-param name="sty"/>
                   <xsl:with-param name="nor"/>
                   <xsl:with-param name="sTokenType" select="'mo'"/>
-                  <xsl:with-param name="fontstyle" select="ancestor::m:oMathPara/@css:font-style"/>
-                  <xsl:with-param name="fontweight" select="ancestor::m:oMathPara/@css:font-weight"/>
                 </xsl:call-template>
                 <xsl:value-of select="substring($sToParse,1,1)"/>
               </mml:mo>

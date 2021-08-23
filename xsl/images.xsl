@@ -42,10 +42,12 @@
   </xsl:template>
   
   <!-- images embedded in word zip container, usually stored in {docx}/word/media/ -->
-  <xsl:template match="a:blip[@r:embed]" mode="wml-to-dbk">
+  <xsl:template match="a:blip[@r:embed]" mode="wml-to-dbk" priority="3">
     <xsl:call-template name="create-imageobject">
       <xsl:with-param name="image-id" select="@r:embed"/>
+      <xsl:with-param name="role-value" select="'hub:embedded'"/>
     </xsl:call-template>
+    <xsl:next-match/>
   </xsl:template>
   
   <xsl:template match="pic:blipFill | a:srcRect" mode="wml-to-dbk"/>
@@ -71,6 +73,7 @@
         <xsl:otherwise>
           <xsl:call-template name="create-imageobject">
             <xsl:with-param name="image-id" select="$image-id"/>
+            <xsl:with-param name="role-value" select="'hub:linked'"/>
           </xsl:call-template>
         </xsl:otherwise>
       </xsl:choose>
@@ -90,10 +93,12 @@
   </xsl:template>
 
   <!-- externally referenced images -->
-  <xsl:template match="a:blip[@r:link]" mode="wml-to-dbk">
+  <xsl:template match="a:blip[@r:link]" mode="wml-to-dbk" priority="1.8">
     <xsl:call-template name="create-imageobject">
       <xsl:with-param name="image-id" select="@r:link"/>
+      <xsl:with-param name="role-value" select="'hub:linked'"/>
     </xsl:call-template>
+    <xsl:next-match/>
   </xsl:template>
 
   <!-- another externally referenced image variant -->
@@ -101,10 +106,16 @@
                              [ancestor::a:graphicData
                                /descendant::a:hlinkClick
                                  /@r:id[matches(key('docrel', .)/@Target, '^file:')]
-                             ]" mode="wml-to-dbk" priority="2">
+                             ]" mode="wml-to-dbk" priority="1.7">
     <xsl:call-template name="create-imageobject">
       <xsl:with-param name="image-id" select="ancestor::a:graphicData/descendant::a:hlinkClick/@r:id"/>
+      <xsl:with-param name="role-value" select="'hub:linked'"/>
     </xsl:call-template>
+    <xsl:next-match/>
+  </xsl:template>
+
+  <xsl:template match="a:blip" mode="wml-to-dbk" priority="0.1">
+    <!-- last template in priority cascade for element 'a:blip'-->
   </xsl:template>
   
   <xsl:key name="docrel" match="rel:Relationship" use="@Id"/>
@@ -112,6 +123,7 @@
   
   <xsl:template name="create-imageobject">
     <xsl:param name="image-id" as="xs:string"/>
+    <xsl:param name="role-value" select="''" as="xs:string"/>
     <xsl:variable name="rels" as="element(rel:Relationships)"
       select="if (ancestor::w:footnote) 
               then $root/*/w:footnoteRels/rel:Relationships
@@ -131,6 +143,9 @@
       <imagedata fileref="{if ($rel/@TargetMode = 'External') 
                            then $patched-file-uri
                            else concat('container:word/', $patched-file-uri)}">
+        <xsl:if test="$role-value != ''">
+          <xsl:attribute name="role" select="$role-value"/>
+        </xsl:if>
         <xsl:apply-templates select="ancestor-or-self::w:drawing//wp:extent/@*" mode="wml-to-dbk"/>
       </imagedata>
     </imageobject>
@@ -158,5 +173,5 @@
                                         @flipV[. eq '1']/'scaleY(-1)'),
                                        ' ')"/>
   </xsl:template>
-  
+
 </xsl:stylesheet>

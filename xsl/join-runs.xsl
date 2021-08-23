@@ -1768,5 +1768,17 @@
   <xsl:template match="@css:*[matches(local-name(), '^border-(left|right|top|bottom)-style$')][. = 'inherit']" mode="docx2hub:join-runs">
     <xsl:attribute name="{name()}" select="'none'"/>
   </xsl:template>-->
+
+  <xsl:template match="*[dbk:imageobject/dbk:imagedata/@role = 'hub:linked']
+                        /dbk:imageobject[dbk:imagedata/@role = 'hub:embedded']" mode="docx2hub:join-runs">
+    <imageobject>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="../dbk:imageobject/dbk:imagedata[@role = 'hub:linked']" mode="#current"/>
+    </imageobject>
+  </xsl:template>
+  <xsl:template match="*[dbk:imageobject/dbk:imagedata/@role = 'hub:embedded']
+                        /dbk:imageobject[dbk:imagedata/@role = 'hub:linked']" mode="docx2hub:join-runs"/>
+  <xsl:template match="*[not(dbk:imageobject/dbk:imagedata/@role = 'hub:embedded')]
+                        /dbk:imageobject/dbk:imagedata/@role[. = 'hub:linked']" mode="docx2hub:join-runs"/>
   
 </xsl:stylesheet>

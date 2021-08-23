@@ -95,6 +95,17 @@
       <xsl:with-param name="image-id" select="@r:link"/>
     </xsl:call-template>
   </xsl:template>
+
+  <!-- another externally referenced image variant -->
+  <xsl:template match="a:blip[not(@r:link)]
+                             [ancestor::a:graphicData
+                               /descendant::a:hlinkClick
+                                 /@r:id[matches(key('docrel', .)/@Target, '^file:')]
+                             ]" mode="wml-to-dbk" priority="2">
+    <xsl:call-template name="create-imageobject">
+      <xsl:with-param name="image-id" select="ancestor::a:graphicData/descendant::a:hlinkClick/@r:id"/>
+    </xsl:call-template>
+  </xsl:template>
   
   <xsl:key name="docrel" match="rel:Relationship" use="@Id"/>
   <xsl:key name="docrel-by-target" match="rel:Relationship" use="@Target"/>

@@ -290,12 +290,22 @@ TEMPLATES
     <!--CUSTOM GEOMETRY -->
     <xsl:for-each select=".//a:custGeom">
       <!--Pfade erstellen-->
+       <xsl:variable name="preset" as="document-node()?">
+        <xsl:document>
+          <xsl:copy-of select="."/>
+        </xsl:document>
+      </xsl:variable>
       <g transform="{d2s:transform($position-x, $position-y, $center-x, $center-y, $phi, $flip)}">
         <xsl:attribute name="d2s:min-x" select="$min-local-x"/>
         <xsl:attribute name="d2s:min-y" select="$min-local-y"/>
         <xsl:attribute name="d2s:max-x" select="$max-local-x"/>
         <xsl:attribute name="d2s:max-y" select="$max-local-y"/>
-        <xsl:apply-templates select="a:pathLst/a:path" mode="d2s:resolve-fmla"/>
+        <xsl:apply-templates select="a:pathLst/a:path" mode="d2s:resolve-fmla">
+          <!-- those params are exprected from descendant attributes. Not sure whether processing is correct-->
+         <xsl:with-param name="xfrm" select="current()/../a:xfrm" as="element(a:xfrm)" tunnel="yes"/>
+         <xsl:with-param name="lookup-docs" as="document-node()+" tunnel="yes"
+            select="$preset, $d2s:constants"/>
+        </xsl:apply-templates>
       </g>
     </xsl:for-each>
   </xsl:template>

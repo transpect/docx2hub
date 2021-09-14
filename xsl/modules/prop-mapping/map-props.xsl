@@ -672,9 +672,20 @@
                                 then 'en-US'
                                else replace($stringval, '^(\p{Lu}+-\p{Ll}+).*$', '$1')"/>
         <xsl:if test="normalize-space($repl)">
-          <docx2hub:attribute name="{../@target-name}">
-            <xsl:value-of select="if($lang-variant eq 'yes') then $repl-long else $repl"/>
-          </docx2hub:attribute>
+          <xsl:choose>
+            <xsl:when test="$val/self::w:lang[@w:val and @w:bidi] and exists($val/ancestor::w:rPr/w:rtl)">
+              <docx2hub:attribute name="{../@target-name}">
+                <xsl:value-of select="if($lang-variant eq 'yes') 
+                                  then replace($val/@w:bidi, '^(\p{Lu}+-\p{Ll}+).*$', '$1')
+                                  else replace($val/@w:bidi, '^(\p{Ll}+).*$', '$1')"/>
+              </docx2hub:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+              <docx2hub:attribute name="{../@target-name}">
+                <xsl:value-of select="if($lang-variant eq 'yes') then $repl-long else $repl"/>
+              </docx2hub:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:if>
       <xsl:if test="$val/self::w:lang[not(@w:val)]/@w:bidi">
           <docx2hub:attribute name="docx2hub:rtl-lang">

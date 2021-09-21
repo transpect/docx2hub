@@ -55,12 +55,17 @@
                                       satisfies ($e/self::w:ins
                                                  and
                                                  count($e/(* except (w:del | w:moveFrom | m:oMath[every $i in descendant::text() satisfies $i/ancestor::w:del]))) = 0)]
-                    )" />
+                    )
+               (: empty paras which has first been inserted but later deleted :)
+              or exists($para/self::w:p[not(w:ins or w:del)]
+                                       [w:pPr/w:rPr/w:ins and w:pPr/w:rPr/w:del]
+                                       [xs:integer(w:pPr/w:rPr/w:del/@w:id) gt xs:integer(w:pPr/w:rPr/w:ins/@w:id)])" />
   </xsl:function>
 
   <!-- changemarkup: remove deleted paragraphs -->
   <xsl:template mode="docx2hub:apply-changemarkup"
     match="w:p[docx2hub:is-changemarkup-removed-para(.)]">
+    <xsl:message select="."/>
     <xsl:if test=". is parent::w:tc/w:p[1]">
       <!-- Word file will be corrupt without w:p in w:tc -->
       <w:p/>

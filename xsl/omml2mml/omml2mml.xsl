@@ -2209,7 +2209,7 @@
     </xsl:variable>
     <xsl:choose>
       <xsl:when test="$strike-through">
-        <mml:enclose notation="horizontalstrike">
+        <mml:menclose notation="horizontalstrike">
           <xsl:choose>
             <xsl:when test="count($content) gt 1">
               <mml:mrow>
@@ -2220,7 +2220,7 @@
               <xsl:sequence select="$content"/>
             </xsl:otherwise>
           </xsl:choose>
-        </mml:enclose>
+        </mml:menclose>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$content"/>

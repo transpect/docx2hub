@@ -30,7 +30,7 @@
                       satisfies $n[self::w:hyperlink[@r:id]]
                                   /key('docrel', $n/@r:id)/@Target[starts-with(., '#_CTVL')]">
         <xsl:for-each select="w:hyperlink">
-          <biblioref docx2hub:citavi-rendered-linkend="{key('docrel', @r:id)/@Target/substring-after(., '#')}">
+          <biblioref docx2hub:citavi-rendered-linkend="{key('docrel', @r:id)/@Target/substring-after(., '#')[not(. = '')]}">
             <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
               <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
             </xsl:apply-templates>

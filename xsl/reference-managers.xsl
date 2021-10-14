@@ -598,16 +598,81 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:variable name="csl-rendered-by-pos-method" as="xs:string"
+    select="'authoryear'"/>
+
   <xsl:template match="fn:*[@key = 'citationItems']//fn:map[@key = 'itemData']" mode="csl">
-    <xsl:variable name="pos" 
-      select="index-of(
-                for $i in //fn:map[@key = 'itemData'][ancestor::fn:*[@key = 'citationItems']] return generate-id($i), 
-                generate-id(.)
-              )" as="xs:integer"/>
+    <xsl:variable name="formattedCitation" as="element()?"
+      select="ancestor::fn:*[@key = 'citationItems']/parent::*/fn:*[@key = 'properties']/fn:*[@key = 'formattedCitation']"/>
+    <xsl:variable name="pos" as="xs:integer?">
+      <xsl:choose>
+        <xsl:when test="$csl-rendered-by-pos-method = 'authoryear'">
+          <xsl:variable name="biblioref-structured" as="node()*">
+            <xsl:element name="result">
+            <xsl:choose>
+              <xsl:when test="$csl-rendered-by-pos-method = 'authoryear' and
+                              descendant::fn:map[@key = 'issued']/fn:array[@key = 'date-parts']/fn:array/*[1][matches(., '^(19|20)\d\d$')] and
+                              descendant::fn:array[@key = 'author']/fn:map[1]/fn:string[@key = 'family'][normalize-space()]">
+                <surname>
+                  <xsl:sequence select="normalize-space(descendant::fn:array[@key = 'author']/fn:map[1]/fn:string[@key = 'family'][1])"/>
+                </surname>
+                <year>
+                  <xsl:sequence select="normalize-space(descendant::fn:map[@key = 'issued']/fn:array[@key = 'date-parts']/fn:array/*[1])"/>
+                </year>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:analyze-string select="replace(normalize-space($formattedCitation), '^\s+|\set\sal\.|\(|\)|,', '')" regex="^[-\p{{L}}]+">
+                  <xsl:matching-substring>
+                    <surname>
+                      <xsl:sequence select="."/>
+                    </surname>
+                  </xsl:matching-substring>
+                  <xsl:non-matching-substring>
+                    <xsl:analyze-string select="." regex="\d\d\d\d[a-z]?">
+                      <xsl:matching-substring>
+                        <year>
+                          <xsl:sequence select="."/>
+                        </year>
+                      </xsl:matching-substring>
+                      <xsl:non-matching-substring/>
+                    </xsl:analyze-string>
+                  </xsl:non-matching-substring>
+                </xsl:analyze-string>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:element>
+        </xsl:variable>
+        <xsl:variable name="match-candidate" as="element()*"
+          select="$root//*:CSL_XML/w:p[
+                        $biblioref-structured/*:year[1] != ''
+                    and matches(normalize-space(.), concat('[\s;,.\(]', $biblioref-structured/*:year[1], '[\s;,.\)]'))
+                    and $biblioref-structured/*:surname != ''
+                    and matches(normalize-space(.), concat('', $biblioref-structured/*:surname))
+                  ]"/>
+        <xsl:choose>
+          <xsl:when test="count($match-candidate) = 1">
+            <xsl:sequence select="$root//*:CSL_XML/w:p[. is $match-candidate]/count(preceding-sibling::w:p) + 1"/>
+          </xsl:when>
+          <xsl:otherwise/>
+        </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:sequence select="index-of(
+                                  for $i in //fn:map[@key = 'itemData']
+                                                    [ancestor::fn:*[@key = 'citationItems']] 
+                                    return generate-id($i), 
+                                  generate-id(.)
+                                )"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
     <biblioentry xml:id="{ancestor::docx2hub:csl-json/@id}">
-      <xsl:call-template name="csl-rendered">
-        <xsl:with-param name="pos" select="$pos"/>
-      </xsl:call-template>
+      <xsl:if test="$pos castable as xs:integer">
+        <xsl:call-template name="csl-rendered">
+          <xsl:with-param name="pos" select="$pos"/>
+        </xsl:call-template>
+      </xsl:if>
       <xsl:call-template name="csl-reference"/>
       <xsl:if test="contains($debug-dir-uri, 'debug-json-to-xml-bibliography=yes')">
         <docx2hub:debug role="input">
@@ -622,7 +687,7 @@
     <xsl:variable name="rendered" 
       select="$root//*:CSL_XML/w:p[position() = $pos]"/>
     <xsl:if test="$rendered">
-      <abstract role="rendered">
+      <abstract role="rendered" docx2hub:pos-in-document="{count($root//*:CSL_XML/w:p[position() = $pos]/preceding-sibling::w:p) + 1}">
         <para>
           <xsl:apply-templates select="$rendered/(@srcpath, node())" mode="wml-to-dbk"/>
         </para>
@@ -892,6 +957,17 @@
 
   <xsl:key name="docx2hub:by-citavi-biblioref-linkend" match="*:biblioref" 
     use="@docx2hub:citavi-rendered-linkend"/>
+
+  <xsl:template match="*:bibliography[@role = 'CSL']" mode="docx2hub:join-runs">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:for-each select="*">
+        <xsl:sort select="(@docx2hub:pos-in-document/xs:integer(.), 0)[1]"/>
+        <xsl:apply-templates select="." mode="#current"/>
+      </xsl:for-each>
+    </xsl:copy>
+  </xsl:template>
+  <xsl:template match="@docx2hub:pos-in-document" mode="docx2hub:join-runs"/>
 
   <xsl:template match="*:biblioentry[*:abstract[.//*:anchor[@role = 'docx2hub:citavi-rendered']]]" mode="docx2hub:join-runs">
     <xsl:variable name="biblioentry-for-current-abstract-order" as="element()?"

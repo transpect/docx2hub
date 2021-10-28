@@ -8,11 +8,12 @@
   exclude-result-prefixes="xs"
   version="2.0">
   
-  <xsl:import href="../sym.xsl"/>
-  <xsl:import href="../modules/error-handler/error-handler.xsl"/>
-  <xsl:import href="omml2mml.xsl"/>
-  <xsl:import href="http://transpect.io/xslt-util/xslt-based-catalog-resolver/xsl/resolve-uri-by-catalog.xsl"/>
+  <xsl:import href="../main.xsl"/>
   
+  <xsl:param name="mml-space-handling" as="xs:string" select="'mspace'"/>
+  
+  <xsl:output method="xml" doctype-system="" doctype-public=""></xsl:output>
+
   <xsl:param name="fail-on-error" select="'no'"/>
   <xsl:param name="charmap-policy" select="'unicode'"/>
   

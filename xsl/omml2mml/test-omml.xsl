@@ -29,14 +29,20 @@
   <xsl:template match="m:oMathPara">
     <equation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
-      <xsl:apply-templates select="node()" mode="omml2mml"/>
+      <xsl:variable name="prelim" as="item()*">
+        <xsl:apply-templates select="node()" mode="omml2mml"/>
+      </xsl:variable>
+      <xsl:apply-templates select="$prelim" mode="docx2hub:join-runs"/>
     </equation>
   </xsl:template>
   
   <xsl:template match="m:oMath">
     <inlineequation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
-      <xsl:apply-templates select="." mode="omml2mml"/>
+      <xsl:variable name="prelim" as="item()*">
+        <xsl:apply-templates select="." mode="omml2mml"/>
+      </xsl:variable>
+      <xsl:apply-templates select="$prelim" mode="docx2hub:join-runs"/>
     </inlineequation>
   </xsl:template>
   

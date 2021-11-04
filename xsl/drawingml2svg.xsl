@@ -82,10 +82,10 @@
   <xsl:template match="w:sectPr[not(parent::w:sectPrChange)][$create-svg]" mode="docx2hub:add-props">
     <xsl:variable name="pageWidth"    select="xs:integer(w:pgSz/@w:w * 635)" as="xs:integer"/>
     <xsl:variable name="pageHeight"   select="xs:integer(w:pgSz/@w:h * 635)" as="xs:integer"/>
-    <xsl:variable name="marginTop"    select="xs:integer(w:pgMar/@w:top * 635)" as="xs:integer"/>
-    <xsl:variable name="marginBottom" select="xs:integer(w:pgMar/@w:bottom * 635)" as="xs:integer"/>
-    <xsl:variable name="marginLeft"   select="xs:integer(w:pgMar/@w:left * 635)" as="xs:integer"/>
-    <xsl:variable name="marginRight"  select="xs:integer(w:pgMar/@w:right * 635)" as="xs:integer"/>
+    <xsl:variable name="marginTop"    select="(xs:integer(w:pgMar/@w:top * 635), 0)[1]" as="xs:integer"/>
+    <xsl:variable name="marginBottom" select="(xs:integer(w:pgMar/@w:bottom * 635), 0)[1]" as="xs:integer"/>
+    <xsl:variable name="marginLeft"   select="(xs:integer(w:pgMar/@w:left * 635), 0)[1]" as="xs:integer"/>
+    <xsl:variable name="marginRight"  select="(xs:integer(w:pgMar/@w:right * 635), 0)[1]" as="xs:integer"/>
     <xsl:variable name="linePitch"    select="xs:integer(w:docGrid/@w:linePitch * 635)"/>
     <xsl:variable name="d2s:sec-layout-map" as="map(xs:string, xs:integer?)">
       <xsl:map>

@@ -638,6 +638,8 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:variable name="docx2hub:formatted-CSL-bibliography" as="xs:boolean"
+    select="true()"/>
 
   <xsl:template name="insert-bibliography">
     <xsl:param name="citavi-refs" as="document-node()?"/>
@@ -665,6 +667,11 @@
     <xsl:if test="exists($citavi-bib)">
       <bibliography role="Citavi">
         <xsl:sequence select="$citavi-bib"/>
+      </bibliography>
+    </xsl:if>
+    <xsl:if test="$docx2hub:formatted-CSL-bibliography and $root//*:CSL_XML/w:p[normalize-space()]">
+      <bibliography role="CSL-formatted">
+        <xsl:apply-templates select="$root//*:CSL_XML/w:p[normalize-space()]" mode="#current"/>
       </bibliography>
     </xsl:if>
     <xsl:if test="exists($csl-bib)">

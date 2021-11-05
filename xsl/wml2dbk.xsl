@@ -1804,7 +1804,7 @@
       </xsl:when>
       <xsl:when test="$remove-biblioentry-paragraphs = 'yes-without-pi'"/>
       <xsl:otherwise>
-        <xsl:processing-instruction name="docx2hub_{lower-case(name())}_bibliography"/>
+        <xsl:processing-instruction name="docx2hub_{lower-case((descendant-or-self::*)[local-name() = ('CSL_XML', 'CITAVI_XML')][1]/local-name())}_bibliography"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

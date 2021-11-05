@@ -62,11 +62,15 @@
     <xsl:choose>
       <xsl:when test="$remove-biblioentry-paragraphs = 'no-in-div-wrapped'">
         <div role="docx2hub:formatted-bibliography">
-          <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current"/>
+          <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current">
+            <xsl:with-param name="is-bibliomixed" select="false()" tunnel="yes"/>
+          </xsl:apply-templates>
         </div>
       </xsl:when>
       <xsl:when test="$remove-biblioentry-paragraphs = 'no'">
-        <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current"/>
+        <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current">
+          <xsl:with-param name="is-bibliomixed" select="false()" tunnel="yes"/>
+        </xsl:apply-templates>
       </xsl:when>
       <xsl:otherwise/>
     </xsl:choose>
@@ -687,16 +691,17 @@
       </xsl:if>
     </biblioentry>
   </xsl:template>
-  
-  <xsl:template match="*:CSL_XML/w:p" mode="wml-to-dbk">
+
+  <xsl:template match="*:CSL_XML/w:p" mode="wml-to-dbk tables">
+    <xsl:param name="is-bibliomixed" select="true()" as="xs:boolean" tunnel="yes"/>
     <xsl:choose>
-      <xsl:when test="$remove-biblioentry-paragraphs = ('no', 'no-in-div-wrapped')">
-        <xsl:next-match/>
-      </xsl:when>
-      <xsl:otherwise>
+      <xsl:when test="$is-bibliomixed">
         <bibliomixed>
           <xsl:apply-templates select="@*, node()" mode="#current"/>
         </bibliomixed>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:next-match/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

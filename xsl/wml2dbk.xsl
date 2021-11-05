@@ -671,7 +671,9 @@
     </xsl:if>
     <xsl:if test="$docx2hub:formatted-CSL-bibliography and $root//*:CSL_XML/w:p[normalize-space()]">
       <bibliography role="CSL-formatted">
-        <xsl:apply-templates select="$root//*:CSL_XML/w:p[normalize-space()]" mode="#current"/>
+        <xsl:apply-templates select="$root//*:CSL_XML/w:p[normalize-space()]" mode="#current">
+          <xsl:with-param name="is-bibliomixed" select="true()" tunnel="yes"/>
+        </xsl:apply-templates>
       </bibliography>
     </xsl:if>
     <xsl:if test="exists($csl-bib)">

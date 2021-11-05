@@ -55,12 +55,21 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="w:sdt[.//*:CITAVI_XML]
-                      |*:CITAVI_XML" mode="wml-to-dbk tables" priority="2" 
-                use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
-    <xsl:if test="$remove-biblioentry-paragraphs = 'no'">
-      <xsl:apply-templates select="(descendant-or-self::*:CITAVI_XML)/node()" mode="#current"/>
-    </xsl:if>
+  <xsl:template match=" w:sdt[.//*:CITAVI_XML] | *:CITAVI_XML
+                      | w:sdt[.//*:CSL_XML]    | *:CSL_XML" 
+    mode="wml-to-dbk tables" priority="2" 
+    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:choose>
+      <xsl:when test="$remove-biblioentry-paragraphs = 'no-in-div-wrapped'">
+        <div role="docx2hub:formatted-bibliography">
+          <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current"/>
+        </div>
+      </xsl:when>
+      <xsl:when test="$remove-biblioentry-paragraphs = 'no'">
+        <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current"/>
+      </xsl:when>
+      <xsl:otherwise/>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="w:sdtPr/w:tag/@w:val[matches(., '^Citavi\.?Placeholder', 'i')]" mode="wml-to-dbk">
@@ -678,11 +687,18 @@
       </xsl:if>
     </biblioentry>
   </xsl:template>
-
+  
   <xsl:template match="*:CSL_XML/w:p" mode="wml-to-dbk">
-    <bibliomixed>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </bibliomixed>
+    <xsl:choose>
+      <xsl:when test="$remove-biblioentry-paragraphs = ('no', 'no-in-div-wrapped')">
+        <xsl:next-match/>
+      </xsl:when>
+      <xsl:otherwise>
+        <bibliomixed>
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </bibliomixed>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template name="csl-reference">

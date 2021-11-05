@@ -103,7 +103,19 @@
   <p:option name="status-dir-uri" select="'status'"/>
   <p:option name="srcpaths" select="'no'"/>
   <p:option name="unwrap-tooltip-links" select="'no'"/>
-  <p:option name="remove-biblioentry-paragraphs" select="'yes'"/>
+  <p:option name="remove-biblioentry-paragraphs" select="'yes'">
+    <p:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <p>Remove formatted paragraphs of reference managers from their position in the content flow.</p>
+      <dl>
+        <dt>yes (or any other unknown value)</dt>
+          <dd>Remove from content flow. Additionally saved in bibliography at the end of the document.</dd>
+        <dt>no</dt>
+          <dd>Let paragraphs stay. Additionally saved in bibliography element at the end of the document.</dd>
+        <dt>no-in-div-wrapped</dt>
+          <dd>Same as 'no'; the paragraphs are wrapped in an extra div element.</dd>
+      </dl>
+    </p:documentation>
+  </p:option>
   <p:option name="mml-space-handling" select="'mspace'">
     <p:documentation xmlns="http://www.w3.org/1999/xhtml">
       <p>Whitespace conversion from OMML to MathML</p>

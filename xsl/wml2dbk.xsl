@@ -1785,9 +1785,28 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
-  <xsl:template match="*:CITAVI_XML | *:CSL_XML" mode="wml-to-dbk tables"
-    use-when="xs:decimal(system-property('xsl:version')) gt 2.0" priority="3">
-    <xsl:processing-instruction name="docx2hub_{lower-case(name())}_bibliography"/>
+  <xsl:template match=" w:sdt[.//*:CITAVI_XML] | *:CITAVI_XML
+                      | w:sdt[.//*:CSL_XML]    | *:CSL_XML" 
+    mode="wml-to-dbk tables" priority="2" 
+    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:choose>
+      <xsl:when test="$remove-biblioentry-paragraphs = 'no-in-div-wrapped'">
+        <div role="docx2hub:formatted-bibliography">
+          <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current">
+            <xsl:with-param name="is-bibliomixed" select="false()" tunnel="yes"/>
+          </xsl:apply-templates>
+        </div>
+      </xsl:when>
+      <xsl:when test="$remove-biblioentry-paragraphs = 'no'">
+        <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current">
+          <xsl:with-param name="is-bibliomixed" select="false()" tunnel="yes"/>
+        </xsl:apply-templates>
+      </xsl:when>
+      <xsl:when test="$remove-biblioentry-paragraphs = 'yes-without-pi'"/>
+      <xsl:otherwise>
+        <xsl:processing-instruction name="docx2hub_{lower-case(name())}_bibliography"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template name="docx2hub:citavi-json-to-xml" use-when="xs:decimal(system-property('xsl:version')) lt 3.0"/>

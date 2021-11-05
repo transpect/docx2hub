@@ -54,27 +54,6 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
-  <xsl:template match=" w:sdt[.//*:CITAVI_XML] | *:CITAVI_XML
-                      | w:sdt[.//*:CSL_XML]    | *:CSL_XML" 
-    mode="wml-to-dbk tables" priority="2" 
-    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
-    <xsl:choose>
-      <xsl:when test="$remove-biblioentry-paragraphs = 'no-in-div-wrapped'">
-        <div role="docx2hub:formatted-bibliography">
-          <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current">
-            <xsl:with-param name="is-bibliomixed" select="false()" tunnel="yes"/>
-          </xsl:apply-templates>
-        </div>
-      </xsl:when>
-      <xsl:when test="$remove-biblioentry-paragraphs = 'no'">
-        <xsl:apply-templates select="(descendant-or-self::*[local-name() = ('CSL_XML', 'CITAVI_XML')])/node()" mode="#current">
-          <xsl:with-param name="is-bibliomixed" select="false()" tunnel="yes"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:otherwise/>
-    </xsl:choose>
-  </xsl:template>
 
   <xsl:template match="w:sdtPr/w:tag/@w:val[matches(., '^Citavi\.?Placeholder', 'i')]" mode="wml-to-dbk">
     <xsl:param name="citavi-refs" as="document-node()?" tunnel="yes"/>

@@ -108,7 +108,10 @@
       <p>Remove formatted paragraphs of reference managers from their position in the content flow.</p>
       <dl>
         <dt>yes (or any other unknown value)</dt>
-          <dd>Remove from content flow. Additionally saved in bibliography at the end of the document.</dd>
+          <dd>Remove from content flow. Replace it with an empty processing instruction 
+            and additionally save the paragraphs in a bibliography at the end of the document.</dd>
+        <dt>yes-without-pi</dt>
+          <dd>Same as 'yes', without the processing instruction.</dd>
         <dt>no</dt>
           <dd>Let paragraphs stay. Additionally saved in bibliography element at the end of the document.</dd>
         <dt>no-in-div-wrapped</dt>

@@ -19,23 +19,39 @@
                   select="for $i in replace(w:bookmarkStart[1]/@w:name, '^_CTVP001', '')
                           return $citavi-refs/docx2hub:citavi-xml/Placeholder[replace(Id, '-', '') eq $i]"/>
     <xsl:choose>
-      <xsl:when test="every $n in node()[not(
-                                     not(normalize-space()) 
-                                     or
-                                     self::w:r[
-                                       every $m in node() 
-                                       satisfies $m[self::w:fldChar or self::w:instrText]
-                                     ]
-                                   )]
-                      satisfies $n[self::w:hyperlink[@r:id]]
-                                  /key('docrel', $n/@r:id)/@Target[starts-with(., '#_CTVL')]">
+      <xsl:when test="every $n in node()[
+                        not(
+                          not(normalize-space()) 
+                          or
+                          self::w:r[
+                            every $m in node() 
+                            satisfies $m[self::w:fldChar or self::w:instrText]
+                          ]
+                        )
+                      ] satisfies 
+                        if($n[self::w:hyperlink[@r:id]])
+                        then $n[self::w:hyperlink[@r:id]]
+                               /key('docrel', $n/@r:id)/@Target[starts-with(., '#_CTVL')]
+                        else //*:CITAVI_XML//w:p[.//w:bookmarkStart/@w:name = $n[self::w:hyperlink]/@w:anchor]">
         <xsl:for-each select="w:hyperlink">
-          <biblioref docx2hub:citavi-rendered-linkend="{key('docrel', @r:id)/@Target/substring-after(., '#')[not(. = '')]}">
-            <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
-              <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
-            </xsl:apply-templates>
-            <xsl:comment select="."/>
-          </biblioref>
+          <xsl:choose>
+            <xsl:when test="@w:rid">
+              <biblioref docx2hub:citavi-rendered-linkend="{key('docrel', @r:id)/@Target/substring-after(., '#')[not(. = '')]}">
+                <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
+                  <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
+                </xsl:apply-templates>
+                <xsl:comment select="."/>
+              </biblioref>
+            </xsl:when>
+            <xsl:otherwise>
+              <biblioref docx2hub:citavi-rendered-linkend="{@w:anchor}">
+                <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
+                  <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
+                </xsl:apply-templates>
+                <xsl:comment select="."/>
+              </biblioref>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:for-each>
       </xsl:when>
       <xsl:when test="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val">
@@ -169,9 +185,7 @@
 
   <xsl:template match="w:sdtContent/*:CITAVI_XML//w:bookmarkEnd" mode="wml-to-dbk"/>
   <xsl:template match="w:sdtContent/*:CITAVI_XML//w:bookmarkStart" mode="wml-to-dbk">
-    <xsl:if test="key('docrel-by-target', concat('#', @w:name))">
-      <anchor xml:id="{@w:name}" role="docx2hub:citavi-rendered"/>
-    </xsl:if>
+    <anchor xml:id="{@w:name}" role="docx2hub:citavi-rendered"/>
   </xsl:template>
   
   <xsl:template match="Reference" mode="citavi">

@@ -1029,7 +1029,7 @@
 
 
                   (:key('docx2hub:by-citavi-biblioref-linkend', current()//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id)/@linkends/tokenize(., '\s+'):)
-                ]"/><xsl:message select="$biblioentry-for-current-bibliomixed"/>
+                ]"/>
     <biblioentry>
       <xsl:apply-templates select="$biblioentry-for-current-bibliomixed/@xml:id" mode="#current"/>
       <xsl:next-match/>

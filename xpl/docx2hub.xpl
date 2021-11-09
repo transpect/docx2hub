@@ -117,6 +117,9 @@
         <dt>no-in-div-wrapped</dt>
           <dd>Same as 'no'; the paragraphs are wrapped in an extra div element.</dd>
       </dl>
+      <p><strong>Notice on linked Citavi biblioentry elements:</strong></p>
+      <p>You have to check for 'Link in-text citations to references in the bibliography' 
+         turned on in the Citavi document settings.</p>
     </p:documentation>
   </p:option>
   <p:option name="mml-space-handling" select="'mspace'">

@@ -37,7 +37,7 @@
           <xsl:choose>
             <xsl:when test="@r:id">
               <biblioref docx2hub:citavi-rendered-linkend="{key('docrel', @r:id)/@Target/substring-after(., '#')[not(. = '')]}">
-                <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
+                <xsl:apply-templates select="@srcpath, ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
                   <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
                 </xsl:apply-templates>
                 <xsl:comment select="."/>
@@ -45,7 +45,7 @@
             </xsl:when>
             <xsl:otherwise>
               <biblioref docx2hub:citavi-rendered-linkend="{@w:anchor}">
-                <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
+                <xsl:apply-templates select="@srcpath, ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
                   <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
                 </xsl:apply-templates>
                 <xsl:comment select="."/>
@@ -54,10 +54,10 @@
           </xsl:choose>
         </xsl:for-each>
       </xsl:when>
-      <xsl:when test="*:HYPERLINK/@fldArgs[matches(., '^.*&#34;#(_CTVL[^&#34;]+)&#34;.*$')]">
-        <xsl:for-each select="*:HYPERLINK[@fldArgs/matches(., '&#34;#_CTVL[^&#34;]+&#34;')]">
+      <xsl:when test="*:HYPERLINK/@fldArgs[matches(., '^.*&#34;#?(_CTVL[^&#34;]+)&#34;.*$')]">
+        <xsl:for-each select="*:HYPERLINK[@fldArgs/matches(., '&#34;#?_CTVL[^&#34;]+&#34;')]">
           <xsl:variable name="target" 
-            select="replace(@fldArgs, '^.*&#34;#(_CTVL[^&#34;]+)&#34;.*$', '$1')"/>
+            select="replace(@fldArgs, '^.*&#34;#?(_CTVL[^&#34;]+)&#34;.*$', '$1')"/>
           <biblioref docx2hub:citavi-rendered-linkend="{$target}">
             <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk"/>
             <xsl:comment select="."/>
@@ -158,13 +158,15 @@
   </xsl:template>
   
   <xsl:template match="fn:map[@key = 'Reference']" mode="citavi">
+    <!-- pos var: is there a trustworthy mechanism (i.e. document order)
+                  to find the corresponding rendered paragraph? -->
     <xsl:variable name="pos" 
-      select="index-of(
+      select="0(:index-of(
                 for $i in //fn:map[@key = 'Reference']
                                   [not(../fn:string[@key = 'ReferenceId'] = ../preceding::fn:string[@key = 'ReferenceId'])] 
                   return generate-id($i), 
                 generate-id(.)
-              )" as="xs:integer"/>
+              ):)" as="xs:integer?"/>
     <biblioentry xml:id="_{fn:string[@key = 'Id']}">
       <xsl:call-template name="citavi-rendered">
         <xsl:with-param name="pos" select="$pos"/>
@@ -203,7 +205,7 @@
       <xsl:apply-templates select="ParentReference" mode="#current"/>
       <xsl:call-template name="citavi-reference-xml"/>
       <xsl:call-template name="citavi-rendered">
-        <xsl:with-param name="pos" select="position()"/><!-- untested -->
+        <xsl:with-param name="pos" select="0(:position():)"/><!-- untested -->
       </xsl:call-template>
     </biblioentry>
   </xsl:template>
@@ -695,7 +697,7 @@
     </biblioentry>
   </xsl:template>
 
-  <xsl:template match="*:CSL_XML/w:p" mode="wml-to-dbk tables">
+  <xsl:template match="*:CITAVI_XML/w:p | *:CSL_XML/w:p" mode="wml-to-dbk tables">
     <xsl:param name="is-bibliomixed" select="true()" as="xs:boolean" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="$is-bibliomixed">
@@ -997,10 +999,15 @@
   <xsl:template match="@docx2hub:rendered-match-searchterm" mode="docx2hub:join-runs"/>
   <xsl:template match="@docx2hub:rendered-match-candidate-pos" mode="docx2hub:join-runs"/>
 
-  <xsl:template match="*:biblioentry[*:abstract[.//*:anchor[@role = 'docx2hub:citavi-rendered']]]" mode="docx2hub:join-runs">
+  <xsl:template match="*:biblioentry[
+                         *:abstract[
+                           .//*:anchor[@role = 'docx2hub:citavi-rendered']
+                                      [exists(key('docx2hub:by-citavi-biblioref-linkend', current()/@xml:id))]
+                         ]
+                       ]" mode="docx2hub:join-runs">
     <xsl:variable name="biblioentry-for-current-abstract-order" as="element()?"
       select="../*:biblioentry[
-                  @xml:id = key('docx2hub:by-citavi-biblioref-linkend', current()//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id)/@linkends
+                  @xml:id = key('docx2hub:by-citavi-biblioref-linkend', current()//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id)/@linkends/tokenize(., '\s+')
                 ]"/>
     <biblioentry>
       <xsl:apply-templates select="$biblioentry-for-current-abstract-order/@xml:id" mode="#current"/>
@@ -1011,6 +1018,29 @@
   <xsl:template match="*:biblioref/@docx2hub:citavi-rendered-linkend" mode="docx2hub:join-runs"/>
   <xsl:template match="*:anchor[@role = 'docx2hub:citavi-rendered']" mode="docx2hub:join-runs"/>
 
+  <xsl:template match="*:bibliography[@role = 'Citavi-formatted'][exists(*:bibliomixed//*:anchor[starts-with(@xml:id, '_CTVL')])]
+                       [
+                         every $bibentry in *:bibliomixed[not(@role = 'CitaviBibliographyHeading')]
+                         satisfies $bibentry//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id[. = //*:biblioref[@linkends/tokenize(., '\s+') = //*:bibliography[@role = 'Citavi']/*:biblioentry/@xml:id]/@docx2hub:citavi-rendered-linkend]
+                       ]/*:bibliomixed" mode="docx2hub:join-runs">
+    <xsl:variable name="biblioentry-for-current-bibliomixed" as="element()?"
+      select="//*:bibliography[@role = 'Citavi']/*:biblioentry[
+                  @xml:id = //*:biblioref[@docx2hub:citavi-rendered-linkend = current()//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id]/@linkends/tokenize(., '\s+')
+
+
+                  (:key('docx2hub:by-citavi-biblioref-linkend', current()//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id)/@linkends/tokenize(., '\s+'):)
+                ]"/><xsl:message select="$biblioentry-for-current-bibliomixed"/>
+    <biblioentry>
+      <xsl:apply-templates select="$biblioentry-for-current-bibliomixed/@xml:id" mode="#current"/>
+      <xsl:next-match/>
+      <xsl:apply-templates select="$biblioentry-for-current-bibliomixed/node()" mode="#current"/>
+    </biblioentry>
+  </xsl:template>
+  <xsl:template match="*:bibliography[@role = 'Citavi'][*:biblioentry/@xml:id]
+                       [
+                         every $bibentry in *:biblioentry
+                         satisfies $bibentry//@xml:id = //*:biblioref[@docx2hub:citavi-rendered-linkend = //*:bibliography[@role = 'Citavi-formatted']/*:bibliomixed//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id]/@linkends/tokenize(., '\s+')
+                       ]" mode="docx2hub:join-runs"/>
 
   <xsl:template match="*:biblioentry/@xml:id" mode="docx2hub:join-runs">
     <xsl:variable name="normalized-text" as="xs:string"

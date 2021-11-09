@@ -640,6 +640,8 @@
 
   <xsl:variable name="docx2hub:formatted-CSL-bibliography" as="xs:boolean"
     select="true()"/>
+  <xsl:variable name="docx2hub:formatted-Citavi-bibliography" as="xs:boolean"
+    select="true()"/>
 
   <xsl:template name="insert-bibliography">
     <xsl:param name="citavi-refs" as="document-node()?"/>
@@ -664,6 +666,13 @@
       <xsl:apply-templates mode="csl"
         select="$csl-refs//fn:*[@key = 'citationItems']//fn:*[@key = 'itemData']"/>
     </xsl:variable>
+    <xsl:if test="$docx2hub:formatted-Citavi-bibliography and $root//*:CITAVI_XML/w:p[normalize-space()]">
+      <bibliography role="Citavi-formatted">
+        <xsl:apply-templates select="$root//*:CITAVI_XML/w:p[normalize-space()]" mode="#current">
+          <xsl:with-param name="is-bibliomixed" select="true()" tunnel="yes"/>
+        </xsl:apply-templates>
+      </bibliography>
+    </xsl:if>
     <xsl:if test="exists($citavi-bib)">
       <bibliography role="Citavi">
         <xsl:sequence select="$citavi-bib"/>

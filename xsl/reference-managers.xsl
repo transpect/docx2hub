@@ -1043,6 +1043,14 @@
                          satisfies $bibentry//@xml:id = //*:biblioref[@docx2hub:citavi-rendered-linkend = //*:bibliography[@role = 'Citavi-formatted']/*:bibliomixed//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id]/@linkends/tokenize(., '\s+')
                        ]" mode="docx2hub:join-runs"/>
 
+  <xsl:template match="*:bibliography[@role = 'Citavi-formatted']
+                         /*:bibliomixed[@role = 'CitaviBibliographyHeading']" mode="docx2hub:join-runs">
+    <title>
+      <xsl:apply-templates select="@*, node()" mode="#current"/>
+    </title>
+  </xsl:template>
+
+
   <xsl:template match="*:biblioentry/@xml:id" mode="docx2hub:join-runs">
     <xsl:variable name="normalized-text" as="xs:string"
       select="normalize-space(string-join(parent::*:biblioentry/descendant::text(), ''))"/>

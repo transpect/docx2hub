@@ -1026,13 +1026,14 @@
     <xsl:variable name="biblioentry-for-current-bibliomixed" as="element()?"
       select="//*:bibliography[@role = 'Citavi']/*:biblioentry[
                   @xml:id = //*:biblioref[@docx2hub:citavi-rendered-linkend = current()//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id]/@linkends/tokenize(., '\s+')
-
-
-                  (:key('docx2hub:by-citavi-biblioref-linkend', current()//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id)/@linkends/tokenize(., '\s+'):)
                 ]"/>
     <biblioentry>
       <xsl:apply-templates select="$biblioentry-for-current-bibliomixed/@xml:id" mode="#current"/>
-      <xsl:next-match/>
+      <abstract role="rendered">
+        <para>
+          <xsl:apply-templates select="@* except @xml:id, node()" mode="#current"/>
+        </para>
+      </abstract>
       <xsl:apply-templates select="$biblioentry-for-current-bibliomixed/node()" mode="#current"/>
     </biblioentry>
   </xsl:template>

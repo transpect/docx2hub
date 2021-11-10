@@ -700,6 +700,11 @@
   <xsl:template match="*:CITAVI_XML/w:p | *:CSL_XML/w:p" mode="wml-to-dbk tables">
     <xsl:param name="is-bibliomixed" select="true()" as="xs:boolean" tunnel="yes"/>
     <xsl:choose>
+      <xsl:when test="$is-bibliomixed and @role= 'CitaviBibliographyHeading'">
+        <title>
+          <xsl:apply-templates select="@*, node()" mode="#current"/>
+        </title>
+      </xsl:when>
       <xsl:when test="$is-bibliomixed">
         <bibliomixed>
           <xsl:apply-templates select="@*, node()" mode="#current"/>
@@ -1020,7 +1025,7 @@
 
   <xsl:template match="*:bibliography[@role = 'Citavi-formatted'][exists(*:bibliomixed//*:anchor[starts-with(@xml:id, '_CTVL')])]
                        [
-                         every $bibentry in *:bibliomixed[not(@role = 'CitaviBibliographyHeading')]
+                         every $bibentry in *:bibliomixed
                          satisfies $bibentry//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id[. = //*:biblioref[@linkends/tokenize(., '\s+') = //*:bibliography[@role = 'Citavi']/*:biblioentry/@xml:id]/@docx2hub:citavi-rendered-linkend]
                        ]/*:bibliomixed" mode="docx2hub:join-runs">
     <xsl:variable name="biblioentry-for-current-bibliomixed" as="element()?"
@@ -1042,14 +1047,6 @@
                          every $bibentry in *:biblioentry
                          satisfies $bibentry//@xml:id = //*:biblioref[@docx2hub:citavi-rendered-linkend = //*:bibliography[@role = 'Citavi-formatted']/*:bibliomixed//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id]/@linkends/tokenize(., '\s+')
                        ]" mode="docx2hub:join-runs"/>
-
-  <xsl:template match="*:bibliography[@role = 'Citavi-formatted']
-                         /*:bibliomixed[@role = 'CitaviBibliographyHeading']" mode="docx2hub:join-runs">
-    <title>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
-    </title>
-  </xsl:template>
-
 
   <xsl:template match="*:biblioentry/@xml:id" mode="docx2hub:join-runs">
     <xsl:variable name="normalized-text" as="xs:string"

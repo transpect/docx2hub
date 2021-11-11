@@ -256,9 +256,10 @@ it, but not when an ilvl=2 heading precedes it.
     <xsl:param name="context" as="element(w:p)"/>
     <!-- Do we process lvlOverrides? -->
     <xsl:variable name="lvl" select="tr:get-lvl-of-numbering($context)" as="element(w:lvl)?"/>
+    <xsl:variable name="override" select="tr:get-lvl-override($context)/w:lvl" as="element(w:lvl)?"/>
     <xsl:choose>
-      <xsl:when test="exists($lvl)">
-        <xsl:if test="not($lvl/w:lvlText)">
+      <xsl:when test="exists($lvl) or exists($override)">
+        <xsl:if test="not($lvl/w:lvlText or $override/w:lvlText)">
           <xsl:call-template name="signal-error">
             <xsl:with-param name="error-code" select="'W2D_061'"/>
             <xsl:with-param name="fail-on-error" select="$fail-on-error"/>
@@ -273,12 +274,12 @@ it, but not when an ilvl=2 heading precedes it.
         <xsl:variable name="style-atts" select="key('style-by-name', $context/@role, $context/root())/@*" as="attribute(*)*"/>
         <xsl:variable name="ad-hoc-atts" select="$context/@*" as="attribute(*)*"/>
         <xsl:variable name="pPr-from-numPr" as="attribute(*)*">
-          <xsl:apply-templates mode="numbering" select="$lvl/w:pPr/@*">
+          <xsl:apply-templates mode="numbering" select="($override/w:pPr, $lvl/w:pPr)[1]/@*">
             <xsl:with-param name="context" select="$context" tunnel="yes"/>
           </xsl:apply-templates>
         </xsl:variable>
         <xsl:variable name="rPr" as="attribute(*)*">
-          <xsl:apply-templates mode="numbering" select="$lvl/w:rPr/@*">
+          <xsl:apply-templates mode="numbering" select="($override/w:rPr, $lvl/w:rPr)[1]/@*">
             <xsl:with-param name="context" select="$context" tunnel="yes"/>
           </xsl:apply-templates>
         </xsl:variable>
@@ -408,7 +409,9 @@ it, but not when an ilvl=2 heading precedes it.
         <xsl:sequence select="if ($numPr)
                               then key('numbering-by-id', $numPr/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $numPr/w:ilvl/@w:val][last()]
                               else if ($style)
-                                   then key('numbering-by-id', $style/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $style/w:ilvl/@w:val][last()]
+                                   then if ($style/w:ilvl/@w:val) 
+                                        then key('numbering-by-id', $style/w:numId/@w:val, root($context))/w:lvlOverride[@w:ilvl = $style/w:ilvl/@w:val][last()]
+                                        else key('numbering-by-id', $style/w:numId/@w:val, root($context))/w:lvlOverride[w:lvl/w:pStyle/@w:val = $context/@role][last()]
                                    else ()"/>
       </xsl:otherwise>
     </xsl:choose>

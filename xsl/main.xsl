@@ -37,7 +37,9 @@
   
   <xsl:import href="http://transpect.io/xslt-util/xslt-based-catalog-resolver/xsl/resolve-uri-by-catalog.xsl"/>
   <xsl:param name="cat:missing-next-catalogs-warning" as="xs:string" select="'no'"/>
-  <xsl:variable name="catalog" as="document-node(element(cat:catalog))?" select="collection()[cat:catalog]"/>
+  <xsl:variable name="catalog" as="document-node(element(cat:catalog))?" select="collection($collection-uri)[cat:catalog]"/>
+  
+  <xsl:param name="collection-uri" as="xs:string?" select="()"/>
   
   <!-- ================================================================================ -->
   <!-- OUTPUT FORMAT -->

@@ -993,7 +993,7 @@
   </xsl:function>  
 
   <!-- Indexterm processing should happen after symbol processing.
-    Now this mode needs to have a collection() input including fontmaps and an XML catalog, too. -->
+    Now this mode needs to have a collection($collection-uri) input including fontmaps and an XML catalog, too. -->
   <xsl:template match="*[w:r/w:instrText]" mode="docx2hub:join-instrText-runs">
     <xsl:param name="nested-fldChars" as="document-node(element(dbk:nested-fldChars))" tunnel="yes"/>
     <xsl:copy copy-namespaces="no">

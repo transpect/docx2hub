@@ -21,7 +21,7 @@
   version="2.0" 
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x docx2hub exsl saxon fn tr mml">
 
-  <xsl:variable name="custom-font-maps" as="document-node(element(symbols))*" select="collection()[symbols]"/>
+  <xsl:variable name="custom-font-maps" as="document-node(element(symbols))*" select="collection($collection-uri)[symbols]"/>
 
   <xsl:function name="docx2hub:font-map-name" as="xs:string">
     <xsl:param name="font-map-doc" as="document-node(element(symbols))"/>

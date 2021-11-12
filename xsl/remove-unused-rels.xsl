@@ -14,19 +14,20 @@
 
   <xsl:param name="active"/>
   <xsl:param name="word-container-cleanup" select="'yes'"/>
-
+  <xsl:param name="collection-uri" as="xs:string?" select="()"/>
+  
   <xsl:variable name="former-ole-objects" as="attribute(docx2hub:rel-ole-id)*"
-                select="collection()[2]//mml:math/@docx2hub:rel-ole-id"/>
+                select="collection($collection-uri)[2]//mml:math/@docx2hub:rel-ole-id"/>
   
   <xsl:variable name="former-image-wmf-objects" as="attribute(docx2hub:rel-wmf-id)*" 
-                select="collection()[2]//mml:math/@docx2hub:rel-wmf-id"/>
+                select="collection($collection-uri)[2]//mml:math/@docx2hub:rel-wmf-id"/>
 
   <xsl:template match="rel:Relationship[$word-container-cleanup eq 'yes' ]
                                         [@Type = ('http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject', 
                                                   'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image')]                                                 
                                         [@Id = ($former-ole-objects, $former-image-wmf-objects)]
-                                        [rel:find-rel-element-by-ref(., collection()[2]/w:root)]
-                                        [not(rel:find-rel-element-by-non-mml-ref(., collection()[2]/w:root))]">
+                                        [rel:find-rel-element-by-ref(., collection($collection-uri)[2]/w:root)]
+                                        [not(rel:find-rel-element-by-non-mml-ref(., collection($collection-uri)[2]/w:root))]">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:attribute name="remove" select="'yes'"/>

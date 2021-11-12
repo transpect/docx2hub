@@ -239,6 +239,7 @@
       the language variant, e.g. 'en-GB'. Per default only the short language code
       is provided ('en').</p:documentation>
   </p:option>
+  <p:option name="terminate-on-unbalanced-instrTexts" required="false" select="'yes'"/>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -433,6 +434,7 @@
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-option name="hub-version" select="$hub-version"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
+    <p:with-param name="terminate-on-unbalanced-instrTexts" select="'no'"></p:with-param>
   </tr:xslt-mode>
 
   <p:viewport name="citavi-viewport"

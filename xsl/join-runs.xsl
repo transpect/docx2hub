@@ -26,6 +26,8 @@
   <!--<xsl:import href="http://transpect.io/xslt-util/hex/xsl/hex.xsl"/>-->
   <xsl:import href="http://transpect.io/xslt-util/calstable/xsl/functions.xsl"/>
   
+  <xsl:param name="terminate-on-unbalanced-instrTexts" select="'yes'" as="xs:string*"/>
+  
   <xsl:template match="/*" mode="docx2hub:join-runs" priority="-0.2">
     <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
     <xsl:copy>
@@ -891,7 +893,7 @@
             </xsl:for-each>
           </xsl:variable>
           <xsl:if test="exists($labeled-fldChars) and not(xs:integer($labeled-fldChars[last()]/@docx2hub:fldChar-level) eq 0)">
-            <xsl:message terminate="yes">
+            <xsl:message terminate="{$terminate-on-unbalanced-instrTexts}">
               <xsl:text>Non-balanced field char nesting detected in mode docx2hub:join-instrText-runs. "level" of last fldChar should be 0, but is: </xsl:text>
               <xsl:value-of select="$labeled-fldChars[last()]/@docx2hub:fldChar-level"/>
             </xsl:message>

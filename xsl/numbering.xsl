@@ -254,7 +254,6 @@ it, but not when an ilvl=2 heading precedes it.
 
   <xsl:function name="tr:insert-numbering" as="item()*">
     <xsl:param name="context" as="element(w:p)"/>
-    <!-- Do we process lvlOverrides? -->
     <xsl:variable name="lvl" select="tr:get-lvl-of-numbering($context)" as="element(w:lvl)?"/>
     <xsl:variable name="override" select="tr:get-lvl-override($context)/w:lvl" as="element(w:lvl)?"/>
     <xsl:choose>

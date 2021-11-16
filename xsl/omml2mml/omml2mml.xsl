@@ -3329,7 +3329,10 @@
     </mml:math>
   </xsl:template>
   
-  <xsl:template match="m:oMathPara/m:oMath[.//m:aln or ..//w:br]" mode="omml2mml">
+  <xsl:template match="m:oMathPara/m:oMath[exists(.//m:aln[empty(ancestor::m:m)] | ..//w:br[empty(ancestor::m:m)])]" 
+    mode="omml2mml">
+    <!-- this may lead to top-level mml:mtr instead of mml:math, see CHBeck_RSW/Y-400_W-BeckOKVAG_G-VAG_P-101.docx 
+         Avoiding this by not matching if m:aln or w:br is already in a table -->
     <mml:mtr>
       <mml:mtd>
         <xsl:apply-templates select="node()" mode="#current"/>

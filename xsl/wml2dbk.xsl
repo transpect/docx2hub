@@ -1672,7 +1672,7 @@
     </equation>
   </xsl:template>
   
-  <xsl:template match="m:oMathPara[.//m:aln or .//w:br]" mode="wml-to-dbk">
+  <xsl:template match="m:oMathPara[.//m:aln[not(ancestor::m:m)] or .//w:br]" mode="wml-to-dbk">
     <equation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
       <mml:math display="block">

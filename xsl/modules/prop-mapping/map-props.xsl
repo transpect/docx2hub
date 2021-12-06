@@ -1758,6 +1758,14 @@
       </xsl:for-each>
     </xsl:for-each-group>
   </xsl:template>
+  
+  <xsl:template match="w:footnote/w:p[descendant::w:fldChar][following-sibling::*[1][self::w:p[every $run in w:r satisfies $run[descendant::w:fldChar]]]]" mode="docx2hub:remove-redundant-run-atts">
+    <xsl:copy>
+      <xsl:apply-templates select="@*, node(), following-sibling::*[1][self::w:p[every $run in w:r satisfies $run[descendant::w:fldChar]]]/descendant::w:fldChar" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="w:footnote/w:p[descendant::w:fldChar][every $run in w:r satisfies $run[descendant::w:fldChar]]" mode="docx2hub:remove-redundant-run-atts"/>
 
   <xsl:template match="w:tbl" mode="docx2hub:remove-redundant-run-atts">      
     <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>

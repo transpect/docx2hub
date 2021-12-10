@@ -59,7 +59,9 @@
                (: empty paras which has first been inserted but later deleted :)
               or exists($para/self::w:p[not(w:ins or w:del)]
                                        [w:pPr/w:rPr/w:ins and w:pPr/w:rPr/w:del]
-                                       [xs:integer(w:pPr/w:rPr/w:del/@w:id) gt xs:integer(w:pPr/w:rPr/w:ins/@w:id)])" />
+                                       [xs:integer(w:pPr/w:rPr/w:del/@w:id) gt xs:integer(w:pPr/w:rPr/w:ins/@w:id)])
+              (: deleted empty paras / linebreaks :)
+              or exists($para/self::w:p[descendant::w:del][every $e in * satisfies $e[self::w:pPr[descendant::w:del]]])" />
   </xsl:function>
 
   <!-- changemarkup: remove deleted paragraphs -->

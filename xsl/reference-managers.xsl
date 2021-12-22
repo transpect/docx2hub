@@ -1048,23 +1048,25 @@
                          satisfies $bibentry//@xml:id = //*:biblioref[@docx2hub:citavi-rendered-linkend = //*:bibliography[@role = 'Citavi-formatted']/*:bibliomixed//*:anchor[@role = 'docx2hub:citavi-rendered']/@xml:id]/@linkends/tokenize(., '\s+')
                        ]" mode="docx2hub:join-runs"/>
 
+  <xsl:key name="bibentry-by-string" match="*:biblioentry" 
+    use="normalize-space(string-join(descendant::text(), ''))"/>
+
+  <xsl:variable name="biblioentry-ids" as="xs:string*"
+    select="for $bibentry in //*:biblioentry return generate-id($bibentry)"/>
+
   <xsl:template match="*:biblioentry/@xml:id" mode="docx2hub:join-runs">
     <xsl:variable name="normalized-text" as="xs:string"
       select="normalize-space(string-join(parent::*:biblioentry/descendant::text(), ''))"/>
-    <!-- do not link to redundant copies -->
+    
     <xsl:variable name="current-bibentry" as="element()"
       select="if(some $be in parent::*:biblioentry/preceding-sibling::*:biblioentry 
                  satisfies $be[normalize-space(string-join(descendant::text(), '')) = $normalized-text]) 
-                then //*:biblioentry[normalize-space(string-join(descendant::text(), '')) = $normalized-text][1] 
-                else .."/>
+                then key('bibentry-by-string', $normalized-text)[1] 
+                else parent::*:biblioentry"/>
     <xsl:attribute name="xml:id" 
       select="concat(
                 $docx2hub:bibref-id-prefix, 
-                index-of(
-                  for $bibentry in //*:biblioentry 
-                    return generate-id($bibentry), 
-                  generate-id($current-bibentry)
-                )
+                index-of($biblioentry-ids, generate-id($current-bibentry))
               )"/>
   </xsl:template>
   

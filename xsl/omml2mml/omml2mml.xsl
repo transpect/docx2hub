@@ -14,8 +14,9 @@
   xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" 
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:dbk="http://docbook.org/ns/docbook"
+  xmlns:css="http://www.w3.org/1996/css"
   version="2.0" 
-  exclude-result-prefixes="m w mml xs dbk">
+  exclude-result-prefixes="m w mml xs dbk css">
   
   <!-- %% Global Definitions -->
   <xsl:output indent="yes"/>
@@ -2676,8 +2677,8 @@
             <mml:maligngroup groupalign="left"/>
           </xsl:if>
           <mml:mo>
-            <xsl:if test="$context/w:rPr/w:color/@w:val">
-              <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+            <xsl:if test="$context/w:rPr/w:color/@w:val or $context/w:rPr/w:rStyle/@w:val">
+              <xsl:attribute name="mathcolor" select=" mml:get-color($context/w:rPr/w:color/@w:val, $context/w:rPr/w:rStyle/@w:val)"/>
             </xsl:if>
             <xsl:if test="$context/w:rPr/w:highlight/@w:val">
               <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
@@ -2763,8 +2764,8 @@
                                                       then 'mtext' 
                                                       else 'mi'"/>
               <xsl:element name="mml:{$local-name}">
-                <xsl:if test="$context/w:rPr/w:color/@w:val">
-                  <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                <xsl:if test="$context/w:rPr/w:color/@w:val or $context/w:rPr/w:rStyle/@w:val">
+                  <xsl:attribute name="mathcolor" select=" mml:get-color($context/w:rPr/w:color/@w:val, $context/w:rPr/w:rStyle/@w:val)"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:highlight/@w:val">
                   <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
@@ -2797,8 +2798,8 @@
                 <mml:maligngroup groupalign="left"/>
               </xsl:if>
               <mml:mo>
-                <xsl:if test="$context/w:rPr/w:color/@w:val">
-                  <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                <xsl:if test="$context/w:rPr/w:color/@w:val or $context/w:rPr/w:rStyle/@w:val">
+                  <xsl:attribute name="mathcolor" select=" mml:get-color($context/w:rPr/w:color/@w:val, $context/w:rPr/w:rStyle/@w:val)"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:highlight/@w:val">
                   <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
@@ -2833,8 +2834,8 @@
                 </xsl:call-template>
               </xsl:variable>
               <mml:mn>
-                <xsl:if test="$context/w:rPr/w:color/@w:val">
-                  <xsl:attribute name="mathcolor" select="$context/w:rPr/w:color/@w:val"/>
+                <xsl:if test="$context/w:rPr/w:color/@w:val or $context/w:rPr/w:rStyle/@w:val">
+                  <xsl:attribute name="mathcolor" select=" mml:get-color($context/w:rPr/w:color/@w:val, $context/w:rPr/w:rStyle/@w:val)"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:highlight/@w:val">
                   <xsl:attribute name="mathbackground" select="$context/w:rPr/w:highlight/@w:val"/>
@@ -3284,8 +3285,8 @@
         <xsl:attribute name="fontstyle">normal</xsl:attribute>
       </xsl:when>
     </xsl:choose>
-    <xsl:if test="w:rPr/w:color/@w:val">
-      <xsl:attribute name="mathcolor" select="w:rPr/w:color/@w:val"/>
+    <xsl:if test="w:rPr/w:color/@w:val or w:rPr/w:rStyle/@w:val">
+      <xsl:attribute name="mathcolor" select=" mml:get-color(w:rPr/w:color/@w:val, w:rPr/w:rStyle/@w:val)"/>
     </xsl:if>
     <xsl:if test="w:rPr/w:highlight/@w:val">
       <xsl:attribute name="mathbackground" select="w:rPr/w:highlight/@w:val"/>
@@ -3361,6 +3362,19 @@
                                     '&#xaf;&#x301;&#x302;&#x303;&#x304;&#x305;&#x306;&#x307;&#x308;&#x2dc;',
                                     '&#x203e;&#xb4;&#x5e;&#x7e;&#x203e;&#x203e;&#x2d8;&#x2d9;&#xa8;&#x7e;'
                                     )"/>
+  </xsl:function>
+  
+  <xsl:function name="mml:get-color" as="xs:string?">
+    <xsl:param name="color-value" as="attribute(w:val)?"/>
+    <xsl:param name="style-name"  as="attribute(w:val)?"/>
+    <xsl:choose>
+      <xsl:when test="$color-value">
+        <xsl:attribute name="mathcolor" select="concat('#', $color-value)"/>
+      </xsl:when>
+      <xsl:when test="key('style-by-name', $style-name, $root)/@css:color">
+        <xsl:attribute name="mathcolor" select="key('style-by-name', $style-name, $root)/@css:color"/>
+      </xsl:when>
+    </xsl:choose>
   </xsl:function>
 
 </xsl:stylesheet>

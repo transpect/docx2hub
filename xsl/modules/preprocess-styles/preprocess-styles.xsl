@@ -48,7 +48,7 @@
       <xsl:with-param name="tc-pos" select="$tc-pos" tunnel="yes"/>
       <xsl:with-param name="tblsty" select="$tblSty" tunnel="yes"/>
       <xsl:with-param name="tblStylePr-name" tunnel="yes"
-                      select="docx2hub:active-cnf-style-name((w:tcPr/w:cnfStyle,parent::w:tr/w:trPr/w:cnfStyle)[1])"/>
+                      select="docx2hub:active-cnf-style-name((w:tcPr/w:cnfStyle,parent::w:tr/w:trPr/w:cnfStyle))"/>
     </xsl:next-match>
   </xsl:template>
 
@@ -166,7 +166,7 @@
   </xsl:template>
   
   <xsl:function name="docx2hub:active-cnf-style-name" as="xs:string*">
-    <xsl:param name="cnfStyle" as="element(w:cnfStyle)?"/>
+    <xsl:param name="cnfStyle" as="element(w:cnfStyle)*"/>
     <xsl:choose>
       <xsl:when test="$cnfStyle/@w:firstRowFirstColumn = ('1', 'yes')">
         <xsl:sequence select="'nwCell'"/>

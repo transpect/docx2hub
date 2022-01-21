@@ -3365,11 +3365,11 @@
   </xsl:function>
   
   <xsl:function name="mml:get-color" as="xs:string?">
-    <xsl:param name="color-value" as="attribute(w:val)?"/>
+    <xsl:param name="color-value" as="attribute(w:val)*"/>
     <xsl:param name="style-name"  as="attribute(w:val)?"/>
     <xsl:choose>
       <xsl:when test="$color-value">
-        <xsl:attribute name="mathcolor" select="concat('#', $color-value)"/>
+        <xsl:attribute name="mathcolor" select="concat('#', $color-value[last()])"/>
       </xsl:when>
       <xsl:when test="key('style-by-name', $style-name, $root)/@css:color">
         <xsl:attribute name="mathcolor" select="key('style-by-name', $style-name, $root)/@css:color"/>

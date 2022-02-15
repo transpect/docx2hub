@@ -40,7 +40,8 @@
                 <xsl:apply-templates select="@srcpath, ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
                   <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
                 </xsl:apply-templates>
-                <xsl:comment select="."/>
+                <xsl:apply-templates mode="wml-to-dbk"/>
+                <!--<xsl:comment select="."/>-->
               </biblioref>
             </xsl:when>
             <xsl:otherwise>
@@ -48,7 +49,8 @@
                 <xsl:apply-templates select="@srcpath, ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
                   <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
                 </xsl:apply-templates>
-                <xsl:comment select="."/>
+                <xsl:apply-templates mode="wml-to-dbk"/>
+                <!--<xsl:comment select="."/>-->
               </biblioref>
             </xsl:otherwise>
           </xsl:choose>
@@ -60,19 +62,22 @@
             select="replace(@fldArgs, '^.*&#34;#?(_CTVL[^&#34;]+)&#34;.*$', '$1')"/>
           <biblioref docx2hub:citavi-rendered-linkend="{$target}">
             <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk"/>
-            <xsl:comment select="."/>
+            <xsl:apply-templates mode="wml-to-dbk"/>
+            <!--<xsl:comment select="."/>-->
           </biblioref>
         </xsl:for-each>
       </xsl:when>
       <xsl:when test="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val">
         <biblioref>
           <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk"/>
-          <xsl:comment select="."/>
+          <xsl:apply-templates mode="wml-to-dbk"/>
+          <!--<xsl:comment select="."/>-->
         </biblioref>    
       </xsl:when>
       <xsl:when test="$citavi-xml">
         <biblioref linkends="{$citavi-xml/Entries/Entry/ReferenceId/concat('_', .)}">
-          <xsl:comment select="."/>
+          <xsl:apply-templates mode="wml-to-dbk"/>
+          <!--<xsl:comment select="."/>-->
         </biblioref>
       </xsl:when>
       <xsl:otherwise>

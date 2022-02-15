@@ -1021,7 +1021,8 @@
     </biblioentry>
   </xsl:template>
   <xsl:template match="*:citation/@docx2hub:citavi-rendered-linkend" mode="docx2hub:join-runs"/>
-  <xsl:template match="*:anchor[@role = 'docx2hub:citavi-rendered']" mode="docx2hub:join-runs"/>
+  <xsl:template match="*:citation/*:anchor[@xml:id/starts-with(., '_CTVP001')]
+                       | *:anchor[@role = 'docx2hub:citavi-rendered']" mode="docx2hub:join-runs"/>
 
   <xsl:template match="*:bibliography[@role = 'Citavi-formatted'][exists(*:bibliomixed//*:anchor[starts-with(@xml:id, '_CTVL')])]
                        [

@@ -1504,6 +1504,16 @@
   runs that otherwise contain w:instrText, preventing adjacent w:instrText runs from being merged -->
   <xsl:template match="w:lastRenderedPageBreak" mode="docx2hub:remove-redundant-run-atts"/>
   
+  <xsl:template match="w:r[count(*) = 1][w:instrText[. = '\']]
+                          [following-sibling::*[1]/self::w:r/w:instrText[matches(., '[&quot;&#x201c;-&#x201e;]')]]" 
+                mode="docx2hub:remove-redundant-run-atts">
+    <!-- https://redmine.le-tex.de/issues/12022 -->
+    <xsl:copy>
+      <xsl:apply-templates select="following-sibling::*[1]/(@css:* | @xml:lang)" mode="#current"/>
+      <xsl:apply-templates select="@*[not(matches(name(), '^(css:|xml:lang)'))], node()" mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template name="docx2hub:nest-field-functions" as="document-node()">
     <xsl:param name="input" as="document-node()"/><!-- containing raw w:fldChar or nested docx2hub:field-function -->
     <xsl:param name="iteration" as="xs:integer" select="1"/>

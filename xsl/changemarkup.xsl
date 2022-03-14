@@ -67,7 +67,7 @@
   <!-- changemarkup: remove deleted paragraphs -->
   <xsl:template mode="docx2hub:apply-changemarkup"
     match="w:p[docx2hub:is-changemarkup-removed-para(.)]">
-    <xsl:message select="."/>
+<!--    <xsl:message select="."/>-->
     <xsl:if test=". is parent::w:tc/w:p[1]">
       <!-- Word file will be corrupt without w:p in w:tc -->
       <w:p/>

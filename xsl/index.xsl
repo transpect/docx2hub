@@ -93,10 +93,12 @@
       <xsl:for-each-group select="$primary-etc/node()" group-starting-with="dbk:sep">
         <xsl:variable name="pos" as="xs:integer" select="position()"/>
         <xsl:if test="normalize-space(string-join(current-group(), ''))">
+          <xsl:variable name="sortkey-sep" 
+                        select="(current-group()/self::dbk:sortkey[empty(ancestor::XE//dbk:flag[. >> fn:current()])])[1]" 
+                        as="element(dbk:sortkey)*"/>
           <xsl:variable name="prelim" as="document-node(element(*))">
             <xsl:document>
               <xsl:element name="{$primary-secondary-etc[$pos]}">
-                <xsl:variable name="sortkey-sep" select="(current-group()/self::dbk:sortkey)[1]" as="element(dbk:sortkey)?"/>
                 <xsl:variable name="sortas" as="node()*" select="current-group()[. >> $sortkey-sep]"/>
                 <xsl:variable name="term" as="node()*" select="current-group()[not(self::dbk:sep)][not(. >> $sortkey-sep)]"/>
                 <xsl:if test="exists(current-group()[1][self::dbk:inlineequation or self::dbk:equation]|$sortas)">
@@ -106,7 +108,9 @@
               </xsl:element>  
             </xsl:document>
           </xsl:variable>  
-          <xsl:apply-templates select="$prelim" mode="wml-to-dbk_normalize-space"/>
+          <xsl:apply-templates select="$prelim" mode="wml-to-dbk_normalize-space">
+            <xsl:with-param name="real-sortkeys" as="element(dbk:sortkey)*" tunnel="yes" select="$sortkey-sep"/>
+          </xsl:apply-templates>
         </xsl:if>
       </xsl:for-each-group>
       <xsl:variable name="see-flag" as="element(dbk:flag)?" select="dbk:flag[. = '\t']"/>
@@ -156,7 +160,12 @@
   
   <xsl:template match="dbk:phrase/@css:*[. = 'normal']" mode="wml-to-dbk_normalize-space"/>
 
-  <xsl:template match="dbk:sortkey[not(node())]" mode="wml-to-dbk_normalize-space"/>
+  <xsl:template match="dbk:sortkey[not(node())]" mode="wml-to-dbk_normalize-space">
+    <xsl:param name="real-sortkeys" as="element(dbk:sortkey)*" tunnel="yes"/>
+    <xsl:if test="empty($real-sortkeys intersect .)">
+      <xsl:text>;</xsl:text>
+    </xsl:if>
+  </xsl:template>
 
   <xsl:template match="*[@docx2hub:contains-markup]" mode="wml-to-dbk" priority="1.5">
     <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_051', 'WRN', 'wml-to-dbk', 

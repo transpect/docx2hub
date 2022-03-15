@@ -59,7 +59,9 @@
           <xsl:variable name="target" 
             select="replace(@fldArgs, '^.*&#34;#?(_CTVL[^&#34;]+)&#34;.*$', '$1')"/>
           <citation docx2hub:citavi-rendered-linkend="{$target}">
-            <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk"/>
+            <xsl:apply-templates select="ancestor::w:sdt[1]/w:sdtPr/w:tag/@w:val" mode="wml-to-dbk">
+              <xsl:with-param name="ref-pos" as="xs:integer" select="position()" tunnel="no"/>
+            </xsl:apply-templates>
             <xsl:apply-templates mode="wml-to-dbk"/>
           </citation>
         </xsl:for-each>
@@ -1023,6 +1025,8 @@
   <xsl:template match="*:citation/@docx2hub:citavi-rendered-linkend" mode="docx2hub:join-runs"/>
   <xsl:template match="*:citation/*:anchor[@xml:id/starts-with(., '_CTVP001')]
                        | *:anchor[@role = 'docx2hub:citavi-rendered']" mode="docx2hub:join-runs"/>
+
+  <xsl:template match="*:citation/*:anchor[@role = 'docx2hub:citavi-rendered'][@xml:id/starts-with(., '_CTVP001')]" mode="docx2hub:join-runs"/>
 
   <xsl:template match="*:bibliography[@role = 'Citavi-formatted'][exists(*:bibliomixed//*:anchor[starts-with(@xml:id, '_CTVL')])]
                        [

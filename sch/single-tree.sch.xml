@@ -94,6 +94,15 @@
       </report>
     </rule>
   </pattern>
+  
+  <pattern id="utf-8-softhyphen">
+    <rule context="*:t[matches(.,'­')]">
+      <report id="utf-8_softhyphen" role="warning" diagnostics="utf-8_softhyphen_de" test="true()">
+        <span class="srcpath"><xsl:value-of select="@srcpath"/></span>
+        UTF-8 character 'SOFT HYPHEN' (U+00AD) found. To assert correct display it is recommended to insert the character using the word functionality. 
+      </report>
+    </rule>
+  </pattern>
 
   <diagnostics>
     <diagnostic id="multipe_formattings_for_tablecolumnhead_de" xml:lang="de">
@@ -124,6 +133,9 @@
     <diagnostic id="update_field_function_de" xml:lang="de">
       In diesem Dokument wurden die Feldfunktionen nicht aktualisiert. Um eine korrekte Konvertierung zu gewährleisten, 
       aktualisieren Sie bitte die Feldfunktionen vor der Konvertierung.
+    </diagnostic>
+    <diagnostic id="utf-8_softhyphen_de" xml:lang="de">
+      Es wurde das UTF-8-Zeichen 'SOFT HYPHEN' (U+00AD) gefunden. Um die korrekte Darstellung zu gewährleisten, fügen Sie das Zeichen mithilfe der Wordfunktionalität in das Dokument ein oder ersetzen Sie es durch ein anderes bindestrichartiges Zeichen bspw. Trennstrich '‐' (U+2010) oder geschützten Trennstrich '‑' (U+2011).
     </diagnostic>
   </diagnostics>
 

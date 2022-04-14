@@ -42,6 +42,10 @@
         <prop name="v:shape/@strokeweight" type="linear" target-name="strokeweight"/>
         <prop name="v:shape/@style" type="linear" target-name="style"/>
         <prop name="v:shape/@type" />
+        <prop name="w10:bordertop" type="docx-border" />
+        <prop name="w10:borderbottom" type="docx-border" />
+        <prop name="w10:borderright" type="docx-border" />
+        <prop name="w10:borderleft" type="docx-border" />
         <prop name="w:adjustRightInd" />
       	<prop name="w:autoRedefine"/>
         <prop name="w:autoSpaceDE" />

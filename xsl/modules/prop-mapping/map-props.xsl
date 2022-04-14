@@ -527,6 +527,7 @@
                        | w:u/@w:color
                        | w:spacing/@* 
                        | v:shape/@* 
+                       | v:shape/*
                        | wp:extent/@*
                        | m:oMathParaPr/*
                        " 
@@ -740,20 +741,36 @@
         <!-- According to § 17.3.1.5 and other sections, the top/bottom borders don't apply
              if a set of paras has identical border settings. The between setting should be used instead.
              TODO -->
-        <xsl:variable name="orientation" select="replace(../@name, '^.+:', '')" as="xs:string"/>
-        <docx2hub:attribute name="css:border-{$orientation}-style">
-          <xsl:value-of select="docx2hub:border-style($val/@w:val)"/>
-        </docx2hub:attribute>
-        <xsl:if test="$val/@w:val and not($val/@w:val = ('nil','none'))">
-          <docx2hub:attribute name="css:border-{$orientation}-width">
-            <xsl:value-of select="docx2hub:pt-border-size($val/@w:sz)"/>
-          </docx2hub:attribute>
-          <xsl:if test="$val/@w:color ne 'auto'">
-            <docx2hub:attribute name="css:border-{$orientation}-color">
-              <xsl:value-of select="docx2hub:color($val/@w:color)"/>
+        <xsl:choose>
+          <xsl:when test="matches(../@name,'w10:border')">
+            <xsl:variable name="orientation" select="replace(../@name, 'w10:border', '')" as="xs:string"/>
+            <docx2hub:attribute name="css:border-{$orientation}-style">
+              <xsl:value-of select="docx2hub:border-style($val/@type)"/>
             </docx2hub:attribute>
-          </xsl:if>
-        </xsl:if>
+            <xsl:if test="$val/@type and not($val/@type = ('nil','none'))">
+              <docx2hub:attribute name="css:border-{$orientation}-width">
+                <xsl:value-of select="docx2hub:pt-border-size($val/@width)"/>
+              </docx2hub:attribute>
+            </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:variable name="orientation" select="replace(../@name, '^.+:', '')" as="xs:string"/>
+            <docx2hub:attribute name="css:border-{$orientation}-style">
+              <xsl:value-of select="docx2hub:border-style($val/@w:val)"/>
+            </docx2hub:attribute>
+            <xsl:if test="$val/@w:val and not($val/@w:val = ('nil','none'))">
+              <docx2hub:attribute name="css:border-{$orientation}-width">
+                <xsl:value-of select="docx2hub:pt-border-size($val/@w:sz)"/>
+              </docx2hub:attribute>
+              <xsl:if test="$val/@w:color ne 'auto'">
+                <docx2hub:attribute name="css:border-{$orientation}-color">
+                  <xsl:value-of select="docx2hub:color($val/@w:color)"/>
+                </docx2hub:attribute>
+              </xsl:if>
+            </xsl:if>
+          </xsl:otherwise>
+        </xsl:choose>
+        
       </xsl:when>
       
       <xsl:when test=". eq 'docx-padding'">

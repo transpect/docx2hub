@@ -527,7 +527,10 @@
                        | w:u/@w:color
                        | w:spacing/@* 
                        | v:shape/@* 
-                       | v:shape/*
+                       | v:shape/*:bordertop
+                       | v:shape/*:borderbottom
+                       | v:shape/*:borderright
+                       | v:shape/*:borderleft
                        | wp:extent/@*
                        | m:oMathParaPr/*
                        " 

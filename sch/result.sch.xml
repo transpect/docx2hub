@@ -90,7 +90,32 @@
     </rule>
   </pattern>
 
+  <pattern id="docx_carriage_returns">
+    <rule context="dbk:phrase[@role='cr']">
+      <report test="true()" id="docx_carriage_return" diagnostics="docx_carriage_return_de" role="warning">
+        <span class="srcpath"><xsl:value-of select="concat($base-dir, (@srcpath, ancestor::*[@srcpath][1]/@srcpath)[1])"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">A carriage return character used</span>
+        Instead of a normal paragraph, a carriage return character was used here, possibly from copying contents from other files. 
+        This cannot be seen in Word because it is displayed in the same way. 
+        Nonetheless, it is not handled in the same way and no seperate paragraph is generated. Ignore this message if that is a wanted behaviour, 
+        the control character is mapped to a phrase.
+       <br xmlns="http://www.w3.org/1999/xhtml"/>
+        If separate paraphraphs were intended, delete the character and the enter button instead.
+      </report>
+    </rule>
+  </pattern>
+
   <diagnostics>
+    <diagnostic id="docx_carriage_return_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Carriage Return Zeichen verwendet</span>
+      An dieser Stelle wurde ein Carriage-Return-Zeichen verwendet, z.B. durch das Kopieren von Inhalten aus anderen Dokumenten. 
+      In Word sieht man den Unterschied nicht, aber es handelt sich nicht um eine echte Absatzmarke, sondern ein spezielles Steuerzeichen. 
+      Bei der Konvertierung werden keine eigenen Absätze erzeugt. Falls das so gewollt ist, ignorieren Sie die Meldung. 
+      <br xmlns="http://www.w3.org/1999/xhtml"/>
+      Sollen separate Absätze erzeugt werden, löschen Sie das Zeichen bitte und trennen die Absätze regulär durch Eingabe der Enter-Taste.
+    </diagnostic>
     <diagnostic id="docx_referenced-image_de" xml:lang="de">
       <span class="category">docx</span>
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Referenziertes Bild</span>

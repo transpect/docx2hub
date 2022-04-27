@@ -1626,7 +1626,9 @@
   <xsl:template match="w:cr" mode="wml-to-dbk">
     <!-- carriage return -->
     <!-- ggf. als echte Absatzmarke behandeln. Dazu muss ein nachgelagerter neuer mode eingefuehrt werden. -->
-    <phrase role="cr"/>
+    <phrase role="cr">
+      <xsl:apply-templates select="../@srcpath" mode="#current"/>
+    </phrase>
   </xsl:template>
 
   <xsl:template match="w:softHyphen" mode="wml-to-dbk">

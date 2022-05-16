@@ -580,9 +580,7 @@
                        | @w:rsidRPr
                        | @w:rsidRDefault
                        | @w:rsidP
-                       | @w:rsidTr
-                       | @w14:paraId
-                       | @w14:textId"
+                       | @w:rsidTr"
     mode="docx2hub:add-props" />
 
   <xsl:function name="docx2hub:propkey" as="xs:string">

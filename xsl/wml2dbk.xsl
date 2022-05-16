@@ -15,6 +15,7 @@
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0" 
   exclude-result-prefixes = "w xs dbk fn r rel tr m mc docx2hub v wp">
@@ -47,6 +48,7 @@
   <xsl:param name="charmap-policy" select="'unicode'" as="xs:string">
     <!-- Values: unicode or xs:string. For xs:string, mapping attribute in the fashion @char-{xs:string} must exist in the symbols file -->
   </xsl:param>
+  <xsl:param name="keep-paraid" select="'false'"/>
   
   <xsl:variable name="docx2hub:discard-alternate-choices" as="xs:boolean"
     select="$discard-alternate-choices = ('yes', 'true', '1')"/>
@@ -725,6 +727,16 @@
       </xsl:if>
       <xsl:if test="w:r[last()][count(*)=1][w:br[@w:type='page']] and count(w:r[count(*)=1][w:br[@w:type='page']]) gt 1">
         <xsl:attribute name="css:page-break-after" select="'always'"/>
+      </xsl:if>
+      <xsl:if test="@w14:paraId and $keep-paraid=('yes','true')">
+        <xsl:element name="anchor">
+          <xsl:attribute name="role" select="'w14:paraId'"/>
+          <xsl:attribute name="xml:id" select="concat('paraId_',@w14:paraId)"/>
+        </xsl:element>
+        <xsl:element name="anchor">
+          <xsl:attribute name="role" select="'w14:textId'"/>
+          <xsl:attribute name="xml:id" select="concat('textId_',@w14:textId)"/>
+        </xsl:element>
       </xsl:if>
       <xsl:if test="not(@docx2hub:removable='true')">
         <xsl:sequence select="tr:insert-numbering(.)"/>

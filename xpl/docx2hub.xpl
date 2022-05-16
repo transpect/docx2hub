@@ -240,6 +240,9 @@
       is provided ('en').</p:documentation>
   </p:option>
   <p:option name="terminate-on-unbalanced-instrTexts" required="false" select="'yes'"/>
+  <p:option name="keep-paraid" required="false" select="'false'">
+    <p:documentation>Keep Word created w14:paraId and w14:textId</p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -586,6 +589,7 @@
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="field-vars" select="$field-vars"/>
     <p:with-param name="charmap-policy" select="$charmap-policy"/>
+    <p:with-param name="keep-paraid" select="$keep-paraid"/>
   </tr:xslt-mode>
 
   <p:sink/>

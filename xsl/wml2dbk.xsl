@@ -1785,6 +1785,7 @@
   </xsl:template>
   
   <xsl:template match="w:sdt[w:sdtPr/w:alias/@w:val or w:sdtPr/w:citation]
+                            [not(ancestor::*:CITAVI_XML)]
                             [empty(.//*:CITAVI_XML)]" mode="wml-to-dbk tables">
     <xsl:element name="blockquote">
       <xsl:attribute name="role" select="if (w:sdtPr/w:citation) then 'hub:citation' else w:sdtPr/w:alias/@w:val"/>

@@ -256,8 +256,10 @@ it, but not when an ilvl=2 heading precedes it.
     <xsl:param name="context" as="element(w:p)"/>
     <xsl:variable name="lvl" select="tr:get-lvl-of-numbering($context)" as="element(w:lvl)?"/>
     <xsl:variable name="override" select="tr:get-lvl-override($context)/w:lvl" as="element(w:lvl)?"/>
+<xsl:if test="exists($lvl)"><xsl:message select="'lvl: ', $lvl, ' override: ', $override"></xsl:message></xsl:if>
     <xsl:choose>
       <xsl:when test="exists($lvl) or exists($override)">
+<xsl:message select="'11111'"/>
         <xsl:if test="not($lvl/w:lvlText or $override/w:lvlText)">
           <xsl:call-template name="signal-error">
             <xsl:with-param name="error-code" select="'W2D_061'"/>
@@ -289,18 +291,23 @@ it, but not when an ilvl=2 heading precedes it.
                               else ($pPr-from-numPr, $style-atts[name() = $pPr-from-numPr/name()])"/>
         <xsl:sequence select="$immediate-first, $ad-hoc-atts[name() = $pPr-from-numPr/name()]"/>
         <xsl:apply-templates select="$context/dbk:tabs" mode="wml-to-dbk"/>
-        <phrase role="hub:identifier">
-          <xsl:sequence select="$rPr, $style-atts[name() = $rPr/name()], $ad-hoc-atts[name() = $rPr/name()]"/>
-          <xsl:if test="$rPr/self::attribute(docx2hub:map-from)">
-            <!-- If the list marker character was in a mapped font, the replacement font should appear here. 
-              Another unresolved issue might be: If the $style-atts @css:font-family is inherited from a
-              w:basedOn style, and if the numPr are attached to the current style, then we will see the
-              inherited font here instead of the numPr font. Not sure how Word behaves in that case. -->
-            <xsl:sequence select="$rPr/self::attribute(docx2hub:map-from), $rPr/self::attribute(css:font-family)"/>
-          </xsl:if>
-          <xsl:value-of select="tr:get-identifier($context,$lvl)"/>
-        </phrase>
-        <tab role="docx2hub:generated"/>
+        <xsl:variable name="identifier" as="element()+">
+          <phrase role="hub:identifier">
+            <xsl:sequence select="$rPr, $style-atts[name() = $rPr/name()], $ad-hoc-atts[name() = $rPr/name()]"/>
+            <xsl:if test="$rPr/self::attribute(docx2hub:map-from)">
+              <!-- If the list marker character was in a mapped font, the replacement font should appear here. 
+                Another unresolved issue might be: If the $style-atts @css:font-family is inherited from a
+                w:basedOn style, and if the numPr are attached to the current style, then we will see the
+                inherited font here instead of the numPr font. Not sure how Word behaves in that case. -->
+              <xsl:sequence select="$rPr/self::attribute(docx2hub:map-from), $rPr/self::attribute(css:font-family)"/>
+            </xsl:if>
+            <xsl:value-of select="tr:get-identifier($context,$lvl)"/>
+          </phrase>
+          <tab role="docx2hub:generated"/>
+        </xsl:variable>
+        <xsl:if test="$identifier[self::phrase][exists(*) or matches(., '\S')]">
+          <xsl:sequence select="$identifier"/>
+        </xsl:if>
       </xsl:when>
       <xsl:otherwise>
         <!--KW 11.6.13: mode hart reingeschrieben wegen null pointer exception-->

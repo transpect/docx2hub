@@ -346,7 +346,7 @@
                                                                               [. &lt;&lt; $innermost-nesting-end/..]"/>
               <xsl:choose>
                 <xsl:when test="exists($ffargs)"><!-- no error -->
-                  <xsl:element name="{replace($ffname, '\\', '')}" xmlns="">
+                  <xsl:element name="{translate($ffname, '\:', '')}" xmlns="">
                     <xsl:attribute name="fldArgs" select="$ffargs"/>
                     <xsl:copy-of select="$inner/@css:*, $inner/@role"/>
                     <xsl:if test="exists($instr-text[1]/*) and not($ffname = 'NOTEREF')">

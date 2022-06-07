@@ -106,7 +106,31 @@
     </rule>
   </pattern>
 
+  <pattern id="docx_broken_indexterms">
+    <rule context="dbk:indexterm">
+     <let name="text" value="(preceding-sibling::*[normalize-space()][1], following-sibling::*[normalize-space()][1])[1]"/>
+      <assert test="exists(*)" id="docx_broken_indexterm" diagnostics="docx_broken_indexterm_de" role="warning">
+        <span class="srcpath"><xsl:value-of 
+          select="for $s in tokenize(ancestor-or-self::*[@srcpath][1]/@srcpath, '\s+')
+                  return concat($base-dir, $s)"/></span>
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Empty or broken index entry</span>
+                An empty indexterm was created, please check input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/> 
+        The following text before or after the index entry might give you a hint where the error occured: 
+       <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
+      </assert>
+    </rule>
+  </pattern>
+
   <diagnostics>
+      <diagnostic id="docx_broken_indexterm_de" xml:lang="de">
+        <span class="category">docx</span>
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Leerer oder unvollständiger Indexeintrag</span>
+        Ein leerer Indexeintrag wurde generiert. Möglicherweise ist er im Dokument nicht richtig erfasst. Bitte prüfen Sie die Stelle.
+        <br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+        Folgender Text, der vor oder nach dem Indexeintrag stehen kann, soll Ihnen helfen die Stelle leichter zu finden: 
+        <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
+      </diagnostic>
     <diagnostic id="docx_carriage_return_de" xml:lang="de">
       <span class="category">docx</span>
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Carriage Return Zeichen verwendet</span>

@@ -260,7 +260,7 @@
             <xsl:choose>
               <xsl:when test="$number = 'NaN'">
                 <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
-                        concat('Could not map char ', string-to-codepoints($sym), ' in font ', $font, ' (message b)'))"/>
+                        concat('Could not map char ', string-join(for $i in string-to-codepoints($sym) return xs:string($i), ''), ' in font ', $font, ' (message b)'))"/>
                 <xsl:call-template name="create-replacement">
                   <xsl:with-param name="font" select="$font"/>
                   <xsl:with-param name="number" select="$sym"/>
@@ -273,7 +273,7 @@
           </xsl:when>
           <xsl:otherwise>
             <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_601', 'WRN', 'wml-to-dbk', 
-                    concat('Could not map char ', string-to-codepoints($sym), ' in font ', $font, ' (message a)'))"/>
+                    concat('Could not map char ', string-join(for $i in string-to-codepoints($sym) return xs:string($i), ''), ' in font ', $font, ' (message a)'))"/>
             <xsl:call-template name="create-replacement">
               <xsl:with-param name="font" select="$font"/>
               <xsl:with-param name="number" select="$sym"/>

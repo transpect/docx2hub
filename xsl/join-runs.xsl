@@ -590,7 +590,8 @@
   </xsl:template>
 
 
-  <xsl:template match="dbk:para[@docx2hub:removable]" mode="docx2hub:join-runs" priority="2"/>
+  <xsl:template match="dbk:para[@docx2hub:removable][not(dbk:anchor[@role eq 'end'][exists(key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm[@linkends])])]" mode="docx2hub:join-runs" priority="2"/>
+  <xsl:template match="dbk:para[dbk:anchor[@role eq 'end'][exists(key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm[@linkends])]]/@docx2hub:removable" mode="docx2hub:join-runs" priority="2"/>
 
   <xsl:template name="docx2hub_move-invalid-sidebar-elements">
     <xsl:for-each select=".//dbk:sidebar">

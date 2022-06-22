@@ -776,10 +776,14 @@
       
       <xsl:when test=". eq 'docx-padding'">
         <xsl:variable name="orientation" select="replace(../@name, '^.+:', '')" as="xs:string" />
-        <docx2hub:attribute name="css:padding-{$orientation}">
-          <!-- LibreOffice produced a padding of -2 dxa, so check for negativity -->
-          <xsl:value-of select="if (starts-with($val/@w:w, '-')) then '0' else docx2hub:pt-length($val/@w:w)" />
-        </docx2hub:attribute>
+        <xsl:if test="not($val/@w:type = ('nil', 'auto', 'pct'))">  
+          <!-- https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.wordprocessing.bottommargin?view=openxml-2.8.1 :
+                »This value is specified in the units applied via its type attribute. Any width value of type pct or auto for this element shall be ignored.«  -->   
+          <docx2hub:attribute name="css:padding-{$orientation}">
+            <!-- LibreOffice produced a padding of -2 dxa, so check for negativity -->
+            <xsl:value-of select="if (starts-with($val/@w:w, '-')) then '0' else docx2hub:pt-length($val/@w:w)" />
+          </docx2hub:attribute>
+        </xsl:if>
       </xsl:when>
 
       <xsl:when test=". eq 'docx-charstyle'">

@@ -981,8 +981,9 @@
              that btLr et al. have been dropped in Wordprocessing ML. -->
         <xsl:choose>
           <xsl:when test="$val/@w:val = ('tbLr', 'btLr')">
-            <!-- preliminary value – only works in IE, while the CSS3 writing mode prop values don’t work -->
-            <docx2hub:attribute name="css:writing-mode">bt-lr</docx2hub:attribute>
+            <!-- preliminary value – only works in IE, while the CSS3 writing mode prop values don’t work
+                 23-06-2022: changed value from bt-lr to valid CSS style vertical-lr -->
+            <docx2hub:attribute name="css:writing-mode">vertical-lr</docx2hub:attribute>
           </xsl:when>
           <xsl:when test="matches($val/@w:val, 'tb', 'i')">
             <!-- looks funny -->

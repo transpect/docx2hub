@@ -980,10 +980,15 @@
              the value 'btLr' doesn’t appear in the table in that section. In Annex N.1 on p. 5563, they mention
              that btLr et al. have been dropped in Wordprocessing ML. -->
         <xsl:choose>
-          <xsl:when test="$val/@w:val = ('tbLr', 'btLr')">
+          <xsl:when test="$val/@w:val = 'tbLr'">
             <!-- preliminary value – only works in IE, while the CSS3 writing mode prop values don’t work
                  23-06-2022: changed value from bt-lr to valid CSS style vertical-lr -->
             <docx2hub:attribute name="css:writing-mode">vertical-lr</docx2hub:attribute>
+          </xsl:when>
+          <xsl:when test="$val/@w:val = 'btLr'">
+            <!-- preliminary value – only works in IE, while the CSS3 writing mode prop values don’t work
+                 24-06-2022: changed value from bt-lr to valid CSS style sideways-lr -->
+            <docx2hub:attribute name="css:writing-mode">sideways-lr</docx2hub:attribute>
           </xsl:when>
           <xsl:when test="matches($val/@w:val, 'tb', 'i')">
             <!-- looks funny -->

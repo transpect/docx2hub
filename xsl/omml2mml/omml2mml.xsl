@@ -1708,13 +1708,14 @@
     </mml:msubsup>
   </xsl:template>
 
+  <xsl:variable name="math-arrows" as="xs:string+"
+                select="('→', '⇒', '←', '⇐', '↔', '⇔')"/>
+
   <xsl:template match="m:groupChr" mode="omml2mml">
     <xsl:variable name="ndLastGroupChrPr" select="m:groupChrPr[last()]"/>
     <xsl:variable name="sLowerCasePos" select="translate($ndLastGroupChrPr/m:pos/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
-
     <xsl:variable name="sLowerCaseVertJc" select="translate($ndLastGroupChrPr/m:vertJc/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
     <xsl:variable name="ndLastChr" select="$ndLastGroupChrPr/m:chr"/>
-
     <xsl:variable name="chr">
       <xsl:choose>
         <xsl:when test="$ndLastChr and (not($ndLastChr/@m:val) or string-length($ndLastChr/@m:val) = 0)"/>
@@ -1742,6 +1743,9 @@
           <xsl:otherwise>
             <mml:munder accentunder="false">
               <mml:mo>
+                <xsl:if test="$chr = $math-arrows">
+                  <xsl:attribute name="stretchy" select="'true'"/>
+                </xsl:if>
                 <xsl:value-of select="$chr"/>
               </mml:mo>
               <mml:mrow>
@@ -1755,6 +1759,9 @@
         <xsl:choose>
           <xsl:when test="$sLowerCaseVertJc = 'bot'">
             <mml:mover accent="false">
+              <xsl:if test="$chr = $math-arrows">
+                <xsl:attribute name="stretchy" select="'true'"/>
+              </xsl:if>
               <mml:mo>
                 <xsl:value-of select="$chr"/>
               </mml:mo>

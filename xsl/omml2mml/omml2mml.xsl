@@ -1709,7 +1709,18 @@
   </xsl:template>
 
   <xsl:variable name="math-arrows" as="xs:string+"
-                select="('→', '⇒', '←', '⇐', '↔', '⇔')"/>
+                select="('&#x20d0;',
+                         '&#x20d1;', 
+                         '&#x20d7;', 
+                         '&#x20e1;', 
+                         '&#x2190;', 
+                         '&#x2192;', 
+                         '&#x2194;',
+                         '&#x21cb;',
+                         '&#x21cc;',
+                         '&#x21d0;', 
+                         '&#x21d2;', 
+                         '&#x21d4;')"/>
 
   <xsl:template match="m:groupChr" mode="omml2mml">
     <xsl:variable name="ndLastGroupChrPr" select="m:groupChrPr[last()]"/>

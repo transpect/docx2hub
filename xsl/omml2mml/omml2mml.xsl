@@ -1741,7 +1741,7 @@
             </mml:mover>
           </xsl:when>
           <xsl:otherwise>
-            <mml:munder accentunder="false">
+            <mml:mover accentunder="false">
               <mml:mrow>
                 <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
               </mml:mrow>
@@ -1751,7 +1751,7 @@
                 </xsl:if>
                 <xsl:value-of select="$chr"/>
               </mml:mo>
-            </mml:munder>
+            </mml:mover>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>

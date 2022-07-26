@@ -1742,15 +1742,15 @@
           </xsl:when>
           <xsl:otherwise>
             <mml:munder accentunder="false">
+              <mml:mrow>
+                <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
+              </mml:mrow>
               <mml:mo>
                 <xsl:if test="$chr = $math-arrows">
                   <xsl:attribute name="stretchy" select="'true'"/>
                 </xsl:if>
                 <xsl:value-of select="$chr"/>
               </mml:mo>
-              <mml:mrow>
-                <xsl:apply-templates select="m:e[1]" mode="omml2mml"/>
-              </mml:mrow>
             </mml:munder>
           </xsl:otherwise>
         </xsl:choose>

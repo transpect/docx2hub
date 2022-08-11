@@ -21,6 +21,10 @@
   <!-- %% Global Definitions -->
   <xsl:output indent="yes"/>
 
+  <xsl:param name="mathml-version" as="xs:string?"/>
+  <!-- MathML 3: leave empty.
+       MathML 4 Core: '4-core' (not full supported yet) -->
+
   <xsl:variable name="alpha-uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" as="xs:string"/>
   <xsl:variable name="alpha-lowercase" select="'abcdefghijklmnopqrstuvwxyz'" as="xs:string"/>
 
@@ -2001,6 +2005,41 @@
         </mml:mrow>
       </xsl:for-each>
     </mml:mfenced>
+  </xsl:template>
+  
+  <xsl:template match="m:d[$mathml-version eq '4-core']" mode="omml2mml" priority="2">
+    <xsl:variable name="current" select="." as="element(m:d)"/>
+    <!-- open: default is '(' for both OMML and MathML -->
+    <mml:mo>
+      <xsl:value-of select="(m:dPr[1]/m:begChr/@m:val, '(')[1]"/>
+    </mml:mo>
+    <!-- now write all the children. Put each one into an mrow
+			just in case it produces multiple runs, etc -->
+    <xsl:for-each select="m:e">
+      <mml:mrow>
+        <xsl:apply-templates select="." mode="omml2mml"/>
+      </mml:mrow>
+      <!-- separator: the default is ',' for MathML, and '|' for OMML -->
+      <xsl:choose>
+        <!-- Only one element to separate: no need for the separators attribute -->
+        <xsl:when test="count($current/m:e) = 1"/>
+        <!-- OMML default: | -->
+        <xsl:when test="not($current/m:dPr[1]/m:sepChr/@m:val) and not(position() eq last())">
+          <mml:mo>
+            <xsl:value-of select="'|'"/>
+          </mml:mo>
+        </xsl:when>
+        <xsl:when test="$current/m:dPr[1]/m:sepChr/@m:val and not(position() eq last())">
+          <mml:mo>
+            <xsl:value-of select="$current/m:dPr[1]/m:sepChr/@m:val"/>
+          </mml:mo>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:for-each>
+    <!-- close: default is ')' for both OMML and MathML -->
+    <mml:mo>
+      <xsl:value-of select="(m:dPr[1]/m:endChr/@m:val, ')')[1]"/>
+    </mml:mo>
   </xsl:template>
   
   

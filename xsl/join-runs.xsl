@@ -1318,7 +1318,7 @@
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
         <xsl:analyze-string select="$string" 
-          regex="(\\:|[:;{$quot-like-regex}]|\s\\[a-z]|\\[{$quot-like-regex}])">
+          regex="(\\:|[:;{$quot-like-regex}]|(\s|^)\\[a-z]|\\[{$quot-like-regex}])">
           <xsl:matching-substring>
             <xsl:choose>
               <xsl:when test=". = '\:'">
@@ -1353,11 +1353,15 @@
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:when>
-              <xsl:when test="matches(., '^\s\\[a-z]$')">
-                <xsl:value-of select="substring(., 1, 1)"/>
-                <flag>
-                  <xsl:value-of select="substring(., 2)"/>
-                </flag>
+              <xsl:when test="matches(., '^\s*\\[a-z]$')">
+                <xsl:analyze-string select="." regex="^(\s*)(\\[a-z])$">
+                  <xsl:matching-substring>
+                    <xsl:value-of select="regex-group(1)"/>
+                    <flag>
+                      <xsl:value-of select="regex-group(2)"/>
+                    </flag>    
+                  </xsl:matching-substring>
+                </xsl:analyze-string>
               </xsl:when>
             </xsl:choose>
           </xsl:matching-substring>

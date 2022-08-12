@@ -137,6 +137,12 @@
       </dl>
     </p:documentation>
   </p:option>
+  <p:option name="mml-version" select="''">
+    <p:documentation>
+      MathML 3: leave empty.
+      MathML 4 Core: '4-core' (not full supported yet)
+    </p:documentation>
+  </p:option>
   <p:option name="hub-version" select="'1.2'"/>
   <p:option name="fail-on-error" select="'no'"/>
   <p:option name="field-vars" select="'no'"/>
@@ -590,6 +596,7 @@
     <p:with-param name="field-vars" select="$field-vars"/>
     <p:with-param name="charmap-policy" select="$charmap-policy"/>
     <p:with-param name="keep-paraid" select="$keep-paraid"/>
+    <p:with-param name="mml-version" select="$mml-version"/>
   </tr:xslt-mode>
 
   <p:sink/>

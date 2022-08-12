@@ -21,9 +21,9 @@
   <!-- %% Global Definitions -->
   <xsl:output indent="yes"/>
 
-  <xsl:param name="mathml-version" as="xs:string?"/>
-  <!-- MathML 3: leave empty.
-       MathML 4 Core: '4-core' (not full supported yet) -->
+  <xsl:param name="mml-version" select="''" as="xs:string"/>
+  <!-- MathML 3: default, leave $mm-version empty.
+       MathML 4 Core: '4-core' (not full supported yet) -->  
 
   <xsl:variable name="alpha-uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" as="xs:string"/>
   <xsl:variable name="alpha-lowercase" select="'abcdefghijklmnopqrstuvwxyz'" as="xs:string"/>
@@ -2007,7 +2007,7 @@
     </mml:mfenced>
   </xsl:template>
   
-  <xsl:template match="m:d[$mathml-version eq '4-core']" mode="omml2mml" priority="2">
+  <xsl:template match="m:d[$mml-version eq '4-core']" mode="omml2mml" priority="2">
     <xsl:variable name="current" select="." as="element(m:d)"/>
     <!-- open: default is '(' for both OMML and MathML -->
     <mml:mo>

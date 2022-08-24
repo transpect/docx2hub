@@ -88,7 +88,7 @@
     <xsl:variable name="fn-mark-fallback" select="$fn//w:r[1][following-sibling::node()[1][self::w:tab]]" as="xs:string?"/>
     <xsl:sequence select="if(($fn-mark, $fn-mark-fallback)[. ne ''][1])
                           then replace(., functx:escape-for-regex(($fn-mark, $fn-mark-fallback)[. ne ''][1]), '')
-                          else ()"/>
+                          else ."/>
   </xsl:template>
 
   <xsl:template match="w:footnote" mode="wml-to-dbk">

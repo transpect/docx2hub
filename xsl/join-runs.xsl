@@ -1025,7 +1025,7 @@
                           exists(current-group()/(self::w:r[w:instrText] | self::w:fldsimple | self::m:oMath))">
             <!-- Typically /dbk:hub, but sometimes also /dbk:p or /w:p -->
             <xsl:variable name="mode-root" as="document-node(element(*))" select="root()"/>
-            <xsl:variable name="fldCharGroup" as="element(dbk:fldCharGroup)"
+            <xsl:variable name="fldCharGroup0" as="element(dbk:fldCharGroup)?"
               select="(
                         $nested-fldChars//dbk:fldCharGroup[key('docx2hub:item-by-id', @begin, $mode-root) &lt;&lt; current()]
                                                           [key('docx2hub:item-by-id', @end, $mode-root) &gt;&gt; current()
@@ -1034,9 +1034,24 @@
                                                             key('docx2hub:item-by-id', @separate, $mode-root) &lt;&lt; current()
                                                            )]
                       )[last()]"/>
+            <!-- 
+              Accepting an empty dbk:fldCharGroup is a workaround for EndNote citations that span across paragraph boundaries 
+              in footnotes. This is problematic because of the template that currently begins on line 1489, 
+              <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1"> 
+              since it sets the document scope to a single w:p.
+              A rework of the first-w:p-in-footnote preprocessing might be necessary, or a warning for 
+              paragraph-spanning field functions in footnotes.
+              https://redmine.le-tex.de/issues/13271
+            -->
+            <xsl:variable name="fldCharGroup" as="element(dbk:fldCharGroup)"
+              select="if ($fldCharGroup0) then $fldCharGroup0
+              else ($nested-fldChars//dbk:fldCharGroup[key('docx2hub:item-by-id', @begin, $mode-root) &lt;&lt; current()])[last()]"/>
+            <xsl:if test="count($fldCharGroup0) = 0">
+              <xsl:message select="'End field char out of scope for ', $fldCharGroup"/>
+            </xsl:if>
             <xsl:variable name="start" as="element(w:fldChar)" 
               select="key('docx2hub:item-by-id', $fldCharGroup/@begin, $mode-root)"/>
-            <xsl:variable name="end" as="element(w:fldChar)" 
+            <xsl:variable name="end" as="element(w:fldChar)?" 
               select="key('docx2hub:item-by-id', $fldCharGroup/@end, $mode-root)"/>
             <w:r>
               <xsl:apply-templates select="current-group()/self::w:r/(@* except @srcpath)" mode="#current"/>
@@ -1045,7 +1060,7 @@
               </xsl:if>
               <xsl:variable name="preceding-begin" as="element(w:fldChar)"
                 select="(current-group()/w:instrText)[1]/preceding::w:fldChar[@w:fldCharType = 'begin'][1]"/>
-              <xsl:variable name="following-end" as="element(w:fldChar)"
+              <xsl:variable name="following-end" as="element(w:fldChar)?"
                 select="(current-group()/w:instrText)[1]/following::w:fldChar[@w:fldCharType = 'end'][1]"/>
               <w:instrText xsl:exclude-result-prefixes="#all">
                 <xsl:variable name="instr-text-nodes" as="document-node()">

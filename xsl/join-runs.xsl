@@ -27,6 +27,7 @@
   <xsl:import href="http://transpect.io/xslt-util/calstable/xsl/functions.xsl"/>
   
   <xsl:param name="terminate-on-unbalanced-instrTexts" select="'yes'" as="xs:string*"/>
+  <xsl:param name="mml-version" as="xs:string?"/>
   
   <xsl:template match="/*" mode="docx2hub:join-runs" priority="-0.2">
     <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
@@ -1685,9 +1686,10 @@
   <xsl:variable name="opening-parenthesis" select="('[', '{', '(')" as="xs:string*"/>
   <xsl:variable name="closing-parenthesis" select="(']', '}', ')')" as="xs:string*"/>
   
-  <xsl:template match="mml:mrow[count(*) = 3]
-                              [*[1]/self::mml:mo = $opening-parenthesis]
-                              [*[3]/self::mml:mo = $closing-parenthesis]" mode="docx2hub:join-runs" priority="1">
+  <xsl:template match="mml:mrow[$mml-version ne '4-core']
+                               [count(*) = 3]
+                               [*[1]/self::mml:mo = $opening-parenthesis]
+                               [*[3]/self::mml:mo = $closing-parenthesis]" mode="docx2hub:join-runs" priority="1">
     <mml:mfenced open="{*[1]}" close="{*[3]}" separators="">
       <xsl:apply-templates select="if(*[2]/self::mml:mrow) then *[2]/node() else *[2]" mode="#current"/>
     </mml:mfenced>

@@ -1012,7 +1012,7 @@
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="w:dir" mode="wml-to-dbk">
+  <xsl:template match="w:dir | w:bdo" mode="wml-to-dbk">
     <xsl:if test="@w:val eq 'rtl'">
       <xsl:message select="'WRN: unimplemented rtl direction element with nested children'"></xsl:message>
     </xsl:if>

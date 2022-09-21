@@ -144,7 +144,7 @@
 
   <xsl:template match="dbk:indexterm/*[dbk:phrase]
                                       [every $node in (* | text()[normalize-space()]) 
-                                       satisfies (exists($node/self::text() | $node/self::dbk:phrase))]
+                                       satisfies (exists($node/self::dbk:phrase))]
                                       [count(distinct-values(for $phr in dbk:phrase return tr:signature($phr))) = 1]" 
                 mode="docx2hub:join-runs" priority="3">
     <!-- In order to retain the same results as before https://github.com/transpect/docx2hub/issues/26,

@@ -1091,6 +1091,7 @@
                                                                 [. >> $preceding-begin]"
                                          mode="docx2hub:join-instrText-runs_save-formatting">
                       <xsl:with-param name="formatting-acceptable" as="xs:boolean" tunnel="yes" select="$is-index-entry"/>
+                      <xsl:with-param name="indexterm-preprocessing" as="xs:boolean" tunnel="yes" select="$is-index-entry"/>
                     </xsl:apply-templates>
                   </xsl:document>
                 </xsl:variable>
@@ -1361,6 +1362,7 @@
     <xsl:param name="instrText" as="element(w:instrText)" select=".."/>
     <xsl:param name="string" as="xs:string" select="."/>
     <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
+    <xsl:param name="indexterm-preprocessing" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="run-atts" as="attribute(*)*" select="$instrText/parent::w:r/(@* except @srcpath)"/>
     <xsl:variable name="prelim" as="item()*">
     <xsl:choose>
@@ -1369,7 +1371,7 @@
           regex="(\\:|[:;{$quot-like-regex}]|(\s|^)\\[a-z]|\\[{$quot-like-regex}]|^\s*XE\s*)">
           <xsl:matching-substring>
             <xsl:choose>
-              <xsl:when test="xs:string(saxon:current-mode-name()) = 'docx2hub:join-instrText-runs_save-formatting'">
+              <xsl:when test="$indexterm-preprocessing">
                 <xsl:value-of select="."/>
               </xsl:when>
               <xsl:when test="matches(., '^\s*XE\s*', 'i')">

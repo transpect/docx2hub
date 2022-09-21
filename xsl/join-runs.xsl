@@ -1055,7 +1055,6 @@
             <xsl:variable name="end" as="element(w:fldChar)?" 
               select="key('docx2hub:item-by-id', $fldCharGroup/@end, $mode-root)"/>
             <w:r>
-              <xsl:apply-templates select="current-group()/self::w:r/(@* except @srcpath)" mode="#current"/>
               <xsl:if test="$srcpaths = 'yes' and current-group()/@srcpath">
                 <xsl:attribute name="srcpath" select="current-group()/@srcpath" separator=" "/>
               </xsl:if>
@@ -1075,7 +1074,9 @@
                                                                  | self::*:superscript | self::*:subscript
                                                                  | self::m:oMath (: may occur in XE :))
                                                                 [. >> $preceding-begin]"
-                                         mode="docx2hub:join-instrText-runs_save-formatting"/>
+                                         mode="docx2hub:join-instrText-runs_save-formatting">
+                      <xsl:with-param name="formatting-acceptable" as="xs:boolean" tunnel="yes" select="true()"/>
+                    </xsl:apply-templates>
                   </xsl:document>
                 </xsl:variable>
                 <!-- docx2hub:join-instrText-runs_render-compound1 is for rendering the instrText as text for attributes,
@@ -1270,7 +1271,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="w:r/w:instrText | w:r/w:sym" mode="docx2hub:join-instrText-runs_save-formatting">
+  <xsl:template match="w:r/w:sym" mode="docx2hub:join-instrText-runs_save-formatting">
     <xsl:copy>
       <xsl:apply-templates select="../@*, @*, node()" mode="#current"/>
     </xsl:copy>
@@ -1295,6 +1296,12 @@
   </xsl:template>
 
   <xsl:template match="w:object[mml:math]" mode="docx2hub:join-instrText-runs_render-compound2">
+    <xsl:sequence select="."/>
+  </xsl:template>
+  
+  <xsl:template match="dbk:phrase" mode="docx2hub:join-instrText-runs_render-compound2">
+    <!-- already created because of run formatting in mode docx2hub:join-instrText-runs_save-formatting,
+         https://github.com/transpect/docx2hub/issues/26 -->
     <xsl:sequence select="."/>
   </xsl:template>
 
@@ -1325,12 +1332,29 @@
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
+  <xsl:template match="w:r[@* except @srcpath]" 
+    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2" priority="1">
+    <phrase>
+      <xsl:apply-templates select="@* | node()" mode="#current"/>
+    </phrase>
+  </xsl:template>
+  
   <xsl:variable name="quot-like-regex" as="xs:string" select="'&quot;„“”'"/>
   
-  <xsl:template name="docx2hub:instrText-formatting">
-    <xsl:param name="instrText" as="element(w:instrText)"/>
-    <xsl:param name="string" as="xs:string"/>
-    <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
+  <xsl:template name="docx2hub:instrText-formatting" match="w:r[@* except @srcpath]/w:instrText/text()" mode="docx2hub:join-instrText-runs_save-formatting">
+    <!-- This template was originally only called by name in mode docx2hub:join-instrText-runs_render-compound2.
+         In the course of addressing https://github.com/transpect/docx2hub/issues/26, we also made it match in 
+         mode docx2hub:join-instrText-runs_save-formatting. The reason is that in render-compound2, the w:r
+         context isn’t available any more. Previously, if any of the w:r parents of a w:instrText join group
+         had some attribute (apart from @srcpath), the whole group inherited this attribute (typically @role
+         or @css:*). This led to the whole indexterm being italicized oder subscripted in the examples given
+         in aforementioned GitHub issue.
+    -->
+    <xsl:param name="instrText" as="element(w:instrText)" select=".."/>
+    <xsl:param name="string" as="xs:string" select="."/>
+    <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes" select="exists(../w:instrText)"/>
+    <xsl:variable name="run-atts" as="attribute(*)*" select="$instrText/parent::w:r/(@* except @srcpath)"/>
+    <xsl:variable name="prelim" as="item()*">
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
         <xsl:analyze-string select="$string" 
@@ -1358,6 +1382,12 @@
               </xsl:when>
               <xsl:when test="matches(., concat('^\\[', $quot-like-regex, ']$'))">
                 <xsl:choose>
+                  <xsl:when test="exists($run-atts)">
+                    <phrase>
+                      <xsl:sequence select="$run-atts"/>
+                      <xsl:value-of select="."/>
+                    </phrase>
+                  </xsl:when>
                   <xsl:when test="exists($instrText/@css:*)">
                     <phrase>
                       <xsl:sequence select="$instrText/@css:*"/>
@@ -1383,6 +1413,12 @@
           </xsl:matching-substring>
           <xsl:non-matching-substring>
             <xsl:choose>
+              <xsl:when test="exists($run-atts)">
+                <phrase>
+                  <xsl:sequence select="$run-atts"/>
+                  <xsl:value-of select="."/>
+                </phrase>
+              </xsl:when>
               <xsl:when test="exists($instrText/@css:*)">
                 <phrase>
                   <xsl:sequence select="$instrText/@css:*"/>
@@ -1400,6 +1436,11 @@
         <xsl:value-of select="$string"/>
       </xsl:otherwise>
     </xsl:choose>
+    </xsl:variable>
+    <!--<xsl:if test="xs:string(saxon:current-mode-name()) = 'docx2hub:join-instrText-runs_save-formatting'">
+      <xsl:message select="'PPPPPPP ', $prelim"></xsl:message>
+    </xsl:if>-->
+    <xsl:sequence select="$prelim"/>
   </xsl:template>
   
   <xsl:template match="w:instrText/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="0.8">

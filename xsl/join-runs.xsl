@@ -146,9 +146,12 @@
                                       [every $node in (* | text()[normalize-space()]) 
                                        satisfies (exists($node/self::dbk:phrase))]
                                       [count(distinct-values(for $phr in dbk:phrase return tr:signature($phr))) = 1]" 
-                mode="docx2hub:join-runs" priority="3">
+                mode="docx2hub:join-runs_" priority="3">
     <!-- In order to retain the same results as before https://github.com/transpect/docx2hub/issues/26,
          we unwrap newly created phrases in indexterms and put the role attribute on primary etc. -->
+    <!-- Update: We decided to disable this template, leaving phrases intact that cover the entire contents of
+         primary etc. One reason was that it is easier to map to BITS: The term element doesn’t allow a content-type
+         attribute, but it allows styled-content. -->
     <xsl:copy>
       <xsl:apply-templates select="@*, dbk:phrase[1]/(@* except @srcpath), 
                                   (dbk:phrase/node() | text()[not(normalize-space())] | comment() | processing-instruction())" 

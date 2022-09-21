@@ -140,9 +140,22 @@
         </xsl:copy>
       </xsl:otherwise>
     </xsl:choose>
-    
   </xsl:template>
-  
+
+  <xsl:template match="dbk:indexterm/*[dbk:phrase]
+                                      [every $node in (* | text()[normalize-space()]) 
+                                       satisfies (exists($node/self::text() | $node/self::dbk:phrase))]
+                                      [count(distinct-values(for $phr in dbk:phrase return tr:signature($phr))) = 1]" 
+                mode="docx2hub:join-runs" priority="3">
+    <!-- In order to retain the same results as before https://github.com/transpect/docx2hub/issues/26,
+         we unwrap newly created phrases in indexterms and put the role attribute on primary etc. -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*, dbk:phrase[1]/(@* except @srcpath), 
+                                  (dbk:phrase/node() | text()[not(normalize-space())] | comment() | processing-instruction())" 
+                mode="#current"/>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- changes in this commit: because of vr_SB_525-12345_NESTOR-Testdaten-01 ($most-frequent-lang) -->
   <xsl:template match="dbk:phrase[empty(@* except @srcpath)]" mode="docx2hub:join-runs" priority="2">
     <xsl:apply-templates mode="#current"/>
@@ -1063,6 +1076,8 @@
               <xsl:variable name="following-end" as="element(w:fldChar)?"
                 select="(current-group()/w:instrText)[1]/following::w:fldChar[@w:fldCharType = 'end'][1]"/>
               <w:instrText xsl:exclude-result-prefixes="#all">
+                <xsl:variable name="is-index-entry" as="xs:boolean" 
+                  select="matches(string-join(current-group()/w:instrText/text(), ''), '^\s*XE\s+', 'i')"/>
                 <xsl:variable name="instr-text-nodes" as="document-node()">
                   <xsl:document>
                     <xsl:apply-templates select="current-group()/(w:instrText 
@@ -1075,7 +1090,7 @@
                                                                  | self::m:oMath (: may occur in XE :))
                                                                 [. >> $preceding-begin]"
                                          mode="docx2hub:join-instrText-runs_save-formatting">
-                      <xsl:with-param name="formatting-acceptable" as="xs:boolean" tunnel="yes" select="true()"/>
+                      <xsl:with-param name="formatting-acceptable" as="xs:boolean" tunnel="yes" select="$is-index-entry"/>
                     </xsl:apply-templates>
                   </xsl:document>
                 </xsl:variable>
@@ -1345,15 +1360,21 @@
     -->
     <xsl:param name="instrText" as="element(w:instrText)" select=".."/>
     <xsl:param name="string" as="xs:string" select="."/>
-    <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes" select="exists(../w:instrText)"/>
+    <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="run-atts" as="attribute(*)*" select="$instrText/parent::w:r/(@* except @srcpath)"/>
     <xsl:variable name="prelim" as="item()*">
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
-        <xsl:analyze-string select="$string" 
-          regex="(\\:|[:;{$quot-like-regex}]|(\s|^)\\[a-z]|\\[{$quot-like-regex}])">
+        <xsl:analyze-string select="$string" flags="i"
+          regex="(\\:|[:;{$quot-like-regex}]|(\s|^)\\[a-z]|\\[{$quot-like-regex}]|^\s*XE\s*)">
           <xsl:matching-substring>
             <xsl:choose>
+              <xsl:when test="xs:string(saxon:current-mode-name()) = 'docx2hub:join-instrText-runs_save-formatting'">
+                <xsl:value-of select="."/>
+              </xsl:when>
+              <xsl:when test="matches(., '^\s*XE\s*', 'i')">
+                <xsl:value-of select="."/>
+              </xsl:when>
               <xsl:when test=". = '\:'">
                 <xsl:text>:</xsl:text>
               </xsl:when>
@@ -1376,6 +1397,10 @@
               <xsl:when test="matches(., concat('^\\[', $quot-like-regex, ']$'))">
                 <xsl:choose>
                   <xsl:when test="exists($run-atts)">
+                    <!-- this shouldn’t be reached since $run-atts can only exist in mode
+                      docx2hub:join-instrText-runs_save-formatting which is handled in an xsl:when 
+                      above (passthru output without a phrase, so that docx2hub:join-instrText-runs_render-compound2
+                      can see elements such as quot and sep without surrounding phrases -->
                     <phrase>
                       <xsl:sequence select="$run-atts"/>
                       <xsl:value-of select="."/>

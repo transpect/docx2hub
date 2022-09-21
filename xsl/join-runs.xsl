@@ -1332,13 +1332,6 @@
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
-  <xsl:template match="w:r[@* except @srcpath]" 
-    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2" priority="1">
-    <phrase>
-      <xsl:apply-templates select="@* | node()" mode="#current"/>
-    </phrase>
-  </xsl:template>
-  
   <xsl:variable name="quot-like-regex" as="xs:string" select="'&quot;„“”'"/>
   
   <xsl:template name="docx2hub:instrText-formatting" match="w:r[@* except @srcpath]/w:instrText/text()" mode="docx2hub:join-instrText-runs_save-formatting">

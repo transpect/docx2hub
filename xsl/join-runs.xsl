@@ -1021,7 +1021,7 @@
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="*" 
         group-adjacent="exists(
-                          self::w:r[w:instrText]
+                          self::w:r
                                    [every $c in * 
                                     satisfies $c/(self::w:instrText | self::w:br | self::w:softHyphen | self::w:tab 
                                                   | self::w:noBreakHyphen
@@ -1090,6 +1090,7 @@
                                                                  | w:sym[parent::w:r]
                                                                  | w:object[mml:math][parent::w:r]
                                                                  | self::*:superscript | self::*:subscript
+                                                                 | w:noBreakHyphen | w:br | w:tab | w:softHyphen
                                                                  | self::m:oMath (: may occur in XE :))
                                                                 [. >> $preceding-begin]"
                                          mode="docx2hub:join-instrText-runs_save-formatting">
@@ -1322,6 +1323,38 @@
     <!-- already created because of run formatting in mode docx2hub:join-instrText-runs_save-formatting,
          https://github.com/transpect/docx2hub/issues/26 -->
     <xsl:sequence select="."/>
+  </xsl:template>
+  
+  <xsl:template match="w:noBreakHyphen | w:br | w:tab | w:softHyphen" 
+    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2">
+    <xsl:param name="markup-acceptable" as="xs:boolean?" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="$markup-acceptable">
+        <xsl:apply-templates select="." mode="wml-to-dbk"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text xml:space="preserve"> </xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:apply-templates select="." mode="wml-to-dbk"/>
+  </xsl:template>
+  
+  <xsl:template match="w:br | w:tab" 
+    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2">
+    <xsl:param name="markup-acceptable" as="xs:boolean?" tunnel="yes"/>
+    <xsl:choose>
+      <xsl:when test="$markup-acceptable">
+        <xsl:apply-templates select="." mode="wml-to-dbk"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text xml:space="preserve"> </xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template match="w:noBreakHyphen | w:softHyphen" 
+    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2">
+    <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
 
   <xsl:template match="w:fldSimple[matches(@w:instr, $w:fldSimple-REF-regex)]" 

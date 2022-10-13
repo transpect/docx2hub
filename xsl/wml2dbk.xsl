@@ -1701,34 +1701,6 @@
     </equation>
   </xsl:template>
   
-  <xsl:param name="omml-character-correction-regex" as="xs:string" select="'[&#x19e;&#x413;]'"/>
-  
-  <xsl:template match="m:t/text()[matches(., $omml-character-correction-regex)]" mode="docx2hub:props2atts">
-    <!-- Heuristic corrections, collateral in this mode.
-         Please note that these replacements will only be applied to OMML, in order to have a proper
-         upright Greek mapping etc. This may result in different codepoints used for text and math.
-    -->
-    <xsl:analyze-string select="." regex="{$omml-character-correction-regex}">
-      <xsl:matching-substring>
-        <xsl:choose>
-          <xsl:when test=". = '&#x19e;'">
-            <!-- eta typed as LATIN SMALL LETTER N WITH LONG RIGHT LEG -->
-            <xsl:text>&#x3b7;</xsl:text>
-          </xsl:when>
-          <xsl:when test=". = '&#x413;'">
-            <!-- Gamma typed as CYRILLIC CAPITAL LETTER GHE (if this is an issue in cyrillic formula text, 
-                 we need to introduce an option for this correction; or let people specify omml-character-correction-regex
-                 in the XProc invocation) -->
-            <xsl:text>&#x393;</xsl:text>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:matching-substring>
-      <xsl:non-matching-substring>
-        <xsl:value-of select="."/>
-      </xsl:non-matching-substring>
-    </xsl:analyze-string>
-  </xsl:template>
-
   <xsl:template match="m:oMath" mode="wml-to-dbk">
     <inlineequation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>

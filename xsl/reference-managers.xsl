@@ -1057,7 +1057,8 @@
     use="normalize-space(string-join(descendant::text(), ''))"/>
 
   <xsl:variable name="biblioentry-ids" as="xs:string*"
-    select="for $bibentry in //*:biblioentry return generate-id($bibentry)"/>
+                select="for $bibentry in //*:biblioentry 
+                        return ($bibentry/@xml:id, generate-id($bibentry))[1]"/>
 
   <xsl:template match="*:biblioentry/@xml:id" mode="docx2hub:join-runs">
     <xsl:variable name="normalized-text" as="xs:string"
@@ -1071,7 +1072,7 @@
     <xsl:attribute name="xml:id" 
       select="concat(
                 $docx2hub:bibref-id-prefix, 
-                index-of($biblioentry-ids, generate-id($current-bibentry))
+                index-of($biblioentry-ids, (., generate-id($current-bibentry))[1])
               )"/>
   </xsl:template>
   

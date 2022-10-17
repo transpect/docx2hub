@@ -1063,16 +1063,19 @@
   <xsl:template match="*:biblioentry/@xml:id" mode="docx2hub:join-runs">
     <xsl:variable name="normalized-text" as="xs:string"
       select="normalize-space(string-join(parent::*:biblioentry/descendant::text(), ''))"/>
-    
+    <xsl:variable name="current-id" as="attribute(xml:id)" select="."/>
     <xsl:variable name="current-bibentry" as="element()"
       select="if(some $be in parent::*:biblioentry/preceding-sibling::*:biblioentry 
                  satisfies $be[normalize-space(string-join(descendant::text(), '')) = $normalized-text]) 
                 then key('bibentry-by-string', $normalized-text)[1] 
                 else parent::*:biblioentry"/>
+    <xsl:variable name="id-duplicates" as="xs:integer"
+                  select="count(parent::*:biblioentry/preceding-sibling::*:biblioentry[@xml:id eq $current-id])" />
     <xsl:attribute name="xml:id" 
       select="concat(
                 $docx2hub:bibref-id-prefix, 
-                index-of($biblioentry-ids, (., generate-id($current-bibentry))[1])
+                index-of($biblioentry-ids, (., generate-id($current-bibentry))[1])[1],
+                concat('_', $id-duplicates + 1)[$id-duplicates gt 0]
               )"/>
   </xsl:template>
   

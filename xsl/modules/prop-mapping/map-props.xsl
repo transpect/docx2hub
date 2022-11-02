@@ -1440,8 +1440,8 @@
 
   <xsl:template match="w:numPr[not(following-sibling::w:numPr)]" mode="docx2hub:props2atts">
     <w:numPr>
-      <xsl:apply-templates select="(w:numId, preceding-sibling::w:numPr/w:numId)[1]" mode="#current"/>
-      <xsl:apply-templates select="(w:ilvl, preceding-sibling::w:numPr/w:ilvl)[1]" mode="#current"/>
+      <xsl:apply-templates select="(w:numId, preceding-sibling::w:numPr[w:numId][1]/w:numId)[1]" mode="#current"/>
+      <xsl:apply-templates select="(w:ilvl, preceding-sibling::w:numPr[w:ilvl][1]/w:ilvl)[1]" mode="#current"/>
       <xsl:apply-templates select="node() except w:numId, w:ilvl" mode="#current"/>
     </w:numPr>
   </xsl:template>

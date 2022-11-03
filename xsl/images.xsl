@@ -162,6 +162,10 @@
     <!-- don’t know whether the empty a:srcRect conveys some meaning; just wanted to get rid of W2D_020 messages -->
   </xsl:template>
   
+  <xsl:template match="a:xfrm[not(@*)]" mode="wml-to-dbk">
+    <!-- don’t know whether a:xfrm without the attributes below conveys some meaning; just wanted to get rid of W2D_020 messages -->
+  </xsl:template>
+  
   <!-- @rot attribute values are 60,000ths of a degree, with positive angles 
        moving clockwise or towards the positive y-axis. @flipH and @flipV are
        boolean values with a value of 1 indicating that the shape should be flipped  -->

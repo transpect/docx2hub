@@ -117,7 +117,7 @@
       <xsl:variable name="see-flag" as="element(dbk:flag)?" select="dbk:flag[. = '\t']"/>
       <xsl:if test="exists($see-flag)">
         <xsl:variable name="open" as="element(dbk:quot)" select="dbk:quot[. >> $see-flag][1]"/>
-        <xsl:variable name="close" as="element(dbk:quot)" select="dbk:quot[. >> $see-flag][2]"/>
+        <xsl:variable name="close" as="element(dbk:quot)?" select="dbk:quot[. >> $see-flag][2]"/>
         <xsl:variable name="prelim" as="document-node(element(dbk:see))">
           <xsl:document>
             <see>

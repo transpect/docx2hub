@@ -219,7 +219,13 @@
                         'Isbn', 
                         'Language',
                         'Number',
+                        'PageCount',
                         'PageRange',
+                        'PlaceOfPublication',
+                        'Price',
+                        'ShortTitle',
+                        'Subtitle',
+                        'SourceOfBibliographicInformation',
                         'Title',
                         'Volume',
                         'Year'"/>
@@ -255,7 +261,8 @@
           <xsl:sequence select="$publisher"/>
         </publisher>
       </xsl:if>
-      <xsl:apply-templates select="fn:string[@key = $other-citavi-ref-parts]" mode="#current"/>
+      <xsl:apply-templates select="fn:map[@key = 'SeriesTitle'],
+                                   fn:string[@key = $other-citavi-ref-parts]" mode="#current"/>
     </biblioset>
   </xsl:template>
   
@@ -534,6 +541,40 @@
     <biblioid class="{lower-case(lower-case((@key, local-name())[1]))}">
       <xsl:value-of select="."/>
     </biblioid>
+  </xsl:template>
+  
+  <xsl:template match="fn:string[@key = ('PageCount', 'Price', 'ShortTitle')]
+                      |PageCount
+                      |Price
+                      |ShortTitle" 
+                mode="citavi">
+    <bibliomisc role="{lower-case(lower-case((@key, local-name())[1]))}">
+      <xsl:value-of select="."/>
+    </bibliomisc>
+  </xsl:template>
+  
+  <xsl:template match="fn:map[@key = 'SeriesTitle']
+                      |SeriesTitle"
+                mode="citavi">    
+      <bibliomisc role="seriestitle">
+        <xsl:value-of select="(fn:string[@key eq 'Name'], Name)[1]"/>
+      </bibliomisc>
+  </xsl:template>
+  
+  <xsl:template match="fn:string[@key = 'SourceOfBibliographicInformation']
+                      |SourceOfBibliographicInformation" 
+                mode="citavi">
+    <bibliosource>
+      <xsl:value-of select="."/>
+    </bibliosource>
+  </xsl:template>
+  
+  <xsl:template match="fn:string[@key = 'Subtitle']
+                      |Subtitle" 
+                mode="citavi">
+    <subtitle>
+      <xsl:value-of select="."/>
+    </subtitle>
   </xsl:template>
   
   <xsl:template match="fn:string[@key = 'OnlineAddress']

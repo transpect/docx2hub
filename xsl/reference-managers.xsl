@@ -543,14 +543,20 @@
     </biblioid>
   </xsl:template>
   
-  <xsl:template match="fn:string[@key = ('PageCount', 'Price', 'ShortTitle')]
+  <xsl:template match="fn:string[@key = ('PageCount', 'Price')]
                       |PageCount
-                      |Price
-                      |ShortTitle" 
+                      |Price" 
                 mode="citavi">
     <bibliomisc role="{lower-case(lower-case((@key, local-name())[1]))}">
       <xsl:value-of select="."/>
     </bibliomisc>
+  </xsl:template>
+  
+  <xsl:template match="fn:string[@key = 'ShortTitle']" 
+                mode="citavi">
+    <titleabbrev>
+      <xsl:value-of select="."/>
+    </titleabbrev>
   </xsl:template>
   
   <xsl:template match="fn:map[@key = 'SeriesTitle']

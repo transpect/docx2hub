@@ -47,7 +47,7 @@
                 'numbering-by-id', 
                 @w:val,
                 $root
-              )/w:lvlOverride[@w:ilvl = $ilvl][last()]"/><!-- why can there be more than one? Are they guaranteed to have
+              )/w:lvlOverride[@w:ilvl = $ilvl][not(empty(*))][last()]"/><!-- why can there be more than one? Are they guaranteed to have
                 the same value? -->
     <xsl:variable name="lvl" as="element(w:lvl)?" 
       select="($abstractNum/w:lvl[@w:ilvl = $ilvl], $lvlOverride/w:lvl[@w:ilvl = $ilvl])[1]"/>

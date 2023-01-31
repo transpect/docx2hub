@@ -290,6 +290,61 @@
                                 else current-group()"/>
         </docx2hub:attribute>
       </xsl:for-each-group>
+      <xsl:variable name="numFmt" 
+                    select="(//w:numbering/w:abstractNum[ @w:abstractNumId =
+                                                          //w:numbering/w:num[@w:numId =
+                                                                              current()/w:pPr/w:numPr/w:numId/@w:val 
+                                                                             ]/w:abstractNumId/@w:val 
+                                                        ]/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:numFmt/@w:val,
+                             //w:numbering/w:abstractNum/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:numFmt/@w:val)[1]" 
+                    as="xs:string?"/>
+      <xsl:variable name="lvlText" select="(//w:numbering/w:abstractNum[ @w:abstractNumId =
+                                                                         //w:numbering/w:num[@w:numId =
+                                                                                             current()/w:pPr/w:numPr/w:numId/@w:val 
+                                                                                            ]/w:abstractNumId/@w:val 
+                                                                       ]/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:lvlText/@w:val,
+                                            //w:numbering/w:abstractNum/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:lvlText/@w:val)[1]" as="xs:string?"/>
+      <xsl:variable name="lvl" select="(//w:numbering/w:abstractNum[ @w:abstractNumId =
+                                                                     //w:numbering/w:num[@w:numId =
+                                                                                         current()/w:pPr/w:numPr/w:numId/@w:val 
+                                                                                        ]/w:abstractNumId/@w:val 
+                                                                   ]/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/@w:ilvl,
+                                        //w:numbering/w:abstractNum/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/@w:ilvl)[1]" as="xs:string?"/>
+      <xsl:variable name="multiLvlType" select="(//w:numbering/w:abstractNum[ @w:abstractNumId =
+                                                                              //w:numbering/w:num[@w:numId =
+                                                                                                  current()/w:pPr/w:numPr/w:numId/@w:val 
+                                                                                                 ]/w:abstractNumId/@w:val 
+                                                                            ]
+                                                                            [w:lvl[current()/@w:styleId=w:pStyle/@w:val]]/w:multiLevelType/@w:val,
+                                                 //w:numbering/w:abstractNum[w:lvl[current()/@w:styleId=w:pStyle/@w:val]]/w:multiLevelType/@w:val)[1]"/>
+      <xsl:if test="not(empty($numFmt))">
+        <docx2hub:attribute name="css:list-style-type">
+          <xsl:choose>
+            <xsl:when test="$numFmt='decimalZero'"><xsl:value-of select="'decimal-leading-zero'"/></xsl:when>
+            <xsl:when test="matches($numFmt,'^decimal')"><xsl:value-of select="'decimal'"/></xsl:when>
+            <xsl:when test="matches($numFmt,'Roman$','i')"><xsl:value-of select="replace(lower-case($numFmt),'\-?(roman)$','-$1')"/></xsl:when>
+            <xsl:when test="matches($numFmt,'Letter$','i')"><xsl:value-of select="replace(lower-case($numFmt),'\-?letter$','-alpha')"/></xsl:when>
+            <xsl:when test="$numFmt='bullet' and $lvlText=''"><xsl:value-of select="'square'"/></xsl:when>
+            <xsl:when test="$numFmt='bullet' and $lvlText='o'"><xsl:value-of select="'circle'"/></xsl:when>
+            <xsl:when test="$numFmt='bullet' and $lvlText='◽'"><xsl:value-of select="'box'"/></xsl:when>
+            <xsl:when test="$numFmt='bullet' and $lvlText='✓'"><xsl:value-of select="'check'"/></xsl:when>
+            <xsl:when test="$numFmt='bullet' and $lvlText='◆'"><xsl:value-of select="'diamond'"/></xsl:when>
+            <xsl:when test="$numFmt='bullet' and $lvlText='—'"><xsl:value-of select="'dash'"/></xsl:when>
+            <xsl:when test="$numFmt='bullet'"><xsl:value-of select="'disc'"/></xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$numFmt"/>    
+            </xsl:otherwise>
+          </xsl:choose>
+        </docx2hub:attribute>
+        <docx2hub:attribute name="numbering-level">
+          <xsl:value-of select="number($lvl)+1"/>
+        </docx2hub:attribute>
+      </xsl:if>
+      <xsl:if test="not(empty($multiLvlType))">
+        <docx2hub:attribute name="numbering-multilevel-type">
+          <xsl:value-of select="replace(lower-case($multiLvlType),'level$','')"/>
+        </docx2hub:attribute>
+      </xsl:if>
       <xsl:sequence select="$mergeable-atts[self::*][not(self::docx2hub:attribute)]"/>
     </xsl:variable>
     <xsl:choose>
@@ -1442,7 +1497,7 @@
     <w:numPr>
       <xsl:apply-templates select="(w:numId, preceding-sibling::w:numPr[w:numId][1]/w:numId)[1]" mode="#current"/>
       <xsl:apply-templates select="(w:ilvl, preceding-sibling::w:numPr[w:ilvl][1]/w:ilvl)[1]" mode="#current"/>
-      <xsl:apply-templates select="node() except w:numId, w:ilvl" mode="#current"/>
+      <xsl:apply-templates select="node() except (w:numId, w:ilvl)" mode="#current"/>
     </w:numPr>
   </xsl:template>
    

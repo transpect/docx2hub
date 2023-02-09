@@ -1902,6 +1902,9 @@
                 mode="docx2hub:remove-redundant-run-atts">
   </xsl:template>
   
+  <xsl:template match="w:tc[docx2hub:is-blind-vmerged-cell(.)]/w:p[not(child::node()[not(self::w:pPr)])]" 
+                mode="docx2hub:remove-redundant-run-atts"/>
+  
   <!-- preserve mml text nodes -->
   
   <xsl:template match="mml:*" mode="docx2hub:add-props" exclude-result-prefixes="#all">

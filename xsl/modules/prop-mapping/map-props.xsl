@@ -298,12 +298,25 @@
                                                         ]/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:numFmt/@w:val,
                              //w:numbering/w:abstractNum/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:numFmt/@w:val)[1]" 
                     as="xs:string?"/>
-      <xsl:variable name="lvlText" select="(//w:numbering/w:abstractNum[ @w:abstractNumId =
-                                                                         //w:numbering/w:num[@w:numId =
-                                                                                             current()/w:pPr/w:numPr/w:numId/@w:val 
-                                                                                            ]/w:abstractNumId/@w:val 
-                                                                       ]/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:lvlText/@w:val,
-                                            //w:numbering/w:abstractNum/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:lvlText/@w:val)[1]" as="xs:string?"/>
+      <xsl:variable name="lvlText" select="(//w:numbering/w:abstractNum[@w:abstractNumId =
+                                                                        //w:numbering/w:num[@w:numId =
+                                                                                            current()/w:pPr/w:numPr/w:numId/@w:val 
+                                                                                           ]/w:abstractNumId/@w:val 
+                                                                       ]/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:lvlText,
+                                            //w:numbering/w:abstractNum/w:lvl[current()/@w:styleId=w:pStyle/@w:val]/w:lvlText)[1]"/>
+      <xsl:variable name="lvlText-value" as="xs:string?">
+        <xsl:choose>
+          <xsl:when test="$lvlText[../w:rPr/w:rFonts/@w:ascii=$docx2hub:symbol-font-names]
+                                  [if (matches(@w:val, '%\d')) then not(../w:numFmt/@w:val = 'decimal') else true()] or
+                          $lvlText[../@css:font-family = $docx2hub:symbol-font-names]
+                                  [if (matches(@w:val, '%\d')) then not(../w:numFmt/@w:val = 'decimal') else true()]">
+            <xsl:apply-templates select="$lvlText/@w:val" mode="wml-to-dbk"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$lvlText/@w:val"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
       <xsl:variable name="lvl" select="(//w:numbering/w:abstractNum[ @w:abstractNumId =
                                                                      //w:numbering/w:num[@w:numId =
                                                                                          current()/w:pPr/w:numPr/w:numId/@w:val 
@@ -324,12 +337,25 @@
             <xsl:when test="matches($numFmt,'^decimal')"><xsl:value-of select="'decimal'"/></xsl:when>
             <xsl:when test="matches($numFmt,'Roman$','i')"><xsl:value-of select="replace(lower-case($numFmt),'\-?(roman)$','-$1')"/></xsl:when>
             <xsl:when test="matches($numFmt,'Letter$','i')"><xsl:value-of select="replace(lower-case($numFmt),'\-?letter$','-alpha')"/></xsl:when>
-            <xsl:when test="$numFmt='bullet' and $lvlText=''"><xsl:value-of select="'square'"/></xsl:when>
-            <xsl:when test="$numFmt='bullet' and $lvlText='o'"><xsl:value-of select="'circle'"/></xsl:when>
-            <xsl:when test="$numFmt='bullet' and $lvlText='◽'"><xsl:value-of select="'box'"/></xsl:when>
-            <xsl:when test="$numFmt='bullet' and $lvlText='✓'"><xsl:value-of select="'check'"/></xsl:when>
-            <xsl:when test="$numFmt='bullet' and $lvlText='◆'"><xsl:value-of select="'diamond'"/></xsl:when>
-            <xsl:when test="$numFmt='bullet' and $lvlText='—'"><xsl:value-of select="'dash'"/></xsl:when>
+            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[⏹■▪◼◾⬛⬝🞍🞌⯀￭𝅇]$')">
+              <xsl:value-of select="'square'"/>
+            </xsl:when>
+            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[º°○⭘◯⚪⚬oOοΟоОօՕₒⲟⲞＯ🞉🞇ｏ￮🞅🔾🔿❍]$')">
+              <xsl:value-of select="'circle'"/>
+            </xsl:when>
+            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[◻◽☐⌑□🞑🞒🞓⸋▫⬜⬞𝅆❏❐❑❒⧠]$')">
+              <xsl:value-of select="'box'"/>
+            </xsl:when>
+            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[✔✓🗸]$')">
+              <xsl:value-of select="'check'"/>
+            </xsl:when>
+            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[⬥⬩⯁◆🞘♦🞗]$')">
+              <xsl:value-of select="'diamond'"/>
+            </xsl:when>
+            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[&#x002d;&#x005f;&#x00af;&#x02d7;&#x0320;&#x2010;-&#x2015;&#x203e;&#x207b;&#x208b;&#x2212;&#x22c5;&#x23af;&#x2796;&#x2e3a;&#x2e3b;&#xfe58;&#xfe63;&#xff0d;&#xff3f;𝄖]$')">
+              <xsl:value-of select="'dash'"/>
+            </xsl:when>
+            
             <xsl:when test="$numFmt='bullet'"><xsl:value-of select="'disc'"/></xsl:when>
             <xsl:otherwise>
               <xsl:value-of select="$numFmt"/>    

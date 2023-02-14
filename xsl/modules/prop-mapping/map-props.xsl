@@ -335,8 +335,13 @@
           <xsl:choose>
             <xsl:when test="$numFmt='decimalZero'"><xsl:value-of select="'decimal-leading-zero'"/></xsl:when>
             <xsl:when test="matches($numFmt,'^decimal')"><xsl:value-of select="'decimal'"/></xsl:when>
-            <xsl:when test="matches($numFmt,'Roman$','i')"><xsl:value-of select="replace(lower-case($numFmt),'\-?(roman)$','-$1')"/></xsl:when>
-            <xsl:when test="matches($numFmt,'Letter$','i')"><xsl:value-of select="replace(lower-case($numFmt),'\-?letter$','-alpha')"/></xsl:when>
+            <xsl:when test="matches($numFmt,'Roman$','i')">
+              <xsl:value-of select="replace(lower-case($numFmt),'\-?(roman)$','-$1')"/>
+            </xsl:when>
+            <xsl:when test="matches($numFmt,'Letter$','i')">
+              <xsl:value-of select="replace(lower-case($numFmt),'\-?letter$','-alpha')"/>
+            </xsl:when>
+            <xsl:when test="$numFmt='chicago'"><xsl:value-of select="'daggers'"/></xsl:when>
             <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[⏹■▪◼◾⬛⬝🞍🞌⯀￭𝅇]$')">
               <xsl:value-of select="'square'"/>
             </xsl:when>
@@ -355,7 +360,6 @@
             <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[&#x002d;&#x005f;&#x00af;&#x02d7;&#x0320;&#x2010;-&#x2015;&#x203e;&#x207b;&#x208b;&#x2212;&#x22c5;&#x23af;&#x2796;&#x2e3a;&#x2e3b;&#xfe58;&#xfe63;&#xff0d;&#xff3f;𝄖]$')">
               <xsl:value-of select="'dash'"/>
             </xsl:when>
-            
             <xsl:when test="$numFmt='bullet'"><xsl:value-of select="'disc'"/></xsl:when>
             <xsl:otherwise>
               <xsl:value-of select="$numFmt"/>    

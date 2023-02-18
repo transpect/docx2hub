@@ -341,25 +341,25 @@
             <xsl:when test="matches($numFmt,'Letter$','i')">
               <xsl:value-of select="replace(lower-case($numFmt),'\-?letter$','-alpha')"/>
             </xsl:when>
-            <xsl:when test="$numFmt='chicago'"><xsl:value-of select="'daggers'"/></xsl:when>
             <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[⏹■▪◼◾⬛⬝🞍🞌⯀￭𝅇]$')">
               <xsl:value-of select="'square'"/>
             </xsl:when>
             <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[º°○⭘◯⚪⚬oOοΟоОօՕₒⲟⲞＯ🞉🞇ｏ￮🞅🔾🔿❍]$')">
               <xsl:value-of select="'circle'"/>
             </xsl:when>
-            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[◻◽☐⌑□🞑🞒🞓⸋▫⬜⬞𝅆❏❐❑❒⧠]$')">
+            <!--<xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[◻◽☐⌑□🞑🞒🞓⸋▫⬜⬞𝅆❏❐❑❒⧠]$')">
               <xsl:value-of select="'box'"/>
-            </xsl:when>
-            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[✔✓🗸]$')">
+            </xsl:when>-->
+            <!--<xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[✔✓🗸]$')">
               <xsl:value-of select="'check'"/>
-            </xsl:when>
-            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[⬥⬩⯁◆🞘♦🞗]$')">
+            </xsl:when>-->
+            <!--<xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[⬥⬩⯁◆🞘♦🞗]$')">
               <xsl:value-of select="'diamond'"/>
-            </xsl:when>
-            <xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[&#x002d;&#x005f;&#x00af;&#x02d7;&#x0320;&#x2010;-&#x2015;&#x203e;&#x207b;&#x208b;&#x2212;&#x22c5;&#x23af;&#x2796;&#x2e3a;&#x2e3b;&#xfe58;&#xfe63;&#xff0d;&#xff3f;𝄖]$')">
+            </xsl:when>-->
+            <!--<xsl:when test="$numFmt='bullet' and matches($lvlText-value,'^[&#x002d;&#x005f;&#x00af;&#x02d7;&#x0320;&#x2010;-&#x2015;&#x203e;&#x207b;&#x208b;&#x2212;&#x22c5;&#x23af;&#x2796;&#x2e3a;&#x2e3b;&#xfe58;&#xfe63;&#xff0d;&#xff3f;𝄖]$')">
               <xsl:value-of select="'dash'"/>
-            </xsl:when>
+            </xsl:when>-->
+            <xsl:when test="$lvlText-value=''"><xsl:value-of select="'none'"/></xsl:when>
             <xsl:when test="$numFmt='bullet'"><xsl:value-of select="'disc'"/></xsl:when>
             <xsl:otherwise>
               <xsl:value-of select="$numFmt"/>    

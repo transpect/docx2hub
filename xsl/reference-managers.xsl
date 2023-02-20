@@ -680,11 +680,15 @@
                   <xsl:when test="$csl-rendered-by-pos-method = 'authoryear' and
                                   descendant::fn:map[@key = 'issued']/fn:array[@key = 'date-parts']/fn:array/*[1][matches(., '^(19|20)\d\d$')] and
                                   descendant::fn:array[@key = 'author']/fn:map[1]/fn:string[@key = 'family'][normalize-space()]">
-                    <surname>
-                      <xsl:sequence select="normalize-space(descendant::fn:array[@key = 'author']/fn:map[1]/fn:string[@key = 'family'][1])"/>
+                    <xsl:variable name="surname" as="xs:string?"
+                      select="normalize-space(descendant::fn:array[@key = 'author']/fn:map[1]/fn:string[@key = 'family'][1])"/>
+                    <surname regex-normalized="{replace($surname, '([\{\}\[\]\(\)])', '\\$1')}">
+                      <xsl:sequence select="$surname"/>
                     </surname>
-                    <year>
-                      <xsl:sequence select="normalize-space(descendant::fn:map[@key = 'issued']/fn:array[@key = 'date-parts']/fn:array/*[1])"/>
+                    <xsl:variable name="year" as="xs:string?"
+                      select="normalize-space(descendant::fn:map[@key = 'issued']/fn:array[@key = 'date-parts']/fn:array/*[1])"/>
+                    <year regex-normalized="{replace($year, '([\{\}\[\]\(\)])', '\\$1')}">
+                      <xsl:sequence select="$year"/>
                     </year>
                   </xsl:when>
                   <xsl:otherwise>
@@ -712,9 +716,9 @@
             <xsl:variable name="match-candidate" as="element()*"
               select="$root//*:CSL_XML/w:p[
                             $citation-structured/*:year[1] != ''
-                        and matches(normalize-space(.), concat('[\s;,.\(]', $citation-structured/*:year[1], '[\s;,.\)]'))
+                        and matches(normalize-space(.), concat('[\s;,.\(]', $citation-structured/*:year[1]/@regex-normalized, '[\s;,.\)]'))
                         and $citation-structured/*:surname != ''
-                        and matches(normalize-space(.), concat('^', $citation-structured/*:surname))
+                        and matches(normalize-space(.), concat('^', $citation-structured/*:surname/@regex-normalized))
                       ]"/>
             <xsl:choose>
               <xsl:when test="count($match-candidate) = 1">

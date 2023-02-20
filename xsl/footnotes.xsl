@@ -286,84 +286,89 @@
     <xsl:param name="identifier" select="false()" tunnel="yes"/>
     <xsl:param name="footnotePrs" as="element(w:footnotePr)*" tunnel="yes"/>
     <xsl:param name="sect-boundaries" as="element(*)*" tunnel="yes"/>
-    <xsl:if test="$identifier">
-      <xsl:variable name="fnref" as="element(w:footnoteReference)*"
-        select="key('footnoteReference-by-id', ancestor::w:footnote/@w:id)"/>
-      <xsl:variable name="preceding-boundary" as="element(*)?" select="($sect-boundaries[. &lt;&lt; $fnref/..])[last()]"/>
-      <xsl:variable name="following-boundary" as="element(*)?" select="($sect-boundaries[. >> $fnref/..])[1]"/>
-      <xsl:variable name="fnpr" as="element(w:footnotePr)?" 
-        select="($footnotePrs[. >> $fnref/..]
-                             [.. is $following-boundary],
-                 if($docx2hub:use-document-footnotePr-settings) 
-                   then /*/w:settings/w:footnotePr else ()
-                )[1]"/>
-      <xsl:variable name="section-reset" as="xs:boolean" select="exists($fnpr/w:numRestart[@w:val='eachSect'])"/>
-      <xsl:variable name="footnote-num-format" 
-                    select="$fnpr/w:numFmt/@w:val" as="xs:string?"/>
-      <xsl:variable name="startnum" as="xs:integer" select="xs:integer(($fnpr/w:numStart/@w:val, 1)[1])"/>
-      <xsl:variable name="provisional-footnote-number" as="xs:string">
-        <xsl:number value="if (exists($fnref)) 
-                           then count(
-                             distinct-values(
-                               $fnref[1]
-                                  /preceding::w:footnoteReference[not(@w:customMarkFollows = ('1','on','true'))]
-                                                                 [if ($section-reset and exists($preceding-boundary)) 
-                                                                  then . >> $preceding-boundary else true()]
-                                    /@w:id
-                             )
-                           ) + $startnum
-                           else (count(preceding::w:footnoteRef[if ($section-reset and exists($preceding-boundary)) 
-                                                               then . >> $preceding-boundary else true()]) + $startnum)" 
-                    format="{if ($footnote-num-format)
-                             then tr:get-numbering-format($footnote-num-format, '') 
-                             else '1'}"/>
-      </xsl:variable>
-      <xsl:variable name="cardinality" select="if (matches($provisional-footnote-number,'^\*†‡§[0-9]+\*†‡§$'))
-                                               then xs:integer(replace($provisional-footnote-number, '^\*†‡§([0-9]+)\*†‡§$', '$1'))
-                                               else 0"/>
-      <xsl:variable name="footnote-number">
-        <xsl:value-of select="if (matches($provisional-footnote-number,'^\*†‡§[0-9]+\*†‡§$')) 
-                              then string-join((for $i 
-                                                in (1 to xs:integer(ceiling($cardinality div 4))) 
-                                                return substring($provisional-footnote-number,if (($cardinality mod 4) ne 0) 
-                                                                                              then ($cardinality mod 4) 
-                                                                                              else 4,1)),'') 
-                              else if (matches($provisional-footnote-number,'^a[a-z]$')) 
-                                   then replace($provisional-footnote-number,'^a([a-z])$','$1$1')
-                                   else $provisional-footnote-number"/>
-      </xsl:variable>
-      <w:t>
-        <xsl:choose>
-          <!-- This seems to be very specific to a particular workflow / set of conventions / preprocessing: -->
-          <xsl:when test="//*:keywordset[@role='docVars']/*:keyword[@role='footnote_check']">
-            <xsl:variable name="footnote-check-docvar" as="xs:string*" 
-              select="tokenize(
-                                //*:keywordset[@role='docVars']/*:keyword[@role='footnote_check'],
-                                '&#xD;'
-                              )[tokenize(.,',')[1]=$footnote-number]"/>
-            <xsl:choose>
-              <xsl:when test="exists($footnote-check-docvar)">
-                <xsl:variable name="after-comma" select="tokenize($footnote-check-docvar,',')[2]" as="xs:string"/>
-                <xsl:value-of select="if (
-                                           matches($after-comma,'\)$') 
-                                           and 
-                                           ancestor::w:footnote//w:r[docx2hub:is-footnote-reference-style(@role)]
-                                                                    [matches(.,'^[\s&#160;]*\)[\s&#160;]*$')]
-                                         )
-                                      then replace($after-comma,'\)$','') 
-                                      else $after-comma"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="$footnote-number"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="$footnote-number"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </w:t>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="$identifier">
+        <xsl:variable name="fnref" as="element(w:footnoteReference)*"
+                      select="key('footnoteReference-by-id', ancestor::w:footnote/@w:id)"/>
+        <xsl:variable name="preceding-boundary" as="element(*)?" 
+                      select="($sect-boundaries[. &lt;&lt; $fnref/..])[last()]"/>
+        <xsl:variable name="following-boundary" as="element(*)?" 
+                      select="($sect-boundaries[. >> $fnref/..])[1]"/>
+        <xsl:variable name="fnpr" as="element(w:footnotePr)?" 
+                      select="($footnotePrs[. >> $fnref/..]
+                                           [.. is $following-boundary],
+                               if ($docx2hub:use-document-footnotePr-settings) 
+                               then /*/w:settings/w:footnotePr else ())[1]"/>
+        <xsl:variable name="section-reset" as="xs:boolean" 
+                      select="exists($fnpr/w:numRestart[@w:val='eachSect'])"/>
+        <xsl:variable name="footnote-num-format" 
+                      select="$fnpr/w:numFmt/@w:val" as="xs:string?"/>
+        <xsl:variable name="startnum" as="xs:integer" select="xs:integer(($fnpr/w:numStart/@w:val, 1)[1])"/>
+        <xsl:variable name="provisional-footnote-number" as="xs:string">
+          <xsl:number value="if (exists($fnref)) 
+                             then count(distinct-values($fnref[1]/preceding::w:footnoteReference[not(@w:customMarkFollows = 
+                                                                                                     ('1','on','true'))]
+                                                                                                [if ($section-reset and 
+                                                                                                     exists($preceding-boundary)) 
+                                                                                                 then . >> $preceding-boundary 
+                                                                                                 else true()]/@w:id)) + 
+                                  $startnum
+                             else (count(preceding::w:footnoteRef[if ($section-reset and exists($preceding-boundary)) 
+                                                                  then . >> $preceding-boundary 
+                                                                  else true()]) + 
+                                   $startnum)" 
+                      format="{if ($footnote-num-format)
+                               then tr:get-numbering-format($footnote-num-format, '') 
+                               else '1'}"/>
+        </xsl:variable>
+        <xsl:variable name="cardinality" select="if (matches($provisional-footnote-number,'^\*†‡§[0-9]+\*†‡§$'))
+                                                 then xs:integer(replace($provisional-footnote-number, '^\*†‡§([0-9]+)\*†‡§$', '$1'))
+                                                 else 0"/>
+        <xsl:variable name="footnote-number">
+          <xsl:value-of select="if (matches($provisional-footnote-number,'^\*†‡§[0-9]+\*†‡§$')) 
+                                then string-join((for $i 
+                                                  in (1 to xs:integer(ceiling($cardinality div 4))) 
+                                                  return substring($provisional-footnote-number,
+                                                  if (($cardinality mod 4) ne 0) 
+                                                  then ($cardinality mod 4) 
+                                                  else 4,1)),'') 
+                                else if (matches($provisional-footnote-number,'^a[a-z]$')) 
+                                     then replace($provisional-footnote-number,'^a([a-z])$','$1$1')
+                                     else $provisional-footnote-number"/>
+        </xsl:variable>
+        <w:t>
+          <xsl:choose>
+            <!-- This seems to be very specific to a particular workflow / set of conventions / preprocessing: -->
+            <xsl:when test="//*:keywordset[@role='docVars']/*:keyword[@role='footnote_check']">
+              <xsl:variable name="footnote-check-docvar" as="xs:string*" 
+                            select="tokenize(//*:keywordset[@role='docVars']/*:keyword[@role='footnote_check'],
+                                             '&#xD;')[tokenize(.,',')[1]=$footnote-number]"/>
+              <xsl:choose>
+                <xsl:when test="exists($footnote-check-docvar)">
+                  <xsl:variable name="after-comma" select="tokenize($footnote-check-docvar,',')[2]" as="xs:string"/>
+                  <xsl:value-of select="if (matches($after-comma,'\)$') and 
+                                            ancestor::w:footnote//w:r[docx2hub:is-footnote-reference-style(@role)]
+                                                                     [matches(.,'^[\s&#160;]*\)[\s&#160;]*$')])
+                                        then replace($after-comma,'\)$','') 
+                                        else $after-comma"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="$footnote-number"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$footnote-number"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </w:t>
+      </xsl:when>
+      <xsl:when test="not(ancestor::*[matches(local-name(),'footnote')])">
+        <w:t>
+          <xsl:value-of select="'1'"/>
+        </w:t>
+      </xsl:when>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="*[*]

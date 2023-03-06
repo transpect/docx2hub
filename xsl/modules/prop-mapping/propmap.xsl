@@ -84,7 +84,6 @@
           <val match="end" target-name="css:text-align" target-value="right" />
           <val match="both" target-name="css:text-align" target-value="justify" />
           <val match="center" target-name="css:text-align" target-value="center" />
-          <val match="center" target-name="css:text-align-last" target-value="center" />
         </prop>
         <prop name="m:jc">
           <val match="left" target-name="css:text-align" target-value="left" />
@@ -93,7 +92,6 @@
           <val match="end" target-name="css:text-align" target-value="right" />
           <val match="both" target-name="css:text-align" target-value="justify" />
           <val match="center" target-name="css:text-align" target-value="center" />
-          <val match="center" target-name="css:text-align-last" target-value="center" />
         </prop>
       	<prop name="w:keepLines" />
       	<prop name="w:keepNext" type="docx-boolean-prop" default="auto" active="avoid" target-name="css:page-break-after"/>

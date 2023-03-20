@@ -748,7 +748,7 @@
                                else replace($stringval, '^(\p{Lu}+-\p{Ll}+).*$', '$1')"/>
         <xsl:if test="normalize-space($repl)">
           <xsl:choose>
-            <xsl:when test="$val/self::w:lang[@w:val and @w:bidi] and exists($val/ancestor::w:rPr/w:rtl)">
+            <xsl:when test="$val/self::w:lang[@w:val and @w:bidi] and exists($val/ancestor::w:rPr/w:rtl[not(@w:val = ('0', 'false'))])">
               <docx2hub:attribute name="{../@target-name}">
                 <xsl:value-of select="if($lang-variant eq 'yes') 
                                   then replace($val/@w:bidi, '^(\p{Lu}+-\p{Ll}+).*$', '$1')

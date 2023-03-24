@@ -249,6 +249,16 @@
   <p:option name="keep-paraid" required="false" select="'false'">
     <p:documentation>Keep Word created w14:paraId and w14:textId</p:documentation>
   </p:option>
+  <p:option name="heuristic-character-replacements" select="'#all'">
+    <p:documentation>Replace Cyrillic symbols in formulas with similar-looking Greek ones, replace
+    small letter 'o' as bullet list marker with U+26AC ('⚬'), etc.
+    This option accepts space-separated tokens. The list will be extended over time.
+    The default '#all' will effect that all replacements will done, '#lists' will apply 
+    all list-related replacements, '#formulas' will apply all formula-related replacements,
+    'bullet-o' will carry out said bullet character replacement, etc. 
+    Search for $heuristic-character-replacement-tokens in the XSLT code in order to find out
+    which keywords are available.</p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -421,6 +431,7 @@
     <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
+    <p:with-param name="heuristic-character-replacements" select="$heuristic-character-replacements"/>
   </tr:xslt-mode>
 
   <p:sink/>
@@ -602,6 +613,7 @@
     <p:with-param name="charmap-policy" select="$charmap-policy"/>
     <p:with-param name="keep-paraid" select="$keep-paraid"/>
     <p:with-param name="mml-version" select="$mml-version"/>
+    <p:with-param name="heuristic-character-replacements" select="$heuristic-character-replacements"/>
   </tr:xslt-mode>
 
   <p:sink/>

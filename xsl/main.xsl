@@ -40,7 +40,13 @@
   <xsl:variable name="catalog" as="document-node(element(cat:catalog))?" select="collection($collection-uri)[cat:catalog]"/>
   
   <xsl:param name="collection-uri" as="xs:string?" select="()"/>
-  
+  <xsl:param name="heuristic-character-replacements" as="xs:string?">
+    <!-- see p:documentation of the same-named option in docx2hub.xpl --> 
+  </xsl:param>
+  <xsl:variable name="heuristic-character-replacement-tokens" as="xs:string*" 
+    select="tokenize($heuristic-character-replacements, '\s+')"/>
+
+
   <!-- ================================================================================ -->
   <!-- OUTPUT FORMAT -->
   <!-- ================================================================================ -->

@@ -1829,6 +1829,15 @@
       </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
+  
+  <!-- collateral: apply heuristic list marker replacements -->
+  <xsl:template match="w:lvl[w:numFmt/@w:val = 'bullet']/w:lvlText/@w:val[. = 'o']
+                          [$heuristic-character-replacement-tokens = ('#all', '#lists', 'bullet-o')]" 
+    mode="docx2hub:remove-redundant-run-atts">
+    <xsl:attribute name="{name()}" select="'&#x26AC;'">
+      <!-- MEDIUM SMALL WHITE CIRCLE ⚬ -->
+    </xsl:attribute>
+  </xsl:template>
 
   <xsl:template match="w:r | *:superscript | *:subscript" mode="docx2hub:remove-redundant-run-atts">
     <xsl:param name="toggles" as="attribute(*)*" tunnel="yes"/>

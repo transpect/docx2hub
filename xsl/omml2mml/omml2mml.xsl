@@ -3466,11 +3466,17 @@
             <!-- eta typed as LATIN SMALL LETTER N WITH LONG RIGHT LEG -->
             <xsl:text>&#x3b7;</xsl:text>
           </xsl:when>
+          <xsl:when test=". = '&#x19e;'">
+            <xsl:value-of select="."/>
+          </xsl:when>
           <xsl:when test=". = '&#x413;' and ($heuristic-character-replacement-tokens = ('#all', '#formulas', '#formulas-cyrillic', 'cyrillic-Ghe-to-Gamma'))">
             <!-- Gamma typed as CYRILLIC CAPITAL LETTER GHE (if this is an issue in cyrillic formula text, 
                  we need to introduce an option for this correction; or let people specify omml-character-correction-regex
                  in the XProc invocation) -->
             <xsl:text>&#x393;</xsl:text>
+          </xsl:when>
+          <xsl:when test=". = '&#x413;'">
+            <xsl:value-of select="."/>
           </xsl:when>
         </xsl:choose>
       </xsl:matching-substring>

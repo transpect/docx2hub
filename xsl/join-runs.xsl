@@ -1911,5 +1911,202 @@
                         /dbk:imageobject[dbk:imagedata/@role = 'hub:linked']" mode="docx2hub:join-runs"/>
   <xsl:template match="*[not(dbk:imageobject/dbk:imagedata/@role = 'hub:embedded')]
                         /dbk:imageobject/dbk:imagedata/@role[. = 'hub:linked']" mode="docx2hub:join-runs"/>
+
+
+  <!-- collateral: optionally convert double-struck, fraktur and script mathvariants to Unicode characters.
+       This is not exactly a heuristic replacement, but we are using this existing option for reasons of
+       parsimony (we don’t want to introduce a new option). This replacement, however, may not be activated
+       by using the #all or #formulas keywords. It needs to be activated by a token of its own, 'exotic-mathvariants'. 
   
+      Word’s equation editor seems to export U+2118 not as P with mathvariant script but as U+2118 with either
+      no mathvariant, matchvariant=double-struck or mathvariant=script. Therefore there is a special treatment
+      for &#x2118; below.
+  -->
+
+  <xsl:template match="mml:mi[$heuristic-character-replacement-tokens = 'exotic-mathvariants']
+                             [tokenize(@mathvariant, '\s+') = 'double-struck']" mode="docx2hub:join-runs">
+    <xsl:variable name="context" as="element(mml:mi)" select="."/>
+    <xsl:variable name="other-variants" as="xs:string*" select="tokenize(@mathvariant, '\s+')[not(. = 'double-struck')]"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @mathvariant" mode="#current"/>
+      <xsl:if test="exists($other-variants)">
+        <xsl:attribute name="mathvariant" select="$other-variants" separator=" "/>
+      </xsl:if>
+      <xsl:analyze-string select="." regex="[A-Za-z&#x2118;]">
+        <xsl:matching-substring>
+          <xsl:choose>
+            <xsl:when test=". = 'C'">&#x2102;</xsl:when>
+            <xsl:when test=". = 'H'">&#x210D;</xsl:when>
+            <xsl:when test=". = 'N'">&#x2115;</xsl:when>
+            <xsl:when test=". = 'P'">&#x2119;</xsl:when>
+            <xsl:when test=". = 'Q'">&#x211A;</xsl:when>
+            <xsl:when test=". = 'R'">&#x211D;</xsl:when>
+            <xsl:when test=". = 'Z'">&#x2124;</xsl:when>
+            <xsl:when test=". = '℘'">&#x2118;</xsl:when>
+            <xsl:when test="matches(., '^[A-Z]$')">
+              <xsl:value-of select="codepoints-to-string(120055 + string-to-codepoints(.))"/>
+            </xsl:when>
+            <xsl:when test="matches(., '^[a-z]$')">
+              <xsl:value-of select="codepoints-to-string(120049 + string-to-codepoints(.))"/>
+            </xsl:when>
+          </xsl:choose>    
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:sequence select="docx2hub:message($context, $fail-on-error = 'yes', false(), 'W2D_621', 'ERR', 'docx2hub:join-runs', 
+                                                   concat('No mapping for double-struck character(s) ', .) 
+                                                   )"/>
+          <xsl:value-of select="."/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="mml:mi[$heuristic-character-replacement-tokens = 'exotic-mathvariants']
+                             [tokenize(@mathvariant, '\s+') = 'fraktur']" mode="docx2hub:join-runs">
+    <xsl:variable name="context" as="element(mml:mi)" select="."/>
+    <xsl:variable name="other-variants" as="xs:string*" select="tokenize(@mathvariant, '\s+')[not(. = 'fraktur')]"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @mathvariant" mode="#current"/>
+      <xsl:if test="exists($other-variants)">
+        <xsl:attribute name="mathvariant" select="$other-variants" separator=" "/>
+      </xsl:if>
+      <xsl:analyze-string select="." regex="[A-Za-z]">
+        <xsl:matching-substring>
+          <xsl:choose>
+            <xsl:when test=". = 'C'">&#x212D;</xsl:when>
+            <xsl:when test=". = 'H'">&#x210C;</xsl:when>
+            <xsl:when test=". = 'I'">&#x2111;</xsl:when>
+            <xsl:when test=". = 'R'">&#x211C;</xsl:when>
+            <xsl:when test=". = 'Z'">&#x2128;</xsl:when>
+            <xsl:when test="matches(., '^[A-Z]$')">
+              <xsl:value-of select="codepoints-to-string(120003 + string-to-codepoints(.))"/>
+            </xsl:when>
+            <xsl:when test="matches(., '^[a-z]$')">
+              <xsl:value-of select="codepoints-to-string(119997 + string-to-codepoints(.))"/>
+            </xsl:when>
+          </xsl:choose>    
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:sequence select="docx2hub:message($context, $fail-on-error = 'yes', false(), 'W2D_622', 'ERR', 'docx2hub:join-runs', 
+                                                   concat('No mapping for fraktur character(s) ', .) 
+                                                   )"/>
+          <xsl:value-of select="."/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="mml:mi[$heuristic-character-replacement-tokens = 'exotic-mathvariants']
+                             [tokenize(@mathvariant, '\s+') = 'bold-fraktur']" mode="docx2hub:join-runs">
+    <xsl:variable name="context" as="element(mml:mi)" select="."/>
+    <xsl:variable name="other-variants" as="xs:string*" select="tokenize(@mathvariant, '\s+')[not(. = 'bold-fraktur')]"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @mathvariant" mode="#current"/>
+      <xsl:if test="exists($other-variants)">
+        <xsl:attribute name="mathvariant" select="$other-variants" separator=" "/>
+      </xsl:if>
+      <xsl:analyze-string select="." regex="[A-Za-z]">
+        <xsl:matching-substring>
+          <xsl:choose>
+            <xsl:when test="matches(., '^[A-Z]$')">
+              <xsl:value-of select="codepoints-to-string(120107 + string-to-codepoints(.))"/>
+            </xsl:when>
+            <xsl:when test="matches(., '^[a-z]$')">
+              <xsl:value-of select="codepoints-to-string(120101 + string-to-codepoints(.))"/>
+            </xsl:when>
+          </xsl:choose>    
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:sequence select="docx2hub:message($context, $fail-on-error = 'yes', false(), 'W2D_623', 'ERR', 'docx2hub:join-runs', 
+                                                   concat('No mapping for bold-fraktur character(s) ', .) 
+                                                   )"/>
+          <xsl:value-of select="."/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mml:mi[$heuristic-character-replacement-tokens = 'exotic-mathvariants']
+                             [tokenize(@mathvariant, '\s+') = 'script']" mode="docx2hub:join-runs">
+    <xsl:variable name="context" as="element(mml:mi)" select="."/>
+    <xsl:variable name="other-variants" as="xs:string*" select="tokenize(@mathvariant, '\s+')[not(. = 'script')]"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @mathvariant" mode="#current"/>
+      <xsl:if test="exists($other-variants)">
+        <xsl:attribute name="mathvariant" select="$other-variants" separator=" "/>
+      </xsl:if>
+      <xsl:analyze-string select="." regex="[A-Za-z&#x2118;]">
+        <xsl:matching-substring>
+          <xsl:choose>
+            <xsl:when test=". = 'B'">&#x212C;</xsl:when>
+            <xsl:when test=". = 'E'">&#x2130;</xsl:when>
+            <xsl:when test=". = 'F'">&#x2131;</xsl:when>
+            <xsl:when test=". = 'H'">&#x210B;</xsl:when>
+            <xsl:when test=". = 'I'">&#x2110;</xsl:when>
+            <xsl:when test=". = 'L'">&#x2112;</xsl:when>
+            <xsl:when test=". = 'M'">&#x2133;</xsl:when>
+            <xsl:when test=". = 'R'">&#x211B;</xsl:when>
+            <xsl:when test=". = 'e'">&#x212F;</xsl:when>
+            <xsl:when test=". = 'g'">&#x210A;</xsl:when>
+            <xsl:when test=". = 'o'">&#x2134;</xsl:when>
+            <xsl:when test=". = '℘'">&#x2118;</xsl:when>
+            <xsl:when test="matches(., '^[A-Z]$')">
+              <xsl:value-of select="codepoints-to-string(119899 + string-to-codepoints(.))"/>
+            </xsl:when>
+            <xsl:when test="matches(., '^[a-z]$')">
+              <xsl:value-of select="codepoints-to-string(119893 + string-to-codepoints(.))"/>
+            </xsl:when>
+          </xsl:choose>    
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:sequence select="docx2hub:message($context, $fail-on-error = 'yes', false(), 'W2D_624', 'ERR', 'docx2hub:join-runs', 
+                                                   concat('No mapping for script character(s) ', .) 
+                                                   )"/>
+          <xsl:value-of select="."/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="mml:mi[$heuristic-character-replacement-tokens = 'exotic-mathvariants']
+                             [tokenize(@mathvariant, '\s+') = 'bold-script']" mode="docx2hub:join-runs">
+    <xsl:variable name="context" as="element(mml:mi)" select="."/>
+    <xsl:variable name="other-variants" as="xs:string*" select="tokenize(@mathvariant, '\s+')[not(. = 'bold-script')]"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@* except @mathvariant" mode="#current"/>
+      <xsl:if test="exists($other-variants)">
+        <xsl:attribute name="mathvariant" select="$other-variants" separator=" "/>
+      </xsl:if>
+      <xsl:analyze-string select="." regex="[A-Za-z]">
+        <xsl:matching-substring>
+          <xsl:choose>
+            <xsl:when test="matches(., '^[A-Z]$')">
+              <xsl:value-of select="codepoints-to-string(119951 + string-to-codepoints(.))"/>
+            </xsl:when>
+            <xsl:when test="matches(., '^[a-z]$')">
+              <xsl:value-of select="codepoints-to-string(119945 + string-to-codepoints(.))"/>
+            </xsl:when>
+          </xsl:choose>    
+        </xsl:matching-substring>
+        <xsl:non-matching-substring>
+          <xsl:sequence select="docx2hub:message($context, $fail-on-error = 'yes', false(), 'W2D_625', 'ERR', 'docx2hub:join-runs', 
+                                                   concat('No mapping for bold-script character(s) ', .) 
+                                                   )"/>
+          <xsl:value-of select="."/>
+        </xsl:non-matching-substring>
+      </xsl:analyze-string>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="mml:mi[$heuristic-character-replacement-tokens = 'exotic-mathvariants']
+                             [tokenize(@mathvariant, '\s+') = ('initial', 'looped', 'tailed', 'stretched')]" mode="docx2hub:join-runs">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:sequence select="docx2hub:message(., $fail-on-error = 'yes', false(), 'W2D_626', 'ERR', 'docx2hub:join-runs', 
+                                                   concat('No mapping for ', @mathvariant, ' character(s) ', .) 
+                                                   )"/>
+      <xsl:value-of select="."/>
+    </xsl:copy>
+  </xsl:template>
+
 </xsl:stylesheet>

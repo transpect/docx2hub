@@ -640,6 +640,7 @@
     <p:with-option name="fail-on-error" select="$fail-on-error"/>
     <p:with-option name="hub-version" select="$hub-version"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
+    <p:with-param name="heuristic-character-replacements" select="$heuristic-character-replacements"/>
   </tr:xslt-mode>
 
   <p:add-attribute match="/*" attribute-name="xml:base" name="rebase">

@@ -20,47 +20,55 @@
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
   exclude-result-prefixes = "w o v wx dbk pkg r rel word200x exsl saxon fn tr">
+  
+  <xsl:param name="table-headers-and-footers" select="false()" as="xs:boolean"/>
 
   <xsl:template match="w:tbl" mode="wml-to-dbk">
-    <xsl:variable name="styledef" as="element(css:rule)?" select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
+    <xsl:variable name="styledef" as="element(css:rule)?" 
+                  select="key('docx2hub:style-by-role', w:tblPr/@role)"/>
     <informaltable>
-      <xsl:variable name="collapse" select="(w:tblPr/@docx2hub:generated-tblCellSpacing/'separate','collapse')[1]" as="xs:string"/>
-      <xsl:variable name="outer-border-set" select="
-        empty(w:tr[1]/w:tc/w:tcPr/w:top[matches(@w:val, 'nil|none')][1]),
-        empty(w:tr/w:tc[last()]/w:tcPr/w:right[matches(@w:val, 'nil|none')][1]),
-        empty(w:tr[last()]/w:tc/w:tcPr/w:bottom[matches(@w:val, 'nil|none')][1]),
-        empty(w:tr/w:tc[1]/w:tcPr/w:left[matches(@w:val, 'nil|none')][1])
-      " as="xs:boolean+"/>
+      <xsl:variable name="collapse" as="xs:string"
+                    select="(w:tblPr/@docx2hub:generated-tblCellSpacing/'separate','collapse')[1]"/>
+      <xsl:variable name="outer-border-set" as="xs:boolean+" 
+                    select="empty(w:tr[1]/w:tc/w:tcPr/w:top[matches(@w:val, 'nil|none')][1]),
+                            empty(w:tr/w:tc[last()]/w:tcPr/w:right[matches(@w:val, 'nil|none')][1]),
+                            empty(w:tr[last()]/w:tc/w:tcPr/w:bottom[matches(@w:val, 'nil|none')][1]),
+                            empty(w:tr/w:tc[1]/w:tcPr/w:left[matches(@w:val, 'nil|none')][1])"/>
       <xsl:attribute name="css:border-collapse" select="$collapse"/>
       <xsl:apply-templates select="w:tblPr/@role,
-                                   (
-                                   $styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align|padding-(top|right|bottom|left))')], 
-                                   w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align|padding-(top|right|bottom|left))')]
-                                   )[$collapse = 'separate' or (matches(., 'background-color|margin-(left|right)|text-align')) or
-                                    (
-                                      (matches(name(), 'top') and $outer-border-set[1])
-                                      or (matches(name(), 'right') and $outer-border-set[2])
-                                      or (matches(name(), 'bottom') and $outer-border-set[3])
-                                      or (matches(name(), 'left') and $outer-border-set[4])
-                                    )],
+                                   ($styledef/w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align|padding-(top|right|bottom|left))')], 
+                                    w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width)|background-color|margin-(left|right)|text-align|padding-(top|right|bottom|left))')]
+                                   )[   $collapse = 'separate' 
+                                     or (matches(., 'background-color|margin-(left|right)|text-align')) 
+                                     or ((    matches(name(), 'top')    and $outer-border-set[1])
+                                          or (matches(name(), 'right')  and $outer-border-set[2])
+                                          or (matches(name(), 'bottom') and $outer-border-set[3])
+                                          or (matches(name(), 'left')   and $outer-border-set[4])
+                                        )],
                                    $styledef/w:tblPr/w:tblW, 
                                    w:tblPr/w:tblW,
                                    w:tblPr/@css:table-layout,
                                    @srcpath, 
                                    @css:orientation" mode="#current"/>
       <xsl:variable name="insideH-width" as="xs:string?" 
-        select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
+                    select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
       <xsl:variable name="insideV-width" as="xs:string?" 
-        select="($styledef/w:tblPr/@css:border-insideV-width, w:tblPr/@css:border-insideV-width)[last()]"/>
-      <xsl:variable name="table-adhoc-borders" select="w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width))')]"/>
-      <xsl:variable name="width" select="w:tblPr/w:tblW/@w:w"/>
-      <xsl:variable name="tblGrid" select="w:tblGrid"/>
-      <xsl:for-each-group select="w:tr" group-starting-with="w:tr[not(preceding-sibling::w:tr) or (docx2hub:is-tableheader-row(.) and preceding-sibling::w:tr[1][not(docx2hub:is-tableheader-row(.))])]">
+                    select="($styledef/w:tblPr/@css:border-insideV-width, w:tblPr/@css:border-insideV-width)[last()]"/>
+      <xsl:variable name="table-adhoc-borders" select="w:tblPr/@css:*[matches(name(.), '(border-(top|right|bottom|left)-(style|color|width))')]" as="attribute()*"/>
+      <xsl:variable name="width" select="w:tblPr/w:tblW/@w:w" as="attribute(w:w)?"/>
+      <xsl:variable name="tblGrid" select="w:tblGrid" as="element(w:tblGrid)?"/>
+      <xsl:variable name="tblLook" select="w:tblPr/w:tblLook" as="element(w:tblLook)?"/>
+      <xsl:variable name="row-count" select="count(w:tr)" as="xs:integer"/>
+      <xsl:for-each-group select="w:tr" 
+                          group-starting-with="    w:tr[not(preceding-sibling::w:tr) 
+                                               or  (docx2hub:is-tableheader-row(., position(), $tblLook) 
+                                               and preceding-sibling::w:tr[1][not(docx2hub:is-tableheader-row(., position(), $tblLook))])]">
         <tgroup>
-          <xsl:attribute name="cols" select="(
-            count($tblGrid/w:gridCol),
-            max(for $row in current-group() return count($row/w:tc)) (: fallback if w:tblGrid is missing :) 
-            )[not(. = 0)][1]"/>
+          <xsl:attribute name="cols" 
+                         select="(count($tblGrid/w:gridCol),
+                                  max(for $row in current-group() 
+                                      return count($row/w:tc)) (: fallback if w:tblGrid is missing :) 
+                                  )[not(. = 0)][1]"/>
           <xsl:if test="exists($insideH-width) and not($insideH-width = '0pt')">
             <xsl:attribute name="rowsep" select="'1'"/>
           </xsl:if>
@@ -68,40 +76,51 @@
             <xsl:attribute name="colsep" select="'1'"/>
           </xsl:if>
           <xsl:apply-templates select="$tblGrid" mode="colspec"/>
-          <xsl:variable name="every-row-is-a-header" as="xs:boolean"
-            select="every $tr in current-group() satisfies $tr[docx2hub:is-tableheader-row(.)]"/>
-          <xsl:if test="current-group()[docx2hub:is-tableheader-row(.)] and 
-            not($every-row-is-a-header)">
-            <thead>
-              <xsl:apply-templates select="current-group()[docx2hub:is-tableheader-row(.)]" mode="tables">
+          <xsl:for-each-group select="current-group()" 
+                              group-adjacent="docx2hub:table-part-name(., position(), $row-count, $tblLook)">
+            <xsl:sort select="index-of(('thead', 'tfoot', 'tbody'), current-grouping-key())"/>
+            <xsl:element name="{current-grouping-key()}">
+              <xsl:apply-templates select="current-group()" mode="tables">
                 <xsl:with-param name="cols" select="count($tblGrid/w:gridCol)" tunnel="yes"/>
                 <xsl:with-param name="width" select="$width" tunnel="yes"/>
                 <xsl:with-param name="col-widths" select="(for $x in $tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
                 <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
               </xsl:apply-templates>
-            </thead>
-          </xsl:if>
-          <tbody>
-            <xsl:apply-templates mode="tables"
-              select="if ($every-row-is-a-header) then current-group()
-              else current-group()[not(docx2hub:is-tableheader-row(.))]">
-              <xsl:with-param name="cols" select="count($tblGrid/w:gridCol)" tunnel="yes"/>
-              <xsl:with-param name="width" select="$width" tunnel="yes"/>
-              <xsl:with-param name="col-widths" select="(for $x in $tblGrid/w:gridCol return $x/@w:w)" tunnel="yes"/>
-              <xsl:with-param name="table-borders" select="$table-adhoc-borders" as="attribute(*)*" tunnel="yes"/>
-            </xsl:apply-templates>
-          </tbody>
+            </xsl:element>
+          </xsl:for-each-group>
         </tgroup>
       </xsl:for-each-group>
     </informaltable>
-  </xsl:template>
+  </xsl:template>  
 
   <xsl:function name="docx2hub:is-tableheader-row" as="xs:boolean">
     <xsl:param name="row" as="element(w:tr)"/>
-    <xsl:sequence select="$row/w:trPr/w:tblHeader or 
-                          $row/w:tblHeader or
-                          $row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]
-                              [preceding-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]/self::w:tr[docx2hub:is-tableheader-row(.)]]"/>
+    <xsl:param name="pos" as="xs:integer"/>
+    <xsl:param name="tblLook" as="element(w:tblLook)?"/>
+    <xsl:sequence select="   $row/w:trPr/w:tblHeader 
+                          or $row/w:tblHeader 
+                          or $row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]
+                                  [preceding-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]/self::w:tr[docx2hub:is-tableheader-row(., position(), $tblLook)]]
+                          or $row[$pos = 1 and $tblLook/@w:firstRow = 1]"/>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:is-tablefooter-row" as="xs:boolean">
+    <xsl:param name="pos" as="xs:integer"/>
+    <xsl:param name="row-count" as="xs:integer"/>
+    <xsl:param name="tblLook" as="element(w:tblLook)?"/>
+    <xsl:sequence select="$pos eq $row-count and $tblLook/@w:lastRow = 1"/>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:table-part-name" as="xs:string">
+    <xsl:param name="row" as="element(w:tr)"/>
+    <xsl:param name="pos" as="xs:integer"/>
+    <xsl:param name="row-count" as="xs:integer"/>
+    <xsl:param name="tblLook" as="element(w:tblLook)?"/>
+    <xsl:value-of select="     if(docx2hub:is-tableheader-row($row, $pos, $tblLook)) 
+                                 then 'thead'
+                          else if(docx2hub:is-tablefooter-row($pos, $row-count, $tblLook)) 
+                                 then 'tfoot'
+                                 else 'tbody'"/>
   </xsl:function>
 
   <xsl:template match="w:tblGridChange" mode="colspec"/>
@@ -576,12 +595,17 @@
   <xsl:template name="cell.morerows">
     <xsl:if test="w:tcPr/w:vMerge/@w:val = 'restart'">
       <xsl:variable name="is-thead-tr" as="xs:boolean" 
-        select="exists(parent::w:tr[docx2hub:is-tableheader-row(.)])"/>
+        select="exists(parent::w:tr[docx2hub:is-tableheader-row(., 
+                                                                position(), 
+                                                                ancestor::w:tbl/w:tblPr/w:tbkLook)])"/>
       <xsl:variable name="next-non-vmerged-tr" as="element(w:tr)?"
         select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]"/>
       <xsl:variable name="counts" as="xs:integer*">
         <xsl:choose>
-          <xsl:when test="$is-thead-tr = true() and not(../following-sibling::w:tr[1][docx2hub:is-tableheader-row(.)])">
+          <xsl:when test="$is-thead-tr = true() 
+                          and not(../following-sibling::w:tr[1][docx2hub:is-tableheader-row(., 
+                                                                                            ../following-sibling::w:tr[1]/position(), 
+                                                                                            ancestor::w:tbl/w:tblPr/w:tblLook)])">
             <xsl:sequence select="999"/>
           </xsl:when>
           <xsl:when test="$next-non-vmerged-tr/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]

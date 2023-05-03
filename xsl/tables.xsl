@@ -98,9 +98,7 @@
     <xsl:param name="pos" as="xs:integer"/>
     <xsl:param name="tblLook" as="element(w:tblLook)?"/>
     <xsl:sequence select="boolean(   $row/w:trPr/w:tblHeader 
-                                  or $row/w:tblHeader 
-                                  or $row[w:tc/w:tcPr/w:vMerge[not(@w:val) or @w:val eq 'continue']]
-                                         [preceding-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]/self::w:tr[docx2hub:is-tableheader-row(., position(), $tblLook)]]
+                                  or $row/w:tblHeader
                                   or $row[$pos = 1 and $tblLook/@w:firstRow = 1])"/>
   </xsl:function>
   

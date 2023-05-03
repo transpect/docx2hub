@@ -21,7 +21,7 @@
   version="2.0"
   exclude-result-prefixes = "w o v wx dbk pkg r rel word200x exsl saxon fn tr">
   
-  <xsl:param name="table-headers-and-footers" select="false()" as="xs:boolean"/>
+  <xsl:param name="table-headers-and-footers-from-tblLook" select="'no'" as="xs:string"/>
 
   <xsl:template match="w:tbl" mode="wml-to-dbk">
     <xsl:variable name="styledef" as="element(css:rule)?" 
@@ -99,14 +99,19 @@
     <xsl:param name="tblLook" as="element(w:tblLook)?"/>
     <xsl:sequence select="boolean(   $row/w:trPr/w:tblHeader 
                                   or $row/w:tblHeader
-                                  or $row[$pos = 1 and $tblLook/@w:firstRow = 1])"/>
+                                  or $row[    $pos = 1 
+                                          and $tblLook/@w:firstRow = 1
+                                          and exists($row/following-sibling::w:tr)]
+                                          and $table-headers-and-footers-from-tblLook eq 'yes')"/>
   </xsl:function>
   
   <xsl:function name="docx2hub:is-tablefooter-row" as="xs:boolean">
     <xsl:param name="pos" as="xs:integer"/>
     <xsl:param name="row-count" as="xs:integer"/>
     <xsl:param name="tblLook" as="element(w:tblLook)?"/>
-    <xsl:sequence select="$pos eq $row-count and $tblLook/@w:lastRow = 1"/>
+    <xsl:sequence select="    $pos eq $row-count 
+                          and $tblLook/@w:lastRow = 1
+                          and $table-headers-and-footers-from-tblLook eq 'yes'"/>
   </xsl:function>
   
   <xsl:function name="docx2hub:table-part-name" as="xs:string">

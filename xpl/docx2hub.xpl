@@ -259,6 +259,13 @@
     Search for $heuristic-character-replacement-tokens in the XSLT code in order to find out
     which keywords are available.</p:documentation>
   </p:option>
+  <p:option name="table-headers-and-footers-from-tblLook" select="'no'">
+    <p:documentation>Whether to use the first row and last row feature 
+      of more recent Microsoft Word versions to render &lt;thead> and &lt;tfoot>. 
+      Otherwise &lt;thead> is only generated when you select the 
+      "Repeat as header row at the top of each page" check box in the Table Properties dialog box on the Row tab.
+      </p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -614,6 +621,7 @@
     <p:with-param name="keep-paraid" select="$keep-paraid"/>
     <p:with-param name="mml-version" select="$mml-version"/>
     <p:with-param name="heuristic-character-replacements" select="$heuristic-character-replacements"/>
+    <p:with-param name="table-headers-and-footers-from-tblLook" select="$table-headers-and-footers-from-tblLook"/>
   </tr:xslt-mode>
 
   <p:sink/>

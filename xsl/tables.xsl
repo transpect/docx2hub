@@ -79,7 +79,7 @@
           <xsl:for-each-group select="current-group()" 
                               group-adjacent="docx2hub:table-part-name(., position(), $row-count, $tblLook)">
             <xsl:sort select="index-of(('thead', 'tfoot', 'tbody'), current-grouping-key())"/>
-            <xsl:element name="{current-grouping-key()}">
+            <xsl:element name="{if(position() eq 1 and position() eq last()) then 'tbody' else current-grouping-key()}">
               <xsl:apply-templates select="current-group()" mode="tables">
                 <xsl:with-param name="cols" select="count($tblGrid/w:gridCol)" tunnel="yes"/>
                 <xsl:with-param name="width" select="$width" tunnel="yes"/>

@@ -62,6 +62,7 @@
   <xsl:key name="footnote-by-id" match="w:footnote" use="@w:id" />
   <xsl:key name="footnoteReference-by-id" match="w:footnoteReference" use="@w:id" />
   <xsl:key name="endnote-by-id" match="w:endnote" use="@w:id" />
+  <xsl:key name="endnoteReference-by-id" match="w:endnoteReference" use="@w:id" />
   <xsl:key name="comment-by-id" match="w:comment" use="@w:id" />
   <xsl:key name="doc-rel-by-id" match="w:docRels/rel:Relationships/rel:Relationship" use="@Id" />
   <xsl:key name="footnote-rel-by-id" match="w:footnoteRels/rel:Relationships/rel:Relationship" use="@Id" />

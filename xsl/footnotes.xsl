@@ -55,7 +55,14 @@
                             docx2hub:is-footnote-reference-style($el/@role)
                             or 
                             $el/w:footnoteRef
-                          )"/>
+                          )
+                          or 
+                          (
+                            docx2hub:is-endnote-reference-style($el/@role)
+                            or 
+                            $el/w:endnoteRef
+                          )
+                          "/>
   </xsl:function>
 
   <xsl:template match="w:continuationSeparator" mode="wml-to-dbk">
@@ -98,7 +105,7 @@
   <xsl:variable name="docx2hub:footnote-marker-embellishment-regex" as="xs:string" select="'^[\p{P}\s\p{Zs}]*$'"/>
 
   <!-- collateral, has to run before the templates below. They currently match in docx2hub:join-instrText-runs --> 
-  <xsl:template match="w:footnote/w:p[1]/w:r[w:tab]" mode="docx2hub:remove-redundant-run-atts" priority="2">
+  <xsl:template match="*[self::w:footnote or self::w:endnote]/w:p[1]/w:r[w:tab]" mode="docx2hub:remove-redundant-run-atts" priority="2">
     <!-- FIXME: decouple this from (toggle-)prop handling, for better more modular code -->
     <xsl:variable name="r" as="element(w:r)">
       <xsl:next-match/>
@@ -196,8 +203,8 @@
   </xsl:template>
 
   <!-- If there are erroneous identifier phrases in the middle of the paragraph, remove them: -->
-  <xsl:template match="w:footnote/w:p/dbk:phrase[@role = 'hub:identifier']
-                                                [preceding-sibling::*:phrase[@role = 'hub:identifier']]" 
+  <xsl:template match="*[self::w:footnote or self::w:endnote]/w:p/dbk:phrase[@role = 'hub:identifier']
+                                                                             [preceding-sibling::*:phrase[@role = 'hub:identifier']]" 
                 mode="wml-to-dbk">
     <superscript>
       <xsl:apply-templates mode="#current"/>  
@@ -236,20 +243,22 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="w:footnote/w:p/w:r//w:tab" mode="docx2hub:join-instrText-runs">
+  <xsl:template match="*[self::w:footnote or self::w:endnote]/w:p/w:r//w:tab" mode="docx2hub:join-instrText-runs">
     <xsl:param name="tab" as="element(w:tab)*" tunnel="yes"/>
     <xsl:if test="not(some $t in $tab satisfies ($t is current()))">
       <xsl:next-match/>
     </xsl:if>
   </xsl:template>
   
-  <xsl:template match="w:footnote/w:p/w:r/@role[docx2hub:is-footnote-reference-style(.)]" 
+  <xsl:template match="*[self::w:footnote or self::w:endnote]/w:p/w:r/@role[docx2hub:is-footnote-reference-style(.)]" 
                 mode="docx2hub:join-instrText-runs"/>
 
   <!-- There is a space after the marker in each Word-generated footnote. Convert it to a separator if there is no
     following separator tab. -->
   <xsl:template match="w:footnote/w:p/w:r[preceding-sibling::w:r[1]/w:footnoteRef]/w:t/text()
-                       | w:footnote/w:p/w:r[preceding-sibling::*[1][self::dbk:superscript]/w:footnoteRef]/w:t/text()" mode="docx2hub:join-instrText-runs">
+                       | w:footnote/w:p/w:r[preceding-sibling::*[1][self::dbk:superscript]/w:footnoteRef]/w:t/text()
+                       | w:endnote/w:p/w:r[preceding-sibling::w:r[1]/w:endnoteRef]/w:t/text()
+                       | w:endnote/w:p/w:r[preceding-sibling::*[1][self::dbk:superscript]/w:endnoteRef]/w:t/text()" mode="docx2hub:join-instrText-runs">
     <xsl:param name="tab" as="element(w:tab)*" tunnel="yes"/>
     <xsl:choose>
       <xsl:when test="empty($tab)">

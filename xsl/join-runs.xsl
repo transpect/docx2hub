@@ -36,8 +36,10 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:variable name="footnote-ids" select="//dbk:footnote/@xml:id" as="xs:string*"/>
+  <xsl:variable name="footnote-ids" select="//dbk:footnote[not(@role='endnote')]/@xml:id" as="xs:string*"/>
 
+  <xsl:variable name="endnote-ids" select="//dbk:footnote[@role='endnote']/@xml:id" as="xs:string*"/>
+  
   <xsl:template match="docx2hub:citavi-jsons" mode="docx2hub:join-runs"/>
 
   <xsl:template match="dbk:bibliography[@role = 'Citavi']//comment()" mode="docx2hub:join-runs"/>
@@ -183,6 +185,10 @@
   
   <xsl:template match="dbk:footnote/@xml:id" mode="docx2hub:join-runs">
       <xsl:attribute name="{name()}" select="concat('fn-', index-of($footnote-ids, .))"/>
+  </xsl:template>
+  
+  <xsl:template match="dbk:footnote[@role='endnote']/@xml:id" mode="docx2hub:join-runs">
+      <xsl:attribute name="{name()}" select="concat('en-', index-of($endnote-ids, .))"/>
   </xsl:template>
 
   <xsl:template match="dbk:phrase[@role='hub:identifier'][ancestor::dbk:footnote[@xreflabel]]" mode="docx2hub:join-runs" priority="+10">
@@ -1579,7 +1585,8 @@
   </xsl:template>-->
   
 
-  <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1">
+  <xsl:template match="w:footnote/w:p[1][*[docx2hub:element-is-footnoteref(.)]]
+                     | w:endnote/w:p[1][*[docx2hub:element-is-endnoteref(.)]]" mode="docx2hub:join-instrText-runs" priority="1">
     <xsl:variable name="prelim" as="document-node(element(*))">
       <xsl:document>
         <xsl:call-template name="docx2hub:first-note-para"/>

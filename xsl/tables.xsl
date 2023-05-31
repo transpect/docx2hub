@@ -600,7 +600,7 @@
       <xsl:variable name="is-thead-tr" as="xs:boolean" 
         select="exists(parent::w:tr[docx2hub:is-tableheader-row(., 
                                                                 position(), 
-                                                                ancestor::w:tbl/w:tblPr/w:tbkLook)])"/>
+                                                                ancestor::w:tbl/w:tblPr/w:tblLook)])"/>
       <xsl:variable name="next-non-vmerged-tr" as="element(w:tr)?"
         select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]"/>
       <xsl:variable name="counts" as="xs:integer*">

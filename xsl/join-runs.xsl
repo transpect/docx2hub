@@ -1642,7 +1642,7 @@
   <xsl:template name="docx2hub:nest-field-functions" as="document-node()">
     <xsl:param name="input" as="document-node()"/><!-- containing raw w:fldChar or nested docx2hub:field-function -->
     <xsl:param name="iteration" as="xs:integer" select="1"/>
-    <xsl:if test="$iteration gt 50">
+    <xsl:if test="$iteration gt 100">
       <xsl:message terminate="yes" select="'docx2hub:nest-field-functions may be looping. Input: ', $input"/>
     </xsl:if>
     <xsl:variable name="grouping" as="element(*)*">

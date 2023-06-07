@@ -80,6 +80,26 @@
   <xsl:template mode="docx2hub:apply-changemarkup"
     match="w:tbl[every $p in .//w:tc/w:p satisfies docx2hub:is-changemarkup-removed-para($p)]"/>
 
+
+  <!-- Paragraph marker has been removed → paragraph should be joined with next -->
+  <xsl:template match="*[w:p/w:pPr/w:rPr/w:del]" mode="docx2hub:apply-changemarkup">
+    <xsl:for-each-group select="*" group-adjacent="exists(self::w:p/w:pPr/w:rPr/w:del)
+                                                   or exists(preceding-sibling::*[1]/self::w:p/w:pPr/w:rPr/w:del)
+                                                   and not(docx2hub:is-changemarkup-removed-para(.))">
+      <xsl:choose>
+        <xsl:when test="current-grouping-key()">
+          <xsl:copy>
+            <xsl:apply-templates mode="#current"
+               select="@*, node(), (current-group() except .)/node()[empty(self::w:pPr)]"/>
+          </xsl:copy>    
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="current-group()" mode="#current"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each-group>
+  </xsl:template>
+
   <xsl:template match="w:del" mode="docx2hub:apply-changemarkup"/>
   <xsl:template match="m:oMath[every $i in descendant::text() satisfies $i/ancestor::w:del]" mode="docx2hub:apply-changemarkup"/>
   <xsl:template match="w:pPrChange|w:rPrChange" mode="docx2hub:apply-changemarkup"/>

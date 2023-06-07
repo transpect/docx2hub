@@ -87,7 +87,7 @@
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:for-each-group select="*" group-adjacent="(
                                                         exists(self::w:p/w:pPr/w:rPr/w:del)
-                                                     or exists(preceding-sibling::*[1]/self::w:p/w:pPr/w:rPr/w:del)
+                                                     or exists(self::w:p/preceding-sibling::*[1]/self::w:p/w:pPr/w:rPr/w:del)
                                                      )
                                                      and not(docx2hub:is-changemarkup-removed-para(.))">
         <xsl:choose>

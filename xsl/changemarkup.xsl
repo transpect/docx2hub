@@ -93,9 +93,9 @@
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:copy>
-              <xsl:attribute name="docx2hub:is-changemarkup-removed-para" select="docx2hub:is-changemarkup-removed-para(.)"></xsl:attribute>
+              <!-- Use para props of last para in group (apparently Word’s behavior) -->
               <xsl:apply-templates mode="#current"
-                 select="@*, node(), (current-group() except .)/node()[empty(self::w:pPr)]"/>
+                 select="@*, current-group()[last()]/w:pPr, (node(), (current-group() except .)/node())[empty(self::w:pPr)]"/>
             </xsl:copy>    
           </xsl:when>
           <xsl:otherwise>

@@ -85,12 +85,15 @@
   <xsl:template match="*[w:p/w:pPr/w:rPr/w:del]" mode="docx2hub:apply-changemarkup">
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="*" group-adjacent="exists(self::w:p/w:pPr/w:rPr/w:del)
+      <xsl:for-each-group select="*" group-adjacent="(
+                                                        exists(self::w:p/w:pPr/w:rPr/w:del)
                                                      or exists(preceding-sibling::*[1]/self::w:p/w:pPr/w:rPr/w:del)
+                                                     )
                                                      and not(docx2hub:is-changemarkup-removed-para(.))">
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:copy>
+              <xsl:attribute name="docx2hub:is-changemarkup-removed-para" select="docx2hub:is-changemarkup-removed-para(.)"></xsl:attribute>
               <xsl:apply-templates mode="#current"
                  select="@*, node(), (current-group() except .)/node()[empty(self::w:pPr)]"/>
             </xsl:copy>    

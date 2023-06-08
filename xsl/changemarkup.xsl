@@ -85,17 +85,32 @@
   <xsl:template match="*[w:p/w:pPr/w:rPr/w:del]" mode="docx2hub:apply-changemarkup">
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="*" group-adjacent="(
-                                                        exists(self::w:p/w:pPr/w:rPr/w:del)
-                                                     or exists(self::w:p/preceding-sibling::*[1]/self::w:p/w:pPr/w:rPr/w:del)
-                                                     )
-                                                     and not(docx2hub:is-changemarkup-removed-para(.))">
+      <xsl:for-each-group select="*" 
+        group-adjacent="(
+                            exists(self::w:p/w:pPr/w:rPr/w:del)
+                         or exists((  self::w:p 
+                                    | self::w:bookmarkStart 
+                                    | self::w:bookmarkEnd 
+                                    | self::w:moveToRangeEnd 
+                                    | self::w:moveFromRangeEnd)
+                                      /preceding-sibling::*[empty(  self::w:bookmarkStart 
+                                                                  | self::w:bookmarkEnd 
+                                                                  | self::w:moveToRangeEnd 
+                                                                  | self::w:moveFromRangeEnd)]
+                                                           [1]
+                                         /self::w:p[not(docx2hub:is-changemarkup-removed-para(.))]
+                                           /w:pPr/w:rPr/w:del)
+                        )
+                        and not(docx2hub:is-changemarkup-removed-para(.))">
+        <!-- see DIN_EN_16475-7_tr_17511667.docx, bibliography at the end, for a motivation for such a complex expression -->
         <xsl:choose>
           <xsl:when test="current-grouping-key()">
             <xsl:copy>
               <!-- Use para props of last para in group (apparently Word’s behavior) -->
               <xsl:apply-templates mode="#current"
-                 select="@*, current-group()[last()]/w:pPr, (node(), (current-group() except .)/node())[empty(self::w:pPr)]"/>
+                 select="@*, 
+                         (current-group()/self::w:p)[last()]/w:pPr, 
+                         (node(), (current-group() except .)/node())[empty(self::w:pPr)]"/>
             </xsl:copy>    
           </xsl:when>
           <xsl:otherwise>
@@ -126,9 +141,11 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="w:ins | w:moveTo | w:moveFrom" mode="docx2hub:apply-changemarkup">
+  <xsl:template match="w:ins | w:moveTo" mode="docx2hub:apply-changemarkup">
     <xsl:apply-templates select="*" mode="#current"/>
   </xsl:template>
+  
+  <xsl:template match="w:moveFrom" mode="docx2hub:apply-changemarkup"/>
   
   <xsl:template mode="docx2hub:apply-changemarkup"
     match="w:moveFromRangeStart | w:moveFromRangeEnd | w:moveToRangeStart | w:moveToRangeEnd"/>

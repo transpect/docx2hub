@@ -91,10 +91,12 @@
                          or exists((  self::w:p 
                                     | self::w:bookmarkStart 
                                     | self::w:bookmarkEnd 
+                                    | self::w:commentRangeEnd
                                     | self::w:moveToRangeEnd 
                                     | self::w:moveFromRangeEnd)
                                       /preceding-sibling::*[empty(  self::w:bookmarkStart 
                                                                   | self::w:bookmarkEnd 
+                                                                  | self::w:commentRangeEnd
                                                                   | self::w:moveToRangeEnd 
                                                                   | self::w:moveFromRangeEnd)]
                                                            [1]

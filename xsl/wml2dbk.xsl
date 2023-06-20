@@ -729,6 +729,9 @@
       <xsl:if test="w:r[last()][count(*)=1][w:br[@w:type='page']] and count(w:r[count(*)=1][w:br[@w:type='page']]) gt 1">
         <xsl:attribute name="css:page-break-after" select="'always'"/>
       </xsl:if>
+      <xsl:if test="not(@docx2hub:removable='true')">
+        <xsl:sequence select="tr:insert-numbering(.)"/>
+      </xsl:if>
       <xsl:if test="@w14:paraId and $keep-paraid=('yes','true')">
         <xsl:element name="anchor">
           <xsl:attribute name="role" select="'w14:paraId'"/>
@@ -738,9 +741,6 @@
           <xsl:attribute name="role" select="'w14:textId'"/>
           <xsl:attribute name="xml:id" select="concat('textId_',@w14:textId)"/>
         </xsl:element>
-      </xsl:if>
-      <xsl:if test="not(@docx2hub:removable='true')">
-        <xsl:sequence select="tr:insert-numbering(.)"/>
       </xsl:if>
       <!-- Only necessary in tables? They'll get lost otherwise. -->     
       <xsl:variable name="bookmarkstart-before-p" as="element(w:bookmarkStart)*"

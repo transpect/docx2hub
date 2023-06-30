@@ -1210,7 +1210,7 @@
                     <xsl:attribute name="docx2hub:field-function-args" select="replace($instr-text-string,'”','&#34;')"/>
                   </xsl:when>
                   <xsl:otherwise>
-                    <xsl:variable name="prelim" as="attribute()+">
+                    <xsl:variable name="prelim" as="attribute()*">
                       <xsl:analyze-string select="$instr-text-string" regex="^\s*\\?(\i\c*)[\s\p{{Zs}}]*">
                         <xsl:matching-substring>
                           <xsl:attribute name="docx2hub:field-function-name" select="upper-case(regex-group(1))">
@@ -1244,6 +1244,9 @@
                       </xsl:analyze-string>
                     </xsl:variable>
                     <xsl:choose>
+                      <xsl:when test="count($prelim) = 0">
+                        <xsl:message select="'EMPTY $instr-text-string ATTRs for these $instr-text-nodes: ', $instr-text-nodes"></xsl:message>
+                      </xsl:when>
                       <xsl:when test="count($prelim) = 1 and not(matches($prelim[1], '^\i\c*$'))">
                         <xsl:attribute name="docx2hub:field-function-name" select="'BROKEN2'"/>
                         <xsl:attribute name="docx2hub:field-function-error" 

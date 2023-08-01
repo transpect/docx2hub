@@ -599,7 +599,7 @@
     <xsl:if test="w:tcPr/w:vMerge/@w:val = 'restart'">
       <xsl:variable name="is-thead-tr" as="xs:boolean" 
         select="exists(parent::w:tr[docx2hub:is-tableheader-row(., 
-                                                                index-of(ancestor::w:tbl[1]/*, .), 
+                                                                count(preceding-sibling::w:tr)+1, 
                                                                 ancestor::w:tbl[1]/w:tblPr/w:tblLook)])"/>
       <xsl:variable name="next-non-vmerged-tr" as="element(w:tr)?"
         select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]"/>
@@ -607,7 +607,7 @@
         <xsl:choose>
           <xsl:when test="$is-thead-tr = true() 
                           and not(../following-sibling::w:tr[1][docx2hub:is-tableheader-row(., 
-                                                                                            index-of(ancestor::w:tbl[1]/*, .), 
+                                                                                            count(preceding-sibling::w:tr)+1, 
                                                                                             ancestor::w:tbl[1]/w:tblPr/w:tblLook)])">
             <xsl:sequence select="999"/>
           </xsl:when>

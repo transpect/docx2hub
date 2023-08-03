@@ -81,12 +81,18 @@
                        //css:rule[@layout-type eq 'inline'][@css:font-family=$docx2hub:symbol-font-names]/@name = ../self::w:r/@role]
                        |
                        w:lvlText[../w:rPr/w:rFonts/@w:ascii=$docx2hub:symbol-font-names]/@w:val
+                         [normalize-space()]
                          [if (matches(., '%\d')) then not(../../w:numFmt/@w:val = 'decimal') else true()]
+                         (: https://mantis.le-tex.de/view.php?id=35783 :)
+                         [not(../../w:rPr/w:rFonts/@w:ascii = 'Symbol' and matches(., '^\.%\d$'))]
                        |
                        w:t[string-length(.)=1 and ../@css:font-family = $docx2hub:symbol-font-names]
                        |
                        w:lvlText[../@css:font-family = $docx2hub:symbol-font-names]/@w:val
+                         [normalize-space()]
                          [if (matches(., '%\d')) then not(../../w:numFmt/@w:val = 'decimal') else true()]
+                         (: https://mantis.le-tex.de/view.php?id=35783 :)
+                         [not(../../w:rPr/w:rFonts/@w:ascii = 'Symbol' and matches(., '^\.%\d$'))]
                        " mode="wml-to-dbk" priority="1.5">
     <!-- priority = 1.5 because of priority = 1 ("default for attributes") in wml2dbk.xsl -->
     <xsl:variable name="context" select="." as="item()"/>

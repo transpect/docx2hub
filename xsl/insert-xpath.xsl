@@ -134,16 +134,25 @@
         <xsl:if test="doc-available(resolve-uri('numbering.xml', $base-dir))">
           <xsl:apply-templates select="document(resolve-uri('numbering.xml', $base-dir))/w:numbering" mode="#current"/>
         </xsl:if>
-        <xsl:if test="doc-available(resolve-uri('footnotes.xml', $base-dir))">
-          <xsl:apply-templates select="document(resolve-uri('footnotes.xml', $base-dir))/w:footnotes" mode="#current"/>
+        <xsl:for-each select="document($docRels-uri)/rel:Relationships
+                              /rel:Relationship[@Type eq 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes']/@Target">
+          <xsl:if test="doc-available(resolve-uri(current(), $base-dir))">
+          <xsl:apply-templates select="document(resolve-uri(current(), $base-dir))/w:footnotes" mode="#current"/>
         </xsl:if>
-        <xsl:if test="doc-available(resolve-uri('endnotes.xml', $base-dir))">
-          <xsl:apply-templates select="document(resolve-uri('endnotes.xml', $base-dir))/w:endnotes" mode="#current"/>
-        </xsl:if>
+        </xsl:for-each>
+        <xsl:for-each select="document($docRels-uri)/rel:Relationships
+                              /rel:Relationship[@Type eq 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/endnotes']/@Target">
+          <xsl:if test="doc-available(resolve-uri(current(), $base-dir))">
+            <xsl:apply-templates select="document(resolve-uri(current(), $base-dir))/w:endnotes" mode="#current"/>
+          </xsl:if>
+        </xsl:for-each>
         <xsl:apply-templates select="document(resolve-uri('settings.xml', $base-dir))/w:settings" mode="#current"/>
-        <xsl:if test="doc-available(resolve-uri('comments.xml', $base-dir))">
-          <xsl:apply-templates select="document(resolve-uri('comments.xml', $base-dir))/w:comments" mode="#current"/>
-        </xsl:if>
+        <xsl:for-each select="document($docRels-uri)/rel:Relationships
+                              /rel:Relationship[@Type eq 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments']/@Target">
+          <xsl:if test="doc-available(resolve-uri(current(), $base-dir))">
+            <xsl:apply-templates select="document(resolve-uri(current(), $base-dir))/w:comments" mode="#current"/>
+          </xsl:if>
+        </xsl:for-each>
         <xsl:apply-templates select="document(resolve-uri('fontTable.xml', $base-dir))/w:fonts" mode="#current"/>
         <w:docTypes>
           <xsl:apply-templates select="document(resolve-uri('../%5BContent_Types%5D.xml', $base-dir))/ct:Types" mode="#current"

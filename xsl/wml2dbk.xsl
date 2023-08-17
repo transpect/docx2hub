@@ -1162,11 +1162,15 @@
                   <xsl:attribute name="docx2hub:field-function" select="'yes'"/>
                   <xsl:apply-templates select="(.//@srcpath)[1]" mode="#current"/>
                   <imageobject>
-                    <imagedata fileref="{if (tokenize(@fldArgs, ' ')[matches(.,'^&#x22;.*&#x22;$')]) 
-                                         then replace(tokenize(@fldArgs, ' ')[matches(.,'^&#x22;.*&#x22;$')][1],'&#x22;','') 
-                                         else if (matches(@fldArgs,'&#x22;.*&#x22;')) 
-                                              then tokenize(@fldArgs,'&#x22;')[2] 
-                                              else tokenize(@fldArgs, ' ')[2]}">
+                    <xsl:variable name="deduplicate-backslash" as="xs:string" select="replace(@fldArgs, '\\\\', '/')">
+                      <!-- https://redmine.le-tex.de/issues/15394 -->
+                      <!-- Named template 'create-imageobject' in images.xsl does the same -->
+                    </xsl:variable>
+                    <imagedata fileref="{if (tokenize($deduplicate-backslash, ' ')[matches(.,'^&#x22;.*&#x22;$')]) 
+                                         then replace(tokenize($deduplicate-backslash, ' ')[matches(.,'^&#x22;.*&#x22;$')][1],'&#x22;','') 
+                                         else if (matches($deduplicate-backslash,'&#x22;.*&#x22;')) 
+                                              then tokenize($deduplicate-backslash,'&#x22;')[2] 
+                                              else tokenize($deduplicate-backslash, ' ')[2]}">
                       <xsl:apply-templates select=".//@css:width | .//@css:height" mode="#current"/>
                     </imagedata>
                   </imageobject>

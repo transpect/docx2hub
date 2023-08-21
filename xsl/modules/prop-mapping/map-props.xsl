@@ -621,7 +621,7 @@
     <xsl:sequence select="$raw-output" />
   </xsl:template>
   
-  <xsl:template match="w:tcW[@w:type = 'pct']/@w:w" mode="docx2hub:add-props">
+  <xsl:template match="w:tcW[@w:type = 'pct']/@w:w" mode="docx2hub:add-props" priority="1">
     <xsl:variable name="pct-to-dxa" as="element()">
       <xsl:variable name="tbl-w" select="../../../../../w:tblPr/w:tblW/@w:w" as="xs:decimal"/>
       <xsl:variable name="tc-pct" select="if(matches(., '%'))

@@ -501,7 +501,7 @@
 
   <!-- collateral: deflate an adjacent start/end anchor pair to a single anchor --> 
   <xsl:template match="dbk:anchor[
-                         following-sibling::node()[1] is key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:anchor
+                         following-sibling::node()[1] is (key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:anchor)[1]
                        ]" mode="docx2hub:join-runs">
     <xsl:copy copy-namespaces="no">
       <xsl:apply-templates select="@* except @role" mode="#current"/>
@@ -509,7 +509,7 @@
   </xsl:template>
 
   <xsl:template match="dbk:anchor[
-                         preceding-sibling::node()[1] is key('docx2hub:item-by-id', @linkend)
+                         preceding-sibling::node()[1] is (key('docx2hub:item-by-id', @linkend))[1]
                        ]" mode="docx2hub:join-runs"/>
 
   <xsl:template match="dbk:anchor/@linkend" mode="docx2hub:join-runs">

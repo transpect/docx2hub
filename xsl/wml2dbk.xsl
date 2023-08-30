@@ -16,6 +16,7 @@
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:v="urn:schemas-microsoft-com:vml"
   xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0" 
   exclude-result-prefixes = "w xs dbk fn r rel tr m mc docx2hub v wp">
@@ -450,7 +451,8 @@
                        | /*/w:endnoteRels
                        | /*/w:commentRels
                        | /*/w:fonts 
-                       | /*/w:comments 
+                       | /*/w:comments
+                       | /*/w15:commentsEx
                        | /*/w:footnotes
                        | /*/w:endnotes
                        | mc:AlternateContent

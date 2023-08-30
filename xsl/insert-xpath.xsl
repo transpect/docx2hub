@@ -153,6 +153,12 @@
             <xsl:apply-templates select="document(resolve-uri(current(), $base-dir))/w:comments" mode="#current"/>
           </xsl:if>
         </xsl:for-each>
+        <xsl:for-each select="document($docRels-uri)/rel:Relationships
+                              /rel:Relationship[@Type eq 'http://schemas.microsoft.com/office/2011/relationships/commentsExtended']/@Target">
+          <xsl:if test="doc-available(resolve-uri(current(), $base-dir))">
+            <xsl:apply-templates select="document(resolve-uri(current(), $base-dir))/w15:commentsEx" mode="#current"/>
+          </xsl:if>
+        </xsl:for-each>
         <xsl:apply-templates select="document(resolve-uri('fontTable.xml', $base-dir))/w:fonts" mode="#current"/>
         <w:docTypes>
           <xsl:apply-templates select="document(resolve-uri('../%5BContent_Types%5D.xml', $base-dir))/ct:Types" mode="#current"

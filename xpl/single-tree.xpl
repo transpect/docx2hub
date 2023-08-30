@@ -115,7 +115,7 @@
       <p:pipe port="result" step="locate-docx"/>
     </p:variable>
 
-    <tr:store-debug>
+    <tr:store-debug name="sd1">
       <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/00-file-uri')"/>
       <p:with-option name="active" select="$debug"/>
       <p:with-option name="base-uri" select="$debug-dir-uri"/>
@@ -135,7 +135,7 @@
       <p:with-option name="overwrite" select="'yes'"/>
     </tr:unzip>
 
-    <tr:store-debug>
+    <tr:store-debug name="sd2">
       <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/00-unzip')"/>
       <p:with-option name="active" select="$debug"/>
       <p:with-option name="base-uri" select="$debug-dir-uri"/>
@@ -189,7 +189,7 @@
       </p:input>
     </p:xslt>
 
-    <tr:store-debug>
+    <tr:store-debug name="sd3">
       <p:with-option name="pipeline-step" select="concat('docx2hub/', $basename, '/00-zip-manifest')"/>
       <p:with-option name="active" select="$debug"/>
       <p:with-option name="base-uri" select="$debug-dir-uri"/>

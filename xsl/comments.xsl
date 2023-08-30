@@ -7,6 +7,8 @@
   xmlns:v="urn:schemas-microsoft-com:vml" 
   xmlns:dbk="http://docbook.org/ns/docbook"
   xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint"
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
   xmlns:o="urn:schemas-microsoft-com:office:office"
   xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -26,7 +28,9 @@
     <xsl:if test="//w:commentRangeEnd[@w:id=current()/@w:id][parent::w:tbl]">
       <xsl:apply-templates select="//w:commentRangeEnd[@w:id=current()/@w:id][parent::w:tbl]" mode="#current"/>
     </xsl:if>
-    <xsl:apply-templates select="key('comment-by-id', @w:id)" mode="comment"/>
+    <xsl:apply-templates select="key('comment-by-id', @w:id)" mode="comment">
+      <xsl:with-param name="comment-id" as="xs:string" tunnel="yes" select="@w:id"/>
+    </xsl:apply-templates>
   </xsl:template>
 
   <!-- dissolve single w:r with only comment(s) -->
@@ -37,9 +41,25 @@
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
 
+  <xsl:key name="by-w14-paraId" match="*[@w14:paraId]" use="@w14:paraId">
+    <!-- found on w:p -->
+  </xsl:key>
+  
+  <xsl:key name="by-w15-paraId" match="*[@w15:paraId]" use="@w15:paraId">
+    <!-- found on w15:commentEx in commentsExtended.xml -->
+  </xsl:key>
+
   <xsl:template match="w:comment" mode="comment">
-    <annotation>
-      <xsl:if test="@w:author | @w:date | @w:initials">
+    <xsl:param name="comment-id" as="xs:string" tunnel="yes"/>
+    <xsl:variable name="para-ids" as="xs:string*" select="descendant::*/@w14:paraId"/>
+    <xsl:variable name="extended-info" as="element(w15:commentEx)*" 
+      select="key('by-w15-paraId', $para-ids)/self::w15:commentEx"/>
+    <xsl:variable name="parent-para-ids" as="xs:string*" select="$extended-info/@w15:paraIdParent"/>
+    <xsl:variable name="parent-comment-ids" as="xs:string*" 
+      select="key('by-w14-paraId', $parent-para-ids)/ancestor::w:comment[1]/@w:id"/>
+    <xsl:variable name="done" as="xs:string*" select="distinct-values($extended-info/@w15:done)"/>
+    <annotation linkend="comment_{$comment-id}">
+      <xsl:if test="exists(@w:author | @w:date | @w:initials) or exists($done) or exists($parent-comment-ids)">
         <info>
           <xsl:if test="@w:author | @w:initials">
             <author>
@@ -49,6 +69,22 @@
             </author>
           </xsl:if>
           <xsl:apply-templates select="@w:date" mode="#current"/>
+          <xsl:if test="exists($done) or exists($parent-comment-ids)">
+            <keywordset>
+              <xsl:if test="$done">
+                <keyword role="done">
+                  <xsl:value-of select="$done" separator=" "/>
+                </keyword>
+              </xsl:if>
+              <xsl:if test="$parent-comment-ids">
+                <keyword role="parent-comment-ids">
+                  <!-- should be at most one parent comment ID, but this is not guaranteed because the metadata
+                    are attached to comment paras, not to a comment as a whole -->
+                  <xsl:value-of select="for $p in $parent-comment-ids return concat('comment_', $p)" separator=" "/>
+                </keyword>
+              </xsl:if>
+            </keywordset>
+          </xsl:if>
         </info>
       </xsl:if>
       <xsl:apply-templates select="*" mode="wml-to-dbk"/>

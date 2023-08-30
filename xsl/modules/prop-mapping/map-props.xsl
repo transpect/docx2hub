@@ -16,6 +16,7 @@
   xmlns:word200x="http://schemas.microsoft.com/office/word/2003/wordml"
   xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint"
   xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
   xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
   xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
   xmlns:extendedProps="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
@@ -204,7 +205,7 @@
       </xsl:if>
       <xsl:apply-templates select="../../w:numbering" mode="#current"/>
       <xsl:sequence select="../../w:docRels, ../../w:footnoteRels, ../../w:endnoteRels, ../../w:commentRels, ../../w:fonts"/>
-      <xsl:apply-templates select="../../w:comments, ../../w:footnotes, ../../w:endnotes, ../../w:settings" mode="#current"/>
+      <xsl:apply-templates select="../../w:comments, ../../w15:commentsEx, ../../w:footnotes, ../../w:endnotes, ../../w:settings" mode="#current"/>
       <xsl:apply-templates mode="#current"/>
       <xsl:apply-templates select="../../w:footer/w:ftr[$convert-footer]" mode="#current"/>
     </xsl:element>

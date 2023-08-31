@@ -58,7 +58,7 @@
     <xsl:variable name="parent-comment-ids" as="xs:string*" 
       select="key('by-w14-paraId', $parent-para-ids)/ancestor::w:comment[1]/@w:id"/>
     <xsl:variable name="done" as="xs:string*" select="distinct-values($extended-info/@w15:done)"/>
-    <annotation linkend="comment_{$comment-id}">
+    <annotation annotates="comment_{$comment-id}">
       <xsl:if test="exists(@w:author | @w:date | @w:initials) or exists($done) or exists($parent-comment-ids)">
         <info>
           <xsl:if test="@w:author | @w:initials">

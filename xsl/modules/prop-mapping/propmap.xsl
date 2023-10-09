@@ -106,10 +106,8 @@
         <prop name="w:next" />
         <prop name="w:noProof" />
         <prop name="w:noWrap" type="docx-boolean-prop" target-name="css:white-space" default="normal" active="nowrap"/>
-        <prop name="w14:numForm">
-          <!-- if there are multiple modifiers (tabular-nums, etc.), we need to establish a type docx-numForm for this prop -->
-          <val match="oldStyle" target-name="css:font-variant-numeric" target-value="oldstyle-nums" />
-        </prop>
+        <prop name="w14:numForm" type="docx-number-style"/>
+        <prop name="w14:numSpacing" type="docx-number-style"/>
         <prop name="w:numPr" type="passthru" />
         <prop name="w:outline">
           <val eq="true" target-name="css:text-shadow" target-value="1px 0px"/>

@@ -845,9 +845,23 @@
             </xsl:if>
           </xsl:otherwise>
         </xsl:choose>
-        
       </xsl:when>
-      
+      <xsl:when test=". eq 'docx-number-style'">
+        <!-- font-variant-numeric can contain one or more space-separated values 
+             indicating numeric figure, spacing and fraction style -->
+        <xsl:choose>
+          <xsl:when test="matches(../@name,'w14:numForm')">
+            <docx2hub:attribute name="css:font-variant-numeric">
+              <xsl:value-of select="docx2hub:docx-numeric-figures($val[self::w14:numForm]/@w14:val)"/>
+            </docx2hub:attribute>
+          </xsl:when>
+          <xsl:when test="matches(../@name,'w14:numSpacing')">
+            <docx2hub:attribute name="css:font-variant-numeric">
+              <xsl:value-of select="docx2hub:docx-numeric-spacing($val[self::w14:numSpacing]/@w14:val)"/>
+            </docx2hub:attribute>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:when>
       <xsl:when test=". eq 'docx-padding'">
         <xsl:variable name="orientation" select="replace(../@name, '^.+:', '')" as="xs:string" />
         <xsl:if test="not($val/@w:type = ('nil', 'auto', 'pct'))">  
@@ -1204,6 +1218,30 @@
                               else docx2hub:css-compatible-name($looked-up)" />
     </docx2hub:attribute>
   </xsl:template>
+  
+  <xsl:function name="docx2hub:docx-numeric-figures" as="xs:string?">
+    <xsl:param name="numeric-figures" as="attribute(w14:val)"/>
+    <xsl:choose>
+      <xsl:when test="$numeric-figures eq 'oldStyle'">
+        <xsl:sequence select="'oldstyle-nums'"/>
+      </xsl:when>
+      <xsl:when test="$numeric-figures eq 'lining'">
+        <xsl:sequence select="'lining-nums'"/>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:docx-numeric-spacing" as="xs:string?">
+    <xsl:param name="numeric-spacing" as="attribute(w14:val)"/>
+    <xsl:choose>
+      <xsl:when test="$numeric-spacing eq 'proportional'">
+        <xsl:sequence select="'proportional-nums'"/>
+      </xsl:when>
+      <xsl:when test="$numeric-spacing eq 'tabular'">
+        <xsl:sequence select="'tabular-nums'"/>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:function>
 
   <xsl:function name="docx2hub:pt-length" as="xs:string" >
     <xsl:param name="val" as="xs:string?"/>

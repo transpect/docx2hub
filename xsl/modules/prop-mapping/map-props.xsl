@@ -1222,6 +1222,9 @@
   <xsl:function name="docx2hub:docx-numeric-figures" as="xs:string?">
     <xsl:param name="numeric-figures" as="attribute(w14:val)"/>
     <xsl:choose>
+      <xsl:when test="$numeric-figures eq 'default'">
+        <xsl:sequence select="'normal'"/>
+      </xsl:when>
       <xsl:when test="$numeric-figures eq 'oldStyle'">
         <xsl:sequence select="'oldstyle-nums'"/>
       </xsl:when>
@@ -1234,6 +1237,9 @@
   <xsl:function name="docx2hub:docx-numeric-spacing" as="xs:string?">
     <xsl:param name="numeric-spacing" as="attribute(w14:val)"/>
     <xsl:choose>
+      <xsl:when test="$numeric-spacing eq 'default'">
+        <xsl:sequence select="'normal'"/>
+      </xsl:when>
       <xsl:when test="$numeric-spacing eq 'proportional'">
         <xsl:sequence select="'proportional-nums'"/>
       </xsl:when>

@@ -1545,6 +1545,14 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="docx2hub:attribute[@name = 'css:font-variant-numeric']
+                                         [following-sibling::docx2hub:attribute[@name = 'css:font-variant-numeric']]" mode="docx2hub:props2atts">
+    <xsl:attribute name="{@name}" select="parent::*/docx2hub:attribute[@name = 'css:font-variant-numeric'][. ne 'normal']"/>
+  </xsl:template>
+  
+  <xsl:template match="docx2hub:attribute[@name = 'css:font-variant-numeric']
+                                         [preceding-sibling::docx2hub:attribute[@name = 'css:font-variant-numeric']]" mode="docx2hub:props2atts"/>
 
   <xsl:template match="docx2hub:color-percentage" mode="docx2hub:props2atts">
     <xsl:variable name="color" select="(../docx2hub:attribute[@name eq 'css:color'][last()], '#000000')[1]" as="xs:string" />

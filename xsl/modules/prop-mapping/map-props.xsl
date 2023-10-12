@@ -1550,7 +1550,7 @@
                                          [following-sibling::docx2hub:attribute[@name = 'css:font-variant-numeric']]" mode="docx2hub:props2atts">
     <xsl:variable name="font-variant-numeric-values" as="element(docx2hub:attribute)+" 
                   select="parent::*/docx2hub:attribute[@name = 'css:font-variant-numeric']"/>
-    <xsl:attribute name="{@name}" select="if(every $val in $font-variant-numeric-values satisfies $val eq 'numeric')
+    <xsl:attribute name="{@name}" select="if(every $val in $font-variant-numeric-values satisfies $val eq 'normal')
                                           then 'normal'
                                           else $font-variant-numeric-values[. ne 'normal']"/>
   </xsl:template>

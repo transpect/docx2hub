@@ -1511,13 +1511,15 @@
   
   <xsl:template match="*:XE/dbk:sep[preceding-sibling::dbk:flag]" mode="wml-to-dbk">
     <xsl:choose>
-      <xsl:when test="exists(preceding-sibling::dbk:phrase[@* except @srcpath] | following-sibling::dbk:phrase[@* except @srcpath])">
+      <xsl:when test="exists(preceding-sibling::node()[1]/self::dbk:phrase[@* except @srcpath] 
+                             | following-sibling::node()[1]/self::dbk:phrase[@* except @srcpath])">
         <!-- GI 2023-11-14: I found no way to attach these attributes to sep directly in docx2hub:instrText-formatting above.
           The $instrText for sep was in a document node while the $instrText for the phrases had w:r parents with CSSa
           attributes.
           https://redmine.le-tex.de/issues/15824#note-8 -->
         <phrase>
-          <xsl:apply-templates select="(preceding-sibling::dbk:phrase | following-sibling::dbk:phrase)/(@* except @srcpath)" mode="#current"/>
+          <xsl:apply-templates select="(preceding-sibling::node()[1]/self::dbk:phrase 
+                                        | following-sibling::node()[1]/self::dbk:phrase)/(@* except @srcpath)" mode="#current"/>
           <xsl:text>:</xsl:text>
         </phrase>
       </xsl:when>

@@ -1393,7 +1393,7 @@
     <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
-  <xsl:variable name="quot-like-regex" as="xs:string" select="'&quot;„“”'"/>
+  <xsl:variable name="quot-like-regex" as="xs:string" select="'&quot;„“”»«'"/>
   
   <xsl:template name="docx2hub:instrText-formatting" match="w:r[@* except @srcpath]/w:instrText/text()" mode="docx2hub:join-instrText-runs_save-formatting">
     <!-- This template was originally only called by name in mode docx2hub:join-instrText-runs_render-compound2.
@@ -1409,6 +1409,7 @@
     <xsl:param name="formatting-acceptable" as="xs:boolean?" tunnel="yes"/>
     <xsl:param name="indexterm-preprocessing" as="xs:boolean?" tunnel="yes"/>
     <xsl:variable name="run-atts" as="attribute(*)*" select="$instrText/parent::w:r/(@* except @srcpath)"/>
+    
     <xsl:variable name="prelim" as="item()*">
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
@@ -1506,6 +1507,24 @@
       <xsl:message select="'PPPPPPP ', $prelim"></xsl:message>
     </xsl:if>-->
     <xsl:sequence select="$prelim"/>
+  </xsl:template>
+  
+  <xsl:template match="*:XE/dbk:sep[preceding-sibling::dbk:flag]" mode="wml-to-dbk">
+    <xsl:choose>
+      <xsl:when test="exists(preceding-sibling::dbk:phrase[@* except @srcpath] | following-sibling::dbk:phrase[@* except @srcpath])">
+        <!-- GI 2023-11-14: I found no way to attach these attributes to sep directly in docx2hub:instrText-formatting above.
+          The $instrText for sep was in a document node while the $instrText for the phrases had w:r parents with CSSa
+          attributes.
+          https://redmine.le-tex.de/issues/15824#note-8 -->
+        <phrase>
+          <xsl:apply-templates select="(preceding-sibling::dbk:phrase | following-sibling::dbk:phrase)/(@* except @srcpath)" mode="#current"/>
+          <xsl:text>:</xsl:text>
+        </phrase>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:text>:</xsl:text>    
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template match="w:instrText/text()" mode="docx2hub:join-instrText-runs_render-compound2" priority="0.8">

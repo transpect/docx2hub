@@ -597,23 +597,27 @@
 
   <xsl:template name="cell.morerows">
     <xsl:if test="w:tcPr/w:vMerge/@w:val = 'restart'">
-      <xsl:variable name="is-thead-tr" as="xs:boolean" 
+      <!--<xsl:variable name="is-thead-tr" as="xs:boolean" 
         select="exists(parent::w:tr[docx2hub:is-tableheader-row(., 
                                                                 count(preceding-sibling::w:tr)+1, 
-                                                                ancestor::w:tbl[1]/w:tblPr/w:tblLook)])"/>
+                                                                ancestor::w:tbl[1]/w:tblPr/w:tblLook)])"/>-->
       <xsl:variable name="next-non-vmerged-tr" as="element(w:tr)?"
         select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][1]"/>
       <xsl:variable name="counts" as="xs:integer*">
         <xsl:choose>
-          <xsl:when test="$is-thead-tr = true() 
+          <!-- KW: Word ignores the header information when it comes to rowspanning and so should we -->
+          <!--<xsl:when test="$is-thead-tr = true() 
                           and not(../following-sibling::w:tr[1][docx2hub:is-tableheader-row(., 
                                                                                             count(preceding-sibling::w:tr)+1, 
                                                                                             ancestor::w:tbl[1]/w:tblPr/w:tblLook)])">
             <xsl:sequence select="999"/>
-          </xsl:when>
+          </xsl:when>-->
           <xsl:when test="$next-non-vmerged-tr/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]
                                                    [docx2hub:is-blind-vmerged-cell(.)]">
-            <xsl:for-each-group select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))][. is $next-non-vmerged-tr or . &gt;&gt; $next-non-vmerged-tr]/w:tc[tr:colcount(1, .) = tr:colcount(1, current())]" 
+            <xsl:for-each-group select="../following-sibling::w:tr[not(docx2hub:is-blind-vmerged-row(.))]
+                                                                  [. is $next-non-vmerged-tr or 
+                                                                   . &gt;&gt; $next-non-vmerged-tr]/w:tc[tr:colcount(1, .) = 
+                                                                                                         tr:colcount(1, current())]" 
               group-adjacent="docx2hub:is-blind-vmerged-cell(.)">
               <xsl:sequence select="count(current-group())"/>
             </xsl:for-each-group>

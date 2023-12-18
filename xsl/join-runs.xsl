@@ -28,6 +28,7 @@
   
   <xsl:param name="terminate-on-unbalanced-instrTexts" select="'yes'" as="xs:string*"/>
   <xsl:param name="mml-version" as="xs:string?"/>
+  <xsl:param name="normalize-thead" select="'yes'"/>
   
   <xsl:template match="/*" mode="docx2hub:join-runs" priority="-0.2">
     <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
@@ -2139,5 +2140,87 @@
       <xsl:value-of select="."/>
     </xsl:copy>
   </xsl:template>
+  
+  <xsl:template match="dbk:tgroup[$normalize-thead='yes'][dbk:thead//dbk:entry[@morerows ne '0']]" mode="docx2hub:join-runs">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="#current"/>
+      <xsl:apply-templates select="node() except (dbk:thead,dbk:tbody)" mode="#current"/>
+      <xsl:choose>
+        <xsl:when test="tr:check-for-morerows(dbk:thead/dbk:row)">
+          <xsl:call-template name="check-body-rows">
+            <xsl:with-param name="tbody" select="dbk:tbody/dbk:row"/>
+            <xsl:with-param name="thead" select="dbk:thead/dbk:row"/>
+            <xsl:with-param name="count" select="tr:count-morerows(dbk:thead/dbk:row)">
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="dbk:thead|dbk:tbody" mode="#current"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template name="check-body-rows">
+    <xsl:param name="tbody" as="node() *"/>
+    <xsl:param name="thead" as="node() *"/>
+    <xsl:param name="count" as="xs:double"/>
+    
+    <xsl:variable name="new_thead">
+      <xsl:sequence select="$thead"/>
+      <xsl:sequence select="$tbody[position() lt ($count + 1)]" />
+    </xsl:variable>
+    
+    <xsl:choose>
+      <xsl:when test="count($tbody) lt $count">
+        <xsl:processing-instruction name="letex" select="'D2T_010: Fehlerhaftes Attribut (morerows erstreckt sich über Ende des tbody)'"/>
+        <thead>
+          <xsl:apply-templates select="$new_thead" mode="#current"/>
+        </thead>
+        <tbody>
+          <xsl:apply-templates select="$tbody[position() gt $count]" mode="#current"/>
+        </tbody>
+      </xsl:when>
+      <xsl:when test="tr:check-for-morerows($new_thead)">
+        <xsl:call-template name="check-body-rows">
+          <xsl:with-param name="tbody" select="$tbody[position() gt $count]"/>
+          <xsl:with-param name="thead" select="$new_thead"/>
+          <xsl:with-param name="count" select="tr:count-morerows($new_thead)">
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <thead>
+          <xsl:apply-templates select="$new_thead" mode="#current"/>
+        </thead>
+        <xsl:if test="count($tbody[position() gt $count]) gt 0">
+          <tbody>
+            <xsl:apply-templates select="$tbody[position() gt $count]" mode="#current"/>
+          </tbody>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:template>
+
+  <xsl:function name="tr:count-morerows">
+    <xsl:param name="input-rows"/>
+    
+    <xsl:variable name="count_rows" as="xs:double *">
+      <xsl:for-each select="$input-rows/descendant::dbk:entry[@morerows ne '0']">
+        <xsl:sequence select="@morerows - count(parent::dbk:row/following-sibling::dbk:row)"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:copy-of select="max($count_rows)"/>
+    
+  </xsl:function>
+  
+  <xsl:function name="tr:check-for-morerows">
+    <xsl:param name="input-rows"/>
+    
+    <xsl:variable name="missing_rows" select="if (some $x in $input-rows/descendant::dbk:entry[@morerows ne '0'] satisfies (($x/@morerows - count($x/parent::dbk:row/following-sibling::dbk:row)) gt 0)) then true() else false()" />
+    <xsl:copy-of select="$missing_rows"/>
+    
+  </xsl:function>
 
 </xsl:stylesheet>

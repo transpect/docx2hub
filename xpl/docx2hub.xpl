@@ -266,6 +266,9 @@
       "Repeat as header row at the top of each page" check box in the Table Properties dialog box on the Row tab.
       </p:documentation>
   </p:option>
+  <p:option name="normalize-thead" select="'yes'">
+    <p:documentation>morerows attributes in &lt;thead> can span &lt;tbody> rows, too. Whether to normalize it and make this rows part of the &lt;thead> to avoid unbalanced rows.</p:documentation>
+  </p:option>
 
   <p:import href="http://xmlcalabash.com/extension/steps/library-1.0.xpl"/>
   <p:import href="http://transpect.io/calabash-extensions/unzip-extension/unzip-declaration.xpl"/>
@@ -649,6 +652,7 @@
     <p:with-option name="hub-version" select="$hub-version"/>
     <p:with-param name="fail-on-error" select="$fail-on-error"/>
     <p:with-param name="heuristic-character-replacements" select="$heuristic-character-replacements"/>
+    <p:with-param name="normalize-thead" select="$normalize-thead"/>
   </tr:xslt-mode>
 
   <p:add-attribute match="/*" attribute-name="xml:base" name="rebase">

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description stylesheet="../xsl/main.xsl"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:x="http://www.jenitennison.com/xslt/xspec">
+  <x:param name="debug" select="'no'"/>
+  <x:scenario label="Given m:oMathPara, containing m:aln in descendants">
+    <x:context mode="wml-to-dbk">
+      <w:document>
+                <w:p>
+          <tabs xmlns="http://docbook.org/ns/docbook">
+            <tab align="right" horizontal-position="305.8pt"/>
+          </tabs>
+          <m:oMathPara>
+            <m:oMath>
+              <m:r>
+                <m:t>a</m:t>
+              </m:r>
+              <m:r>
+                <m:rPr>
+                  <m:aln/>
+                </m:rPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+                </w:rPr>
+                <m:t>=b</m:t>
+              </m:r>
+              <m:r>
+                <m:rPr>
+                  <m:sty m:val="p"/>
+                </m:rPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+                </w:rPr>
+                <w:br />
+              </m:r>
+            </m:oMath>
+            <m:oMath>
+              <m:r>
+                <m:rPr>
+                  <m:aln/>
+                </m:rPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+                </w:rPr>
+                <m:t>=c</m:t>
+              </m:r>
+            </m:oMath>
+          </m:oMathPara>
+        </w:p>
+      </w:document>
+    </x:context>
+    <x:expect label="mtable with maligngroup is generated">
+      <para xmlns="http://docbook.org/ns/docbook">
+        <tabs>
+          <tab align="right" horizontal-position="305.8pt"/>
+        </tabs>
+        <equation role="omml">
+          <mml:math display="block">
+            <mml:mtable>
+              <mml:mtr>
+                 <mml:mtd>
+                    <mml:mi>a</mml:mi>
+                    <mml:maligngroup />
+                    <mml:mo>=</mml:mo>
+                    <mml:mi>b</mml:mi>
+                    <mml:mspace linebreak="newline" />
+                 </mml:mtd>
+              </mml:mtr>
+              <mml:mtr>
+                 <mml:mtd>
+                    <mml:maligngroup />
+                    <mml:mo>=</mml:mo>
+                    <mml:mi>c</mml:mi>
+                 </mml:mtd>
+              </mml:mtr>
+            </mml:mtable>
+          </mml:math>
+        </equation>
+      </para>
+    </x:expect>
+  </x:scenario>
+  <x:scenario label="Given m:oMathPara, containing m:aln in descendants">
+    <x:context mode="wml-to-dbk">
+      <w:document>
+        <w:p>
+          <tabs xmlns="http://docbook.org/ns/docbook">
+            <tab align="right" horizontal-position="305.8pt"/>
+          </tabs>
+          <m:oMathPara>
+            <m:oMath>
+              <m:r>
+                <m:t>a</m:t>
+              </m:r>
+              <m:r>
+                <m:rPr>
+                  <m:sty m:val="p"/>
+                </m:rPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+                </w:rPr>
+                <w:br />
+              </m:r>
+            </m:oMath>
+            <m:oMath>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+                </w:rPr>
+                <m:t>b</m:t>
+              </m:r>
+            </m:oMath>
+          </m:oMathPara>
+        </w:p>
+      </w:document>
+    </x:context>
+    <x:expect label="mtable with maligngroup is generated">
+      <para xmlns="http://docbook.org/ns/docbook">
+        <tabs>
+          <tab align="right" horizontal-position="305.8pt"/>
+        </tabs>
+        <equation role="omml">
+          <mml:math display="block">
+            <mml:mtable>
+              <mml:mtr>
+                 <mml:mtd>
+                    <mml:mi>a</mml:mi>
+                    <mml:mspace linebreak="newline" />
+                 </mml:mtd>
+              </mml:mtr>
+              <mml:mtr>
+                 <mml:mtd>
+                    <mml:mi>b</mml:mi>
+                 </mml:mtd>
+              </mml:mtr>
+            </mml:mtable>
+          </mml:math>
+        </equation>
+      </para>
+    </x:expect>
+  </x:scenario>
+</x:description>

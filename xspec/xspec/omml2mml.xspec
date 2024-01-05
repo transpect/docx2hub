@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description
+  xmlns:x="http://www.jenitennison.com/xslt/xspec"
+  xmlns:mml="http://www.w3.org/1998/Math/MathML"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+  stylesheet="../xsl/omml2mml/omml2mml.xsl">
+  <x:scenario label="Given msPre">
+    <x:scenario label="with only containing text">
+      <x:context mode="omml2mml">
+        <m:sPre>
+          <m:sub/>
+          <m:sup>
+            <m:r>
+              <m:t>d</m:t>
+            </m:r>
+          </m:sup>
+          <m:e>
+            <m:r>
+              <m:t>a</m:t>
+            </m:r>
+          </m:e>
+        </m:sPre>
+      </x:context>
+      <x:expect label="mmultiscripts should be generated">
+        <mml:mmultiscripts>
+           <mml:mrow>
+              <mml:mi>a</mml:mi>
+           </mml:mrow>
+           <mml:mprescripts />
+           <mml:mrow />
+           <mml:mrow>
+              <mml:mi>d</mml:mi>
+           </mml:mrow>
+        </mml:mmultiscripts>
+      </x:expect>
+    </x:scenario>
+    <x:scenario label="with m:frac as base">
+      <x:context mode="omml2mml">
+        <m:sPre>
+          <m:sub/>
+          <m:sup>
+            <m:r>
+              <m:t>d</m:t>
+            </m:r>
+          </m:sup>
+          <m:e>
+            <m:f>
+              <m:num>
+                <m:r>
+                  <m:t xml:space="preserve">a</m:t>
+                </m:r>
+              </m:num>
+              <m:den>
+                <m:r>
+                  <m:t xml:space="preserve">b</m:t>
+                </m:r>
+              </m:den>
+            </m:f>
+          </m:e>
+        </m:sPre>
+      </x:context>
+      <x:expect label="mmultiscripts should be generated">
+        <mml:mmultiscripts>
+           <mml:mrow>
+             <mml:mfrac>
+               <mml:mrow>
+                  <mml:mi>a</mml:mi>
+               </mml:mrow>
+               <mml:mrow>
+                  <mml:mi>b</mml:mi>
+               </mml:mrow>
+             </mml:mfrac>
+           </mml:mrow>
+           <mml:mprescripts />
+           <mml:mrow />
+           <mml:mrow>
+             <mml:mi>d</mml:mi>
+           </mml:mrow>
+        </mml:mmultiscripts>
+      </x:expect>
+    </x:scenario>
+    <x:scenario label="text and m:frac as base">
+      <x:context mode="omml2mml">
+        <m:sPre>
+          <m:sub/>
+          <m:sup>
+            <m:r>
+              <m:t>d</m:t>
+            </m:r>
+          </m:sup>
+          <m:e>
+            <m:r>
+              <m:t xml:space="preserve">a</m:t>
+            </m:r>
+            <m:f>
+              <m:num>
+                <m:r>
+                  <m:t xml:space="preserve">b</m:t>
+                </m:r>
+              </m:num>
+              <m:den>
+                <m:r>
+                  <m:t xml:space="preserve">c</m:t>
+                </m:r>
+              </m:den>
+            </m:f>
+          </m:e>
+        </m:sPre>
+      </x:context>
+      <x:expect label="only text should be mmultiscripts base">
+        <mml:mrow>
+          <mml:mmultiscripts>
+            <mml:mrow>
+              <mml:mi>a</mml:mi>
+            </mml:mrow>
+            <mml:mprescripts />
+            <mml:mrow />
+            <mml:mrow>
+              <mml:mi>d</mml:mi>
+            </mml:mrow>
+          </mml:mmultiscripts>
+          <mml:mfrac>
+            <mml:mrow>
+              <mml:mi>b</mml:mi>
+            </mml:mrow>
+            <mml:mrow>
+              <mml:mi>c</mml:mi>
+            </mml:mrow>
+          </mml:mfrac>
+        </mml:mrow>
+      </x:expect>
+    </x:scenario>
+  </x:scenario>
+  <x:scenario label="Given m:t with m:sty/@m:val='b'">
+    <x:scenario label="and a number">
+      <x:context mode="omml2mml">
+      <m:r>
+        <m:rPr>
+          <m:sty m:val="b"/>
+        </m:rPr>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+        </w:rPr>
+        <m:t>0,8</m:t>
+      </m:r>
+    </x:context>
+    <x:expect label="bold mml:mn is generated">
+      <mn xmlns="http://www.w3.org/1998/Math/MathML" mathvariant="bold">0,8</mn>
+    </x:expect>
+    </x:scenario>
+  </x:scenario>
+  <x:scenario label="Given m:aln and an operator">
+    <x:context mode="omml2mml">
+      <m:r>
+        <m:rPr>
+          <m:aln/>
+        </m:rPr>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+        </w:rPr>
+        <m:t>=1-</m:t>
+      </m:r>
+    </x:context>
+    <x:expect label="m:aligngroup is generated only on first operator in run">
+      <mml:maligngroup columnalign="left"/>
+      <mml:mo>=</mml:mo>
+      <mml:mn>1</mml:mn>
+      <mml:mo>-</mml:mo>
+    </x:expect>
+  </x:scenario>
+</x:description>

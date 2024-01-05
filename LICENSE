@@ -1,4 +1,5 @@
 Copyright (c) 2015–2024, transpect.io
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

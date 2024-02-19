@@ -2157,6 +2157,26 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
+  <xsl:template match="m:r[not(w:rPr/w:strike/@w:val = ('0','false','off'))
+                           or w:rPr/w:bdr/@w:val = ('single', 'dashed')]" mode="omml2mml">
+    <xsl:variable name="strike-through" select="if(w:rPr/w:strike[not(@w:val=('0','false','off'))]) then true() else false()" as="xs:boolean"/>
+    <xsl:variable name="border" select="w:rPr/w:bdr/@w:val = ('single', 'dashed')" as="xs:boolean"/>
+    <mml:menclose>
+      <xsl:attribute name="notation" select="'horizontalstrike'[$strike-through],
+                                             'box'[$border]"/>        
+      <xsl:choose>
+        <xsl:when test="count(*) gt 1">
+          <mml:mrow>
+            <xsl:next-match/>
+          </mml:mrow>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:next-match/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </mml:menclose>
+  </xsl:template>
 
   <xsl:template match="m:r" mode="omml2mml">
     <!-- Typical content: m:t or w:sym. 
@@ -2172,7 +2192,6 @@
     <xsl:variable name="fLit" select="if(not(child::m:rPr[child::m:lit][last()]) or $sLowerCaseLit='off') then 0 else 1" as="xs:integer"/>
     <xsl:variable name="fSub" select="if(number(w:rPr/w:position/@w:val) lt 0) then 1 else 0" as="xs:integer"/>
     <xsl:variable name="fSup" select="if(number(w:rPr/w:position/@w:val) gt 0) then 1 else 0" as="xs:integer"/>
-    <xsl:variable name="strike-through" select="if (w:rPr/w:strike[not(@w:val=('0','false','off'))]) then true() else false()" as="xs:boolean"/>
     <xsl:variable name="context" as="element(m:r)" select="."/>
     <xsl:variable name="text-nodes" as="node()*">
       <xsl:apply-templates select=".//*:t/text()
@@ -2280,25 +2299,7 @@
         </xsl:otherwise>
       </xsl:choose>  
     </xsl:variable>
-    <xsl:choose>
-      <xsl:when test="$strike-through">
-        <mml:menclose notation="horizontalstrike">
-          <xsl:choose>
-            <xsl:when test="count($content) gt 1">
-              <mml:mrow>
-                <xsl:sequence select="$content"/>
-              </mml:mrow>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:sequence select="$content"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </mml:menclose>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:sequence select="$content"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:sequence select="$content"/>
   </xsl:template>
 
   <xsl:template name="CreateTokenAttributes">

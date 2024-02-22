@@ -1659,8 +1659,8 @@
                 mode="docx2hub:remove-redundant-run-atts">
     <!-- https://redmine.le-tex.de/issues/12022 -->
     <xsl:copy>
-      <xsl:apply-templates select="following-sibling::*[1]/(@css:* | @xml:lang)" mode="#current"/>
-      <xsl:apply-templates select="@*[not(matches(name(), '^(css:|xml:lang)'))], node()" mode="#current"/>
+      <xsl:apply-templates select="following-sibling::*[1]/(@css:* | @xml:lang | @docx2hub:*)" mode="#current"/>
+      <xsl:apply-templates select="@*[not(matches(name(), '^(css:|xml:lang|docx2hub)'))], node()" mode="#current"/>
     </xsl:copy>
   </xsl:template>
   

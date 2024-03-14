@@ -18,7 +18,7 @@
   xmlns:tr= "http://transpect.io"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:css="http://www.w3.org/1996/css"
-  version="2.0" 
+  version="3.0" 
   exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x docx2hub exsl saxon fn tr mml">
 
   <xsl:variable name="custom-font-maps" as="document-node(element(symbols))*" select="collection($collection-uri)[symbols]"/>
@@ -192,7 +192,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?">
+  <xsl:function name="docx2hub:font-map-implementation" as="document-node(element(symbols))?">
     <xsl:param name="font-name" as="xs:string?"/>
     <xsl:if test="$font-name">
       <xsl:choose>
@@ -218,6 +218,19 @@
       </xsl:choose>
     </xsl:if>
   </xsl:function>
+  
+  <!--<xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?" cache="yes" 
+    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:param name="font-name" as="xs:string?"/>
+    <xsl:sequence select="docx2hub:font-map-implementation($font-name)"/>
+  </xsl:function>-->
+  
+  <xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?" saxon:memo-function="yes"
+    >
+    <xsl:param name="font-name" as="xs:string?"/>
+    <xsl:sequence select="docx2hub:font-map-implementation($font-name)"/>
+  </xsl:function>
+  
   
   <xsl:function name="docx2hub:applied-font-for-w-t" as="xs:string?">
     <xsl:param name="w-t_or_m-t" as="element()"/><!-- element 'w:t' or 'm:t' -->

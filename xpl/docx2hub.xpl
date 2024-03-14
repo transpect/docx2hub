@@ -593,13 +593,25 @@
   </p:insert>
   
   <p:sink/>
-
-  <tr:xslt-mode msg="yes" mode="wml-to-dbk" name="wml-to-dbk">
+  
+  <p:identity name="wml-to-dbk-input">
     <p:input port="source">
       <p:pipe port="result" step="field-functions"/>
       <p:pipe port="custom-font-maps" step="docx2hub"/>
       <p:document href="http://this.transpect.io/xmlcatalog/catalog.xml"/>
     </p:input>
+  </p:identity>
+  
+  <tr:store-debug name="store-wml-to-dbk-input">
+    <p:with-option name="pipeline-step"
+      select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/20-wml-to-dbk-input')">
+      <p:pipe port="params" step="single-tree-enhanced"/>
+    </p:with-option>
+    <p:with-option name="active" select="$debug"><p:empty/></p:with-option>
+    <p:with-option name="base-uri" select="$debug-dir-uri"><p:empty/></p:with-option>
+  </tr:store-debug>
+
+  <tr:xslt-mode msg="yes" mode="wml-to-dbk" name="wml-to-dbk">
     <p:input port="parameters">
       <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
@@ -612,19 +624,19 @@
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/20')">
       <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
-    <p:with-option name="debug" select="$debug"/>
-    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
-    <p:with-option name="fail-on-error" select="$fail-on-error"/>
-    <p:with-option name="hub-version" select="$hub-version"/>
-    <p:with-param name="srcpaths" select="$srcpaths"/>
-    <p:with-param name="unwrap-tooltip-links" select="$unwrap-tooltip-links"/>
-    <p:with-param name="fail-on-error" select="$fail-on-error"/>
-    <p:with-param name="field-vars" select="$field-vars"/>
-    <p:with-param name="charmap-policy" select="$charmap-policy"/>
-    <p:with-param name="keep-paraid" select="$keep-paraid"/>
-    <p:with-param name="mml-version" select="$mml-version"/>
-    <p:with-param name="heuristic-character-replacements" select="$heuristic-character-replacements"/>
-    <p:with-param name="table-headers-and-footers-from-tblLook" select="$table-headers-and-footers-from-tblLook"/>
+    <p:with-option name="debug" select="$debug"><p:empty/></p:with-option>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"><p:empty/></p:with-option>
+    <p:with-option name="fail-on-error" select="$fail-on-error"><p:empty/></p:with-option>
+    <p:with-option name="hub-version" select="$hub-version"><p:empty/></p:with-option>
+    <p:with-param name="srcpaths" select="$srcpaths"><p:empty/></p:with-param>
+    <p:with-param name="unwrap-tooltip-links" select="$unwrap-tooltip-links"><p:empty/></p:with-param>
+    <p:with-param name="fail-on-error" select="$fail-on-error"><p:empty/></p:with-param>
+    <p:with-param name="field-vars" select="$field-vars"><p:empty/></p:with-param>
+    <p:with-param name="charmap-policy" select="$charmap-policy"><p:empty/></p:with-param>
+    <p:with-param name="keep-paraid" select="$keep-paraid"><p:empty/></p:with-param>
+    <p:with-param name="mml-version" select="$mml-version"><p:empty/></p:with-param>
+    <p:with-param name="heuristic-character-replacements" select="$heuristic-character-replacements"><p:empty/></p:with-param>
+    <p:with-param name="table-headers-and-footers-from-tblLook" select="$table-headers-and-footers-from-tblLook"><p:empty/></p:with-param>
   </tr:xslt-mode>
 
   <p:sink/>

@@ -1626,7 +1626,7 @@
        – 'separate' and 'end' fldChars link to their 'begin' fldChar
        – the nesting level is given at each 'begin' fldChar, starting from 1 for the topmost nesting
    -->
-  <xsl:template match="/" mode="docx2hub:join-instrText-runs">
+  <xsl:template match="document-node()[dbk:hub]" mode="docx2hub:join-instrText-runs" priority="2">
     <xsl:variable name="nested-field-functions" as="document-node()">
       <xsl:call-template name="docx2hub:nest-field-functions">
         <xsl:with-param name="input">

@@ -624,7 +624,7 @@
   </xsl:template>
 
 
-  <xsl:template match="/dbk:*" mode="wml-to-dbk">
+  <xsl:template match="/dbk:hub" mode="wml-to-dbk">
     <xsl:variable name="citavi-refs" as="document-node()?">
       <xsl:call-template name="docx2hub:citavi-json-to-xml"/>
     </xsl:variable>

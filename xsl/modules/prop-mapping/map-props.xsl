@@ -1874,7 +1874,7 @@
                   0
                 )[1]"/>
       <xsl:if test="$css:orientation">
-        <xsl:attribute name="css:transform" select="$css:orientation"/>
+        <xsl:attribute name="{if ($css:orientation = ('land', 'port')) then 'orient' else 'css:transform'}" select="$css:orientation"/>
       </xsl:if>
       <xsl:apply-templates select="@*[not(name() = $docx2hub:toggle-prop-names)]" mode="#current"/>
       <xsl:sequence select="$toggles"/>
@@ -1940,7 +1940,7 @@
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
       <xsl:if test="$css:orientation">
-        <xsl:attribute name="css:transform" select="$css:orientation"/>  
+        <xsl:attribute name="{if ($css:orientation = ('land', 'port')) then 'orient' else 'css:transform'}" select="$css:orientation"/>  
       </xsl:if>
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
@@ -1960,7 +1960,7 @@
                 <xsl:when test="current-group()[last()][self::w:p[w:pgSz[@css:orientation='landscape']]]">
                   <xsl:apply-templates select="current-group()[1]" mode="#current"/>
                   <xsl:apply-templates select="current-group()[position() gt 1]" mode="docx2hub:remove-redundant-run-atts">
-                    <xsl:with-param name="css:orientation" select="'rotate(90deg)'" tunnel="yes"/>
+                    <xsl:with-param name="css:orientation" select="'land'" tunnel="yes"/>
                   </xsl:apply-templates>
                 </xsl:when>
                 <xsl:otherwise>

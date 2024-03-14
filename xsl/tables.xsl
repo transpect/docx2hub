@@ -49,7 +49,8 @@
                                    w:tblPr/w:tblW,
                                    w:tblPr/@css:table-layout,
                                    @srcpath, 
-                                   @css:transform" mode="#current"/>
+                                   @css:transform,
+                                   @orient" mode="#current"/>
       <xsl:variable name="insideH-width" as="xs:string?" 
                     select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>
       <xsl:variable name="insideV-width" as="xs:string?" 
@@ -91,7 +92,9 @@
         </tgroup>
       </xsl:for-each-group>
     </informaltable>
-  </xsl:template>  
+  </xsl:template>
+  
+  <xsl:template match="@orient[empty(parent::w:tbl)]" mode="wml-to-dbk" priority="2"/>
 
   <xsl:function name="docx2hub:is-tableheader-row" as="xs:boolean">
     <xsl:param name="row" as="element(w:tr)"/>

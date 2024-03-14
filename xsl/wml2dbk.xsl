@@ -1378,7 +1378,7 @@
   
 
   <xsl:template match="*[name() = ('PRINT', 'GOTOBUTTON', 'MACROBUTTON')][@docx2hub:contains-markup]" 
-    mode="wml-to-dbk" priority="1.5">
+    mode="wml-to-dbk" priority="1.75">
     <xsl:call-template name="docx2hub:default-field-function-handler"/>
   </xsl:template>
   

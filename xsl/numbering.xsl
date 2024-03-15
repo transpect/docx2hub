@@ -8,7 +8,7 @@
   xmlns:css="http://www.w3.org/1996/css"
   xmlns:saxon="http://saxon.sf.net/"
   xmlns="http://docbook.org/ns/docbook"
-  version="2.0"
+  version="3.0"
   exclude-result-prefixes="w xs dbk tr docx2hub saxon">
 
   <!-- This mode is called from docx2hub:remove-redundant-run-atts as a collateral -->
@@ -153,8 +153,24 @@ it, but not when an ilvl=2 heading precedes it.
   <!-- recursive function that calculates the counter for the given ilvl based on the counter of the previous (non-disabled) 
     list paragraph. It outputs multiple attributes so that we can add more information to the intermediate debug file.
     Of the recursive invocation results, only the @docx2hub:num-counter-ilvl{$ilvl} attribute is used.
+    For certain documents, it is really important to use saxon:memo-function (or XSLT 3.0+ cache="yes"). Otherwise,
+    conversion might terminate with an error message "too many nested function calls".
   -->
-  <xsl:function name="docx2hub:level-counter" as="attribute(*)*" saxon:memo-function="yes">
+  <xsl:function name="docx2hub:level-counter" as="attribute(*)*" cache="yes" 
+    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:param name="context" as="element(w:p)"/>
+    <xsl:param name="ilvl" as="xs:integer?"/>
+    <xsl:sequence select="docx2hub:level-counter-implementation($context, $ilvl)"/>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:level-counter" as="attribute(*)*" saxon:memo-function="yes" 
+    use-when="xs:decimal(system-property('xsl:version')) lt 3.0">
+    <xsl:param name="context" as="element(w:p)"/>
+    <xsl:param name="ilvl" as="xs:integer?"/>
+    <xsl:sequence select="docx2hub:level-counter-implementation($context, $ilvl)"/>
+  </xsl:function>
+  
+  <xsl:function name="docx2hub:level-counter-implementation" as="attribute(*)*">
     <xsl:param name="context" as="element(w:p)"/>
     <xsl:param name="ilvl" as="xs:integer?"/>
     <xsl:variable name="ilvl" as="xs:integer?" select="$context/@docx2hub:num-ilvl"/>

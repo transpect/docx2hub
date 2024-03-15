@@ -445,13 +445,25 @@
   </tr:xslt-mode>
 
   <p:sink/>
-
-  <tr:xslt-mode msg="yes" mode="docx2hub:join-instrText-runs" name="join-instrText-runs">
+  
+  <p:identity name="join-instrText-runs-input">
     <p:input port="source">
       <p:pipe port="result" step="remove-redundant-run-atts"/>
       <p:pipe port="custom-font-maps" step="docx2hub"/>
       <p:document href="http://this.transpect.io/xmlcatalog/catalog.xml"/>
     </p:input>
+  </p:identity>
+  
+  <tr:store-debug name="store-join-instrText-runs-input">
+    <p:with-option name="pipeline-step"
+      select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/08-join-instrText-runs-input')">
+      <p:pipe port="params" step="single-tree-enhanced"/>
+    </p:with-option>
+    <p:with-option name="active" select="$debug"><p:empty/></p:with-option>
+    <p:with-option name="base-uri" select="$debug-dir-uri"><p:empty/></p:with-option>
+  </tr:store-debug>
+
+  <tr:xslt-mode msg="yes" mode="docx2hub:join-instrText-runs" name="join-instrText-runs">
     <p:input port="parameters">
       <p:pipe step="single-tree-enhanced" port="params"/>
     </p:input>
@@ -464,12 +476,12 @@
     <p:with-option name="prefix" select="concat('docx2hub/', /c:param-set/c:param[@name='basename']/@value, '/08')">
       <p:pipe port="params" step="single-tree-enhanced"/> 
     </p:with-option>
-    <p:with-option name="debug" select="$debug"/>
-    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"/>
-    <p:with-option name="fail-on-error" select="$fail-on-error"/>
-    <p:with-option name="hub-version" select="$hub-version"/>
-    <p:with-param name="fail-on-error" select="$fail-on-error"/>
-    <p:with-param name="terminate-on-unbalanced-instrTexts" select="'no'"></p:with-param>
+    <p:with-option name="debug" select="$debug"><p:empty/></p:with-option>
+    <p:with-option name="debug-dir-uri" select="$debug-dir-uri"><p:empty/></p:with-option>
+    <p:with-option name="fail-on-error" select="$fail-on-error"><p:empty/></p:with-option>
+    <p:with-option name="hub-version" select="$hub-version"><p:empty/></p:with-option>
+    <p:with-param name="fail-on-error" select="$fail-on-error"><p:empty/></p:with-param>
+    <p:with-param name="terminate-on-unbalanced-instrTexts" select="'no'"><p:empty/></p:with-param>
   </tr:xslt-mode>
 
   <p:viewport name="citavi-viewport"

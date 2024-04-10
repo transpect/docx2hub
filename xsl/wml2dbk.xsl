@@ -1717,6 +1717,10 @@
     </inlineequation>
   </xsl:template>
   
+  <xsl:template match="m:oMath[count(*) = 1 and m:r[count(*) = 1 and m:t[matches(., '^\p{Zs}+$')]]]" mode="wml-to-dbk" priority="2">
+    <xsl:apply-templates select="m:r/m:t/node()" mode="#current"/>
+  </xsl:template>
+  
   <xsl:template match="w:object[mml:math]
                       |w:pict[mml:math]" mode="wml-to-dbk">
     <inlineequation role="mtef">

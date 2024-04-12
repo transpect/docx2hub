@@ -226,7 +226,7 @@
     <p:documentation>If this option is set to 'yes' all tables are normalized with calstable and checked against 
     schematron</p:documentation>
   </p:option>
-  <p:option name="create-svg" select="'true'">
+  <p:option name="create-svg" select="'false'">
     <p:documentation>Whether to convert DrawingML to SVG. This is an experimental feature. Text in v:textbox
     elements will not be retained at the moment.</p:documentation>
   </p:option>

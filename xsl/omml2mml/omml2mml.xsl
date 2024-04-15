@@ -15,8 +15,9 @@
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
   xmlns:dbk="http://docbook.org/ns/docbook"
   xmlns:css="http://www.w3.org/1996/css"
+  xmlns:tr="http://transpect.io"
   version="2.0" 
-  exclude-result-prefixes="m w mml xs dbk css">
+  exclude-result-prefixes="m w mml xs dbk css tr">
   
   <!-- %% Global Definitions -->
   <xsl:output indent="yes"/>
@@ -2760,7 +2761,8 @@
                                                              $context/w:rPr/w:rStyle/@w:val)"/>
             </xsl:if>
             <xsl:if test="$context/w:rPr/w:sz/@w:val">
-              <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
+              <xsl:attribute name="{if($mml-version eq '4-core') then 'css:font-size' else 'mathsize'}" 
+                             select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
             </xsl:if>
             <xsl:call-template name="CreateTokenAttributes">
               <xsl:with-param name="scr"/>
@@ -2848,7 +2850,8 @@
                                                                  $context/w:rPr/w:rStyle/@w:val)"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:sz/@w:val">
-                  <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
+                  <xsl:attribute name="{if($mml-version eq '4-core') then 'css:font-size' else 'mathsize'}" 
+                                 select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
                 </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr" select="$scr"/>
@@ -2883,7 +2886,8 @@
                                                                  $context/w:rPr/w:rStyle/@w:val)"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:sz/@w:val">
-                  <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
+                  <xsl:attribute name="{if($mml-version eq '4-core') then 'css:font-size' else 'mathsize'}" 
+                                 select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
                 </xsl:if>
                 <xsl:call-template name="CreateTokenAttributes">
                   <xsl:with-param name="scr"/>
@@ -2920,7 +2924,8 @@
                                                                  $context/w:rPr/w:rStyle/@w:val)"/>
                 </xsl:if>
                 <xsl:if test="$context/w:rPr/w:sz/@w:val">
-                  <xsl:attribute name="mathsize" select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
+                  <xsl:attribute name="{if($mml-version eq '4-core') then 'css:font-size' else 'mathsize'}" 
+                                 select="concat(number($context/w:rPr/w:sz/@w:val) div 2,'pt')"/>
                 </xsl:if>
                 <xsl:if test="$context/m:rPr/m:sty/@m:val[matches(., 'b')]">
                   <!-- Word won't render italic numbers -->
@@ -3372,7 +3377,8 @@
                                                      w:rPr/w:rStyle/@w:val)"/>
     </xsl:if>
     <xsl:if test="w:rPr/w:sz/@w:val">
-      <xsl:attribute name="mathsize" select="concat(number(w:rPr/w:sz/@w:val) div 2,'pt')"/>
+      <xsl:attribute name="{if($mml-version eq '4-core') then 'css:font-size' else 'mathsize'}" 
+                     select="concat(number(w:rPr/w:sz/@w:val) div 2,'pt')"/>
     </xsl:if>
   </xsl:template>
 
@@ -3447,12 +3453,19 @@
   <xsl:function name="mml:get-color" as="attribute()?">
     <xsl:param name="color-value" as="attribute(w:val)*"/>
     <xsl:param name="style-name"  as="attribute(w:val)?"/>
+    <xsl:variable name="applied-color-value" as="xs:string?" 
+                  select="($color-value[last()], 
+                           key('style-by-name', $style-name, $root)/@css:color)[1]"/>
+    <xsl:variable name="color-value-hex" as="xs:string?" 
+                  select="if(lower-case($applied-color-value) = $css:known-color-keywords) 
+                          then tr:color-keyword-to-hex-rgb(lower-case($applied-color-value)) 
+                          else  $applied-color-value"/>
     <xsl:choose>
-      <xsl:when test="$color-value">
-        <xsl:attribute name="mathcolor" select="concat('#', $color-value[last()])"/>
+      <xsl:when test="$mml-version eq '4-core' and $applied-color-value">
+        <xsl:attribute name="css:color" select="$color-value-hex"/>
       </xsl:when>
-      <xsl:when test="key('style-by-name', $style-name, $root)/@css:color">
-        <xsl:attribute name="mathcolor" select="key('style-by-name', $style-name, $root)/@css:color"/>
+      <xsl:when test="$applied-color-value">
+        <xsl:attribute name="mathcolor" select="$color-value-hex"/>
       </xsl:when>
     </xsl:choose>
   </xsl:function>
@@ -3460,12 +3473,19 @@
   <xsl:function name="mml:get-background-color" as="attribute()?">
     <xsl:param name="color-value" as="attribute()*"/>
     <xsl:param name="style-name"  as="attribute(w:val)?"/>
+    <xsl:variable name="applied-color-value" as="xs:string?" 
+                  select="($color-value[last()], 
+                           key('style-by-name', $style-name, $root)/@css:background-color)[1]"/>
+    <xsl:variable name="color-value-hex" as="xs:string?" 
+                  select="if(lower-case($applied-color-value) = $css:known-color-keywords) 
+                          then tr:color-keyword-to-hex-rgb(lower-case($applied-color-value)) 
+                          else $applied-color-value"/>
     <xsl:choose>
-      <xsl:when test="$color-value">
-        <xsl:attribute name="mathbackground" select="concat('#', $color-value[last()])"/>
+      <xsl:when test="$mml-version eq '4-core' and $applied-color-value">
+        <xsl:attribute name="css:color" select="$color-value-hex"/>
       </xsl:when>
-      <xsl:when test="key('style-by-name', $style-name, $root)/@css:background-color">
-        <xsl:attribute name="mathbackground" select="key('style-by-name', $style-name, $root)/@css:background-color"/>
+      <xsl:when test="$applied-color-value">
+        <xsl:attribute name="mathbackground" select="$color-value-hex"/>
       </xsl:when>
     </xsl:choose>
   </xsl:function>

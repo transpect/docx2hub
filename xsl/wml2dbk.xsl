@@ -1685,15 +1685,21 @@
 
   <!-- math section -->
   <xsl:template match="m:oMathPara" mode="wml-to-dbk">
-    <equation role="omml">
-      <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
+    <xsl:variable name="mml" as="element(mml:math)">
       <xsl:apply-templates select="node()" mode="omml2mml">
         <xsl:with-param name="inline" select="false()" tunnel="yes"/>
       </xsl:apply-templates>
+    </xsl:variable>
+    <equation role="omml">
+      <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
+      <xsl:apply-templates select="$mml" mode="merge-omml-css-atts"/>
     </equation>
   </xsl:template>
   
   <xsl:template match="m:oMathPara[.//m:aln[not(ancestor::m:m)] or .//w:br]" mode="wml-to-dbk">
+    <xsl:variable name="mml" as="element(mml:math)">
+      <xsl:apply-templates select="node()" mode="omml2mml"/>
+    </xsl:variable>
     <equation role="omml">
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/>
       <mml:math display="block">
@@ -1702,10 +1708,17 @@
           <xsl:if test=".//w:br">
             <xsl:attribute name="columnalign" select="if (@css:text-align) then @css:text-align else 'left'"/>
           </xsl:if>
-          <xsl:apply-templates select="node()" mode="omml2mml"/>
+          <xsl:apply-templates select="$mml" mode="merge-omml-css-atts"/>
         </mml:mtable>
       </mml:math>
     </equation>
+  </xsl:template>
+  
+  <xsl:template match="*[@css:*]" mode="merge-omml-css-atts">
+    <xsl:copy>
+      <xsl:attribute name="style" select="string-join(for $css-prop in @css:* return concat($css-prop/local-name(), ':', $css-prop), ';')"/>
+      <xsl:apply-templates select="@* except @css:*, node()" mode="#current"/>
+    </xsl:copy>
   </xsl:template>
   
   <xsl:template match="m:oMath" mode="wml-to-dbk">

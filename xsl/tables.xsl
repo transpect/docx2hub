@@ -50,6 +50,7 @@
                                    w:tblPr/@css:table-layout,
                                    @srcpath, 
                                    @css:transform,
+                                   @css:page,
                                    @orient" mode="#current"/>
       <xsl:variable name="insideH-width" as="xs:string?" 
                     select="($styledef/w:tblPr/@css:border-insideH-width, w:tblPr/@css:border-insideH-width)[last()]"/>

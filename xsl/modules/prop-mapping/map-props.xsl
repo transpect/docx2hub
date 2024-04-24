@@ -1836,7 +1836,7 @@
   
   <!-- collateral: denote numbering resets -->
   <xsl:template match="w:p" mode="docx2hub:remove-redundant-run-atts">
-    <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="css:page" as="xs:string?" tunnel="yes"/>
     <xsl:param name="toggles" as="attribute(*)*" tunnel="yes"/>
     <xsl:copy>
       <xsl:variable name="context" as="element(w:p)" select="."/>
@@ -1873,8 +1873,11 @@
                   return xs:integer($i),
                   0
                 )[1]"/>
-      <xsl:if test="$css:orientation">
-        <xsl:attribute name="{if ($css:orientation = ('land', 'port')) then 'orient' else 'css:transform'}" select="$css:orientation"/>
+      <xsl:if test="$css:page">
+        <xsl:if test="$css:page = ('landscape', 'portrait')">
+          <xsl:attribute name="orient" select="substring($css:page,1,4)"/>  
+        </xsl:if>
+        <xsl:attribute name="css:page" select="$css:page"/>
       </xsl:if>
       <xsl:apply-templates select="@*[not(name() = $docx2hub:toggle-prop-names)]" mode="#current"/>
       <xsl:sequence select="$toggles"/>
@@ -1935,12 +1938,15 @@
   <xsl:template match="w:footnote/w:p[descendant::w:fldChar][every $run in w:r satisfies $run[descendant::w:fldChar]]" mode="docx2hub:remove-redundant-run-atts"/>
 
   <xsl:template match="w:tbl" mode="docx2hub:remove-redundant-run-atts">      
-    <xsl:param name="css:orientation" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="css:page" as="xs:string?" tunnel="yes"/>
     <!-- to do: toggle att handling if applicable -->
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:if test="$css:orientation">
-        <xsl:attribute name="{if ($css:orientation = ('land', 'port')) then 'orient' else 'css:transform'}" select="$css:orientation"/>  
+      <xsl:if test="$css:page">
+        <xsl:if test="$css:page = ('landscape', 'portrait')">
+          <xsl:attribute name="orient" select="substring($css:page,1,4)"/>  
+        </xsl:if>
+        <xsl:attribute name="css:page" select="$css:page"/>
       </xsl:if>
       <xsl:apply-templates mode="#current"/>
     </xsl:copy>
@@ -1952,15 +1958,15 @@
   <xsl:template match="*[w:p[w:pgSz]]" mode="docx2hub:remove-redundant-run-atts">
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="#current"/>
-      <xsl:for-each-group select="node()" group-ending-with="w:p[w:pgSz[@css:orientation='landscape']]">
+      <xsl:for-each-group select="node()" group-ending-with="w:p[w:pgSz[@css:page='landscape']]">
         <xsl:choose>
-          <xsl:when test="current-group()[last()][self::w:p[w:pgSz[@css:orientation='landscape']]]">
-            <xsl:for-each-group select="current-group()" group-starting-with="w:p[w:pgSz[not(@css:orientation='landscape')]]">
+          <xsl:when test="current-group()[last()][self::w:p[w:pgSz[@css:page='landscape']]]">
+            <xsl:for-each-group select="current-group()" group-starting-with="w:p[w:pgSz[not(@css:page='landscape')]]">
               <xsl:choose>
-                <xsl:when test="current-group()[last()][self::w:p[w:pgSz[@css:orientation='landscape']]]">
+                <xsl:when test="current-group()[last()][self::w:p[w:pgSz[@css:page='landscape']]]">
                   <xsl:apply-templates select="current-group()[1]" mode="#current"/>
                   <xsl:apply-templates select="current-group()[position() gt 1]" mode="docx2hub:remove-redundant-run-atts">
-                    <xsl:with-param name="css:orientation" select="'land'" tunnel="yes"/>
+                    <xsl:with-param name="css:page" select="'landscape'" tunnel="yes"/>
                   </xsl:apply-templates>
                 </xsl:when>
                 <xsl:otherwise>

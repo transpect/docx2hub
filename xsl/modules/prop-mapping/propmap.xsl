@@ -123,7 +123,7 @@
         <prop name="w:pgSz/@w:w" type="docx-length-attr" target-name="css:width"/>
         <prop name="w:pgSz/@w:h" type="docx-length-attr" target-name="css:height"/>
         <prop name="w:pgSz/@w:code"/>
-        <prop name="w:pgSz/@w:orient" target-name="css:orientation" type="linear"/>
+        <prop name="w:pgSz/@w:orient" target-name="css:page" type="linear"/>
         <prop name="w:position" target-name="css:top" type="docx-position-attr-negated" />
         <prop name="w:position" target-name="css:position" target-value="relative"/>
         <prop name="w:pPrChange"/>

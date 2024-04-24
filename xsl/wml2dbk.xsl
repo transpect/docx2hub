@@ -1817,6 +1817,20 @@
     </xsl:element>
   </xsl:template>
   
+    <xsl:template match="w:sdt[not(w:sdtPr/w:alias/@w:val)]
+                              [w:sdtPr/w:citation]
+                              [not(ancestor::*:CITAVI_XML)]
+                              [empty(.//*:CITAVI_XML)]
+                              [w:sdtContent/CITATION]" mode="wml-to-dbk tables" priority="3">
+      <!-- referencing a citation in Word (in customXML/item1mxml a <b:Sources xmlns:b="http://schemas.openxmlformats.org/officeDocument/2006/bibliography"
+           xmlns="http://schemas.openxmlformats.org/officeDocument/2006/bibliography" SelectedStyle="\APASixthEditionOfficeOnline.xsl"
+           StyleName="APA" Version="6"> ) (field function CITATION not yet implemented, but avoid creation blockquotes as in template above) https://redmine.le-tex.de/issues/16715 -->
+    <citation linkend="">
+      <!--example:  <CITATION xmlns="" fldArgs="Kra00 \p 24 \l 2057"> the id Kra00 is given in the beforementioned source but not yet included into document-->
+      <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
+    </citation>
+  </xsl:template>
+  
   <xsl:template match="w:sdt[w:sdtPr/w:docPartObj/w:docPartGallery/@w:val='Table of Contents'][empty(.//*:CITAVI_XML)]" mode="wml-to-dbk tables">
     <xsl:element name="toc">
       <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>

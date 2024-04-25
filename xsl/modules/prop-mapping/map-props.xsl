@@ -997,9 +997,16 @@
       <xsl:when test=". eq 'docx-shd'">
         <xsl:choose>
           <xsl:when test="$val/@w:val = ('clear','nil')">
-            <xsl:if test="$val/@w:fill ne 'auto'">
-              <docx2hub:attribute name="css:background-color"><xsl:value-of select="concat('#', $val/@w:fill)" /></docx2hub:attribute>
-            </xsl:if>
+            <xsl:choose>
+              <xsl:when test="$val/@w:fill = 'auto' and $val/@w:val = 'clear'">
+                <docx2hub:remove-attribute name="css:background-color"><xsl:value-of select="'transparent'"/>
+                <!-- Intention: if there is no preceding attribute to remove and if the named style and its cascade contains this property,
+                then use this value as an override --></docx2hub:remove-attribute>
+              </xsl:when>
+              <xsl:otherwise>
+                <docx2hub:attribute name="css:background-color"><xsl:value-of select="concat('#', $val/@w:fill)" /></docx2hub:attribute>    
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:when>
           <xsl:when test="$val/@w:val eq 'solid'">
             <docx2hub:attribute name="css:background-color"><xsl:value-of select="concat('#', $val/@w:color)" /></docx2hub:attribute>
@@ -1576,7 +1583,27 @@
     </w:numPr>
   </xsl:template>
    
-  <xsl:template match="docx2hub:remove-attribute" mode="docx2hub:props2atts" />
+  <xsl:template match="docx2hub:remove-attribute[not(normalize-space())]" mode="docx2hub:props2atts" />
+  
+  <xsl:template match="docx2hub:remove-attribute[normalize-space()]
+                                                [empty(preceding-sibling::docx2hub:attribute[@name = current()/@name])]" 
+                mode="docx2hub:props2atts">
+    <!-- Example: override bgcolor in ITALIC style def in: 
+      <w:r srcpath="file:/mnt/c/Users/gerrit/Dev/tmp/brill_539504_Domanski.docx.tmp/word/footnotes.xml?xpath=/w:footnotes[1]/w:footnote[7]/w:p[1]/w:r[26]"
+     w:rsidRPr="005B04B3">
+   <w:rPr>
+      <w:rStyle w:val="ITALIC"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+   </w:rPr>
+   <w:t srcpath="file:/mnt/c/Users/gerrit/Dev/tmp/brill_539504_Domanski.docx.tmp/word/footnotes.xml?xpath=/w:footnotes[1]/w:footnote[7]/w:p[1]/w:r[26]/w:t[1]">è</w:t>
+</w:r> -->
+    <xsl:variable name="role" as="xs:string?" select="../docx2hub:attribute[@name = 'role']"/>
+    <xsl:variable name="style" as="element(css:rule)?" select="//css:rule[docx2hub:attribute[@name = 'name'] = $role]"/>
+    <xsl:if test="exists($style/docx2hub:attribute[@name = current()/@name]
+                                                  [empty(following-sibling::docx2hub:remove-attribute[@name = current()/@name])])">
+      <xsl:attribute name="{@name}" select="."/>
+    </xsl:if>
+  </xsl:template>
 
   <xsl:template match="docx2hub:style-link" mode="docx2hub:props2atts">
     <xsl:attribute name="{if (@type eq 'AppliedParagraphStyle')

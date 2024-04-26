@@ -1864,6 +1864,7 @@
   <!-- collateral: denote numbering resets -->
   <xsl:template match="w:p" mode="docx2hub:remove-redundant-run-atts">
     <xsl:param name="css:page" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="css:page_tbl" as="xs:string?" tunnel="yes"/>
     <xsl:param name="toggles" as="attribute(*)*" tunnel="yes"/>
     <xsl:copy>
       <xsl:variable name="context" as="element(w:p)" select="."/>
@@ -1900,7 +1901,7 @@
                   return xs:integer($i),
                   0
                 )[1]"/>
-      <xsl:if test="$css:page">
+      <xsl:if test="$css:page and not($css:page = $css:page_tbl)">
         <xsl:if test="$css:page = ('landscape', 'portrait')">
           <xsl:attribute name="orient" select="substring($css:page,1,4)"/>  
         </xsl:if>
@@ -1975,7 +1976,9 @@
         </xsl:if>
         <xsl:attribute name="css:page" select="$css:page"/>
       </xsl:if>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates mode="#current">
+        <xsl:with-param name="css:page_tbl" select="($css:page, '_unset_')[1]" tunnel="yes"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
 

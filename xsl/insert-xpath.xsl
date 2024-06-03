@@ -173,7 +173,7 @@
             will later be converted to keywordset[@role = 'hub:custom-meta'] -->
           <xsl:apply-templates mode="#current"
             select="for $t in $containerRels/rel:Relationships/rel:Relationship[ends-with(@Type, 'properties')]/@Target
-                    return document(resolve-uri($t, $container-base-uri))"/>
+                    return document(resolve-uri(replace($t,'^/',''), $container-base-uri))"/>
         </w:containerProps>
         <w:docRels>
           <xsl:apply-templates select="document($docRels-uri)/rel:Relationships"

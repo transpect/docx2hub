@@ -137,7 +137,7 @@
                     $root/*/w:docRels/rel:Relationships"/>
     <xsl:variable name="rel" as="element(rel:Relationship)"
       select="$rels/rel:Relationship[@Id = $image-id]"/>
-    <xsl:variable name="patched-file-uri" select="replace($rel/@Target, '\\', '/')" as="xs:string"/>
+    <xsl:variable name="patched-file-uri" select="replace(replace($rel/@Target, '\\', '/'),'^/','')" as="xs:string"/>
     <imageobject>
       <xsl:apply-templates select="../a:srcRect" mode="wml-to-dbk"/>
       <imagedata fileref="{if ($rel/@TargetMode = 'External') 

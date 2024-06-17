@@ -1000,7 +1000,8 @@
             <xsl:choose>
               <xsl:when test="$val/@w:fill = 'auto' and $val/@w:val = 'clear'">
                 <docx2hub:remove-attribute name="css:background-color"><xsl:value-of select="'transparent'"/>
-                <!-- Intention: if there is no preceding attribute to remove and if the named style and its cascade contains this property,
+                <!-- idInsertTransparentBackground
+                  intention: if there is no preceding attribute to remove and if the named style and its cascade contains this property,
                 then use this value as an override --></docx2hub:remove-attribute>
               </xsl:when>
               <xsl:otherwise>
@@ -1414,7 +1415,9 @@
             <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)][not(@name = ('css:top','css:position','css:font-size','css:font-weight','css:font-style'))]"/>
           </xsl:when>-->
           <xsl:otherwise>
-            <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)]"/>
+            <xsl:sequence select="docx2hub:attribute[not(@name = following-sibling::docx2hub:remove-attribute/@name)],
+                                  (: see idInsertTransparentBackground, but remove-attribute should apply without condition(?/!) :)
+                                  docx2hub:remove-attribute[@name = 'css:background-color'][. = 'transparent'][empty(preceding-sibling::docx2hub:attribute[@name = current()/@name])]"/>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -1432,7 +1435,7 @@
           <xsl:sequence select="$remaining-tabs" />
         </tabs>
       </xsl:if>
-      <xsl:apply-templates select="node() except (docx2hub:attribute | docx2hub:color-percentage | docx2hub:wrap | docx2hub:style-link | dbk:tabs)" mode="#current" />
+      <xsl:apply-templates select="node() except (docx2hub:attribute | docx2hub:remove-attribute | docx2hub:color-percentage | docx2hub:wrap | docx2hub:style-link | dbk:tabs)" mode="#current" />
     </xsl:variable>
     <xsl:choose>
       <!-- do not wrap whitespace only subscript or superscript -->

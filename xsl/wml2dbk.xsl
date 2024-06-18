@@ -1697,7 +1697,7 @@
   </xsl:template>
   
   <xsl:template match="m:oMathPara[.//m:aln[not(ancestor::m:m)] or .//w:br]" mode="wml-to-dbk">
-    <xsl:variable name="mml" as="element()+">
+    <xsl:variable name="mml" as="node()+">
       <xsl:apply-templates select="node()" mode="omml2mml"/>
     </xsl:variable>
     <equation role="omml">

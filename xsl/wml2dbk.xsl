@@ -1893,6 +1893,11 @@
 
   <xsl:template match="@srcpath[$srcpaths != 'yes']" mode="wml-to-dbk" priority="2" />
 
+  <xsl:template match="w:r[@css:font-family='ZWAdobeF']" priority="5" mode="wml-to-dbk">
+   <!-- ZWAdobeF seems to be a font hack from Adobe that inserts special characer combinations for numbering in PDF exports. 
+    Unfortunately, they are sometimes inserted into exported docx document. -->
+  </xsl:template>
+  
   <xsl:function name="docx2hub:twips2mm" as="xs:string">
     <xsl:param name="val" as="xs:integer"/>
     <xsl:sequence select="concat(xs:string($val * 0.01763889), 'mm')" />

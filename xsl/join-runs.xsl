@@ -1110,7 +1110,7 @@
                      docx2hub:join-instrText-runs_render-compound2 is for rendering it with markup
                      docx2hub:join-instrText-runs_render-compound3 is for postprocessing the joint transformed instrText 
                         content just in case there is a backslash in one instrText and the quote in the next 
-                        (https://redmine.le-tex.de/issues/8174) -->
+                        (https://redmine.le-tex.de/issues/8174, https://redmine.le-tex.de/issues/17220) -->
                 <xsl:variable name="instr-text" as="node()*">
                   <xsl:apply-templates select="$instr-text-nodes" mode="docx2hub:join-instrText-runs_render-compound1"/>
                 </xsl:variable>
@@ -1548,11 +1548,11 @@
 
   
   
-  <xsl:template match="dbk:wrapper/text()" mode="docx2hub:join-instrText-runs_render-compound3" priority="0.8">
+  <xsl:template match="dbk:wrapper/text() | dbk:wrapper/*/text()" mode="docx2hub:join-instrText-runs_render-compound3" priority="0.8">
     <xsl:param name="formatting-acceptable" as="xs:boolean" tunnel="yes"/>
     <xsl:variable name="prelim" as="xs:string">
       <xsl:choose>
-        <xsl:when test="ends-with(., '\') and following-sibling::*[1]/local-name() = ('sep', 'quot')">
+        <xsl:when test="ends-with(., '\') and (. | ..[parent::dbk:wrapper])/following-sibling::*[1]/local-name() = ('sep', 'quot')">
           <xsl:sequence select="replace(., '\\$', '')"/>
         </xsl:when>
         <xsl:otherwise>
@@ -1561,7 +1561,7 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:choose>
-      <xsl:when test="(. is parent::dbk:wrapper/node()[1]) and $formatting-acceptable">
+      <xsl:when test="(. is parent::dbk:wrapper/node()[1] or . is parent::dbk:wrapper/node()[1]/text()[1]) and $formatting-acceptable">
         <xsl:value-of select="replace($prelim, '^\s*\w+\s+', '')">
           <!-- remove field function name -->
         </xsl:value-of>
@@ -1572,12 +1572,16 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="dbk:wrapper/dbk:quot[ends-with(preceding-sibling::node()[1]/self::text(), '\')]" 
+  <xsl:template match="dbk:wrapper/dbk:quot[ends-with(preceding-sibling::node()[1]/self::text(), '\')
+                                            or
+                                            ends-with(preceding-sibling::node()[1]/self::*, '\')]" 
     mode="docx2hub:join-instrText-runs_render-compound3" >
     <xsl:apply-templates mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="dbk:wrapper/dbk:sep[ends-with(preceding-sibling::node()[1]/self::text(), '\')]" 
+  <xsl:template match="dbk:wrapper/dbk:sep[ends-with(preceding-sibling::node()[1]/self::text(), '\')
+                                           or
+                                           ends-with(preceding-sibling::node()[1]/self::*, '\')]" 
     mode="docx2hub:join-instrText-runs_render-compound3" >
     <xsl:value-of select="':'"/>
   </xsl:template>

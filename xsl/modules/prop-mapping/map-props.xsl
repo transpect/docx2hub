@@ -142,6 +142,9 @@
                 <xsl:value-of select="."/>
               </keyword>
             </xsl:for-each>
+            <xsl:if test="exists(../../w:settings/w:trackRevisions)">
+              <keyword role="trackRevisions"/>
+            </xsl:if>
           </keywordset>
         </xsl:if>
         <xsl:if test="exists(../../w:settings/w:docVars/w:docVar)">

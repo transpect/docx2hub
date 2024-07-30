@@ -13,6 +13,7 @@
 
   <let name="base-dir" value="/*/dbk:info/dbk:keywordset[@role eq 'hub']/dbk:keyword[@role eq 'source-dir-uri']"/>
   <xsl:param name="report-referenced-images-in-docx"/>
+  <xsl:variable name="indexterms" select="//dbk:indexterm" as="element(dbk:indexterm)*"/>
   
   <pattern id="docx_unbalanced_field_functions_pattern">
     <rule context="*[processing-instruction(letex)[starts-with(., 'W2D_094')]]">
@@ -109,7 +110,7 @@
   <pattern id="docx_broken_indexterms">
     <rule context="dbk:indexterm">
      <let name="text" value="(preceding-sibling::*[normalize-space()][1], following-sibling::*[normalize-space()][1])[1]"/>
-      <assert test="exists(*)" id="docx_broken_indexterm" diagnostics="docx_broken_indexterm_de" role="warning">
+      <assert test="if(@class eq 'endofrange') then true() else exists(*)" id="docx_broken_indexterm" diagnostics="docx_broken_indexterm_de" role="warning">
         <span class="srcpath"><xsl:value-of 
           select="for $s in tokenize(ancestor-or-self::*[@srcpath][1]/@srcpath, '\s+')
                   return concat($base-dir, $s)"/></span>
@@ -119,6 +120,19 @@
         The following text before or after the index entry might give you a hint where the error occured: 
        <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
       </assert>
+      <assert test="if(@class eq 'startofrange') then @xml:id = $indexterms[@class eq 'endofrange']/@startref else true()" id="docx_indexterm_no_endref" role="warning">
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Index entry with range but no end delimiter.</span>
+        An index delimiter indicating the end of an index range was found but the starting index term is missing, please check input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+        The following text before or after the index entry might give you a hint where the error occured:
+        <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
+      </assert>
+      <assert test="if(@class eq 'endofrange') then @startref = $indexterms[@class eq 'startofrange']/@xml:id else true()" id="docx_indexterm_no_startref" role="warning">
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Index entry with range but no end delimiter.</span>
+        An index delimiter indicating the end of an index range was found but the starting index term is missing, please check input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+        The following text before or after the index entry might give you a hint where the error occured:
+        <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
+      </assert>
+      
     </rule>
   </pattern>
 

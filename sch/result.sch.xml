@@ -116,19 +116,21 @@
                   return concat($base-dir, $s)"/></span>
         <span class="category">docx</span>
         <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Empty or broken index entry</span>
-                An empty indexterm was created, please check input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/> 
+                An empty indexterm was created, please check the input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/> 
         The following text before or after the index entry might give you a hint where the error occured: 
        <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
       </assert>
-      <assert test="if(@class eq 'startofrange') then @xml:id = $indexterms[@class eq 'endofrange']/@startref else true()" id="docx_indexterm_no_endref" role="warning">
-        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Index entry with range but no end delimiter.</span>
-        An index delimiter indicating the end of an index range was found but the starting index term is missing, please check input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+      <assert test="if(@class eq 'startofrange') then @xml:id = $indexterms[@class eq 'endofrange']/@startref else true()" id="docx_indexterm_no_endref" diagnostics="docx_indexterm_no_endref_de" role="warning">
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">End delimiter for index entry is missing</span>
+        An index entry was found that defines a range, but the end separator is missing. 
+        Please check the input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
         The following text before or after the index entry might give you a hint where the error occured:
         <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
       </assert>
-      <assert test="if(@class eq 'endofrange') then @startref = $indexterms[@class eq 'startofrange']/@xml:id else true()" id="docx_indexterm_no_startref" role="warning">
-        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Index entry with range but no end delimiter.</span>
-        An index delimiter indicating the end of an index range was found but the starting index term is missing, please check input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+      <assert test="if(@class eq 'endofrange') then @startref = $indexterms[@class eq 'startofrange']/@xml:id else true()" id="docx_indexterm_no_startref" diagnostics="docx_indexterm_no_startref_de" role="warning">
+        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">End delimiter found but beginning of index entry is missing</span>
+        An index separator was found that indicates the end of an index entry range, but the beginning of the index term is missing. 
+        Please check the input.<br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
         The following text before or after the index entry might give you a hint where the error occured:
         <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
       </assert>
@@ -137,14 +139,31 @@
   </pattern>
 
   <diagnostics>
-      <diagnostic id="docx_broken_indexterm_de" xml:lang="de">
-        <span class="category">docx</span>
-        <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Leerer oder unvollständiger Indexeintrag</span>
-        Ein leerer Indexeintrag wurde generiert. Möglicherweise ist er im Dokument nicht richtig erfasst. Bitte prüfen Sie die Stelle.
-        <br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
-        Folgender Text, der vor oder nach dem Indexeintrag stehen kann, soll Ihnen helfen die Stelle leichter zu finden: 
-        <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
-      </diagnostic>
+    <diagnostic id="docx_broken_indexterm_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Leerer oder unvollständiger Indexeintrag</span>
+      Ein leerer Indexeintrag wurde generiert. Möglicherweise ist er im Dokument nicht richtig erfasst. Bitte prüfen Sie die Stelle.
+      <br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+      Folgender Text, der vor oder nach dem Indexeintrag stehen kann, soll Ihnen helfen die Stelle leichter zu finden: 
+      <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
+    </diagnostic>
+    <diagnostic id="docx_indexterm_no_endref_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Indexeintrag </span>
+      Ein Indexeintrag wurde gefunden, der einen Bereich definiert, aber die Endmarke für den Bereich ist nicht vorhanden.
+      <br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+      Folgender Text, der vor oder nach dem Indexeintrag stehen kann, soll Ihnen helfen die Stelle leichter zu finden: 
+      <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
+    </diagnostic>
+    <diagnostic id="docx_indexterm_no_startref_de" xml:lang="de">
+      <span class="category">docx</span>
+      <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Index-Endmarke ohne Indexeintrag</span>
+      Es wurde die Endmarke eines Indexeintrags gefunden, das das Ende eines Indexeintragsbereichs angibt, aber der Anfang des Indexeintrags fehlt.
+      <br xmlns="http://www.w3.org/1999/xhtml"/><br xmlns="http://www.w3.org/1999/xhtml"/>
+      Folgender Text, der vor oder nach dem Indexeintrag stehen kann, soll Ihnen helfen die Stelle leichter zu finden: 
+      <br xmlns="http://www.w3.org/1999/xhtml"/><xsl:value-of select="string-join($text, '')"/>
+    </diagnostic>
+    
     <diagnostic id="docx_carriage_return_de" xml:lang="de">
       <span class="category">docx</span>
       <span class="issue" xmlns="http://www.w3.org/1999/xhtml">Carriage Return Zeichen verwendet</span>

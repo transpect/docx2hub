@@ -1580,8 +1580,9 @@
         <!--<tr:field-function name="INDEX" element="div" role="hub:index"/>-->
         <tr:field-function name="NOTEREF" element="link" attrib="linkend" value="1"/>
         <tr:field-function name="GOTOBUTTON" element="link" attrib="linkend" value="1"/>
-        <tr:field-function name="PAGE"/>
+        <tr:field-function name="PAGE" element="phrase" role="hub:page-number"/>
         <tr:field-function name="PAGEREF" element="link" attrib="linkend" role="page" value="1"/>
+        <tr:field-function name="NUMPAGES" element="phrase" role="hub:page-count"/>
         <tr:field-function name="RD"/>
         <tr:field-function name="REF"/>
         <tr:field-function name="ADVANCE"/>

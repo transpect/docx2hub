@@ -98,6 +98,10 @@
                           else ."/>
   </xsl:template>
 
+  <xsl:template match="w:sym[preceding-sibling::node()[1][self::w:footnoteReference]/@w:customMarkFollows=('1', 'on', 'true')]" mode="wml-to-dbk" priority="3">
+    <!-- discard footnote symbol that was already processed in w:footnoteReference-->
+  </xsl:template>
+  
   <xsl:template match="w:footnote" mode="wml-to-dbk">
     <xsl:apply-templates mode="#current"/>
   </xsl:template>

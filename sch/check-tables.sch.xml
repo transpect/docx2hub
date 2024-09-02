@@ -17,10 +17,17 @@
   <pattern id="check_tables_columns">
     <rule context="w:tbl[w:tblGrid/w:gridCol]">
         <!--diagnostics="table_grid_greater_column_count-de"-->
+      <let name="max-tc-cols" value="max(
+                                      for $row in w:tr 
+                                      return (
+                                        count($row/w:tc) 
+                                        + sum(($row/w:tc/w:tcPr/w:gridSpan/@w:val/xs:integer(.), 0))
+                                      )
+                                    )"/>
       <report id="table_grid_greater_column_count" role="warning" 
-        test="count(w:tblGrid/w:gridCol) &gt; max(for $row in w:tr return count($row/w:tc))">
+        test="count(w:tblGrid/w:gridCol) &gt; $max-tc-cols">
         <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace(@srcpath, '^(.*word/document\.xml)', 'word/document.xml')), '')"/></span>
-        The table grid colum count (<xsl:value-of select="count(w:tblGrid/w:gridCol)"/>) is higher than the maximum column count (<xsl:value-of select="max(for $row in w:tr return count($row/w:tc))"/>) in any table row. Please check.
+        The table grid colum count (<xsl:value-of select="count(w:tblGrid/w:gridCol)"/>) is higher than the maximum column count (<xsl:value-of select="$max-tc-cols"/>) in any table row. Please check.
       </report>
     </rule>
   </pattern>

@@ -85,6 +85,20 @@
     </rule>
   </pattern>
   
+  <pattern id="omml_vdot">
+    <rule context="m:mr[following-sibling::*[1][self::m:mr[m:e[. = '.']]]]
+                       /m:e[. = '.']">
+      <let name="current-pos" value="count(preceding-sibling::m:e)"/>
+      <report id="vdots_candidate_in_formula" role="warning" diagnostics="vdot_candidate_in_formula_de" 
+        test="not(parent::m:mr/preceding-sibling::*[1][self::m:mr/m:e[count(preceding-sibling::m:e) = $current-pos][. = '.']])
+              and parent::m:mr/following-sibling::*[1][self::m:mr/m:e[count(preceding-sibling::m:e) = $current-pos][. = '.']]
+              and parent::m:mr/following-sibling::*[2][self::m:mr/m:e[count(preceding-sibling::m:e) = $current-pos][. = '.']]">
+        <span class="srcpath"><xsl:value-of select="string-join(($base-dir, replace((ancestor::w:p,ancestor::w:p/following-sibling::*[1])[1]/@srcpath,'^(.*word/document\.xml)','word/document.xml')), '')"/></span>
+        There are three rows with cells (one above the other) and a single punctuation mark each in it. That's a candidate for a vertical ellipsis ⋮ (U+22EE).
+      </report>
+    </rule>
+  </pattern>
+  
   <pattern id="update-field-function">
     <rule context="*:fldSimple | *:fldChar">
       <report id="update_field_function" role="warning" diagnostics="update_field_function_de" 
@@ -129,6 +143,9 @@
     </diagnostic>
     <diagnostic id="mml_in_omml_de" xml:lang="de">
        Hier steht wahrscheinlich eine MathType-Formel in einer Word-OMML-Formel. Bitte ersetzen Sie die MathType-Formel.
+    </diagnostic>
+    <diagnostic id="vdot_candidate_in_formula_de" xml:lang="de">
+       In dieser Formelmatrix steht ein Kandidat für das vertikale Auslassungszeichen ⋮ (U+22EE). Bitte prüfen, ob die übereinander angeordneten Zellen durch das ordentliche ⋮-Zeichen ersetzt werden können.
     </diagnostic>
     <diagnostic id="update_field_function_de" xml:lang="de">
       In diesem Dokument wurden die Feldfunktionen nicht aktualisiert. Um eine korrekte Konvertierung zu gewährleisten, 

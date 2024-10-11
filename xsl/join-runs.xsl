@@ -1335,20 +1335,6 @@
     <xsl:sequence select="."/>
   </xsl:template>
   
-  <xsl:template match="w:noBreakHyphen | w:br | w:tab | w:softHyphen" 
-    mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2">
-    <xsl:param name="markup-acceptable" as="xs:boolean?" tunnel="yes"/>
-    <xsl:choose>
-      <xsl:when test="$markup-acceptable">
-        <xsl:apply-templates select="." mode="wml-to-dbk"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:text xml:space="preserve"> </xsl:text>
-      </xsl:otherwise>
-    </xsl:choose>
-    <xsl:apply-templates select="." mode="wml-to-dbk"/>
-  </xsl:template>
-  
   <xsl:template match="w:br | w:tab" 
     mode="docx2hub:join-instrText-runs_render-compound1 docx2hub:join-instrText-runs_render-compound2">
     <xsl:param name="markup-acceptable" as="xs:boolean?" tunnel="yes"/>

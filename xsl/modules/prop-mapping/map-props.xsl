@@ -428,7 +428,7 @@
     <xsl:param name="initial" as="element(w:style)*"/>
     <xsl:variable name="next" as="element(w:style)?" 
       select="if (exists($initial)) 
-              then key('docx2hub:style', $initial[last()]/w:basedOn/@w:val, root($initial[last()]))
+              then key('docx2hub:style', $initial[last()]/w:basedOn/@w:val, root($initial[last()]))[1]
               else ()"/>
     <xsl:choose>
       <xsl:when test="exists($next)">

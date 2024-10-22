@@ -194,6 +194,7 @@
         <prop name="w:tblCellMar/w:left" type="docx-padding" />
         <prop name="w:tblCellMar/w:right" type="docx-padding" />
         <prop name="w:tblCellMar/w:top" type="docx-padding" />
+        <prop name="w:tblDescription" type="passthru"/>
         <prop name="w:tblGrid" type="passthru" />
         <prop name="w:tblInd" type="docx-length-attr" target-name="css:margin-left">
           <!-- postprocess it; should be margin-right if the table is rtl (§ 17.4.51) --> 

@@ -61,6 +61,11 @@
       <xsl:variable name="tblGrid" select="w:tblGrid" as="element(w:tblGrid)?"/>
       <xsl:variable name="tblLook" select="w:tblPr/w:tblLook" as="element(w:tblLook)?"/>
       <xsl:variable name="row-count" select="count(w:tr)" as="xs:integer"/>
+      <xsl:if test="w:tblPr/w:tblDescription/@w:val/normalize-space(.)">
+        <alt>
+          <xsl:value-of select="w:tblPr/w:tblDescription/@w:val"/>
+        </alt>
+      </xsl:if>
       <xsl:for-each-group select="w:tr" 
                           group-starting-with="    w:tr[not(preceding-sibling::w:tr) 
                                                or  (docx2hub:is-tableheader-row(., position(), $tblLook) 

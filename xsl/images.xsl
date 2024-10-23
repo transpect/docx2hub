@@ -62,7 +62,7 @@
       <xsl:apply-templates select="@srcpath, parent::v:shape/@style" mode="#current"/>
       <xsl:if test="ancestor::v:shape[1]/@docx2hub:generated-alt/normalize-space(.) != 'alt:'">
         <alt>
-          <xsl:value-of select="ancestor::v:shape[1]/@docx2hub:generated-alt"/>
+          <xsl:value-of select="replace(ancestor::v:shape[1]/@docx2hub:generated-alt, '^alt:', '')"/>
         </alt>
       </xsl:if>
       <xsl:variable name="image-id" select="(@r:href, @r:id)[1]" as="xs:string?"/>

@@ -853,7 +853,7 @@
   </xsl:template>
   
   <xsl:template match="*[not((local-name(.) = ('keyword', 'keywordset', 'anchor')))]
-                        [$is-libre-office-document or matches(key('natives', @role)/@native-name, '~')]/@role" mode="docx2hub:join-runs">
+                        [$is-libre-office-document or matches(key('natives', @role, $root)/@native-name, '~')]/@role" mode="docx2hub:join-runs">
     <xsl:attribute name="{name()}">
       <xsl:choose>
         <xsl:when test="key('natives', .)[matches(@native-name, 'Kein Absatzformat')]">

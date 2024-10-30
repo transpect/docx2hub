@@ -1401,7 +1401,7 @@
     <xsl:choose>
       <xsl:when test="$formatting-acceptable">
         <xsl:analyze-string select="$string" flags="i"
-          regex="(\\:|[:;{$quot-like-regex}]|(\s|^)\\[a-z]|\\[{$quot-like-regex}]|^\s*XE\s*)">
+                            regex="(\\[:;]|[:;{$quot-like-regex}]|(\s|^)\\[a-z]|\\[{$quot-like-regex}]|^\s*XE\s*)">
           <xsl:matching-substring>
             <xsl:choose>
               <xsl:when test="$indexterm-preprocessing">
@@ -1415,6 +1415,9 @@
               </xsl:when>
               <xsl:when test=". = ':'">
                 <sep/>
+              </xsl:when>
+              <xsl:when test=". = '\;'">
+                <xsl:text>;</xsl:text>
               </xsl:when>
               <xsl:when test=". = ';'">
                 <sortkey/>

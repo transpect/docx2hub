@@ -1632,9 +1632,61 @@
                          xs:string($att) eq xs:string(current())
                        ))]" mode="docx2hub:remove-redundant-run-atts" />
   
+  <xsl:template match="w:p[preceding-sibling::*[1][self::w:commentRangeStart[parent::*:hub]]] | 
+                       w:p[following-sibling::*[1][self::w:commentRangeEnd[parent::*:hub]]]" 
+                mode="docx2hub:remove-redundant-run-atts" priority="+1">
+    <xsl:param name="css:page" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="css:page_tbl" as="xs:string?" tunnel="yes"/>
+    <xsl:param name="toggles" as="attribute(*)*" tunnel="yes"/>
+    <xsl:variable name="gid" select="generate-id(.)"/>
+    <xsl:variable name="context" as="element(w:p)" select="."/>
+    <xsl:variable name="style" select="key('docx2hub:style-by-role', @role, $root)[1]" as="element(css:rule)?"/>
+    <xsl:variable name="tbl" as="element(w:tbl)?" select="ancestor::w:tbl[1]"/>
+    <xsl:variable name="tbl-style" select="key('docx2hub:style-by-role', $tbl/@role, $root)[1]" as="element(css:rule)?"/>
+    <xsl:variable name="tr" as="element(w:tr)?" select="ancestor::w:tr[1]"/>
+    <xsl:variable name="tr-style" select="key('docx2hub:style-by-role', $tr/@role, $root)[1]" as="element(css:rule)?"/>
+    <xsl:variable name="tc" as="element(w:tc)?" select="ancestor::w:tc[1]"/>
+    <xsl:variable name="tc-style" select="key('docx2hub:style-by-role', $tc/@role, $root)[1]" as="element(css:rule)?"/>
+    <xsl:variable name="numId" as="element(w:numId)?" select="(w:numPr/w:numId, $style/w:numPr/w:numId)[1]"/>
+    <xsl:variable name="ilvl" as="xs:integer" 
+                  select="(for $i 
+                           in (w:numPr/w:ilvl/@w:val,
+                               $style/w:numPr/w:ilvl/@w:val)[1] 
+                           return xs:integer($i),
+                           0)[1]"/>
+    <xsl:copy>
+      <xsl:if test="$css:page and not($css:page = $css:page_tbl)">
+        <xsl:if test="$css:page = ('landscape', 'portrait')">
+          <xsl:attribute name="orient" select="substring($css:page,1,4)"/>  
+        </xsl:if>
+        <xsl:attribute name="css:page" select="$css:page"/>
+      </xsl:if>
+      <xsl:apply-templates select="@*[not(name() = $docx2hub:toggle-prop-names)]" mode="#current"/>
+      <xsl:sequence select="$toggles"/>
+      <xsl:apply-templates select="$numId" mode="docx2hub:abstractNum">
+        <xsl:with-param name="ilvl" select="$ilvl"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="preceding-sibling::w:commentRangeStart[following-sibling::*[not(self::w:commentRangeStart or 
+                                                                                                   self::w:commentRangeEnd)]
+                                                                                              [1]
+                                                                                              [self::w:p[generate-id(.)=$gid]]]" mode="#current">
+        <xsl:with-param name="display-comment" select="true()"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates mode="#current">
+        <xsl:with-param name="p-toggles" select="$toggles"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="following-sibling::w:commentRangeEnd[following-sibling::*[not(self::w:commentRangeStart or 
+                                                                                                 self::w:commentRangeEnd)]
+                                                                                            [1]
+                                                                                            [self::w:p[generate-id(.)=$gid]]]" mode="#current">
+        <xsl:with-param name="display-comment" select="true()"/>
+      </xsl:apply-templates>
+    </xsl:copy>
+  </xsl:template>
+  
   <!-- what about list marker formatting? -->
   <xsl:template mode="docx2hub:remove-redundant-run-atts" priority="20"
-    match="w:r | w:p | w:tbl | *:superscript | *:subscript">
+                match="w:r | w:p | w:tbl | *:superscript | *:subscript">
     <xsl:param name="p-toggles" as="attribute(*)*"/>
     <xsl:variable name="toggles" as="attribute(*)*">
       <xsl:variable name="context" as="element(*)" select="."/>

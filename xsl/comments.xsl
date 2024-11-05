@@ -17,10 +17,12 @@
   xmlns:saxon="http://saxon.sf.net/"
   xmlns:tr="http://transpect.io"
   xmlns:mml="http://www.w3.org/1998/Math/MathML"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
   xmlns:css="http://www.w3.org/1996/css"
+  xmlns:docx2hub="http://transpect.io/docx2hub"
   xmlns="http://docbook.org/ns/docbook"
   version="2.0"
-  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml">
+  exclude-result-prefixes = "w o v wx xs dbk pkg r rel word200x exsl saxon fn tr mml m docx2hub">
 
   <xsl:variable name="comment-reference-style-regex" select="'^(Kommentarzeichen)$'"/>
 
@@ -31,6 +33,29 @@
     <xsl:apply-templates select="key('comment-by-id', @w:id)" mode="comment">
       <xsl:with-param name="comment-id" as="xs:string" tunnel="yes" select="@w:id"/>
     </xsl:apply-templates>
+  </xsl:template>
+  
+  <xsl:template match="*[self::m:oMathPara or self::m:oMath[not(parent::m:oMathPara)]]
+                        [descendant::w:commentRangeStart or descendant::w:commentRangeEnd or descendant::w:commentReference]"  
+                mode="docx2hub:remove-redundant-run-atts">
+    <xsl:apply-templates select="descendant::w:commentRangeStart" mode="#current">
+      <xsl:with-param name="display-comment" select="true()"/>
+    </xsl:apply-templates>
+    <xsl:next-match/>
+    <xsl:apply-templates select="descendant::w:commentRangeEnd | descendant::w:commentReference" mode="#current">
+      <xsl:with-param name="display-comment" select="true()"/>
+    </xsl:apply-templates>
+  </xsl:template>
+  
+  <xsl:template match="*[self::w:commentRangeStart or self::w:commentRangeEnd or self::w:commentReference]
+                        [ancestor::m:oMathPara or ancestor::m:oMath[not(parent::m:oMathPara)]] |
+                       *:hub/w:commentRangeStart[following-sibling::*[not(self::w:commentRangeStart or self::w:commentRangeEnd)][1][self::w:p]] |
+                       *:hub/w:commentRangeEnd[preceding-sibling::*[not(self::w:commentRangeStart or self::w:commentRangeEnd)][1][self::w:p]]" 
+                mode="docx2hub:remove-redundant-run-atts">
+    <xsl:param name="display-comment" select="false()" as="xs:boolean"/>
+    <xsl:if test="$display-comment">
+      <xsl:next-match/>
+    </xsl:if>
   </xsl:template>
 
   <!-- dissolve single w:r with only comment(s) -->

@@ -2126,6 +2126,7 @@
                                                       |$c/self::w:sym
                                                       |$c/self::w:noBreakHyphen
                                                       |$c/self::w:footnoteReference
+                                                      |$c/self::w:commentReference
                                                       )">
         <xsl:for-each select="$text-nodes">
           <xsl:choose>
@@ -2180,7 +2181,8 @@
       <xsl:apply-templates select=".//*:t/text()
                                   |.//w:sym
                                   |.//w:noBreakHyphen
-                                  |.//w:footnoteReference" mode="wml-to-dbk"/>
+                                  |.//w:footnoteReference 
+                                  |.//w:commentReference" mode="wml-to-dbk"/>
     </xsl:variable>
     <xsl:variable name="content" as="node()*">
       <xsl:choose>
@@ -2230,53 +2232,50 @@
             </mml:mrow>
           </xsl:element>
         </xsl:when>
-        <xsl:otherwise>
+        <xsl:when test="$fNor=1">
           <xsl:choose>
-            <xsl:when test="$fNor=1">
-              <xsl:choose>
-                <xsl:when test="$fLit=1">
-                  <mml:maction actiontype="lit">
-                    <xsl:call-template name="m:preliminary-mtext1">
-                      <xsl:with-param name="context" select="$context"/>
-                      <xsl:with-param name="text-nodes" select="$text-nodes"/>
-                    </xsl:call-template>
-                  </mml:maction>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:call-template name="m:preliminary-mtext1">
-                    <xsl:with-param name="context" select="$context"/>
-                    <xsl:with-param name="text-nodes" select="$text-nodes"/>
-                  </xsl:call-template>
-                </xsl:otherwise>
-              </xsl:choose>
+            <xsl:when test="$fLit=1">
+              <mml:maction actiontype="lit">
+                <xsl:call-template name="m:preliminary-mtext1">
+                  <xsl:with-param name="context" select="$context"/>
+                  <xsl:with-param name="text-nodes" select="$text-nodes"/>
+                </xsl:call-template>
+              </mml:maction>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:variable name="context" as="element(*)?" select="(.//*:t 
-                |.//w:sym
-                |.//w:br
-                |.//w:noBreakHyphen
-                |.//w:footnoteReference
-                )[1]/..
-                "/>
-              <xsl:choose>
-                <xsl:when test="$fLit=1">
-                  <mml:maction actiontype="lit">
-                    <xsl:call-template name="m:preliminary-mtext2">
-                      <xsl:with-param name="context" select="$context"/>
-                      <xsl:with-param name="text-nodes" select="$text-nodes"/>
-                    </xsl:call-template>
-                  </mml:maction>
-                </xsl:when>
-                <xsl:when test="$context/w:br and not($context/m:t)">
-                  <mml:mspace linebreak="newline"/>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:call-template name="m:preliminary-mtext2">
-                    <xsl:with-param name="context" select="$context"/>
-                    <xsl:with-param name="text-nodes" select="$text-nodes"/>
-                  </xsl:call-template>
-                </xsl:otherwise>
-              </xsl:choose>
+              <xsl:call-template name="m:preliminary-mtext1">
+                <xsl:with-param name="context" select="$context"/>
+                <xsl:with-param name="text-nodes" select="$text-nodes"/>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="context" as="element(*)?" select="(.//*:t 
+            |.//w:sym
+            |.//w:br
+            |.//w:noBreakHyphen
+            |.//w:footnoteReference
+            |.//w:commentReference
+            )[1]/..
+            "/>
+          <xsl:choose>
+            <xsl:when test="$fLit=1">
+              <mml:maction actiontype="lit">
+                <xsl:call-template name="m:preliminary-mtext2">
+                  <xsl:with-param name="context" select="$context"/>
+                  <xsl:with-param name="text-nodes" select="$text-nodes"/>
+                </xsl:call-template>
+              </mml:maction>
+            </xsl:when>
+            <xsl:when test="$context/w:br and not($context/m:t)">
+              <mml:mspace linebreak="newline"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name="m:preliminary-mtext2">
+                <xsl:with-param name="context" select="$context"/>
+                <xsl:with-param name="text-nodes" select="$text-nodes"/>
+              </xsl:call-template>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:otherwise>
@@ -3414,6 +3413,10 @@
       <xsl:apply-templates select="@* except @xpath" mode="#current"/>
       <xsl:apply-templates select="node()" mode="#current"/>
     </mml:math>
+  </xsl:template>
+  
+  <xsl:template match="w:commentRangeStart | w:commentRangeEnd | w:commentReference" mode="omml2mml">
+    <xsl:apply-templates select="." mode="wml-to-dbk"/>
   </xsl:template>
   
   <xsl:template match="m:oMathPara/m:oMath[exists(.//m:aln[empty(ancestor::m:m)] | ..//w:br[empty(ancestor::m:m)])]" 

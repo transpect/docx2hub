@@ -614,8 +614,13 @@
   </xsl:template>
 
 
-  <xsl:template match="dbk:para[@docx2hub:removable][not(dbk:anchor[@role eq 'end'][exists(key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm[@linkends])])]" mode="docx2hub:join-runs" priority="2"/>
-  <xsl:template match="dbk:para[dbk:anchor[@role eq 'end'][exists(key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm[@linkends])]]/@docx2hub:removable" mode="docx2hub:join-runs" priority="2"/>
+  <xsl:template match="dbk:para[@docx2hub:removable]
+                               [not(dbk:anchor[@role eq 'end']
+                                              [exists(key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm[@linkends])])]" 
+                mode="docx2hub:join-runs" priority="2"/>
+  <xsl:template match="dbk:para[dbk:anchor[@role eq 'end']
+                                          [exists(key('docx2hub:linking-item-by-id', @xml:id)/self::dbk:indexterm[@linkends])]]/@docx2hub:removable" 
+                mode="docx2hub:join-runs" priority="2"/>
 
   <xsl:template name="docx2hub_move-invalid-sidebar-elements">
     <xsl:for-each select=".//dbk:sidebar">
@@ -645,7 +650,7 @@
     <xsl:sequence select="$page-break-atts[name() = 'css:page-break-after']"/>
     <!-- There may be anchors (from w:bookmarkStart and w:bookmarkEnd) in removable paragraphs -->
     <anchors-to-the-end>
-      <xsl:apply-templates select="$following//dbk:anchor[following-sibling::dbk:br[@role[not(. eq 'textWrapping')]]]" mode="#current"/>  
+      <xsl:apply-templates select="$following//dbk:anchor[@role=('end') or following-sibling::dbk:br[@role[not(. eq 'textWrapping')]]]" mode="#current"/>  
     </anchors-to-the-end>
   </xsl:template>
   
@@ -658,7 +663,7 @@
     </xsl:variable>
     <xsl:sequence select="$page-break-atts[name() = 'css:page-break-before']"/>
     <!-- There may be anchors (from w:bookmarkStart and w:bookmarkEnd) in removable paragraphs -->
-    <xsl:apply-templates select="$preceding//dbk:anchor[preceding-sibling::dbk:br[@role[not(. eq 'textWrapping')]]]" mode="#current"/>
+    <xsl:apply-templates select="$preceding//dbk:anchor[@role=('start') or preceding-sibling::dbk:br[@role[not(. eq 'textWrapping')]]]" mode="#current"/>
   </xsl:template>
 
   <xsl:function name="tr:signature" as="xs:string?">

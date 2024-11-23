@@ -83,7 +83,7 @@
   <xsl:template match="@style" mode="vml" priority="4">
     <xsl:analyze-string select="." regex="\s*;\s*">
       <xsl:non-matching-substring>
-        <xsl:analyze-string select="." regex="(.+)\s*:\s*(.+)">
+        <xsl:analyze-string select="." regex="(.+?)\s*:\s*(.+)">
           <xsl:matching-substring>
             <xsl:attribute name="css:{regex-group(1)}" select="regex-group(2)"/>
           </xsl:matching-substring>

@@ -1049,7 +1049,7 @@
   <!-- Field functions -->
 
   <xsl:template match="REF[@fldArgs]" mode="wml-to-dbk" priority="2">
-    <xsl:variable name="linkend" select="docx2hub:normalize-name-for-id(@fldArgs)" as="xs:string"/>
+    <xsl:variable name="linkend" select="docx2hub:normalize-name-for-id(replace(@fldArgs, '\s+\\.+$', ''))" as="xs:string"/>
     <xsl:variable name="switches" select="tokenize(@fldArgs,'\s+\\')[string-length(.)=1]" as="xs:string *"/>
     <xsl:choose>
     <!-- Unwrap, don’t link, a REF like this: 

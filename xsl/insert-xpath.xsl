@@ -34,6 +34,29 @@
   <xsl:param name="insert-default-settings" as="xs:string" select="'yes'"/>
 
   <xsl:function name="docx2hub:srcpath" as="xs:string">
+    <xsl:param name="node" as="element()"/>
+    <xsl:param name="ancestor-srcpath" as="xs:string?"/>
+    <xsl:choose>
+      <xsl:when test="$ancestor-srcpath = ''">
+        <xsl:sequence select="docx2hub:srcpath($node)"/>
+      </xsl:when>
+      <!-- use tunneled srcpath -->
+      <xsl:otherwise>
+        <xsl:variable name="node-name" select="name($node)"/>
+        <xsl:sequence select="concat(
+                                $ancestor-srcpath, '/',
+                                name($node),
+                                '[', count($node/preceding-sibling::*[name() = $node-name]) + 1, ']'
+                              )"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+
+  <!-- old docx2hub:srcpath (one param) function: 
+         – for older projects (compatibility)
+         – as fallback for all root elements of non-document.xml docx files
+           (see template match="/w:document") -->
+  <xsl:function name="docx2hub:srcpath" as="xs:string">
     <xsl:param name="elt" as="element(*)?"/>
     <xsl:sequence select="string-join(
                             (
@@ -85,15 +108,21 @@
                         [ /*/name() = ('w:document', 'w:footnotes', 'w:endnotes', 'w:settings', 
                                        'w:comments', 'w:header', 'w:footer', 'w:hdr', 'w:ftr')]
                         " mode="insert-xpath">
+    <xsl:param name="ancestor-srcpath" tunnel="no"/>
+    <xsl:variable name="srcpath" select="docx2hub:srcpath(., $ancestor-srcpath)"/>
     <xsl:copy>
-      <xsl:attribute name="srcpath" select="docx2hub:srcpath(.)"/>
+      <xsl:attribute name="srcpath" select="$srcpath"/>
       <xsl:apply-templates select="@* except @srcpath" mode="#current"/><!-- there was a case where the input was overwritten with an output that contained srcpaths -->
-      <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates mode="#current">
+        <xsl:with-param name="ancestor-srcpath" select="$srcpath" tunnel="no"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
   
   
   <xsl:template match="/*" mode="insert-xpath" priority="-0.2">
+    <xsl:param name="ancestor-srcpath" tunnel="no"/>
+    <xsl:variable name="srcpath" select="docx2hub:srcpath(., $ancestor-srcpath)"/>
     <!-- no copy-namespaces="no" in order to suppress excessive namespace declarations on every element -->
     <xsl:copy>
       <xsl:namespace name="w16cid">http://schemas.microsoft.com/office/word/2016/wordml/cid</xsl:namespace>
@@ -114,7 +143,9 @@
       <xsl:namespace name="cp">http://schemas.openxmlformats.org/package/2006/metadata/core-properties</xsl:namespace>
       <xsl:namespace name="extendedProps">http://schemas.openxmlformats.org/officeDocument/2006/extended-properties</xsl:namespace>
       <xsl:namespace name="customProps">http://schemas.openxmlformats.org/officeDocument/2006/custom-properties</xsl:namespace>
-      <xsl:apply-templates select="@*, node()" mode="#current"/>
+      <xsl:apply-templates select="@*, node()" mode="#current">
+        <xsl:with-param name="ancestor-srcpath" select="$srcpath" tunnel="no"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
   
@@ -242,9 +273,13 @@
                        | w:settings | w:fonts | rel:Relationships | w:comments
                        | w:styles | extendedProps:Properties
                        | ct:Types | w:hdr | w:ftr | *:Properties | cp:coreProperties" mode="insert-xpath">
+    <xsl:param name="ancestor-srcpath" tunnel="no"/>
+    <xsl:variable name="srcpath" select="docx2hub:srcpath(., $ancestor-srcpath)"/>
     <xsl:copy>
       <xsl:attribute name="xml:base" select="base-uri()" />
-      <xsl:apply-templates select="@*, *" mode="#current"/>      
+      <xsl:apply-templates select="@*, *" mode="#current">
+        <xsl:with-param name="ancestor-srcpath" select="$srcpath" tunnel="no"/>
+      </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>
 

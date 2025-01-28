@@ -1790,10 +1790,10 @@
         <xsl:choose>
           <xsl:when test="$sLowerCaseVertJc = 'bot'">
             <mml:mover accent="false">
-              <xsl:if test="$chr = $math-arrows">
-                <xsl:attribute name="stretchy" select="'true'"/>
-              </xsl:if>
               <mml:mo>
+                <xsl:if test="$chr = $math-arrows">
+                  <xsl:attribute name="stretchy" select="'true'"/>
+                </xsl:if>
                 <xsl:value-of select="$chr"/>
               </mml:mo>
               <mml:mrow>

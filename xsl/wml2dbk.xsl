@@ -1185,15 +1185,29 @@
               <xsl:apply-templates select="*" mode="#current"/>
             </xsl:variable>
             <xsl:variable name="without-options" select="$tokens[not(matches(., '\\[lo]'))]" as="xs:string*"/>
-            <xsl:variable name="local" as="xs:boolean" select="$tokens = '\l'"/>
-            <xsl:variable name="target" select="if(exists($without-options)) then replace($without-options[1], '(^&quot;|&quot;$)', '') 
-                                                else string-join($link-content/descendant-or-self::text(), '')"/>
-            <xsl:variable name="tooltip" select="replace($without-options[2], '(^&quot;|&quot;$)', '')"/>
+            <xsl:variable name="has-fragment-id" as="xs:boolean" select="$tokens = '\l'"/>
+            <xsl:variable name="has-tooltip" as="xs:boolean" select="$tokens = '\o'"/>
+            <xsl:variable name="link-text" as="xs:string?" select="string-join($link-content/descendant-or-self::text(), '')"/>
+            <xsl:variable name="target" select="if(exists($without-options)) 
+                                                then replace($without-options[1], '(^&quot;|&quot;$)', '') 
+                                                else $link-text" as="xs:string?"/>
             <link docx2hub:field-function="yes">
-              <xsl:attribute name="{if ($local) then 'linkend' else 'xlink:href'}" 
-                select="if(matches($target, $mail-regex)) then concat('mailto:', $target) else $target"/>
-              <xsl:if test="$tooltip">
-                <xsl:attribute name="xlink:title" select="$tooltip"/>
+              <xsl:choose>
+                <xsl:when test="$has-fragment-id and not(concat($target, '#', $tokens[position() = index-of($tokens, '\l')[1] + 1]) = $link-text)">
+                  <xsl:attribute name="linkend" select="$tokens[position() = index-of($tokens, '\l')[1] + 1]"/>
+                </xsl:when>
+                <xsl:when test="$has-fragment-id and concat($target, '#', $tokens[position() = index-of($tokens, '\l')[1] + 1]) = $link-text">
+                  <xsl:attribute name="xlink:href" select="$link-text"/>
+                </xsl:when>
+                <xsl:when test="matches($target, $mail-regex)">
+                  <xsl:attribute name="xlink:href" select="concat('mailto:', $target)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:attribute name="xlink:href" select="$target"/>
+                </xsl:otherwise>
+              </xsl:choose>
+              <xsl:if test="$has-tooltip">
+                <xsl:attribute name="xlink:title" select="$tokens[position() = index-of($tokens, '\o')[1] + 1]"/>
               </xsl:if>
               <xsl:sequence select="(.//@srcpath)[1], $link-content"/>
             </link>

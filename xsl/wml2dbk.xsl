@@ -1189,18 +1189,23 @@
             <xsl:variable name="has-tooltip" as="xs:boolean" select="$tokens = '\o'"/>
             <xsl:variable name="link-text" as="xs:string?" select="string-join($link-content/descendant-or-self::text(), '')"/>
             <xsl:variable name="link-target-from-tokens" as="xs:string?" select="replace($without-options[1], '(^&quot;|&quot;$)', '')"/>
-            <xsl:variable name="link-target-from-tokens-plus-fragmet-id" as="xs:string?" 
-              select="concat(replace($link-target-from-tokens, '&amp;?#$', ''), '#', $tokens[position() = index-of($tokens, '\l')[1] + 1])"/>
+            <xsl:variable name="fragment-id" as="xs:string?" 
+              select="$tokens[position() = index-of($tokens, '\l')[1] + 1]"/>
+            <xsl:variable name="link-target-from-tokens-plus-fragment-id" as="xs:string?" 
+              select="concat(replace($link-target-from-tokens, '&amp;?#$', ''), '#', $fragment-id)"/>
             <xsl:variable name="target" select="if(exists($without-options)) 
                                                 then $link-target-from-tokens 
                                                 else $link-text" as="xs:string?"/>
             <link docx2hub:field-function="yes">
               <xsl:choose>
-                <xsl:when test="$has-fragment-id and $link-target-from-tokens-plus-fragmet-id = $link-text">
+                <xsl:when test="$has-fragment-id and $fragment-id = $without-options[1]">
+                  <xsl:attribute name="linkend" select="$fragment-id"/>
+                </xsl:when>
+                <xsl:when test="$has-fragment-id and $link-target-from-tokens-plus-fragment-id = $link-text">
                   <xsl:attribute name="xlink:href" select="$link-text"/>
                 </xsl:when>
-                <xsl:when test="$has-fragment-id and not($link-target-from-tokens-plus-fragmet-id = $link-text)">
-                  <xsl:attribute name="xlink:href" select="$link-target-from-tokens-plus-fragmet-id"/>
+                <xsl:when test="$has-fragment-id and not($link-target-from-tokens-plus-fragment-id = $link-text)">
+                  <xsl:attribute name="xlink:href" select="$link-target-from-tokens-plus-fragment-id"/>
                 </xsl:when>
                 <xsl:when test="matches($target, $mail-regex)">
                   <xsl:attribute name="xlink:href" select="concat('mailto:', $target)"/>

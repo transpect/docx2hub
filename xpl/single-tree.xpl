@@ -275,6 +275,7 @@
               then 'no' else 'yes'">
         <p:pipe step="document" port="result"/>
       </p:with-param>
+      <p:with-option name="adjust-doc-base-uri" select="'yes'"/>
     </tr:xslt-mode>
     
     <p:choose>
@@ -297,6 +298,7 @@
           <p:with-param name="base-dir" select="replace(base-uri(), '[^/]+$', '')">
             <p:pipe step="document" port="result"/>
           </p:with-param>
+          <p:with-option name="adjust-doc-base-uri" select="'yes'"/>
         </tr:xslt-mode>
       </p:when>
       <p:otherwise>

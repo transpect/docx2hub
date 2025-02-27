@@ -465,7 +465,7 @@
     <xsl:variable name="props" as="item()*">
       <xsl:apply-templates select="$lvl/w:pPr" mode="#current"/>
     <xsl:apply-templates select="for $style in reverse($based-on-chain/*[position() le $numId-chain-item-pos])
-                                   return $style/w:pPr/*[not(self::w:numPr)]" mode="#current"/>
+                                 return $style/w:pPr/*[not(self::w:numPr)]" mode="#current"/>
     </xsl:variable>
     <xsl:sequence select="$props//docx2hub:attribute[starts-with(@name, 'css:')]"/>
     <xsl:next-match>
@@ -1546,9 +1546,10 @@
   <xsl:template match="docx2hub:attribute[@name = 'css:text-decoration-line'][text()]" mode="docx2hub:props2atts">
     <xsl:variable name="all-atts" select="preceding-sibling::docx2hub:attribute[@name = current()/@name], ."
       as="element(docx2hub:attribute)+"/>
+    
     <xsl:variable name="tokenized" select="for $a in $all-atts return tokenize($a, '\s+')" as="xs:string+"/>
-    <xsl:variable name="line-through" select="$tokenized[starts-with(., 'line-through')][last()]"/>
-    <xsl:variable name="underline" select="$tokenized[starts-with(., 'underline')][last()]"/>
+    <xsl:variable name="line-through" select="($tokenized[starts-with(., 'line-through')], $all-atts/@active[. eq 'line-through'])[last()]"/>
+    <xsl:variable name="underline" select="($tokenized[starts-with(., 'underline')], $all-atts[@name eq 'css:text-decoration-line']/@active[. eq 'underline'])[last()]"/>
     <xsl:choose>
       <xsl:when test="every $t in ($line-through, $underline) satisfies (ends-with($t, 'none'))">
         <xsl:attribute name="{@name}" select="'none'"/>

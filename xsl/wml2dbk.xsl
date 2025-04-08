@@ -1706,6 +1706,7 @@
 
   <xsl:template match="/*/w:settings" mode="wml-to-dbk"/>
 
+  <xsl:template match="m:oMathPara[not(node())]" mode="wml-to-dbk"/>
   <!-- math section -->
   <xsl:template match="m:oMathPara" mode="wml-to-dbk">
     <xsl:variable name="mml" as="element(mml:math)+">

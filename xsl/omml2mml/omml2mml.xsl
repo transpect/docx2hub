@@ -2172,8 +2172,8 @@
                   select="translate(child::m:rPr[child::m:lit][last()]/@m:val, $alpha-uppercase, $alpha-lowercase)"/>
     <xsl:variable name="fNor" select="if($sLowerCaseNor='off' or count(child::m:rPr[last()]/m:nor) = 0) then 0 else 1" as="xs:integer"/>
     <xsl:variable name="fLit" select="if(not(child::m:rPr[child::m:lit][last()]) or $sLowerCaseLit='off') then 0 else 1" as="xs:integer"/>
-    <xsl:variable name="fSub" select="if(number(w:rPr/w:position/@w:val) lt 0) then 1 else 0" as="xs:integer"/>
-    <xsl:variable name="fSup" select="if(number(w:rPr/w:position/@w:val) gt 0) then 1 else 0" as="xs:integer"/>
+    <xsl:variable name="fSub" select="if(number(w:rPr/w:position[1]/@w:val) lt 0) then 1 else 0" as="xs:integer"/>
+    <xsl:variable name="fSup" select="if(number(w:rPr/w:position[1]/@w:val) gt 0) then 1 else 0" as="xs:integer"/>
     <xsl:variable name="strike-through" select="if (w:rPr/w:strike[not(@w:val=('0','false','off'))]) then true() else false()" as="xs:boolean"/>
     <xsl:variable name="border" select="w:rPr/w:bdr/@w:val = ('single', 'dashed')" as="xs:boolean"/>
     <xsl:variable name="context" as="element(m:r)" select="."/>

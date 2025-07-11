@@ -1828,7 +1828,7 @@
     <xsl:apply-templates select="node()" mode="#current"/>
   </xsl:template>
   
-  <xsl:template match="w:sdt" mode="wml-to-dbk" priority="-1">
+  <xsl:template match="w:sdt" mode="wml-to-dbk" priority="-0.9">
     <xsl:apply-templates select="w:sdtContent/*" mode="#current"/>
   </xsl:template>
   

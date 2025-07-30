@@ -1963,7 +1963,7 @@
       <xsl:if test="exists($other-variants)">
         <xsl:attribute name="mathvariant" select="$other-variants" separator=" "/>
       </xsl:if>
-      <xsl:analyze-string select="." regex="[A-Za-z&#x2118;]">
+      <xsl:analyze-string select="." regex="[A-Za-z&#x2118;]|\s|\p{{Zs}}">
         <xsl:matching-substring>
           <xsl:choose>
             <xsl:when test=". = 'C'">&#x2102;</xsl:when>
@@ -1974,6 +1974,9 @@
             <xsl:when test=". = 'R'">&#x211D;</xsl:when>
             <xsl:when test=". = 'Z'">&#x2124;</xsl:when>
             <xsl:when test=". = '℘'">&#x2118;</xsl:when>
+            <xsl:when test="matches(., '^(\s|\p{Zs})$')">
+              <xsl:value-of select="."/>
+            </xsl:when>
             <xsl:when test="matches(., '^[A-Z]$')">
               <xsl:value-of select="codepoints-to-string(120055 + string-to-codepoints(.))"/>
             </xsl:when>

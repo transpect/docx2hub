@@ -12,6 +12,7 @@
   xmlns:css="http://www.w3.org/1996/css"
   xmlns:tr="http://transpect.io"
   xmlns:docx2hub="http://transpect.io/docx2hub"
+  xmlns:adec="http://schemas.microsoft.com/office/drawing/2017/decorative"
   xmlns="http://docbook.org/ns/docbook"
   exclude-result-prefixes = "w v xs r rel tr"
   version="2.0">
@@ -139,6 +140,9 @@
       select="$rels/rel:Relationship[@Id = $image-id]"/>
     <xsl:variable name="patched-file-uri" select="replace(replace($rel/@Target, '\\', '/'),'^/','')" as="xs:string"/>
     <imageobject>
+      <xsl:if test="ancestor-or-self::w:drawing//adec:decorative/@val='1'">
+        <xsl:attribute name="condition" select="'artifact'"/>
+      </xsl:if>
       <xsl:apply-templates select="../a:srcRect" mode="wml-to-dbk"/>
       <imagedata fileref="{if ($rel/@TargetMode = 'External') 
                            then $patched-file-uri

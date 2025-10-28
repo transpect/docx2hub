@@ -1183,7 +1183,7 @@
           <xsl:when test="name() = 'HYPERLINK'">
             <xsl:variable name="link-content" as="node()*">
               <xsl:apply-templates select="*" mode="#current"/>
-            </xsl:variable>
+            </xsl:variable><!-- what about the other options? \t, \m and \n ?-->
             <xsl:variable name="without-options" select="$tokens[not(matches(., '\\[lo]'))]" as="xs:string*"/>
             <xsl:variable name="has-fragment-id" as="xs:boolean" select="$tokens = '\l'"/>
             <xsl:variable name="has-tooltip" as="xs:boolean" select="$tokens = '\o'"/>
@@ -1845,7 +1845,9 @@
                               [w:sdtPr/w:citation]
                               [not(ancestor::*:CITAVI_XML)]
                               [empty(.//*:CITAVI_XML)]
-                              [w:sdtContent/CITATION]" mode="wml-to-dbk tables" priority="3">
+                              [w:sdtContent/CITATION] 
+                         |
+                         w:sdt[w:sdtPr/w:alias/@w:val[contains(., 'Citation')]]    " mode="wml-to-dbk tables" priority="3">
       <!-- referencing a citation in Word (in customXML/item1mxml a <b:Sources xmlns:b="http://schemas.openxmlformats.org/officeDocument/2006/bibliography"
            xmlns="http://schemas.openxmlformats.org/officeDocument/2006/bibliography" SelectedStyle="\APASixthEditionOfficeOnline.xsl"
            StyleName="APA" Version="6"> ) (field function CITATION not yet implemented, but avoid creation blockquotes as in template above) https://redmine.le-tex.de/issues/16715 -->

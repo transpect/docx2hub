@@ -146,6 +146,16 @@
           />
           <xsl:variable name="border">
             <xsl:choose>
+              <!-- case: no local borders ('none'), but conditional formatting -->
+              <xsl:when test="(
+                                not($self/w:tcBorders/w:*[local-name() = current()])
+                                or
+                                $self/w:tcBorders/w:*[local-name() = current()]/@w:val[. = 'none']
+                              )
+                              and exists($tblBorder-by-style/@*)
+                              and exists($self/w:cnfStyle|$self/../w:p[1]/w:pPr/w:cnfStyle)">
+                <xsl:sequence select="$tblBorder-by-style"/>
+              </xsl:when>
               <xsl:when test="exists($adhoc-border)">
                 <xsl:sequence select="$adhoc-border"/>
               </xsl:when>

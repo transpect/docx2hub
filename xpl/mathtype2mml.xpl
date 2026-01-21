@@ -122,11 +122,12 @@
         match="/w:root/*[name() = ('w:document', 
                                    'w:footnotes', 
                                    'w:endnotes', 
-                                   'w:comments')]//w:pict[count(o:OLEObject) != 1]
-                                                   /o:OLEObject[
-                                                     @Type eq 'Embed' 
-                                                     and 
-                                                     starts-with(@ProgID, 'Equation')]"/>
+                                   'w:comments')]//*[self::w:pict or self::w:object]
+                                                    [count(o:OLEObject) != 1]
+                                                    /o:OLEObject[
+                                                      @Type eq 'Embed' 
+                                                      and 
+                                                      starts-with(@ProgID, 'Equation')]"/>
       <p:viewport match="/w:root/*[name() = ('w:document', 
                                              'w:footnotes', 
                                              'w:endnotes', 

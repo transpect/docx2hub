@@ -225,8 +225,14 @@
     <xsl:sequence select="docx2hub:font-map-implementation($font-name)"/>
   </xsl:function>-->
   
+  <xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?" cache="yes"
+    use-when="xs:decimal(system-property('xsl:version')) ge 3.0">
+    <xsl:param name="font-name" as="xs:string?"/>
+    <xsl:sequence select="docx2hub:font-map-implementation($font-name)"/>
+  </xsl:function>
+  
   <xsl:function name="docx2hub:font-map" as="document-node(element(symbols))?" saxon:memo-function="yes"
-    >
+    use-when="xs:decimal(system-property('xsl:version')) lt 3.0">
     <xsl:param name="font-name" as="xs:string?"/>
     <xsl:sequence select="docx2hub:font-map-implementation($font-name)"/>
   </xsl:function>

@@ -1383,7 +1383,7 @@
   <xsl:template match="m:m" mode="omml2mml">
     <mml:mtable>
       <xsl:call-template name="CreateMathMLMatrixAttr">
-        <xsl:with-param name="mcJc" select="(m:mPr[last()]/m:mcs/m:mc/m:mcPr[last()]/m:mcJc/@m:val, 'center')[1]"/>
+        <xsl:with-param name="mcJc" select="string-join(m:mPr/m:mcs/m:mc/m:mcPr/m:mcJc/@m:val,' ')"/>
         <xsl:with-param name="rSpRule" select="m:mPr/m:rSpRule/@m:val"/>
         <xsl:with-param name="rSp" select="m:mPr/m:rSp/@m:val"/>
       </xsl:call-template>
@@ -1410,14 +1410,9 @@
                                                  then concat(xs:integer($rSp) div 2, 'em')
                                                  else concat($rSpRule,'em')"/>
     
-    <xsl:choose>
-      <xsl:when test="$sLowerCaseMcjc='left'">
-        <xsl:attribute name="columnalign">left</xsl:attribute>
-      </xsl:when>
-      <xsl:when test="$sLowerCaseMcjc='right'">
-        <xsl:attribute name="columnalign">right</xsl:attribute>
-      </xsl:when>
-    </xsl:choose>
+    <xsl:if test="$sLowerCaseMcjc">
+      <xsl:attribute name="columnalign" select="$sLowerCaseMcjc"/>
+    </xsl:if>
     <xsl:if test="$rSp!=''">
       <xsl:attribute name="rowspacing">
         <xsl:sequence select="string-join($rowSpacing ,' ')"/>

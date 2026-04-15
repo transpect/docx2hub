@@ -574,6 +574,13 @@
     <xsl:variable name="langs" as="xs:string*">
       <xsl:for-each-group select="$context//w:t" group-by="docx2hub:text-lang(.)">
         <xsl:sort select="string-length(string-join(current-group(), ''))" order="descending"/>
+        <xsl:if test="contains($debug-dir-uri, 'debug-most-frequent-lang=yes')">
+          <xsl:if test="position() = 1">
+            <xsl:message select="'DEBUG debug-most-frequent-lang (markdown table):'"/>
+            <xsl:message select="'|№|Language|w:t element count|Character count|'"/>
+          </xsl:if>
+          <xsl:message select="'|', position(), '|', current-grouping-key(), '|', count(current-group()), '|', string-length(string-join(current-group(), '')), '|'"/>
+        </xsl:if>
         <xsl:sequence select="current-grouping-key()"/>
       </xsl:for-each-group>
     </xsl:variable>

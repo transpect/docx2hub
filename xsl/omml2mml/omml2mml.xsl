@@ -2633,7 +2633,7 @@
           </xsl:matching-substring>
           <xsl:non-matching-substring>
             <mml:mtext>
-              <xsl:apply-templates select="$current/@*" mode="#current"/>
+              <xsl:apply-templates select="$current/@* except $current/@mathvariant[. = 'normal']" mode="#current"/>
               <xsl:value-of select="."/>
             </mml:mtext>
           </xsl:non-matching-substring>

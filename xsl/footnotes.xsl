@@ -307,6 +307,7 @@
                       select="($sect-boundaries[. &lt;&lt; $fnref/..])[last()]"/>
         <xsl:variable name="following-boundary" as="element(*)?" 
                       select="($sect-boundaries[. >> $fnref/..])[1]"/>
+<!--        <xsl:message select="ancestor::w:footnote/xs:string(@w:id), ' between: ', xs:string($preceding-boundary/@id), xs:string($following-boundary/@id)"/>-->
         <xsl:variable name="fnpr" as="element(w:footnotePr)?" 
                       select="($footnotePrs[. >> $fnref/..]
                                            [.. is $following-boundary],

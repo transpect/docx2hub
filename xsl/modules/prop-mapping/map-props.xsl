@@ -576,11 +576,22 @@
       <xsl:if test="$is-removable">
         <xsl:attribute name="docx2hub:removable" select="$is-removable"/>
       </xsl:if>
-      <xsl:if test="exists(descendant::w:sectPr)">
+      <xsl:if test="exists(descendant::w:sectPr) and not(exists(descendant::w:r))">
         <xsl:attribute name="docx2hub:sectPr" select="'true'"/>
       </xsl:if>
       <xsl:apply-templates select="@* | * | processing-instruction() | comment()" mode="#current"/>
     </xsl:copy>
+    <!-- 
+      w:sectPr are always stored at the w:p regardless of its position in the w:p.
+      A w:sectPr at the end of a w:p can be placed, but is not stored at the end of the w:p.
+      This will move it after the w:p if the w:p contains content.
+    -->
+    <xsl:if test="exists(descendant::w:sectPr) and exists(descendant::w:r)">
+      <xsl:copy>
+        <xsl:attribute name="docx2hub:sectPr" select="'true'"/>
+        <xsl:apply-templates select="descendant::w:footnotePr" mode="#current"/>
+      </xsl:copy>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="  w:style/*

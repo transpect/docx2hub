@@ -578,6 +578,7 @@
       </xsl:if>
       <xsl:if test="exists(descendant::w:sectPr) and not(exists(descendant::w:r))">
         <xsl:attribute name="docx2hub:sectPr" select="'true'"/>
+        <xsl:attribute name="docx2hub:removable" select="'true'"/>
       </xsl:if>
       <xsl:apply-templates select="@* | * | processing-instruction() | comment()" mode="#current"/>
     </xsl:copy>

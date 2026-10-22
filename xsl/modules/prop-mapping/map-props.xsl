@@ -590,6 +590,7 @@
     <xsl:if test="exists(descendant::w:sectPr) and exists(descendant::w:r)">
       <xsl:copy>
         <xsl:attribute name="docx2hub:sectPr" select="'true'"/>
+        <xsl:attribute name="docx2hub:removable" select="'true'"/>
         <xsl:apply-templates select="descendant::w:footnotePr" mode="#current"/>
       </xsl:copy>
     </xsl:if>
